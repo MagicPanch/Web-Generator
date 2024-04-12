@@ -1,0 +1,16 @@
+models/#*
+
+# Rasa ignore
+*/.rasa/*
+*.tar.gz
+*.rasa/cache
+*.rasa.db
+*.rasa.db-shm
+*.rasa.db-wal
+*.events.db
+*.events.db-shm
+*.events.db-wal
+*.graph.png
+*.graph.html
+*.story_graph.html
+*.story_graph.dot
