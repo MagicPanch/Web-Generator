@@ -2,6 +2,12 @@ version: "3.1"
 
 stories:
 
+- story: prueba
+  steps:
+  - intent: prueba
+  - action: action_prueba
+
+
 - story: happy path
   steps:
   - intent: greet

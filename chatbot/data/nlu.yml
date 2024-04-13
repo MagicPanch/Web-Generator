@@ -1,6 +1,12 @@
 version: "3.1"
 
 nlu:
+- intent: prueba
+  examples: |
+    - prueba
+    - prueba1
+    - prueba2
+
 - intent: greet
   examples: |
     - hey
