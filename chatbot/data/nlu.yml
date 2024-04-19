@@ -4,7 +4,7 @@ nlu:
 - intent: prueba
   examples: |
     - prueba
-    - prueba1
+    - quiero crear una pagina
     - prueba2
 
 - intent: greet
