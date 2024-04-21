@@ -73,27 +73,3 @@ go_to_main_dir()
 go_to_dir('user_prueba')
 go_to_dir('page_prueba')
 create_project('page_prueba')
-
-
-
-import subprocess
-
-def verificar_npx():
-    try:
-        # Ejecutar el comando `npx --version` para verificar la accesibilidad de `npx`
-        resultado = subprocess.run(['npm', '--version'], capture_output=True, text=True)
-
-        # Verificar el código de retorno
-        if resultado.returncode == 0:
-            # `npx` está accesible y el comando se ejecutó correctamente
-            print(f'npm está disponible. Versión: {resultado.stdout.strip()}')
-        else:
-            # El comando no se ejecutó correctamente
-            print(f'No se pudo ejecutar `npm --version`. Código de retorno: {resultado.returncode}')
-            print(f'Error: {resultado.stderr.strip()}')
-
-    except Exception as e:
-        print(f'Error al verificar la accesibilidad de `npx`: {e}')
-
-# Verificar si `npx` es accesible desde el entorno Python
-verificar_npx()
