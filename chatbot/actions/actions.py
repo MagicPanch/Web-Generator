@@ -10,7 +10,9 @@ class ActionPrueba(Action):
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         url = 'http://127.0.0.1:5000/create-next-app'
-        response = requests.get(url)
+        page_name = "PRUEBA"
+        response = requests.get(url, json={'user': tracker.sender_id, 'page_name': page_name})
+        print(response.text)
         message = "Tu pagina fue creada. Puedes acceder a ella en: " + response.text
         dispatcher.utter_message(message)
         return []
