@@ -9,6 +9,7 @@ def home():
 
 @app.route('/create-next-app')
 def create_next_app():
+    #Se crea el directorio para el usuario, luego se crea el directorio para la página y en él se crea el proyecto
     generator.go_to_main_dir()
     generator.go_to_dir(request.json.get("user"))
     generator.go_to_dir(request.json.get("page_name"))
