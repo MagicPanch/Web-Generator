@@ -2,35 +2,10 @@ version: "3.1"
 
 stories:
 
-- story: prueba
+- story: crear_pagina
   steps:
-  - intent: prueba
-  - action: action_prueba
+  - intent: crear_pagina
+  - action: utter_preguntar_nombre
+  - intent: nombre_pagina
+  - action: action_crear_pagina
 
-
-- story: happy path
-  steps:
-  - intent: greet
-  - action: utter_greet
-  - intent: mood_great
-  - action: utter_happy
-
-- story: sad path 1
-  steps:
-  - intent: greet
-  - action: utter_greet
-  - intent: mood_unhappy
-  - action: utter_cheer_up
-  - action: utter_did_that_help
-  - intent: affirm
-  - action: utter_happy
-
-- story: sad path 2
-  steps:
-  - intent: greet
-  - action: utter_greet
-  - intent: mood_unhappy
-  - action: utter_cheer_up
-  - action: utter_did_that_help
-  - intent: deny
-  - action: utter_goodbye

@@ -14,7 +14,7 @@ def create_next_app():
     generator.go_to_dir(request.json.get("page_name"))
     generator.create_project(request.json.get("page_name"))
 
-    return 'Next app created', 200
+    return 'www.' + request.json.get("page_name") + ".com", 200
 
 if (__name__ == '__main__'):
     app.run(host='0.0.0.0', port=5000)

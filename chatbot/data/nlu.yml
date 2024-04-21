@@ -1,97 +1,27 @@
 version: "3.1"
 
 nlu:
-- intent: prueba
+- intent: crear_pagina
   examples: |
-    - prueba
     - quiero crear una pagina
-    - prueba2
+    - quiero una pagina
+    - quiero una nueva pagina
+    - quiero crear
 
-- intent: greet
+- regex: regex_page_name
   examples: |
-    - hey
-    - hello
-    - hi
-    - hello there
-    - good morning
-    - good evening
-    - moin
-    - hey there
-    - let's go
-    - hey dude
-    - goodmorning
-    - goodevening
-    - good afternoon
+    - '^[a-zA-Z0-9-_]+$'
 
-- intent: goodbye
+- intent: nombre_pagina
   examples: |
-    - cu
-    - good by
-    - cee you later
-    - good night
-    - bye
-    - goodbye
-    - have a nice day
-    - see you around
-    - bye bye
-    - see you later
+    - www. [design-label](page_name) .com
+    - www. [pagina](page_name) .com
+    - www. [pagina1](page_name) .com
 
-- intent: affirm
-  examples: |
-    - yes
-    - y
-    - indeed
-    - of course
-    - that sounds good
-    - correct
 
-- intent: deny
-  examples: |
-    - no
-    - n
-    - never
-    - I don't think so
-    - don't like that
-    - no way
-    - not really
+#- intent: nombre_pagina
+#  examples: |
+#    - www.des(regex_page_name).com
+#    - el nombre es www.regex_page_name(regex_page_name).com
+#    - que se llame www.regex_page_name(regex_page_name).com
 
-- intent: mood_great
-  examples: |
-    - perfect
-    - great
-    - amazing
-    - feeling like a king
-    - wonderful
-    - I am feeling very good
-    - I am great
-    - I am amazing
-    - I am going to save the world
-    - super stoked
-    - extremely good
-    - so so perfect
-    - so good
-    - so perfect
-
-- intent: mood_unhappy
-  examples: |
-    - my day was horrible
-    - I am sad
-    - I don't feel very well
-    - I am disappointed
-    - super sad
-    - I'm so sad
-    - sad
-    - very sad
-    - unhappy
-    - not good
-    - not very good
-    - extremly sad
-    - so saad
-    - so sad
-
-- intent: bot_challenge
-  examples: |
-    - are you a bot?
-    - are you a human?
-    - am I talking to a bot?
-    - am I talking to a human?

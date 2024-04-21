@@ -1,37 +1,28 @@
 version: "3.1"
 
 intents:
-  - prueba
-  - greet
-  - goodbye
-  - affirm
-  - deny
-  - mood_great
-  - mood_unhappy
-  - bot_challenge
+  - crear_pagina
+  - nombre_pagina
+
+entities:
+  - regex_page_name
+  - page_name
+
+slots:
+  page_name:
+    type: text
+    mappings:
+      - type: from_entity
+        entity: page_name
+
 
 responses:
-  utter_greet:
-  - text: "Hey! How are you?"
+  utter_preguntar_nombre:
+    - text: "¿Como queres que se llame tu pagina? Por favor indica su nombre en el siguiente formato: www. nombre-pagina .com"
 
-  utter_cheer_up:
-  - text: "Here is something to cheer you up:"
-    image: "https://i.imgur.com/nGF1K8f.jpg"
-
-  utter_did_that_help:
-  - text: "Did that help you?"
-
-  utter_happy:
-  - text: "Great, carry on!"
-
-  utter_goodbye:
-  - text: "Bye"
-
-  utter_iamabot:
-  - text: "I am a bot, powered by Rasa."
 
 actions:
-  - action_prueba
+  - action_crear_pagina
 
 session_config:
   session_expiration_time: 60
