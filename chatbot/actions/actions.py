@@ -1,10 +1,13 @@
 from typing import Any, Text, Dict, List, Tuple
 from rasa_sdk import Action, Tracker
 from rasa_sdk.executor import CollectingDispatcher
+
+from generator import GenericRoutes
 from generator.Generator import Generator
 from generator.PageRunner import PageRunner
 from generator.Front import Front
 from generator.Back import Back
+import generator.GenericRoutes
 import CONSTANTS
 
 running:Dict[Tuple[str, str], List[PageRunner]] = {}
@@ -44,5 +47,7 @@ class ActionCrearPagina(Action):
         # Iniciar la ejecucion de los hilos
         running[(user, page_name)][0].start()
         running[(user, page_name)][1].start()
+        # Agregar ruta
+        running[(user, page_name)][0].agregar_ruta('/get-producto', GenericRoutes.get_product, ['GET'])
 
         return running[(user, page_name)][1].get_page_adress()

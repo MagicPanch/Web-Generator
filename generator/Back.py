@@ -18,6 +18,10 @@ class Back(PageRunner):
         self.app.route('/')(self.home)
         self.app.route('/saludo')(self.saludo)
 
+    def agregar_ruta(self, route, function, methods=None):
+        # Agrega una ruta de forma dinámica
+        self.app.add_url_rule(route, view_func=function, methods=methods)
+
     def home(self):
         # Define la vista para la ruta '/'
         return "¡Bienvenido a la aplicación Flask!"
