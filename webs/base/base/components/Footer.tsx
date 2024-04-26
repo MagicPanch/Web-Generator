@@ -6,17 +6,9 @@ import { FOOTER_CONTACT_INFO, FOOTER_LINKS, SOCIALS } from "../constants";
 
 const Footer = () => {
   return (
-    <footer className="flexCenter pt-24 bg-bgBlack py-14">
+    <footer className="flex justify-center pt-24 bg-slate-500 py-14">
       <div className="padding-container max-container flex flex-col w-full gap-14">
         <div className="flex flex-col items-start justify-center gap-[10%] md:flex-row">
-          <Link href="/" className="mb-10">
-            <Image
-              src="/invow-logo-footer.png"
-              alt="logo"
-              width={144}
-              height={48}
-            />
-          </Link>
           <div className="flex flex-wrap gap-10 sm:justify-between md:flex-1">
             {FOOTER_LINKS.map((columns, index) => (
               <FooterColumn key={index} title={columns.title}>
