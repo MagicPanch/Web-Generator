@@ -14,7 +14,6 @@ export const FOOTER_LINKS = [
       { label: "Portfolio", href: "/#portfolio" },
       { label: "Contact", href: "/contact-us" },
       { label: "About us", href: "/about-us" },
-      // { label: "Blog", href: "blog" },
     ],
   },
 ];
