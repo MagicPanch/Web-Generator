@@ -37,3 +37,4 @@ export const SOCIALS = {
     { image: "/x.svg", href: "https://twitter.com/InvowClub/" },
   ],
 };
+
