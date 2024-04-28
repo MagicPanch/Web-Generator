@@ -7,7 +7,9 @@
     <list default="true" id="121f2593-11ee-405e-a8d8-1c2f43d81e54" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/chatbot/actions/actions.py" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/actions/actions.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/generator/Back.py" beforeDir="false" afterPath="$PROJECT_DIR$/generator/Back.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chatbot/credentials.yml" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/credentials.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/generator/Front.py" beforeDir="false" afterPath="$PROJECT_DIR$/generator/Front.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/generator/Generator.py" beforeDir="false" afterPath="$PROJECT_DIR$/generator/Generator.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -70,7 +72,7 @@
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;terminal&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;D:\\Desarrollo\\Web-Generator\\user-pages\\2086036019\\prueba18\\node_modules\\typescript\\lib&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;C:\\Program Files\\JetBrains\\PyCharm 2023.2.1\\plugins\\javascript-impl\\jsLanguageServicesImpl\\external&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
@@ -109,6 +111,7 @@
       <workItem from="1713836775872" duration="40000" />
       <workItem from="1713878755945" duration="8162000" />
       <workItem from="1713899522368" duration="1976000" />
+      <workItem from="1714324285404" duration="2233000" />
     </task>
     <servers />
   </component>
@@ -132,9 +135,9 @@
     </option>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/Web_Generator$router.coverage" NAME="router Coverage Results" MODIFIED="1713813104376" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/generator" />
     <SUITE FILE_PATH="coverage/Web_Generator$Generator.coverage" NAME="Generator Coverage Results" MODIFIED="1713714682935" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/Web_Generator$Router.coverage" NAME="Router Coverage Results" MODIFIED="1713712734889" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
-    <SUITE FILE_PATH="coverage/Web_Generator$router.coverage" NAME="router Coverage Results" MODIFIED="1713813104376" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/generator" />
     <SUITE FILE_PATH="coverage/Web_Generator$generator.coverage" NAME="generator Coverage Results" MODIFIED="1713816696702" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/generator" />
   </component>
 </project>

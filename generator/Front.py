@@ -2,6 +2,7 @@ import threading
 
 import CONSTANTS
 from generator.PageRunner import PageRunner
+from generator.Generator import Generator
 
 class Front(PageRunner):
     # Clase encargada de la ejecución del front-end.
@@ -20,12 +21,13 @@ class Front(PageRunner):
         self.page_adress = self.generate_page_adress()
 
     def get_page_adress(self) -> str:
-        return "http://" + self.page_adress + ":" + str(self.page_port)
+        return "http://localhost:" + str(self.page_port)
 
     def init_page(self):
         #Metodo encargado de iniciar la ejecucion de una pagina
-        print("Pagina ejecutando")
+        print("Antes de run_project")
+        Generator.run_project(self.user, self.page_name, self.page_port)
 
     def run(self):
-        print("Hilo correspondiente al front de la pagina" + self.page_name + " del usuario " + self.user + ". Thread ID: " + threading.currentThread().getName())
+        print("Hilo correspondiente al front de la pagina " + self.page_name + " del usuario " + self.user + ". Thread ID: " + threading.currentThread().getName())
         self.init_page()

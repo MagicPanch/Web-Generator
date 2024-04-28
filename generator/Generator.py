@@ -1,5 +1,6 @@
 import os
 import wexpect
+import subprocess
 import CONSTANTS
 
 class Generator(object):
@@ -42,7 +43,20 @@ class Generator(object):
         Generator.go_to_main_dir()
         Generator.go_to_dir(user)
         command = 'npx create-next-app ' + page_name + ' --typescript --eslint --tailwind --app --src-dir --no-import-alias'
-        wexpect.run(command)
+        process = subprocess.Popen(command, shell=False)
+        process.wait()
+        #wexpect.run(command)
 
+    @staticmethod
+    def run_project(user, page_name, port):
+        Generator.go_to_main_dir()
+        Generator.go_to_dir(user)
+        Generator.go_to_dir(page_name)
+        print(os.getcwd())
+        command = 'npm run dev -- --port ' + str(port)
+        print(command)
+        process = subprocess.Popen(command, shell=False)
+        #wexpect.run(command)
+        print("despues del comando")
 
 
