@@ -1,4 +1,7 @@
 import threading
+import subprocess
+
+import psutil
 
 import CONSTANTS
 from generator.PageRunner import PageRunner
@@ -23,6 +26,11 @@ class Front(PageRunner):
     def get_page_adress(self) -> str:
         return "http://localhost:" + str(self.page_port)
 
+    def build_page(self):
+        Generator.build_project(self.user, self.page_name)
+
     def run(self):
-        print("Hilo correspondiente al front de la pagina " + self.page_name + " del usuario " + self.user + ". Thread ID: " + threading.currentThread().getName())
         Generator.run_project(self.user, self.page_name, self.page_port)
+
+    def stop(self):
+        Generator.kill_project(self.page_port)

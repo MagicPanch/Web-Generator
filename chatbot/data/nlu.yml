@@ -15,8 +15,22 @@ nlu:
 - intent: nombre_pagina
   examples: |
     - www. [design-label](page_name) .com
-    - www. [pagina](page_name) .com
-    - www. [pagina1](page_name) .com
+    - www. [google](page_name) .com
+    - www. [facebook](page_name) .com
+
+- intent: ejecutar_pagina
+  examples: |
+    - ejecutala
+    - quiero abrirla
+    - ponela a correr
+    - ejecuta [test](page_name)
+
+- intent: detener_pagina
+  examples: |
+    - detenela
+    - quiero que la apagues
+    - apagala
+    - frena [test](page_name)
 
 
 #- intent: nombre_pagina

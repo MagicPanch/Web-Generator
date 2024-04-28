@@ -9,3 +9,13 @@ stories:
   - intent: nombre_pagina
   - action: action_crear_pagina
 
+- story: ejecutar_pagina
+  steps:
+  - intent: ejecutar_pagina
+  - action: action_ejecutar_pagina
+
+- story: detener_pagina
+  steps:
+  - intent: detener_pagina
+  - action: action_detener_pagina
+

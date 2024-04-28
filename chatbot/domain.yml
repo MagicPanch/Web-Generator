@@ -3,6 +3,8 @@ version: "3.1"
 intents:
   - crear_pagina
   - nombre_pagina
+  - ejecutar_pagina
+  - detener_pagina
 
 entities:
   - regex_page_name
@@ -23,6 +25,8 @@ responses:
 
 actions:
   - action_crear_pagina
+  - action_ejecutar_pagina
+  - action_detener_pagina
 
 session_config:
   session_expiration_time: 60
