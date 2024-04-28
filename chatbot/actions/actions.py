@@ -28,7 +28,10 @@ class ActionCrearPagina(Action):
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         creating_thread = threading.Thread(Generator.create_project(user=tracker.sender_id, page_name=tracker.get_slot('page_name')))
         creating_thread.start()
-        message = "Tu pagina fue creada. Puedes acceder a ella en: " + self.init_next_app(user=tracker.sender_id, page_name=tracker.get_slot('page_name'))
+        creating_thread.join()
+        print("------------PAGINA CREADA---------")
+        page_dir = self.init_next_app(user=tracker.sender_id, page_name=tracker.get_slot('page_name'))
+        message = "Tu pagina fue creada. Puedes acceder a ella en: " + page_dir
         dispatcher.utter_message(message)
         return []
 
@@ -38,8 +41,8 @@ class ActionCrearPagina(Action):
 
         # Crear back y front
         running[(user, page_name)] = [None, None]
-        running[(user, page_name)][0] = Back(user, page_name, current_back_port)
-        running[(user, page_name)][1] = Front(user, page_name, current_front_port, running[(user, page_name)][0].get_app_adress())
+        #running[(user, page_name)][0] = Back(user, page_name, current_back_port)
+        running[(user, page_name)][1] = Front(user, page_name, current_front_port, "asd") #running[(user, page_name)][0].get_app_adress())
 
         # Incrementar puertos
         #current_back_port = inc_port(current_back_port, CONSTANTS.MAX_BACK_PORT)

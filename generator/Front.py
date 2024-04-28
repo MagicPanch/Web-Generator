@@ -23,11 +23,6 @@ class Front(PageRunner):
     def get_page_adress(self) -> str:
         return "http://localhost:" + str(self.page_port)
 
-    def init_page(self):
-        #Metodo encargado de iniciar la ejecucion de una pagina
-        print("Antes de run_project")
-        Generator.run_project(self.user, self.page_name, self.page_port)
-
     def run(self):
         print("Hilo correspondiente al front de la pagina " + self.page_name + " del usuario " + self.user + ". Thread ID: " + threading.currentThread().getName())
-        self.init_page()
+        Generator.run_project(self.user, self.page_name, self.page_port)

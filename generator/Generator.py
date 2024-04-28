@@ -1,5 +1,4 @@
 import os
-import wexpect
 import subprocess
 import CONSTANTS
 
@@ -21,14 +20,14 @@ class Generator(object):
     @staticmethod
     def go_to_dir(dir_name):
         #Nos posiciona en el directorio indicado. Si no existe, lo crea
-        print("dir actual: " + os.getcwd())
+        #print("dir actual: " + os.getcwd())
         os.makedirs(dir_name, exist_ok=True)
         os.chdir(dir_name)
-        print("nuevo dir: " + os.getcwd())
+        #print("nuevo dir: " + os.getcwd())
 
     @staticmethod
     def go_to_main_dir():
-        print("dir actual: " + os.getcwd())
+        #print("dir actual: " + os.getcwd())
         #Nos posiciona en el directorio user-pages
         if os.path.basename(os.getcwd()) == CONSTANTS.MAIN_DIR:
             os.chdir(CONSTANTS.USER_PAGES_DIR)
@@ -39,7 +38,7 @@ class Generator(object):
         else:
             while os.path.basename(os.getcwd()) != CONSTANTS.USER_PAGES_DIR:
                 os.chdir("..")
-        print("nuevo dir: " + os.getcwd())
+        #print("nuevo dir: " + os.getcwd())
 
     @staticmethod
     def create_project(user, page_name):
@@ -49,18 +48,13 @@ class Generator(object):
         command = 'npx create-next-app ' + page_name + ' --typescript --eslint --tailwind --app --src-dir --no-import-alias'
         process = subprocess.Popen(command, shell=True)
         process.wait()
-        #wexpect.run(command)
 
     @staticmethod
     def run_project(user, page_name, port):
         Generator.go_to_main_dir()
         Generator.go_to_dir(user)
         Generator.go_to_dir(page_name)
-        print(os.getcwd())
         command = 'npm run dev -- --port ' + str(port)
-        print(command)
         process = subprocess.Popen(command, shell=True)
-        #wexpect.run(command)
-        print("despues del comando")
 
 
