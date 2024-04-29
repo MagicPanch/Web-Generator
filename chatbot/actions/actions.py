@@ -4,6 +4,7 @@ from rasa_sdk.executor import CollectingDispatcher
 import threading
 
 from generator.Generator import Generator
+from generator.DBManager import DBManager
 from generator.PageRunner import PageRunner
 from generator.Front import Front
 from generator.Back import Back
@@ -19,7 +20,7 @@ class ActionCrearPagina(Action):
         creating_thread = threading.Thread(Generator.create_project(user=tracker.sender_id, page_name=tracker.get_slot('page_name')))
         creating_thread.start()
         creating_thread.join()
-
+        DBManager.add_user_page(user=tracker.sender_id, page_name=tracker.get_slot('page_name'))
         print("------------PAGINA CREADA---------")
         message = "Tu pagina fue creada con exito."
         dispatcher.utter_message(message)

@@ -20,4 +20,7 @@ class DBManager(object):
         else:
             raise Exception("No se puede crear otra instancia de DB Manager")
 
+    def add_user_page(self, user, page):
+        pass
+
 
