@@ -1,11 +1,34 @@
 import os
 import subprocess
+from typing import List, Tuple, Dict
+
 import CONSTANTS
 import psutil
+
+from generator.PageRunner import PageRunner
+
 
 class Generator(object):
 
     _instance = None
+    running: Dict[Tuple[str, str], List[PageRunner]] = {}
+    current_back_port = CONSTANTS.MIN_BACK_PORT
+    current_front_port = CONSTANTS.MIN_FRONT_PORT
+
+    @staticmethod
+    def inc_port(current, max):
+        current = current + 1
+        if current > max:
+            raise Exception("Se ha alcanzado el máximo número de páginas en ejecución")
+        return current
+
+    @staticmethod
+    def dec_port(current, min):
+        current = current - 1
+        if current < min:
+            current = min
+        return current
+
     @classmethod
     def get_instance(cls):
         if not cls._instance:
@@ -74,7 +97,6 @@ class Generator(object):
 
         command = 'npm start -- --port ' + str(port)
         process = subprocess.Popen(command, shell=True)
-        process.terminate()
 
     @staticmethod
     def get_pid(port):

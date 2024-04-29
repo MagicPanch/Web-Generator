@@ -7,3 +7,4 @@ MAX_BACK_PORT = 6999
 MIN_FRONT_PORT = 7001
 MAX_FRONT_PORT = 7999
 ADRESS = "0.0.0.0"
+DB_URI = "mongodb+srv://design:label123@cluster0.3yowbc8.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
