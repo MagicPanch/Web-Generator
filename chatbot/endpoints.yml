@@ -43,6 +43,6 @@ action_endpoint:
 
 tracker_store:
   type: mongod
-  url: mongodb://localhost:27017 #cambiarlo por el url de nuestra db
+  url: mongodb+srv://design:label123@cluster0.3yowbc8.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0 #cambiarlo por el url de nuestra db
   db: web_generator
   collection: users

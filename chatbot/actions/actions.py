@@ -21,7 +21,7 @@ class ActionCrearPagina(Action):
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         creating_thread = threading.Thread(Generator.create_project(user=tracker.sender_id, page_name=tracker.get_slot('page_name')))
         creating_thread.start()
-        creating_thread.join()
+        creating_thread.join()s
         DBManager.add_user_page(user=tracker.sender_id, page_name=tracker.get_slot('page_name'))
         print("------------PAGINA CREADA---------")
         message = "Tu pagina fue creada con exito."
@@ -106,7 +106,7 @@ class ActionEjecutarPagina(Action):
             tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         # Conectarse a la base de datos MongoDB
-        client = MongoClient('localhost', 27017) #cambiar localhost por url propio
+        client = MongoClient('mongodb+srv://design:label123@cluster0.3yowbc8.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0', 27017) #cambiar localhost por url propio
         db = client['web_generator']
         usuarios = db['users']
         # Extraer la información del tracker de la conversación
@@ -135,7 +135,7 @@ class ActionEjecutarPagina(Action):
     #        domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
     def agregar_pagina(id_user, pagina_info):
         # Conectarse a la base de datos MongoDB
-        client = MongoClient('localhost', 27017) #cambiar localhost por url propio
+        client = MongoClient('mongodb+srv://design:label123@cluster0.3yowbc8.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0', 27017) #cambiar localhost por url propio
         try:
             db = client['web_generator']
             usuarios = db['users']
@@ -166,16 +166,3 @@ class ActionEjecutarPagina(Action):
             client.close()
             dispatcher.utter_message("¡Nueva pagina ingresada en MongoDB!")
         return[]
-    
-    # Uso de la función agregar_pagina
-    id_user = ObjectId('607e07ef4fd67a001f33511e')  # ID del usuario al que se le agregará la página
-    pagina_info = {
-        'id': '123456789',
-        'contact': 'contacto@example.com',
-        'compilada': True,
-        'webType': 'blog'
-    }
-    resultado, mensaje = agregar_pagina(usuario_id, pagina_info)
-    print(mensaje)    
-        return[]
-    
