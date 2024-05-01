@@ -11,6 +11,8 @@ from generator.Back import Back
 import generator.GenericRoutes
 import CONSTANTS
 
+from pymongo import MongoClient
+
 class ActionCrearPagina(Action):
 
     def name(self) -> Text:
@@ -96,3 +98,84 @@ class ActionEjecutarPagina(Action):
 
             # Decrementar puertos
             Generator.dec_port(Generator.current_front_port, CONSTANTS.MIN_FRONT_PORT)
+
+    class ActionCrearUsuario(Action):
+    def name(self) -> Text:
+        return "action crear usuario"
+    def run(self, dispatcher: CollectingDispatcher,
+            tracker: Tracker,
+            domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        # Conectarse a la base de datos MongoDB
+        client = MongoClient('localhost', 27017) #cambiar localhost por url propio
+        db = client['web_generator']
+        usuarios = db['users']
+        # Extraer la información del tracker de la conversación
+        id_user = tracker.latest_message.get('text')
+        mail = tracker.latest_message.get('intent').get('name')
+        nro_celular = tracker.latest_message.get('intent').get('name')
+        # Crear un documento para insertar en la colección
+        nuevo_usuario = {
+            "id_user": id_user, #sacar de la metadata de telegram
+            "mail": mail,
+            "nro_celular": nro_celular,
+            "paginas": [] #nueva subcoleccion de paginas creadas vacia
+        }
+        # Insertar el documento en la colección
+        usuarios.insert_one(nuevo_usuario)
+        # Cerrar la conexión con MongoDB
+        client.close()
+        dispatcher.utter_message("¡Nuevo usuario ingresado en MongoDB!")
+        return[]
+    
+    class ActionAgregarPagina(Action):
+    #def name(self) -> Text:
+    #    return "action agregar pagina"
+    #def run(self, dispatcher: CollectingDispatcher,
+    #        tracker: Tracker,
+    #        domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+    def agregar_pagina(id_user, pagina_info):
+        # Conectarse a la base de datos MongoDB
+        client = MongoClient('localhost', 27017) #cambiar localhost por url propio
+        try:
+            db = client['web_generator']
+            usuarios = db['users']
+            # Buscar el usuario por su ID
+            usuario = usuarios.find_one({'_id': id_user})
+            if usuario:
+                # Crear el documento de la nueva página
+                nueva_pagina = {
+                    'id': pagina_info.get('id', ''),  # ID de la página
+                    'contact': pagina_info.get('contact', ''),  # Información de contacto
+                    'creationDate': datetime.utcnow(),  # Fecha de creación (actual)
+                    'lastModification': datetime.utcnow(),  # Última fecha de modificación (actual)
+                    'compilada': pagina_info.get('compilada', False),  # Indicador de compilación (predeterminado: False)
+                    'webType': pagina_info.get('webType', '')  # Tipo de página web
+                }
+
+                # Agregar la nueva página a la subcolección 'paginas' del usuario
+                usuarios.update_one(
+                    {'_id': id_user},
+                    {'$push': {'paginas': nueva_pagina}}
+                )
+
+                return True, "Página agregada correctamente."
+            else:
+                return False, "Usuario no encontrado."
+        finally:
+            # Cerrar la conexión con la base de datos al finalizar
+            client.close()
+            dispatcher.utter_message("¡Nueva pagina ingresada en MongoDB!")
+        return[]
+    
+    # Uso de la función agregar_pagina
+    id_user = ObjectId('607e07ef4fd67a001f33511e')  # ID del usuario al que se le agregará la página
+    pagina_info = {
+        'id': '123456789',
+        'contact': 'contacto@example.com',
+        'compilada': True,
+        'webType': 'blog'
+    }
+    resultado, mensaje = agregar_pagina(usuario_id, pagina_info)
+    print(mensaje)    
+        return[]
+    

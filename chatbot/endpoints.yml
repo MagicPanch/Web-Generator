@@ -40,3 +40,9 @@ action_endpoint:
 #  username: username
 #  password: password
 #  queue: queue
+
+tracker_store:
+  type: mongod
+  url: mongodb://localhost:27017 #cambiarlo por el url de nuestra db
+  db: web_generator
+  collection: users
