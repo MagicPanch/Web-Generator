@@ -19,3 +19,53 @@ stories:
   - intent: detener_pagina
   - action: action_detener_pagina
 
+- story: Comienzo de charla
+  steps:
+  - intent: saludo
+  - action: action_saludo_telegram
+
+- story: Como estas
+  steps:
+  - intent: como_estas
+  - action: utter_como_estas
+
+- story: Que haces
+  steps:
+  - intent: que_haces
+  - action: utter_que_haces
+
+- story: Contestar risa
+  steps:
+  - intent: reirse
+  - action: utter_reirse
+
+- story: Estado de animo triste
+  steps:
+  - intent: estado_de_animo_triste
+  - action: action_animo
+
+
+- story: Estado de animo feliz
+  steps:
+  - intent: estado_de_animo_feliz
+  - action: action_animo
+
+- story: Agradecer
+  steps:
+  - intent: me_alegro
+  - action: utter_me_alegro
+
+- story: Finalizacion de charla
+  steps:
+  - intent: despedidasc
+  - action: action_despedida_telegram
+
+- story: Decir nombre
+  steps:
+  - intent: decir_nombre
+  - action: utter_decir_nombre
+
+- story: Decir funcionalidad
+  steps:
+    - intent: funcionalidad
+    - action: utter_funcionalidad

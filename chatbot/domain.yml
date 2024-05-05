@@ -5,10 +5,44 @@ intents:
   - nombre_pagina
   - ejecutar_pagina
   - detener_pagina
+  - saludo
+  - despedidasc
+  - como_estas
+  - estado_de_animo_triste
+  - estado_de_animo_feliz
+  - afirmar
+  - denegar
+  - bot_challenge
+  - out_of_scope
+  - me_alegro
+  - triste_facu
+  - triste_pelea
+  - decir_nombre
+  - que_haces
+  - reirse
+  - hora
+  - gracias
+  - pregunta
+  - funcionalidad
 
 entities:
   - regex_page_name
   - page_name
+  - horario
+  - usuario
+  - animo
+  - preguntas
+  - dia
+
+actions:
+  - action_crear_pagina
+  - action_ejecutar_pagina
+  - action_detener_pagina
+  - action_saludo_telegram
+  - action_despedida_telegram
+  - action_animo
+  - action_triste
+  - action_hora
 
 slots:
   page_name:
@@ -17,16 +51,96 @@ slots:
       - type: from_entity
         entity: page_name
 
+  dia:
+    type: text
+    mappings:
+      - type: from_entity
+        entity: dia
+
+  usuario:
+    type: text
+    mappings:
+      - type: from_entity
+        entity: usuario
+
+  horario:
+    type: text
+    mappings:
+      - type: from_entity
+        entity: horario
+
+  animo:
+    type: text
+    mappings:
+      - type: from_entity
+        entity: animo
+
 
 responses:
   utter_preguntar_nombre:
     - text: "¿Como queres que se llame tu pagina? Por favor indica su nombre en el siguiente formato: www. nombre-pagina .com"
 
+  utter_funcionalidad:
+    - text: "Por el momento puedo crear una pagina y permitirte correrla o detenerla."
 
-actions:
-  - action_crear_pagina
-  - action_ejecutar_pagina
-  - action_detener_pagina
+  utter_saludo:
+    - text: "buenas {usuario}! tanto tiempoooo"
+
+  utter_me_alegro:
+  - text: "Muchas gracias!"
+
+  utter_que_haces:
+  - text: "Atento a cualquier tarea que me asignes"
+
+  utter_despedida_horario_nombre:
+  - text: "Chau nos vemos! Que tengas una buena {horario} {usuario}"
+
+  utter_despedida_nombre:
+  - text: "Chau! nos vemos {usuario}"
+
+  utter_despedidasc:
+  - text: "Chau nos vemos!"
+  - text: "Hasta luego, que sigas bien!"
+
+  utter_out_of_scope:
+  - text: "Mejor hablemos de otra cosa"
+  - text: "Preguntame otra cosa"
+  - text: "hablemos de la facu mejor"
+
+  utter_reirse:
+  - text: "jajajajaj"
+  - text: "jajajajjaa"
+  - text: "jsjsjajaj"
+
+  utter_como_estas:
+  - text: "Muy bien, gracias por preguntar, vos?"
+  - text: "Re bien!, vos como estas?"
+  - text: "Todo bien!, vos?"
+
+  utter_estado_de_animo_feliz:
+   - text: "Que bueno!, me alegro"
+   - text: "Bien ahi! me alegro"
+
+  utter_estado_de_animo_triste:
+   - text: "Uh que mal, ¿que te paso?"
+   - text: "Que bajon, ¿que te paso?"
+
+  utter_triste_pelea:
+   - text: "Que lastima, espero que se puedan arreglar"
+   - text: "Que lastima, culaquier cosa que necesites decime"
+
+  utter_triste_facu:
+   - text: "Bueno no pasa nada, no te estreses, intenta organizate mejor y vas a ver que van a salir los resultados"
+
+  utter_iamabot:
+   - text: "Si, soy un bot generador por el grupo de desarrollo Design Label"
+
+  utter_decir_nombre:
+   - text: "Mi nombre es WebGenerator"
+
+  utter_gracias:
+   - text: "de nada!"
+   - text: "no hay problemaa"
 
 session_config:
   session_expiration_time: 60
