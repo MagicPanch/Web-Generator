@@ -2,6 +2,7 @@ version: "3.1"
 
 nlu:
 
+# Look up tables
   - lookup: usuario
     examples: |
       - Lleyton
@@ -338,16 +339,81 @@ nlu:
       - Viernes
       - Sabado
       - Domingo
+  - lookup: colores
+    examples: |
+      - Azul
+      - Rojo
+      - Naranja
+      - Violeta
+      - Marron
+      - Verde
+      - Amarillo
+      - Celeste
+      - Blanco
+      - Negro
+      - Gris
+      - Rosa
+      - Bordo
+  - lookup: componentes
+    examples: |
+      - Boton
+      - Titulo
+      - Imagen
+      - Texto
+      - Subtitulo
+      - Video
+      - Nombre
+      - Producto
+      - Carrito
+  - lookup: pagina
+    examples: |
+      - E-commerce
+      - Informativa
+      - Foro
+      - Blog
+      - Red Social
+      - Portal de noticias
+      - Encuesta
+      - ABM
+  - lookup: page_name
+    examples: |
+      - facebook
+      - instagram
+      - whatsapp
+      - miforo
+      - foroexactas
+      - pagina1
+      - mipagina
+      - borrador
+      - myweb
+      - miprimerpaginaweb
+      - holamundo
 
+# Intents
 
-# Intents para crear/modificar/borrar pagina
+# Intents funcionamiento bot
   - intent: crear_pagina
     examples: |
       - quiero crear una pagina
       - quiero una pagina
       - quiero una nueva pagina
       - quiero crear
+      - perfecto, quiero una pagina web
+      - quiero otra pagina
 
+  - intent: tipo_pagina
+    examples: |
+      - Quiero que mi pagina sea [e-commerce](pagina)
+      - el tipo de mi pagina es [informativa](pagina)
+      - mi pagina es [foro](pagina)
+      - quiero una [red social](pagina)
+      - no se que tipo pagina quiero
+      - quiero un [Blog](pagina)
+      - todavia no se
+      - mas adelante te digo
+      - despues te digo
+      - no se que decirte
+      - me gustaria una [ABM](pagina)
   - regex: regex_page_name
     examples: |
       - '^[a-zA-Z0-9-_]+$'
@@ -357,6 +423,10 @@ nlu:
       - www. [design-label](page_name) .com
       - www. [google](page_name) .com
       - www. [facebook](page_name) .com
+      - www. [miprimerpagina](page_name) .com
+      - www. [miprimerforo](page_name) .com
+      - www. [pagina1](page_name) .com
+      - www. [borrador](page_name) .com
 
   - intent: ejecutar_pagina
     examples: |
@@ -390,6 +460,26 @@ nlu:
       - para q servis
       - mostrame q sabes
       - mostrame que sabes
+      - nada vos que haces?
+      - que haces?
+      - a ver q haces
+      - a ver mostrame
+      - que andas haciendo
+      - que estas haciendo?
+      - haces algo?
+      - que hacias?
+
+  - intent: agregaciones
+    examples: |
+      - Puedo agregar un [boton](componente)?
+      - puedo agregar un [titulo](componente) [negro](color)
+      - quiero agregar un [boton](componente) [azul](color)
+      - quiero agregar un [titulo](componente)
+      - quiero agregar una [imagen](componente)
+      - quiero agregar un [filtro](componente)
+      - puedo agregar una [imagen](componente)
+      - quiero agregar un [boton](componente) [rojo](color)
+
 
 #- intent: nombre_pagina
 #  examples: |
@@ -458,6 +548,7 @@ nlu:
       - jaaaaaaaaaja
       - jaaaaaaa
 
+
 # Saludos // Comienzo de conversacion
   - intent: saludo
     examples: |
@@ -483,12 +574,13 @@ nlu:
       - Adios
       - hasta luego
       - Nos vemos pronto
-      - By
+      - Bye
       - que sigas bien!
       - perfecto, bueno me tengo que ir, chau!
       - me tengo que ir
       - tengo otro plan, nos vemos!
       - seguimos en otro momento, me tengo que ir!
+
 
 # Estado de animo
   - intent: como_estas
@@ -502,16 +594,6 @@ nlu:
       - Acá andamos santi, tod bien?
       - todo bien vos?
       - como te sentis?
-
-  - intent: que_haces
-    examples: |
-      - nada vos que haces?
-      - yo nada, vos en que andas?
-      - en que andas
-      - que haces?
-      - que andas haciendo
-      - que estas haciendo?
-      - haces algo?
 
   - intent: estado_de_animo_feliz
     examples: |

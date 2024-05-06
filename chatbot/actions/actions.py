@@ -1,16 +1,22 @@
 import threading
+from random import random
+
+from pymongo import MongoClient
+
 from generator.Generator import Generator
 from generator.Front import Front
+import generator.GenericRoutes
 import CONSTANTS
-from typing import Any, Text, Dict, List
+from typing import Any, Text, Dict, List, Tuple
 from rasa_sdk import Action, Tracker
 from rasa_sdk.executor import CollectingDispatcher
 from rasa_sdk.events import SlotSet
 import datetime
 import os.path
 import json
+from generator.DBManager import DBManager
 
-
+#Actions Pagina
 class ActionCrearPagina(Action):
 
     def name(self) -> Text:
@@ -24,7 +30,8 @@ class ActionCrearPagina(Action):
         print("------------PAGINA CREADA---------")
         message = "Tu pagina fue creada con exito."
         dispatcher.utter_message(message)
-        return []
+        variable = next(tracker.get_latest_entity_values("page_name"), None)
+        return [SlotSet("page_name", variable)]
 
 class ActionEjecutarPagina(Action):
 
@@ -98,6 +105,21 @@ class ActionEjecutarPagina(Action):
             # Decrementar puertos
             Generator.dec_port(Generator.current_front_port, CONSTANTS.MIN_FRONT_PORT)
 
+class ActionGuardaTipo(Action):
+
+    def name(self) -> Text:
+        return "action_guardar_tipo"
+
+    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker,
+            domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        tipo_pag = next(tracker.get_latest_entity_values("pagina"), None)
+
+        if(str(tipo_pag))=="None":
+            message = "Bueno, podemos ver el tipo mas tarde"
+        else:
+            message = "Perfecto! Ya se guardo que tipo de pagina quieres, la cual sera: \n" + str(tipo_pag) + "."
+        dispatcher.utter_message(text=str(message))
+        return [SlotSet("tipo_pagina", tipo_pag)]
 
 # Saludo Actions
 class ActionSaludoTelegram(Action):
@@ -117,13 +139,13 @@ class ActionSaludoTelegram(Action):
             horario = "noche"
         variable = tracker.latest_message["metadata"]["message"]
         nombre = variable["from"]["first_name"]
-        SlotSet("usuario", nombre)
-        SlotSet("horario", horario)
+        user_name = variable["from"]["username"]
+        ide = variable["from"]["id"]
         message = "Hola " + nombre + ", como va tu " + horario + "? Soy el Chatbot WebGenerator, el encargado de ayudarte a crear tu pagina web! Si queres preguntame y te explico un poco en que cosas puedo contribuir."
         dispatcher.utter_message(text=str(message))
-        return []
+        return [SlotSet("usuario", user_name),SlotSet("horario", horario),SlotSet("id_user", ide)]
 
-
+#Random Actions
 class ActionDespedidaTelegram(Action):
 
     def name(self) -> Text:
@@ -235,3 +257,79 @@ class OperarArchivoUser():
         else:
             retorno = {}
         return retorno
+
+
+class ActionCrearUsuario(Action):
+    def name(self) -> Text:
+        return "action_crear_documento_usuario"
+
+    def run(self, dispatcher: CollectingDispatcher,
+            tracker: Tracker,
+            domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        # Conectarse a la base de datos MongoDB
+        client = MongoClient(
+            'mongodb+srv://design:label123@cluster0.3yowbc8.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0',
+            27017)  # cambiar localhost por url propio
+        db = client['web_generator']
+        usuarios = db['users']
+
+        # Extraer la información del tracker de la conversación
+        ide = tracker.get_slot("id_user")
+        username = tracker.get_slot("usuario")
+
+        # Verificar si el usuario ya existe en la base de datos
+        existing_user = usuarios.find_one({"_id": ide})
+        if existing_user:
+            dispatcher.utter_message("¡El usuario ya existe en MongoDB!")
+        else:
+            # Crear un documento para insertar en la colección
+            nuevo_usuario = {
+                "_id": ide,
+                "username": username,
+                "paginas": []  # nueva subcoleccion de paginas creadas vacia
+            }
+            # Insertar el documento en la colección
+            usuarios.insert_one(nuevo_usuario)
+            dispatcher.utter_message("¡Nuevo usuario ingresado en MongoDB!")
+
+        # Cerrar la conexión con MongoDB
+        client.close()
+
+        return []
+
+class ActionAgregarPagina(Action):
+
+    def name(self) -> Text:
+        return "action_crear_documento_pagina"
+
+    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        # Conectarse a la base de datos MongoDB
+        client = MongoClient('mongodb+srv://design:label123@cluster0.3yowbc8.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0',27017)  # cambiar localhost por url propio
+        db = client['web_generator']
+        usuarios = db['users']
+        # Buscar el usuario por su ID
+        usuario = usuarios.find_one({'_id': tracker.get_slot("id_user")})
+        if usuario:
+            # Crear el documento de la nueva página
+            nueva_pagina = {
+                'id': random()*100, #pagina_info.get('id', ''),  # ID de la página
+                'nombre': tracker.get_slot("page_name"), #pagina nombre
+                'contact':  tracker.get_slot("usuario"), #pagina_info.get('contact', ''),  # Información de contacto
+                'creationDate': datetime.datetime.utcnow(),  # Fecha de creación (actual)
+                'lastModification': datetime.datetime.now(),  # Última fecha de modificación (actual)
+                'compilada': False, #pagina_info.get('compilada', False),
+                # Indicador de compilación (predeterminado: False)
+                'webType': tracker.get_slot("tipo_pagina") #pagina_info.get('webType', '')  # Tipo de página web
+            }
+            # Agregar la nueva página a la subcolección 'paginas' del usuario
+            usuarios.update_one(
+                {'_id': aux},
+                {'$push': {'paginas': nueva_pagina}}
+            )
+            dispatcher.utter_message("Página agregada correctamente.")
+        else:
+            dispatcher.utter_message("Usuario no encontrado")
+        # Cerrar la conexión con la base de datos al finalizar
+        client.close()
+        dispatcher.utter_message("¡Nueva pagina ingresada en MongoDB!")
+        return [SlotSet("tipo_pagina", None)]

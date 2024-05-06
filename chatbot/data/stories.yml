@@ -2,12 +2,17 @@ version: "3.1"
 
 stories:
 
+#Stories funciones
 - story: crear_pagina
   steps:
   - intent: crear_pagina
+  - action: utter_tipo_pagina
+  - intent: tipo_pagina
+  - action: action_guardar_tipo
   - action: utter_preguntar_nombre
   - intent: nombre_pagina
   - action: action_crear_pagina
+  - action: action_crear_documento_pagina
 
 - story: ejecutar_pagina
   steps:
@@ -19,21 +24,29 @@ stories:
   - intent: detener_pagina
   - action: action_detener_pagina
 
+- story: Decir funcionalidad
+  steps:
+    - intent: funcionalidad
+    - action: utter_funcionalidad
+
+#Stories Conversacion normal
 - story: Comienzo de charla
   steps:
   - intent: saludo
   - action: action_saludo_telegram
+  - action: action_crear_documento_usuario
 
 - story: Como estas
   steps:
   - intent: como_estas
   - action: utter_como_estas
 
-- story: Que haces
+- story: Finalizacion de charla
   steps:
-  - intent: que_haces
-  - action: utter_que_haces
+  - intent: despedidasc
+  - action: action_despedida_telegram
 
+#Stories randoms
 - story: Contestar risa
   steps:
   - intent: reirse
@@ -55,17 +68,7 @@ stories:
   - intent: me_alegro
   - action: utter_me_alegro
 
-- story: Finalizacion de charla
-  steps:
-  - intent: despedidasc
-  - action: action_despedida_telegram
-
 - story: Decir nombre
   steps:
   - intent: decir_nombre
   - action: utter_decir_nombre
-
-- story: Decir funcionalidad
-  steps:
-    - intent: funcionalidad
-    - action: utter_funcionalidad

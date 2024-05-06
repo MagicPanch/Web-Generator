@@ -75,7 +75,7 @@ class Generator(object):
         #Crea el proyecto de la página
         Generator.go_to_main_dir()
         Generator.go_to_dir(user)
-        command = 'npx create-next-app ' + page_name + ' --typescript --eslint --tailwind --app --src-dir --no-import-alias'
+        command = 'npx create-next-app ' + str(page_name) + ' --typescript --eslint --tailwind --app --src-dir --no-import-alias'
         process = subprocess.Popen(command, shell=True)
         process.wait()
 
