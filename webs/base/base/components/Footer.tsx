@@ -9,7 +9,7 @@ const Footer = () => {
     <footer className="flex justify-center pt-24 bg-slate-500 py-14">
       <div className="padding-container max-container flex flex-col w-full gap-14">
         <div className="flex flex-col items-start justify-center gap-[10%] md:flex-row">
-          <div className="flex flex-wrap gap-10 sm:justify-between md:flex-1">
+          <div className="flex flex-wrap gap-10 sm:justify-between md:flex-1 px-10">
             {FOOTER_LINKS.map((columns, index) => (
               <FooterColumn key={index} title={columns.title}>
                 <ul className="regular-18 flex flex-col gap-4 text-gray-300">
