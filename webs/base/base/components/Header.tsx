@@ -4,7 +4,7 @@
     import logo from './logo.png';
     import Image from "next/image";
     import Link from "next/link";
-
+    
     const Header = () =>  {
         return(
         
@@ -16,7 +16,7 @@
                     alt="Logo"/>
                 </div>
                 <h1 className="text-5xl  mb-5  font-semibold text-center flex-1">
-                     holar reinas
+                    chau
                 </h1>
             </div>
         )
