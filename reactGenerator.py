@@ -20,7 +20,7 @@ def generarHeader(data):
                     height={{100}}
                     alt="Logo"/>
                 </div>
-                <h1 className="text-5xl  mb-5  font-semibold text-center flex-1">
+                <h1 className="text-5xl {data["colorTitulo"]}  mb-5  font-semibold text-center flex-1">
                     {data["titulo"]}
                 </h1>
             </div>
@@ -34,7 +34,7 @@ def generarHeader(data):
 
 
 addres ="C:/Users/Agustin/Desktop/DesingLabelBranchSanti/Web-Generator/webs/base/base" #direccion donde se ubica la web react
-dataHeader =  { "titulo": "chau" , "address":addres , "addressLogo": "./logo.png"} 
+dataHeader =  { "titulo": "ecommerce" , "address":addres , "addressLogo": "./logo.png" ,"colorTitulo":"text-yellow-600"} 
 dataHeader = json.dumps(dataHeader)
 print(dataHeader)
 dataDicHeader = json.loads(dataHeader)
