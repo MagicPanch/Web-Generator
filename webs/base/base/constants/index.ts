@@ -1,14 +1,7 @@
 // FOOTER SECTION
 export const FOOTER_LINKS = [
   {
-    title: "Learn More",
-    links: [
-      { label: "Terms and Conditions", href: "/terms-and-conditions" },
-      { label: "Privacy Policy", href: "/privacy-policy" },
-    ],
-  },
-  {
-    title: "Navigation",
+    title: "Navegación",
     links: [
       { label: "Services", href: "/#services" },
       { label: "Portfolio", href: "/#portfolio" },
@@ -19,10 +12,10 @@ export const FOOTER_LINKS = [
 ];
 
 export const FOOTER_CONTACT_INFO = {
-  title: "Contact Us",
+  title: "Contactanos",
   links: [
-    { label: "Email", value: "contact@invow.com" },
-    { label: "Location", value: "AV. Avellaneda 462 1C \n Argentina, Tandil" },
+    { label: "Email", value: "contactDesignLabel@gmail.com" },
+    { label: "Ubicación", value: "Pinto 399 Argentina, Tandil" },
   ],
 };
 
@@ -31,10 +24,10 @@ export const SOCIALS = {
   data: [
     {
       image: "/facebook.svg",
-      href: "https://www.facebook.com/profile.php?id=61556379895964/",
+      href: "https://www.facebook.com",
     },
-    { image: "/instagram.svg", href: "https://www.instagram.com/invow.tech/" },
-    { image: "/x.svg", href: "https://twitter.com/InvowClub/" },
+    { image: "/instagram.svg", href: "https://www.instagram.com" },
+    { image: "/x.svg", href: "https://twitter.com" },
   ],
 };
 
