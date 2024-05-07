@@ -1,8 +1,3 @@
-import threading
-import subprocess
-
-import psutil
-
 import CONSTANTS
 from generator.PageRunner import PageRunner
 from generator.Generator import Generator
@@ -27,7 +22,7 @@ class Front(PageRunner):
         return "http://localhost:" + str(self.page_port)
 
     def build_page(self):
-        Generator.build_project(self.user, self.page_name)
+        Generator.start_running_thread(target=Generator.build_project, args=(self.user, self.page_name))
 
     def run(self):
         Generator.run_project(self.user, self.page_name, self.page_port)

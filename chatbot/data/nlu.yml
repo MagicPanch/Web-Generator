@@ -356,6 +356,7 @@ nlu:
       - Bordo
   - lookup: componentes
     examples: |
+      - Encabezado
       - Boton
       - Titulo
       - Imagen
@@ -414,6 +415,7 @@ nlu:
       - despues te digo
       - no se que decirte
       - me gustaria una [ABM](pagina)
+
   - regex: regex_page_name
     examples: |
       - '^[a-zA-Z0-9-_]+$'
@@ -468,6 +470,10 @@ nlu:
       - que estas haciendo?
       - haces algo?
       - que hacias?
+
+  - intent: enviar_imagen
+    examples: |
+      - img.jpg
 
   - intent: agregaciones
     examples: |
@@ -670,6 +676,7 @@ nlu:
       - no lo creo
       - no me sirve
       - nao
+      - no quiero
 
   - regex: pregunta
     examples: |

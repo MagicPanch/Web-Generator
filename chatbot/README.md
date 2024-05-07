@@ -7,6 +7,42 @@ Tutorial para hacer la conexión de un chatbot desarrollado en RASA con Telegram
 
 - Con el venv activado, ejecutar el comando
 ``` pip install rasa==3.1 ```
+- Ir a venv/Lib/site-packages/rasa/core/channels/channel.py y encontrar el método get_metadata(self, request: Request)
+- Remplazar la definición del método por
+    ```python
+    metadata=request.json
+    return metadata
+    ```
+- Ir a venv/Lib/site-packages/rasa/core/channels/telegram.py y encontrar el método blueprint (línea 190 aprox)
+- En él, se tiene el siguiente bloque if (línea 220 aprox):
+  ```python
+      if self._is_button(update):
+        msg = update.callback_query.message
+        text = update.callback_query.data
+      elif self._is_edited_message(update):
+        msg = update.edited_message
+        text = update.edited_message.text
+      else:
+        msg = update.message
+        if self._is_user_message(msg):
+          text = msg.text.replace("/bot", "")
+        elif self._is_location(msg):
+          text = '{{"lng":{0}, "lat":{1}}}'.format(
+            msg.location.longitude, msg.location.latitude
+          )
+        else:
+            return response.text("success")
+  ```
+- Agregar en el mismo nivel de identación:
+  ```python    
+      elif msg.photo is not None:  # check if message contains an image
+        text = 'img.jpg'  # set the text to the file name
+  ```
+- Antes de
+  ```python    
+      else:
+        return response.text("success")
+  ```
 
 ### Chocolatey
 Es un gestor de paquetes para windows

@@ -1,6 +1,8 @@
 import os
 import subprocess
+import threading
 from typing import List, Tuple, Dict
+from telegram import Bot
 
 import CONSTANTS
 import psutil
@@ -11,9 +13,11 @@ from generator.PageRunner import PageRunner
 class Generator(object):
 
     _instance = None
-    running: Dict[Tuple[str, str], List[PageRunner]] = {}
+    running_pages: Dict[Tuple[str, str], List[PageRunner]] = {}
+    running_thread = None
     current_back_port = CONSTANTS.MIN_BACK_PORT
     current_front_port = CONSTANTS.MIN_FRONT_PORT
+    bot = None
 
     @staticmethod
     def inc_port(current, max):
@@ -33,6 +37,7 @@ class Generator(object):
     def get_instance(cls):
         if not cls._instance:
             cls._instance = Generator()
+            cls.bot = Bot(token=CONSTANTS.TELEGRAM_BOT_TOKEN)
         return cls._instance
 
     def __init__(self) -> None:
@@ -71,30 +76,42 @@ class Generator(object):
         return os.listdir(os.getcwd())
 
     @staticmethod
+    def start_running_thread(target, args):
+        if Generator.running_thread is None:
+            Generator.running_thread = threading.Thread(target(args[0], args[1]))
+            Generator.running_thread.start()
+        else:
+            Generator.join_running_thread()
+            Generator.start_running_thread(target, args)
+
+    @staticmethod
+    def join_running_thread():
+        if Generator.running_thread is not None:
+            Generator.running_thread.join()
+            Generator.running_thread = None
+
+    @staticmethod
     def create_project(user, page_name):
         #Crea el proyecto de la página
         Generator.go_to_main_dir()
         Generator.go_to_dir(user)
         command = 'npx create-next-app ' + str(page_name) + ' --typescript --eslint --tailwind --app --src-dir --no-import-alias'
-        process = subprocess.Popen(command, shell=True)
-        process.wait()
+        subprocess.Popen(command, shell=True)
 
     @staticmethod
     def build_project(user, page_name):
         Generator.go_to_main_dir()
         Generator.go_to_dir(user)
         Generator.go_to_dir(page_name)
-
         command = 'npx next build '
-        process = subprocess.Popen(command, shell=True)
-        process.wait()
+        subprocess.Popen(command, shell=True)
 
     @staticmethod
     def run_project(user, page_name, port):
         Generator.go_to_main_dir()
         Generator.go_to_dir(user)
         Generator.go_to_dir(page_name)
-
+        Generator.running_thread.join()
         command = 'npm start -- --port ' + str(port)
         process = subprocess.Popen(command, shell=True)
 
@@ -133,5 +150,17 @@ class Generator(object):
         process = psutil.Process(Generator.get_pid(port))
         process.terminate()
         process.wait()
+
+    async def download_telegram_image(self, user, page_name, image_id, short_id, i):
+        file = await self.bot.get_file(image_id)
+        Generator.go_to_main_dir()
+        Generator.go_to_dir(user)
+        Generator.go_to_dir(page_name)
+        Generator.go_to_dir('img')
+        path = os.getcwd() + '\\' + str(short_id) + '-' + str(i) + '.jpg'
+        print("path: " + str(path))
+        await file.download_to_drive(path)
+        print("Imagen descargada con éxito.")
+
 
 

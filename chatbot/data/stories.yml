@@ -6,13 +6,17 @@ stories:
 - story: crear_pagina
   steps:
   - intent: crear_pagina
+  - action: utter_preguntar_nombre
+  - intent: nombre_pagina
   - action: utter_tipo_pagina
   - intent: tipo_pagina
   - action: action_guardar_tipo
-  - action: utter_preguntar_nombre
-  - intent: nombre_pagina
-  - action: action_crear_pagina
-  - action: action_crear_documento_pagina
+  - action: action_crear_pagina  #Aca se crea el proyecto y se guarda la pagina en la DB
+  - action: utter_preguntar_logo
+  - or:
+    - intent: enviar_imagen
+    - intent: denegar
+  - action: action_recibir_imagen
 
 - story: ejecutar_pagina
   steps:
@@ -33,8 +37,7 @@ stories:
 - story: Comienzo de charla
   steps:
   - intent: saludo
-  - action: action_saludo_telegram
-  - action: action_crear_documento_usuario
+  - action: action_saludo_telegram #Aca se guarda al usuario en la DB
 
 - story: Como estas
   steps:

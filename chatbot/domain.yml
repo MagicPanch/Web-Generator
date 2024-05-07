@@ -25,6 +25,7 @@ intents:
   - gracias
   - pregunta
   - funcionalidad
+  - enviar_imagen
 
 entities:
   - animo
@@ -38,6 +39,7 @@ entities:
   - page_name
   - preguntas
   - regex_page_name
+  - imagen
 
 actions:
   - action_animo
@@ -49,8 +51,10 @@ actions:
   - action_ejecutar_pagina
   - action_hora
   - action_guardar_tipo
+  - action_preguntar_titulo
   - action_saludo_telegram
   - action_triste
+  - action_recibir_imagen
 
 slots:
   page_name:
@@ -102,6 +106,9 @@ responses:
 
   utter_preguntar_nombre:
     - text: "¿Como queres que se llame tu pagina? Por favor indica su nombre en el siguiente formato: www. nombre-pagina .com"
+
+  utter_preguntar_logo:
+    - text: "Si lo deseas podes enviarme una imagen con el logo de tu página para el encabezado"
 
   utter_funcionalidad:
     - text: "Por el momento puedo crear una pagina y permitirte correrla o detenerla."
