@@ -1,4 +1,3 @@
-// FOOTER SECTION
 export const FOOTER_LINKS = [
   {
     title: "Navegación",
