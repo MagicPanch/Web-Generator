@@ -6,16 +6,20 @@
   <component name="ChangeListManager">
     <list default="true" id="121f2593-11ee-405e-a8d8-1c2f43d81e54" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CONSTANTS.PY" beforeDir="false" afterPath="$PROJECT_DIR$/CONSTANTS.PY" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chatbot/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/chatbot/actions/actions.py" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/actions/actions.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chatbot/credentials.yml" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/credentials.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chatbot/componentes.json" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/chatbot/data/nlu.yml" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/data/nlu.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chatbot/data/rules.yml" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/data/rules.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/chatbot/data/stories.yml" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/data/stories.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/chatbot/domain.yml" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/domain.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chatbot/tests/test_stories.yml" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/tests/test_stories.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chatbot/user.json" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/generator/DBManager.py" beforeDir="false" afterPath="$PROJECT_DIR$/generator/DBManager.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/generator/Front.py" beforeDir="false" afterPath="$PROJECT_DIR$/generator/Front.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/generator/Generator.py" beforeDir="false" afterPath="$PROJECT_DIR$/generator/Generator.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/generator/Generator.py" beforeDir="false" afterPath="$PROJECT_DIR$/generator/PageManager.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/generator/GenericRoutes.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/generator/PageRunner.py" beforeDir="false" afterPath="$PROJECT_DIR$/generator/PageRunner.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/reactGenerator.py" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -43,7 +47,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="main" />
+        <entry key="$PROJECT_DIR$" value="reactGenerator" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -88,7 +92,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
     "deletionFromPopupRequiresConfirmation": "false",
-    "git-widget-placeholder": "santiago",
+    "git-widget-placeholder": "lucas__reactGenerator",
     "ignore.virus.scanning.warn.message": "true",
     "last_opened_file_path": "C:/Users/Rodríguez/OneDrive/Escritorio/Facultad/IngSoft/Web-Generator",
     "node.js.detected.package.eslint": "true",
@@ -97,7 +101,7 @@
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
     "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
-    "ts.external.directory.path": "C:\\Program Files\\JetBrains\\PyCharm 2023.2.1\\plugins\\javascript-impl\\jsLanguageServicesImpl\\external",
+    "ts.external.directory.path": "D:\\Desarrollo\\Web-Generator\\webs\\base\\base\\node_modules\\typescript\\lib",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>

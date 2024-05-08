@@ -10,7 +10,7 @@ import psutil
 from generator.PageRunner import PageRunner
 
 
-class Generator(object):
+class PageManager(object):
 
     _instance = None
     running_pages: Dict[Tuple[str, str], List[PageRunner]] = {}
@@ -36,13 +36,13 @@ class Generator(object):
     @classmethod
     def get_instance(cls):
         if not cls._instance:
-            cls._instance = Generator()
+            cls._instance = PageManager()
             cls.bot = Bot(token=CONSTANTS.TELEGRAM_BOT_TOKEN)
         return cls._instance
 
     def __init__(self) -> None:
-        if Generator._instance is None:
-            Generator._instance = self
+        if PageManager._instance is None:
+            PageManager._instance = self
         else:
             raise Exception("No se puede crear otra instancia de Generator")
 
@@ -70,48 +70,55 @@ class Generator(object):
         #print("nuevo dir: " + os.getcwd())
 
     @staticmethod
+    def get_path(user, page_name):
+        PageManager.go_to_main_dir()
+        PageManager.go_to_dir(user)
+        PageManager.go_to_dir(page_name)
+        return os.getcwd()
+
+    @staticmethod
     def get_user_pages(user):
-        Generator.go_to_main_dir()
-        Generator.go_to_dir(user)
+        PageManager.go_to_main_dir()
+        PageManager.go_to_dir(user)
         return os.listdir(os.getcwd())
 
     @staticmethod
     def start_running_thread(target, args):
-        if Generator.running_thread is None:
-            Generator.running_thread = threading.Thread(target(args[0], args[1]))
-            Generator.running_thread.start()
+        if PageManager.running_thread is None:
+            PageManager.running_thread = threading.Thread(target(args[0], args[1]))
+            PageManager.running_thread.start()
         else:
-            Generator.join_running_thread()
-            Generator.start_running_thread(target, args)
+            PageManager.join_running_thread()
+            PageManager.start_running_thread(target, args)
 
     @staticmethod
     def join_running_thread():
-        if Generator.running_thread is not None:
-            Generator.running_thread.join()
-            Generator.running_thread = None
+        if PageManager.running_thread is not None:
+            PageManager.running_thread.join()
+            PageManager.running_thread = None
 
     @staticmethod
     def create_project(user, page_name):
         #Crea el proyecto de la página
-        Generator.go_to_main_dir()
-        Generator.go_to_dir(user)
+        PageManager.go_to_main_dir()
+        PageManager.go_to_dir(user)
         command = 'npx create-next-app ' + str(page_name) + ' --typescript --eslint --tailwind --app --src-dir --no-import-alias'
         subprocess.Popen(command, shell=True)
 
     @staticmethod
     def build_project(user, page_name):
-        Generator.go_to_main_dir()
-        Generator.go_to_dir(user)
-        Generator.go_to_dir(page_name)
+        PageManager.go_to_main_dir()
+        PageManager.go_to_dir(user)
+        PageManager.go_to_dir(page_name)
         command = 'npx next build '
         subprocess.Popen(command, shell=True)
 
     @staticmethod
     def run_project(user, page_name, port):
-        Generator.go_to_main_dir()
-        Generator.go_to_dir(user)
-        Generator.go_to_dir(page_name)
-        Generator.running_thread.join()
+        PageManager.go_to_main_dir()
+        PageManager.go_to_dir(user)
+        PageManager.go_to_dir(page_name)
+        PageManager.running_thread.join()
         command = 'npm start -- --port ' + str(port)
         process = subprocess.Popen(command, shell=True)
 
@@ -147,17 +154,17 @@ class Generator(object):
 
     @staticmethod
     def kill_project(port):
-        process = psutil.Process(Generator.get_pid(port))
+        process = psutil.Process(PageManager.get_pid(port))
         process.terminate()
         process.wait()
 
-    async def download_telegram_image(self, user, page_name, image_id, short_id, i):
+    async def download_telegram_image(self, user, page_name, image_id, short_id):
         file = await self.bot.get_file(image_id)
-        Generator.go_to_main_dir()
-        Generator.go_to_dir(user)
-        Generator.go_to_dir(page_name)
-        Generator.go_to_dir('img')
-        path = os.getcwd() + '\\' + str(short_id) + '-' + str(i) + '.jpg'
+        PageManager.go_to_main_dir()
+        PageManager.go_to_dir(user)
+        PageManager.go_to_dir(page_name)
+        PageManager.go_to_dir('img')
+        path = os.getcwd() + '\\' + str(short_id) + '.jpg'
         print("path: " + str(path))
         await file.download_to_drive(path)
         print("Imagen descargada con éxito.")

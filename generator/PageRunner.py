@@ -3,7 +3,6 @@ from abc import ABC, abstractmethod
 
 class PageRunner(threading.Thread):
     #Clase encargada de la ejecución de las páginas web. En ella se deben definir los métodos para la gestión de estas páginas.
-
     user:str
     page_name:str
     page_port:int

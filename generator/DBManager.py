@@ -18,23 +18,22 @@ class DBManager(object):
         if DBManager._instance is None:
             DBManager._instance = self
             self._client = MongoClient(CONSTANTS.DB_URI)
-            self._lock = threading.Lock()
         else:
             raise Exception("No se puede crear otra instancia de DB Manager")
 
     async def add_user(self, id, username):
         db = self._client['web_generator']
         usuarios = db['users']
-        if not usuarios.find_one({"_id": int(id)}):
+        if not usuarios.find_one({"_id": id}):
             await usuarios.insert_one(
                 {
                     "_id": id,
                     "username": username,
                     "paginas": []  # nueva subcoleccion de paginas creadas vacia
                 })
-            print("-------USUARIO INSERTADO EN LA DB--------")
+            print("----USUARIO INSERTADO EN LA DB----")
         else:
-            print("-------USUARIO YA EXISTENTE EN LA DB--------")
+            print("----USUARIO YA EXISTENTE EN LA DB----")
 
     async def add_page(self, user_id, page_name, contact, webType):
         db = self._client['web_generator']
