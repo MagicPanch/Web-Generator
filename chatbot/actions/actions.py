@@ -18,19 +18,20 @@ class ActionCrearPagina(Action):
         return "action_crear_pagina"
 
     async def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        dispatcher.utter_message(text="Aguarda un momento mientras se crea tu página")
+        if (tracker.get_slot('page_name') is None):
+            dispatcher.utter_message(text="Repetime como queres que se llame tu página. Te recuerdo que el formato es: www. nombre-pagina .com")
+            return []
+        else:
+            # Crear back y front
+            PageManager.running_pages[(tracker.sender_id, tracker.get_slot('page_name'))] = [None, None]
+            # Generator.running[(args[0], args[1])][0] = Back(args[0], args[1], PageManager.current_back_port)
+            PageManager.running_pages[(tracker.sender_id, tracker.get_slot('page_name'))][1] = Front(tracker.sender_id, tracker.get_slot('page_name'), PageManager.current_front_port,
+                                                                     "")  # running[(user, page_name)][0].get_app_adress())
 
-        # Crear back y front
-        PageManager.running_pages[(tracker.sender_id, tracker.get_slot('page_name'))] = [None, None]
-        # Generator.running[(args[0], args[1])][0] = Back(args[0], args[1], PageManager.current_back_port)
-        PageManager.running_pages[(tracker.sender_id, tracker.get_slot('page_name'))][1] = Front(tracker.sender_id, tracker.get_slot('page_name'), PageManager.current_front_port,
-                                                                 "")  # running[(user, page_name)][0].get_app_adress())
-
-        PageManager.running_pages[(tracker.sender_id, tracker.get_slot('page_name'))][1].start_running_thread(target=PageManager.create_project, args=(tracker.sender_id, tracker.get_slot('page_name')))
-
-        await DBManager.add_page(DBManager.get_instance(), tracker.sender_id, tracker.get_slot('page_name'), tracker.get_slot('usuario'), tracker.get_slot('tipo_pagina'))
-
-        return [SlotSet("page_name", tracker.get_slot('page_name')), FollowupAction("action_ejecutar_dev")]
+            PageManager.running_pages[(tracker.sender_id, tracker.get_slot('page_name'))][1].start_running_thread(target=PageManager.create_project, args=(tracker.sender_id, tracker.get_slot('page_name')))
+            await DBManager.add_page(DBManager.get_instance(), tracker.sender_id, tracker.get_slot('page_name'), tracker.get_slot('usuario'), tracker.get_slot('tipo_pagina'))
+            dispatcher.utter_message(text="Aguarda un momento mientras se crea tu página")
+            return [SlotSet("page_name", tracker.get_slot('page_name')), FollowupAction("action_ejecutar_dev")]
 
 class ActionEjecutarDev(Action):
 
