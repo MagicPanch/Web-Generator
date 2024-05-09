@@ -2,17 +2,17 @@ version: "3.1"
 
 rules:
 
-- rule: Siempre preguntar nombre despues de crear pagina
-  steps:
-  - intent: crear_pagina
-  - action: utter_preguntar_nombre
-  - action: action_listen
-
-- rule: Siempre preguntar tipo después del nombre
-  steps:
-  - intent: nombre_pagina
-  - action: utter_tipo_pagina
-  - action: action_listen
+#- rule: Siempre preguntar nombre despues de crear pagina
+#  steps:
+#  - intent: crear_pagina
+#  - action: utter_preguntar_nombre
+#  - action: action_listen
+#
+#- rule: Siempre preguntar tipo después del nombre
+#  steps:
+#  - intent: nombre_pagina
+#  - action: utter_tipo_pagina
+#  - action: action_listen
 #
 #- rule: Siempre guardar el tipo de pagina
 #  steps:

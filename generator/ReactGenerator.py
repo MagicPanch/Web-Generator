@@ -16,7 +16,6 @@ class ReactGenerator:
 
     @staticmethod
     def generarHeader(data):
-        print("genero header")
         text = f""""use client";
 
         import React from "react";
@@ -42,5 +41,6 @@ class ReactGenerator:
         }}
         export default Header;
         """
-        with open(data["address"] + "\components\Header.tsx", "w") as file:
+        with open("Header.tsx", "w") as file:
             file.write(text)
+            file.close()

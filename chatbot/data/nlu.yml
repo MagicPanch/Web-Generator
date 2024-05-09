@@ -33,11 +33,14 @@ nlu:
     - www. [pagina1](page_name) .com
     - www. [borrador](page_name) .com
     - www. [test](page_name) .com
-- intent: crear_encabezado
+    - www. [super_mega_pagina_piola](page_name) .com
+- intent: editar_encabezado
   examples: |
     - te voy a explicar como quiero el encabezado
     - hagamos el encabezado
     - terminemos el encabezado
+    - quiero modificar el encabezado
+    - quiero editar el encabezado
 - intent: ejecutar_pagina
   examples: |
     - ejecutala
@@ -93,7 +96,7 @@ nlu:
     - color [rojo](color)
     - que sea [violeta](color)
     - lo quiero [rosa](color)
-    - color [rojo](color)
+    - que sea [bordo](color)
 - intent: out_of_scope
   examples: |
     - I want to order food

@@ -2,7 +2,8 @@
 #### If you want to learn more, please see the docs: https://rasa.com/docs/rasa/testing-your-assistant
 
 stories:
-- story: crear pagina sin tipo
+
+- story: crear pagina y editar encabezado
   steps:
   - user: |
       quiero crear una pagina
@@ -10,15 +11,14 @@ stories:
   - action: utter_preguntar_nombre
   - user: |
       www. test .com
-    intent: nombre_pagina
-  - action: utter_tipo_pagina
+    intent: decir_nombre
+  - action: action_crear_pagina  #Aca se crea el proyecto y se guarda la pagina en la DB. Posteriormente se ejecuta en modo DEV
   - user: |
-      despues te digo
-    intent: despues_te_digo
-  - action: action_guardar_tipo
-  - action: action_crear_pagina
-  - action: action_creando_encabezado
-  - action: utter_preguntar_color_encabezado
+      hagamos el encabezado
+    intent: editar_encabezado
+  - slot_was_set:
+    - creando_encabezado: true
+  - action: action_preguntar_color_encabezado
   - user: |
       color rojo
     intent: decir_color
@@ -29,5 +29,5 @@ stories:
     intent: enviar_imagen
   - action: action_recibir_imagen
   - action: action_crear_encabezado
-
-
+  - slot_was_set:
+    - creando_encabezado: false
