@@ -2,13 +2,39 @@ version: "3.1"
 
 stories:
 
-#Stories funciones
+#Comienzo Charla
+- story: Comienzo de charla
+  steps:
+  - intent: saludo
+  - action: action_saludo_telegram
+  - action: action_crear_documento_usuario
+
+- story: Decir funcionalidad
+  steps:
+    - intent: funcionalidad
+    - action: utter_funcionalidad
+
+#Stories crear pagina
 - story: crear_pagina
   steps:
   - intent: crear_pagina
   - action: utter_tipo_pagina
   - intent: tipo_pagina
   - action: action_guardar_tipo
+  - action: utter_tema_especifico
+
+- story: pagina_especifica
+  steps:
+  - intent: afirmar
+  - action: action_robot_scrapper
+  - action: utter_preguntar_nombre
+  - intent: nombre_pagina
+  - action: action_crear_pagina
+  - action: action_crear_documento_pagina
+
+- story: pagina_NO_especifica
+  steps:
+  - intent: denegar
   - action: utter_preguntar_nombre
   - intent: nombre_pagina
   - action: action_crear_pagina
@@ -24,17 +50,30 @@ stories:
   - intent: detener_pagina
   - action: action_detener_pagina
 
-- story: Decir funcionalidad
+#Stories editar seccion
+- story: editar_seccion
   steps:
-    - intent: funcionalidad
-    - action: utter_funcionalidad
+  - intent:
+  - action:
+
+#Stories crear seccion
+- story: crear_seccion
+  steps:
+  - intent:
+  - action:
+
+#Stories editar encabezado
+- story: editar_encabezado
+  steps:
+  - intent: editar_encabezado
+  - action: utter_color_nuevo
+  - intent: decir_color
+# - action: guardar_color
+  - action: utter_preguntar_logo
+  - intent: enviar_foto
+# - action: guardar_imagen
 
 #Stories Conversacion normal
-- story: Comienzo de charla
-  steps:
-  - intent: saludo
-  - action: action_saludo_telegram
-  - action: action_crear_documento_usuario
 
 - story: Como estas
   steps:

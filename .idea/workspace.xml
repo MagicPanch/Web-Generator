@@ -11,7 +11,6 @@
       <change beforePath="$PROJECT_DIR$/chatbot/data/nlu.yml" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/data/nlu.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/chatbot/data/stories.yml" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/data/stories.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/chatbot/domain.yml" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/domain.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/generator/Generator.py" beforeDir="false" afterPath="$PROJECT_DIR$/generator/Generator.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -85,7 +84,7 @@
     &quot;deletionFromPopupRequiresConfirmation&quot;: &quot;false&quot;,
     &quot;git-widget-placeholder&quot;: &quot;santiago&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/Rodríguez/OneDrive/Escritorio/Facultad/IngSoft/Web-Generator&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Rodríguez/OneDrive/Escritorio/BotInge/EjecucionBat.bat&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
@@ -159,6 +158,12 @@
       <workItem from="1714921143478" duration="13788000" />
       <workItem from="1714946777219" duration="14604000" />
       <workItem from="1714967079793" duration="284000" />
+      <workItem from="1715014574065" duration="4969000" />
+      <workItem from="1715037073821" duration="7485000" />
+      <workItem from="1715046806039" duration="2364000" />
+      <workItem from="1715099564028" duration="3627000" />
+      <workItem from="1715111181775" duration="1955000" />
+      <workItem from="1715370004921" duration="3074000" />
     </task>
     <servers />
   </component>

@@ -389,45 +389,77 @@ nlu:
       - miprimerpaginaweb
       - holamundo
 
+
+  - lookup: tema
+    examples: |
+      - Auto
+      - Ropa
+      - Comida
+      - Computadoras
+      - Vestimenta
+      - Plantas
+      - Atuendos
+      - Deportes
+      -
 # Intents
 
 # Intents funcionamiento bot
+  - intent: agregaciones
+    examples: |
+      - Puedo agregar un [boton](componente)?
+      - puedo agregar un [titulo](componente) [negro](color)
+      - quiero agregar un [boton](componente) [azul](color)
+      - quiero agregar un [titulo](componente)
+      - quiero agregar una [imagen](componente)
+      - quiero agregar un [filtro](componente)
+      - puedo agregar una [imagen](componente)
+      - quiero agregar un [boton](componente) [rojo](color)
   - intent: crear_pagina
     examples: |
       - quiero crear una pagina
       - quiero una pagina
       - quiero una nueva pagina
-      - quiero crear
+      - pagina
       - perfecto, quiero una pagina web
       - quiero otra pagina
-
-  - intent: tipo_pagina
+  - intent: crear_seccion
     examples: |
-      - Quiero que mi pagina sea [e-commerce](pagina)
-      - el tipo de mi pagina es [informativa](pagina)
-      - mi pagina es [foro](pagina)
-      - quiero una [red social](pagina)
-      - no se que tipo pagina quiero
-      - quiero un [Blog](pagina)
-      - todavia no se
-      - mas adelante te digo
-      - despues te digo
-      - no se que decirte
-      - me gustaria una [ABM](pagina)
-  - regex: regex_page_name
-    examples: |
-      - '^[a-zA-Z0-9-_]+$'
+      - quiero crear una seccion
+      - quiero una seccion
+      - quiero una nueva seccion
+      - seccion
+      - perfecto, quiero una nueva seccion
+      - quiero otra seccion
 
-  - intent: nombre_pagina
+  - intent: decir_color
     examples: |
-      - www. [design-label](page_name) .com
-      - www. [google](page_name) .com
-      - www. [facebook](page_name) .com
-      - www. [miprimerpagina](page_name) .com
-      - www. [miprimerforo](page_name) .com
-      - www. [pagina1](page_name) .com
-      - www. [borrador](page_name) .com
+      - color [rojo](color)
+      - que sea [violeta](color)
+      - lo quiero [rosa](color)
+      - que sea [bordo](color)
+      - elijo color [marron](color)
+  - intent: detener_pagina
+    examples: |
+      - detenela
+      - quiero que la apagues
+      - apagala
+      - frena [test](page_name)
 
+  - intent: editar_encabezado
+    examples: |
+      - te voy a explicar como quiero el encabezado
+      - hagamos el encabezado
+      - terminemos el encabezado
+      - quiero modificar el encabezado
+      - quiero editar el encabezado
+  - intent: editar_encabezado
+    examples: |
+      - quiero cambiar una seccion
+      - modificar seccion
+      - cambiar seccion
+      - editar seccion
+      - quiero modificar una seccion
+      - quiero editar una seccion
   - intent: ejecutar_pagina
     examples: |
       - ejecutala
@@ -440,14 +472,9 @@ nlu:
       - mandala
       - ponela a correr
       - ejecuta [test](page_name)
-
-  - intent: detener_pagina
+  - intent: enviar_imagen
     examples: |
-      - detenela
-      - quiero que la apagues
-      - apagala
-      - frena [test](page_name)
-
+      - img.jpg
 
   - intent: funcionalidad
     examples: |
@@ -469,17 +496,44 @@ nlu:
       - haces algo?
       - que hacias?
 
-  - intent: agregaciones
-    examples: |
-      - Puedo agregar un [boton](componente)?
-      - puedo agregar un [titulo](componente) [negro](color)
-      - quiero agregar un [boton](componente) [azul](color)
-      - quiero agregar un [titulo](componente)
-      - quiero agregar una [imagen](componente)
-      - quiero agregar un [filtro](componente)
-      - puedo agregar una [imagen](componente)
-      - quiero agregar un [boton](componente) [rojo](color)
 
+  - intent: nombre_pagina
+    examples: |
+      - www. [design-label](page_name) .com
+      - www. [google](page_name) .com
+      - www. [facebook](page_name) .com
+      - www. [miprimerpagina](page_name) .com
+      - www. [miprimerforo](page_name) .com
+      - www. [pagina1](page_name) .com
+      - www. [borrador](page_name) .com
+      - www. [test](page_name) .com
+      - www. [super_mega_pagina_piola](page_name) .com
+
+  - intent: tema_especifico
+    examples: |
+      - quiero que mi [foro](pagina) sea de [autos](tema)
+      - si, que sea de [comida](tema)
+      - que sea de [ropa](tema)
+      - no quiero que sea de nada en especifico
+      - nada en especifico
+      - no tengo un tema pensado
+      - mi tema es [ropa](tema)
+  - intent: tipo_pagina
+    examples: |
+      - Quiero que mi pagina sea [e-commerce](pagina)
+      - el tipo de mi pagina es [informativa](pagina)
+      - mi pagina es [foro](pagina)
+      - quiero una [red social](pagina)
+      - no se que tipo pagina quiero
+      - quiero un [Blog](pagina)
+      - todavia no se
+      - mas adelante te digo
+      - despues te digo
+      - no se que decirte
+      - me gustaria una [ABM](pagina)
+  - regex: regex_page_name
+    examples: |
+      - '^[a-zA-Z0-9-_]+$'
 
 #- intent: nombre_pagina
 #  examples: |

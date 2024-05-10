@@ -1,8 +1,7 @@
 import threading
 from random import random
-
+import subprocess
 from pymongo import MongoClient
-
 from generator.Generator import Generator
 from generator.Front import Front
 import generator.GenericRoutes
@@ -323,7 +322,7 @@ class ActionAgregarPagina(Action):
             }
             # Agregar la nueva página a la subcolección 'paginas' del usuario
             usuarios.update_one(
-                {'_id': aux},
+                {'_id': tracker.get_slot("id_user")},
                 {'$push': {'paginas': nueva_pagina}}
             )
             dispatcher.utter_message("Página agregada correctamente.")
@@ -333,3 +332,18 @@ class ActionAgregarPagina(Action):
         client.close()
         dispatcher.utter_message("¡Nueva pagina ingresada en MongoDB!")
         return [SlotSet("tipo_pagina", None)]
+
+class ActionRobotScrapper(Action):
+
+    def name(self) -> Text:
+        return "action_robot_scrapper"
+
+    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker,
+            domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        def ejecutar_bat(ruta_bat):
+            subprocess.call(ruta_bat, shell=True)
+
+        # Ejemplo de uso
+        ruta_bat = "C:\Eclipse-TUDAI\Virtual1\EjecucionBat.bat"
+        ejecutar_bat(ruta_bat)
+        return[]
