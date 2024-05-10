@@ -53,14 +53,17 @@ stories:
 #Stories editar seccion
 - story: editar_seccion
   steps:
-  - intent:
+  - intent: editar_seccion
   - action:
 
 #Stories crear seccion
 - story: crear_seccion
   steps:
-  - intent:
-  - action:
+  - intent: crear_seccion
+  - action: utter_tipo_pagina
+  - intent: tipo_pagina
+  - action: action_guardar_tipo
+# - action: action_crear_seccion
 
 #Stories editar encabezado
 - story: editar_encabezado
@@ -68,13 +71,13 @@ stories:
   - intent: editar_encabezado
   - action: utter_color_nuevo
   - intent: decir_color
-# - action: guardar_color
+  - action: action_guardar_color
   - action: utter_preguntar_logo
   - intent: enviar_foto
-# - action: guardar_imagen
+  - action: action_recibir_imagen
+  - action: action_crear_encabezado
 
 #Stories Conversacion normal
-
 - story: Como estas
   steps:
   - intent: como_estas
