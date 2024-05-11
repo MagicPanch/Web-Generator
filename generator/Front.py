@@ -21,6 +21,7 @@ class Front(PageRunner):
         self.page_adress = self.generate_page_adress()
 
     def get_page_adress(self) -> str:
+        print("puerto de la pagina: " + str(self.page_port))
         return "http://localhost:" + str(self.page_port)
 
     def build(self):

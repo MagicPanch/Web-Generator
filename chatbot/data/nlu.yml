@@ -8,14 +8,17 @@ nlu:
     - quiero crear
     - perfecto, quiero una pagina web
     - quiero otra pagina
-- intent: tipo_pagina
+
+- intent: tipo_seccion
   examples: |
-    - que sea [e-commerce](pagina)
-    - el tipo de mi pagina es [informativa](pagina)
-    - mi pagina es [foro](pagina)
-    - una [red social](pagina)
-    - quiero un [Blog](pagina)
-    - me gustaria una [ABM](pagina)
+    - que sea [e-commerce](seccion)
+    - el tipo de la seccion es [informativa](seccion)
+    - mi pagina es [foro](seccion)
+    - una [red social](seccion)
+    - quiero un [Blog](seccion)
+    - me gustaria una [ABM](seccion)
+    - e-commerce(seccion)
+
 - intent: despues_te_digo
   examples: |
     - todavia no se
@@ -23,6 +26,7 @@ nlu:
     - no se que quiero
     - despues te digo
     - no se que decirte
+
 - intent: nombre_pagina
   examples: |
     - www. [design-label](page_name) .com
@@ -34,6 +38,7 @@ nlu:
     - www. [borrador](page_name) .com
     - www. [test](page_name) .com
     - www. [super_mega_pagina_piola](page_name) .com
+
 - intent: editar_encabezado
   examples: |
     - te voy a explicar como quiero el encabezado
@@ -41,6 +46,16 @@ nlu:
     - terminemos el encabezado
     - quiero modificar el encabezado
     - quiero editar el encabezado
+
+- intent: crear_seccion
+  examples: |
+    - quiero crear una seccion
+    - quiero una seccion
+    - quiero una nueva seccion
+    - seccion
+    - perfecto, quiero una nueva seccion
+    - quiero otra seccion
+
 - intent: ejecutar_pagina
   examples: |
     - ejecutala
@@ -53,12 +68,14 @@ nlu:
     - mandala
     - ponela a correr
     - ejecuta [test](page_name)
+
 - intent: detener_pagina
   examples: |
     - detenela
     - quiero que la apagues
     - apagala
     - frena [test](page_name)
+
 - intent: funcionalidad
   examples: |
     - que podes hacer?
@@ -78,9 +95,11 @@ nlu:
     - que estas haciendo?
     - haces algo?
     - que hacias?
+
 - intent: enviar_imagen
   examples: |
     - img.jpg
+
 - intent: agregaciones
   examples: |
     - Puedo agregar un [boton](componente)?
@@ -91,12 +110,14 @@ nlu:
     - quiero agregar un [filtro](componente)
     - puedo agregar una [imagen](componente)
     - quiero agregar un [boton](componente) [rojo](color)
+
 - intent: decir_color
   examples: |
     - color [rojo](color)
     - que sea [violeta](color)
     - lo quiero [rosa](color)
     - que sea [bordo](color)
+
 - intent: out_of_scope
   examples: |
     - I want to order food
@@ -122,6 +143,7 @@ nlu:
     - que jugas?
     - idolo de chico?
     - que relacion tiene?
+
 - intent: bot_challenge
   examples: |
     - Sos un bot?
@@ -130,6 +152,7 @@ nlu:
     - Estoy hablando con un humano?
     - am I talking to a bot?
     - am I talking to a human?
+
 - intent: decir_nombre
   examples: |
     - Como te llamas?
@@ -140,6 +163,7 @@ nlu:
     - presentensen en el grupo
     - digan sus nombres
     - Cual es tu nombre?
+
 - intent: reirse
   examples: |
     - jaajjaja
@@ -151,6 +175,7 @@ nlu:
     - jua jua juaa
     - jaaaaaaaaaja
     - jaaaaaaa
+
 - intent: saludo
   examples: |
     - Buen [dia](horario)
@@ -167,6 +192,7 @@ nlu:
     - olaa
     - ola
     - hola
+
 - intent: despedidasc
   examples: |
     - nos vemos
@@ -181,6 +207,7 @@ nlu:
     - me tengo que ir
     - tengo otro plan, nos vemos!
     - seguimos en otro momento, me tengo que ir!
+
 - intent: como_estas
   examples: |
     - ¿Todo bien?
@@ -192,6 +219,7 @@ nlu:
     - Acá andamos santi, tod bien?
     - todo bien vos?
     - como te sentis?
+
 - intent: estado_de_animo_feliz
   examples: |
     - muy bien
@@ -280,12 +308,15 @@ nlu:
     - Gracias
     - graciela
     - thanks
+
 - regex: pregunta
   examples: |
     - ((([aA-zZ]\w+ ){1,})+(, )){1,}
+
 - regex: regex_page_name
   examples: |
     - '^[a-zA-Z0-9-_]+$'
+
 - lookup: usuario
   examples: |
     - Lleyton
@@ -636,6 +667,7 @@ nlu:
     - Gris
     - Rosa
     - Bordo
+
 - lookup: componentes
   examples: |
     - Encabezado
@@ -648,7 +680,8 @@ nlu:
     - Nombre
     - Producto
     - Carrito
-- lookup: pagina
+
+- lookup: seccion
   examples: |
     - E-commerce
     - Informativa
@@ -658,6 +691,7 @@ nlu:
     - Portal de noticias
     - Encuesta
     - ABM
+
 - lookup: page_name
   examples: |
     - facebook

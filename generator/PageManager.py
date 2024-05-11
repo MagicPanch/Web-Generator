@@ -1,4 +1,6 @@
 import os
+import random
+import socket
 import subprocess
 import threading
 from typing import Tuple, Dict, List
@@ -14,34 +16,27 @@ class PageManager(object):
 
     _instance = None
     running_pages: Dict[Tuple[str, str], List[PageRunner]] = {}
-    running_thread = None
-    lock = threading.Lock()
-    current_back_port = CONSTANTS.MIN_BACK_PORT
-    current_front_port = CONSTANTS.MIN_FRONT_PORT
 
     @staticmethod
-    def _inc_port(current, max):
-        current = current + 1
-        if current > max:
-            raise Exception("Se ha alcanzado el máximo número de páginas en ejecución")
-        return current
+    def _is_port_in_use(port) -> bool:
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            try:
+                s.bind(('127.0.0.1', port))
+            except OSError as e:
+                if e.errno == socket.errno.EADDRINUSE:
+                    return True  # El puerto está ocupado
+                else:
+                    # Otro error
+                    raise
+            return False  # El puerto está disponible
 
     @staticmethod
-    def _dec_port(current, min):
-        current = current - 1
-        if current < min:
-            current = min
-        return current
-
-    @staticmethod
-    def inc_front_port():
-        with PageManager.lock:
-            PageManager.current_front_port = PageManager._inc_port(PageManager.current_front_port, CONSTANTS.MAX_FRONT_PORT)
-
-    @staticmethod
-    def dec_front_port():
-        with PageManager.lock:
-            PageManager.current_front_port = PageManager._dec_port(PageManager.current_front_port, CONSTANTS.MIN_FRONT_PORT)
+    def get_port() -> int:
+        port = random.randint(CONSTANTS.MIN_PORT, CONSTANTS.MAX_PORT)
+        if not PageManager._is_port_in_use(port):
+            return port
+        else:
+            return PageManager.get_port()
 
     @classmethod
     def get_instance(cls):
@@ -53,9 +48,6 @@ class PageManager(object):
         if PageManager._instance is None:
             PageManager._instance = self
             self.running_pages = {}
-            self.running_thread = None
-            self.current_back_port = CONSTANTS.MIN_BACK_PORT
-            self.current_front_port = CONSTANTS.MIN_FRONT_PORT
             self.bot = Bot(token=CONSTANTS.TELEGRAM_BOT_TOKEN)
         else:
             raise Exception("No se puede crear otra instancia de PageManager")
@@ -101,6 +93,15 @@ class PageManager(object):
         return os.listdir(os.getcwd())
 
     @staticmethod
+    def get_running_user_pages(user):
+        pages = []
+        for key in PageManager.running_pages.keys():
+            if key[0] == user:
+                # Agregar la lista correspondiente al resultado
+                pages.append(PageManager.running_pages[key][1])
+        return pages
+
+    @staticmethod
     def create_project(user, page_name):
         #Crea el proyecto de la página
         PageManager.go_to_main_dir()
@@ -140,7 +141,7 @@ class PageManager(object):
         # Crear back y front
         PageManager.running_pages[(args[0], args[1])] = [None, None]
         # Generator.running[(args[0], args[1])][0] = Back(args[0], args[1], PageManager.current_back_port)
-        PageManager.running_pages[(args[0], args[1])][1] = Front(args[0], args[1], PageManager.current_front_port, "")  # running[(user, page_name)][0].get_app_adress())
+        PageManager.running_pages[(args[0], args[1])][1] = Front(args[0], args[1], PageManager.get_port(), "")  # running[(user, page_name)][0].get_app_adress())
         print("----OBJETO FRONT CREADO----")
 
         # Iniciar la ejecucion de los hilos

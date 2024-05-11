@@ -30,6 +30,7 @@ class PageRunner(threading.Thread):
 
     def start_running_thread(self, target, args):
         print("----EN START RUNNING THREAD----")
+        print("THREAD ID: " + threading.currentThread().getName())
         print("target: " + str(target))
         print("cant args: " + str(len(args)))
         print("args: " + str(args))
@@ -41,6 +42,7 @@ class PageRunner(threading.Thread):
                 self.running_thread = threading.Thread(target=target, args=args)
             print("despues de crear el nuevo hilo")
             self.running_thread.start()
+            print("THREAD ID: " + threading.currentThread().getName())
         else:
             print("el hilo no es None")
             self.join_running_thread()

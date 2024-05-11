@@ -2,10 +2,8 @@ MAIN_DIR = 'Web-Generator'
 GENERATOR_DIR = 'generator'
 CHATBOT_DIR = 'chatbot'
 USER_PAGES_DIR = 'user-pages'
-MIN_BACK_PORT = 6001
-MAX_BACK_PORT = 6999
-MIN_FRONT_PORT = 7001
-MAX_FRONT_PORT = 7999
+MIN_PORT = 6001
+MAX_PORT = 6999
 ADRESS = "0.0.0.0"
 DB_URI = "mongodb+srv://design:label123@cluster0.3yowbc8.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 IMGUR_API_CLIENT_ID = '31ad4568aa7f525'

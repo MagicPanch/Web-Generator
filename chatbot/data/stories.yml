@@ -58,6 +58,14 @@ stories:
   - slot_was_set:
     - creando_encabezado: false
 
+- story: crear seccion
+  steps:
+  - intent: crear_seccion
+  - action: action_preguntar_tipo_seccion
+  - slot_was_set:
+    - creando_seccion: true
+  - intent: tipo_seccion
+  - action: action_guardar_seccion
 
 ####
 

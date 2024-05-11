@@ -7,6 +7,7 @@ intents:
   - como_estas
   - editar_encabezado
   - crear_pagina
+  - crear_seccion
   - decir_color
   - decir_nombre
   - denegar
@@ -27,7 +28,7 @@ intents:
   - pregunta
   - reirse
   - saludo
-  - tipo_pagina
+  - tipo_seccion
   - triste_facu
   - triste_pelea
 
@@ -40,7 +41,7 @@ entities:
   - horario
   - id_user
   - usuario
-  - pagina
+  - seccion
   - preguntas
   - regex_page_name
   - imagen
@@ -66,6 +67,8 @@ actions:
   - utter_preguntar_nombre
   - utter_tipo_pagina
   - action_ejecutar_dev
+  - action_guardar_seccion
+  - action_preguntar_tipo_seccion
 
 slots:
   page_name:
@@ -73,41 +76,57 @@ slots:
     mappings:
     - type: from_entity
       entity: page_name
+
   id_user:
     type: text
     mappings:
     - type: from_entity
       entity: id_user
-  tipo_pagina:
+
+  tipo_seccion:
     type: text
     mappings:
     - type: from_entity
-      entity: pagina
+      entity: seccion
+
+  creando_seccion:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: custom
+
   creando_encabezado:
     type: bool
+    influence_conversation: true
     initial_value: false
     mappings:
     - type: custom
+
   color_encabezado:
     type: text
     mappings:
     - type: from_entity
       entity: color
+
   dia:
     type: text
     mappings:
     - type: from_entity
       entity: dia
+
   usuario:
     type: text
     mappings:
     - type: from_entity
       entity: usuario
+
   horario:
     type: text
     mappings:
     - type: from_entity
       entity: horario
+
   animo:
     type: text
     mappings:
@@ -115,15 +134,6 @@ slots:
       entity: animo
 
 responses:
-
-  utter_tipo_pagina:
-  - text: |-
-      Que tipo de pagina queres? Algunos de los ejemplos que te podemos ofrecer son:
-        - Sitio E-Commerce
-        - Blog
-        - ABM
-        - Foro
-      Entre otras.
 
   utter_preguntar_nombre:
   - text: '¿Como queres que se llame tu pagina? Por favor indica su nombre en el siguiente formato: www. nombre-pagina .com'
