@@ -1,15 +1,11 @@
 import threading
-from random import random
-import subprocess
-from pymongo import MongoClient
-from generator.Generator import Generator
+
 from generator.Front import Front
-import generator.GenericRoutes
 import CONSTANTS
-from typing import Any, Text, Dict, List, Tuple
+from typing import Any, Text, Dict, List
 from rasa_sdk import Action, Tracker
 from rasa_sdk.executor import CollectingDispatcher
-from rasa_sdk.events import SlotSet
+from rasa_sdk.events import SlotSet, FollowupAction
 import datetime
 import os.path
 import json
@@ -120,16 +116,51 @@ class ActionCrearPagina(Action):
     def name(self) -> Text:
         return "action_crear_pagina"
 
-    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        creating_thread = threading.Thread(Generator.create_project(user=tracker.sender_id, page_name=tracker.get_slot('page_name')))
-        creating_thread.start()
-        creating_thread.join()
-        #DBManager.add_user_page(user=tracker.sender_id, page_name=tracker.get_slot('page_name'))
-        print("------------PAGINA CREADA---------")
-        message = "Tu pagina fue creada con exito."
-        dispatcher.utter_message(message)
-        variable = next(tracker.get_latest_entity_values("page_name"), None)
-        return [SlotSet("page_name", variable)]
+    async def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        print("----EN ACTION CREAR PAGINA----")
+        if (tracker.get_slot('page_name') is None):
+            dispatcher.utter_message(text="Repetime como queres que se llame tu página. Te recuerdo que el formato es: www. nombre-pagina .com")
+            return []
+        else:
+            # Crear back y front
+            PageManager.running_pages[(tracker.sender_id, tracker.get_slot('page_name'))] = [None, None]
+            # Generator.running[(args[0], args[1])][0] = Back(args[0], args[1], PageManager.current_back_port)
+            PageManager.running_pages[(tracker.sender_id, tracker.get_slot('page_name'))][1] = Front(tracker.sender_id, tracker.get_slot('page_name'), PageManager.get_port(),
+                                                                     "")  # running[(user, page_name)][0].get_app_adress())
+            print("THREAD ID: " + threading.currentThread().getName())
+            threading.Thread(target=PageManager.running_pages[(tracker.sender_id, tracker.get_slot('page_name'))][1].start_running_thread, args=(PageManager.create_project, (tracker.sender_id, tracker.get_slot('page_name')))).start()
+            print("THREAD ID: " + threading.currentThread().getName())
+
+            #PageManager.running_pages[(tracker.sender_id, tracker.get_slot('page_name'))][1].start_running_thread(target=PageManager.create_project, args=(tracker.sender_id, tracker.get_slot('page_name')))
+            await DBManager.add_page(DBManager.get_instance(), tracker.sender_id, tracker.get_slot('page_name'), tracker.get_slot('usuario'), tracker.get_slot('tipo_seccion'))
+            dispatcher.utter_message(text="Aguarda un momento mientras se crea tu página")
+            return [SlotSet("page_name", tracker.get_slot('page_name')), FollowupAction("action_ejecutar_dev")]
+
+class ActionEjecutarDev(Action):
+
+    def name(self) -> Text:
+        return "action_ejecutar_dev"
+
+    async def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        print("----EN ACTION EJECUTAR DEV----")
+        PageManager.running_pages[(tracker.sender_id, tracker.get_slot('page_name'))][1].join_running_thread()
+        print("THREAD ID: " + threading.currentThread().getName())
+        threading.Thread(target=PageManager.running_pages[(tracker.sender_id, tracker.get_slot('page_name'))][1].start_running_thread, args=(PageManager.run_dev, (tracker.sender_id, tracker.get_slot('page_name'), PageManager.running_pages[(tracker.sender_id, tracker.get_slot('page_name'))][1].page_port))).start()
+        print("THREAD ID: " + threading.currentThread().getName())
+        #PageManager.running_pages[(tracker.sender_id, tracker.get_slot('page_name'))][1].start_running_thread(target=PageManager.run_dev, args=(tracker.sender_id, tracker.get_slot('page_name'), PageManager.running_pages[(tracker.sender_id, tracker.get_slot('page_name'))][1].page_port))
+        dispatcher.utter_message(text="Podes visualizar tu página en el siguiente link: " + PageManager.running_pages[(tracker.sender_id, tracker.get_slot('page_name'))][1].get_page_adress())
+
+        ###
+        print("#########")
+        threads = threading.enumerate()
+        for thread in threads:
+            print("Nombre del hilo:", thread.getName())
+            print("Identificador del hilo:", thread.ident)
+            print("Hilo en ejecución:", thread.is_alive())
+            print("--------------------")
+
+
+        return []
 
 class ActionEjecutarDev(Action):
 
@@ -148,41 +179,20 @@ class ActionEjecutarPagina(Action):
     def name(self) -> Text:
         return "action_ejecutar_pagina"
 
-    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+    async def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         if (tracker.get_slot('page_name') is None):
             message = "Indicame el nombre de la pagina que deseas ejecutar. Te recuerdo que tus paginas son: "
-            pags = Generator.get_user_pages(tracker.sender_id)
+            pags = PageManager.get_user_pages(tracker.sender_id)
             for pag in pags:
                 message += str(pag) + "\n"
         else:
-            address = self.init_next_app(tracker.sender_id, tracker.get_slot('page_name'))
-            print("------------PAGINA ejecutando---------")
-            message = "Puedes acceder a tu pagina en: " + address
+            if (not await DBManager.was_compiled(DBManager.get_instance(), tracker.sender_id, tracker.get_slot('page_name'))):threading.Thread(target=PageManager.running_pages[(tracker.sender_id, tracker.get_slot('page_name'))][1].start_running_thread, args=(PageManager.build, (tracker.sender_id, tracker.get_slot('page_name')))).start()
+            else:
+                threading.Thread(target=PageManager.running_pages[(tracker.sender_id, tracker.get_slot('page_name'))][1].start_running_thread, args=(PageManager.run_project, (tracker.sender_id, tracker.get_slot('page_name'), PageManager.running_pages[(tracker.sender_id, tracker.get_slot('page_name'))][1].page_port))).start()
+                #PageManager.running_pages[(tracker.sender_id, tracker.get_slot('page_name'))][1].start_running_thread(target=PageManager.run_project, args=(tracker.sender_id, tracker.get_slot('page_name'), PageManager.running_pages[(tracker.sender_id, tracker.get_slot('page_name'))][1].page_port))
+            message = "Puedes acceder a tu pagina en: " + PageManager.running_pages[(tracker.sender_id, tracker.get_slot('page_name'))][1].get_page_adress()
         dispatcher.utter_message(message)
         return []
-
-    def init_next_app(self, user, page_name) -> str:
-
-        # Crear back y front
-        Generator.running[(user, page_name)] = [None, None]
-        #Generator.running[(user, page_name)][0] = Back(user, page_name, Generator.current_back_port)
-        Generator.running[(user, page_name)][1] = Front(user, page_name, Generator.current_front_port, "") #running[(user, page_name)][0].get_app_adress())
-
-        # Incrementar puertos
-        #Generator.inc_port(Generator.current_back_port, CONSTANTS.MAX_BACK_PORT)
-        Generator.inc_port(Generator.current_front_port, CONSTANTS.MAX_FRONT_PORT)
-
-        # Compilar
-        Generator.running[(user, page_name)][1].build_page()
-        print("------------PAGINA COMPILADA---------")
-
-        # Iniciar la ejecucion de los hilos
-        #running[(user, page_name)][0].start()
-        Generator.running[(user, page_name)][1].start()
-        # Agregar ruta
-        #running[(user, page_name)][0].agregar_ruta('/get-producto', GenericRoutes.get_product, ['GET'])
-
-        return Generator.running[(user, page_name)][1].get_page_adress()
 
     class ActionDetenerPagina(Action):
 
@@ -190,30 +200,86 @@ class ActionEjecutarPagina(Action):
             return "action_detener_pagina"
 
         def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-            if (tracker.get_slot('page_name') is None):
-                message = "Indicame el nombre de la pagina que deseas detener. Te recuerdo que tus paginas son: \n"
-                pags = Generator.get_user_pages(tracker.sender_id)
-                for pag in pags:
-                    message += str(pag) + "\n"
+            print("----EN ACTION DETENER PAGINA----")
+            last_entities = tracker.latest_message.get("entities", None)
+            print("last entities: " + str(last_entities))
+            print("text: " + tracker.latest_message.get("text"))
+            if last_entities is None:
+                print("last_entities es None")
             else:
-                self.stop_next_app(tracker.sender_id, tracker.get_slot('page_name'))
+                print("last_entities no es None")
+            if len(last_entities) == 0:
+                if "todas" in tracker.latest_message.get("text"):
+                    for pag in PageManager.get_running_user_pages(tracker.sender_id):
+                        PageManager.stop_page(tracker.sender_id, pag.page_name)
+                        print("------------PAGINA detenida---------")
+                    message = "Tus paginas fueron apagadas con exito."
+                else:
+                    message = "Indicame el nombre de la pagina que deseas detener. Te recuerdo que tus paginas son: \n"
+                    pags = PageManager.get_user_pages(tracker.sender_id)
+                    for pag in pags:
+                        message += str(pag) + "\n"
+            elif "page_name" in (entity.keys() for entity in last_entities):
+                PageManager.stop_page(tracker.sender_id, tracker.get_latest_entity_values('page_name'))
+                print("------------PAGINA detenida---------")
+                message = "Tu pagina fue apagada con exito."
+            else:
+                PageManager.stop_page(tracker.sender_id, tracker.get_slot('page_name'))
                 print("------------PAGINA detenida---------")
                 message = "Tu pagina fue apagada con exito."
             dispatcher.utter_message(message)
             return []
 
-        def stop_next_app(self, user, page_name):
-            global current_back_port
-            global current_front_port
-            global running
+class ActionPreguntarTipoSeccion(Action):
+    def name(self) -> Text:
+        return "action_preguntar_tipo_seccion"
 
-            # Matar la página
-            Generator.running[(user, page_name)][1].stop()
+    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        message = ("Que tipo de pagina queres? Algunos de los ejemplos que te podemos ofrecer son: \n" +
+        "- E-Commerce \n" +
+        "- Blog \n" +
+        "- ABM \n" +
+         "- Foro")
+        dispatcher.utter_message(text=message)
+        return [SlotSet("creando_seccion", True)]
 
-            Generator.running.pop((user, page_name))
+class ActionGuardarSeccion(Action):
 
-            # Decrementar puertos
-            Generator.dec_port(Generator.current_front_port, CONSTANTS.MIN_FRONT_PORT)
+    def name(self) -> Text:
+        return "action_guardar_seccion"
+
+    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker,
+            domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        print("----EN GUARDAR SECCION----")
+        tipo_seccion = next(tracker.get_latest_entity_values("seccion"), None)
+
+        if(str(tipo_seccion))=="None" or tracker.get_intent_of_latest_message() == "despues_te_digo":
+            message = "Bueno, podemos ver el tipo mas tarde"
+        else:
+            message = "Perfecto! Ya se guardo que tipo de sección quieres, la cual sera: \n" + str(tipo_seccion) + "."
+        dispatcher.utter_message(text=str(message))
+        dispatcher.utter_message(text="Aguarda un momento mientras se crea tu sección")
+        return [SlotSet("tipo_seccion", tipo_seccion), FollowupAction("action_crear_seccion")]
+
+class ActionCrearSeccion(Action):
+
+
+    def name(self) -> Text:
+        return "action_crear_seccion"
+
+    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker,
+            domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        print("----EN CREAR SECCION----")
+        page_path = PageManager.get_path(tracker.sender_id, tracker.get_slot('page_name'))
+        dataSection = {}
+        PageManager.go_to_main_dir()
+        PageManager.go_to_dir(tracker.sender_id)
+        PageManager.go_to_dir(tracker.get_slot('page_name'))
+        PageManager.go_to_dir("components")
+        #ReactGenerator.generarSection(dataSection)
+        print("-------------SECCION CREADA-------------")
+        dispatcher.utter_message(text="Podes ver la nueva sección en tu página")
+        return [SlotSet("creando_seccion", False)]
 
 class ActionGuardarColor(Action):
     def name(self) -> Text:
@@ -236,30 +302,6 @@ class ActionGuardarColor(Action):
             return [SlotSet(slot_key, color)]
         else:
             return []
-
-class ActionGuardaTipo(Action):
-
-    def name(self) -> Text:
-        return "action_guardar_tipo"
-
-    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker,
-            domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        tipo_pag = next(tracker.get_latest_entity_values("pagina"), None)
-
-        if(str(tipo_pag))=="None":
-            message = "Bueno, podemos ver el tipo mas tarde"
-        else:
-            message = "Perfecto! Ya se guardo que tipo de pagina quieres, la cual sera: \n" + str(tipo_pag) + "."
-        dispatcher.utter_message(text=str(message))
-        return [SlotSet("tipo_pagina", tipo_pag)]
-
-class ActionPreguntarColorEncabezado(Action):
-    def name(self) -> Text:
-        return "action_preguntar_color_encabezado"
-
-    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        dispatcher.utter_message(text="De que color te gustaria que sea el encabezado?")
-        return [SlotSet("creando_encabezado", True)]
 
 class ActionRecibirImagen(Action):
     def name(self) -> Text:
@@ -287,28 +329,44 @@ class ActionRecibirImagen(Action):
                 dispatcher.utter_message(text="Perfecto, el encabezado de tu página no contendrá ningún logo")
         return []
 
-class ActionRobotScrapper(Action):
-
+class ActionPreguntarColorEncabezado(Action):
     def name(self) -> Text:
-        return "action_robot_scrapper"
+        return "action_preguntar_color_encabezado"
+
+    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        dispatcher.utter_message(text="De que color te gustaria que sea el encabezado?")
+        return [SlotSet("creando_encabezado", True)]
+
+
+class ActionCrearEncabezado(Action):
+    def name(self) -> Text:
+        return "action_crear_encabezado"
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker,
-            domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        def ejecutar_bat(ruta_bat):
-            subprocess.call(ruta_bat, shell=True)
+                  domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        page_path = PageManager.get_path(tracker.sender_id, tracker.get_slot('page_name'))
+        dataHeader = {
+            "titulo": tracker.get_slot('page_name'),
+            "address": page_path,
+            "addressLogo": page_path + "\\img\\logo.png",
+            "colorTitulo": "text-yellow-600"
+        }
+        PageManager.go_to_main_dir()
+        PageManager.go_to_dir(tracker.sender_id)
+        PageManager.go_to_dir(tracker.get_slot('page_name'))
+        PageManager.go_to_dir("components")
+        ReactGenerator.generarHeader(dataHeader)
+        print("-------------ENCABEZADO CREADO-------------")
+        dispatcher.utter_message(text="Podes ver los cambios que realizamos en el encabezado")
+        return [SlotSet("creando_encabezado", False)]
 
-        # Ejemplo de uso
-        ruta_bat = "C:\Eclipse-TUDAI\Virtual1\EjecucionBat.bat"
-        ejecutar_bat(ruta_bat)
-        return[]
-
-# Saludo Actions
+    # Saludo Actions
 class ActionSaludoTelegram(Action):
 
     def name(self) -> Text:
         return "action_saludo_telegram"
 
-    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker,
+    async def run(self, dispatcher: CollectingDispatcher, tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         now = datetime.datetime.now()
         hora = int(now.strftime("%H"))
@@ -320,10 +378,14 @@ class ActionSaludoTelegram(Action):
             horario = "noche"
         variable = tracker.latest_message["metadata"]["message"]
         nombre = variable["from"]["first_name"]
-        user_name = variable["from"]["username"]
+        user_name = variable["from"].get("user_name", None)
         ide = variable["from"]["id"]
         message = "Hola " + nombre + ", como va tu " + horario + "? Soy el Chatbot WebGenerator, el encargado de ayudarte a crear tu pagina web! Si queres preguntame y te explico un poco en que cosas puedo contribuir."
         dispatcher.utter_message(text=str(message))
+
+        await DBManager.add_user(DBManager.get_instance(), tracker.get_slot("id_user"), tracker.get_slot("usuario"))
+        print("----FINALIZA SALUDO TELEGRAM----")
+
         return [SlotSet("usuario", user_name),SlotSet("horario", horario),SlotSet("id_user", ide)]
 
 class ActionDespedidaTelegram(Action):
@@ -432,6 +494,5 @@ class OperarArchivoUser():
         else:
             retorno = {}
         return retorno
-
 
 

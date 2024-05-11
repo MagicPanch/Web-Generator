@@ -2,43 +2,116 @@ version: "3.1"
 
 stories:
 
-#Comienzo Charla
-- story: Comienzo de charla
-  steps:
-  - intent: saludo
-  - action: action_saludo_telegram
-  - action: action_crear_documento_usuario
 
-- story: Decir funcionalidad
-  steps:
-    - intent: funcionalidad
-    - action: utter_funcionalidad
 
-#Stories crear pagina
-- story: crear_pagina
+#Stories funciones
+#- story: flujo_creacion_completo
+#  steps:
+#  - intent: crear_pagina
+#  - action: utter_preguntar_nombre
+#  - intent: nombre_pagina
+#  - action: utter_tipo_pagina
+#  - or:
+#    - intent: tipo_pagina
+#    - intent: despues_te_digo
+#  - action: action_guardar_tipo
+#  - action: action_crear_pagina  #Aca se crea el proyecto y se guarda la pagina en la DB
+#  - action: action_creando_encabezado
+#  - action: utter_preguntar_color_encabezado
+#  - or:
+#    - intent: decir_color
+#    - intent: despues_te_digo
+#  - action: action_guardar_color
+#  - action: utter_preguntar_logo
+#  - or:
+#    - intent: enviar_imagen
+#    - intent: denegar
+#  - action: action_recibir_imagen
+#  - action: action_crear_encabezado
+
+- story: crear pagina dev
   steps:
   - intent: crear_pagina
-  - action: utter_tipo_pagina
-  - intent: tipo_pagina
-  - action: action_guardar_tipo
-  - action: utter_tema_especifico
-
-- story: pagina_especifica
-  steps:
-  - intent: afirmar
-  - action: action_robot_scrapper
   - action: utter_preguntar_nombre
-  - intent: nombre_pagina
-  - action: action_crear_pagina
-  - action: action_crear_documento_pagina
+  - intent: decir_nombre
+  - action: action_crear_pagina  #Aca se crea el proyecto y se guarda la pagina en la DB. Posteriormente se ejecuta en modo DEV
 
-- story: pagina_NO_especifica
+- story: editar encabezado 1
   steps:
-  - intent: denegar
-  - action: utter_preguntar_nombre
-  - intent: nombre_pagina
-  - action: action_crear_pagina
-  - action: action_crear_documento_pagina
+  - intent: editar_encabezado
+  - action: action_preguntar_color_encabezado
+  - slot_was_set:
+    - creando_encabezado: true
+  - or:
+    - intent: decir_color
+    - intent: despues_te_digo
+  - action: action_guardar_color
+  - checkpoint: color_encabezado
+
+- story: editar encabezado 2
+  steps:
+  - checkpoint: color_encabezado
+  - action: utter_preguntar_logo
+  - or:
+    - intent: enviar_imagen
+    - intent: denegar
+  - action: action_recibir_imagen
+  - action: action_crear_encabezado
+  - slot_was_set:
+    - creando_encabezado: false
+
+- story: crear seccion
+  steps:
+  - intent: crear_seccion
+  - action: action_preguntar_tipo_seccion
+  - slot_was_set:
+    - creando_seccion: true
+  - intent: tipo_seccion
+  - action: action_guardar_seccion
+
+####
+
+#- story: crear_pagina_1
+#  steps:
+#  - intent: crear_pagina
+#  - action: utter_preguntar_nombre
+#  - checkpoint: creando_pagina_nombre_preguntado
+
+#- story: crear_pagina_2
+#  steps:
+#  - checkpoint: creando_pagina_nombre_preguntado
+#  - intent: nombre_pagina
+#  - action: utter_tipo_pagina
+#  - checkpoint: creando_pagina_tipo_preguntado
+
+#- story: crear_pagina_3
+#  steps:
+#  - checkpoint: creando_pagina_tipo_preguntado
+#  - or:
+#    - intent: tipo_pagina
+#    - intent: despues_te_digo
+#  - action: action_guardar_tipo
+#  - action: action_crear_pagina  #Aca se crea el proyecto y se guarda la pagina en la DB
+#  - checkpoint: pagina_creada
+
+#- story: crear_encabezado
+#  steps:
+#  - checkpoint: pagina_creada
+#  - action: action_creando_encabezado
+#  - action: utter_preguntar_color_encabezado
+#  - or:
+#    - intent: decir_color
+#    - intent: despues_te_digo
+#  - action: action_guardar_color
+#  - action: utter_preguntar_logo
+#  - or:
+#    - intent: enviar_imagen
+#    - intent: denegar
+#  - action: action_recibir_imagen
+#  - action: action_crear_encabezado
+#  - checkpoint: encabezado_creado
+
+####
 
 - story: ejecutar_pagina
   steps:
@@ -59,6 +132,7 @@ stories:
 #Stories crear seccion
 - story: crear_seccion
   steps:
+
   - intent: crear_seccion
   - action: utter_tipo_pagina
   - intent: tipo_pagina
@@ -76,6 +150,7 @@ stories:
   - intent: enviar_foto
   - action: action_recibir_imagen
   - action: action_crear_encabezado
+
 
 #Stories Conversacion normal
 - story: Como estas
@@ -99,7 +174,6 @@ stories:
   - intent: estado_de_animo_triste
   - action: action_animo
 
-
 - story: Estado de animo feliz
   steps:
   - intent: estado_de_animo_feliz
@@ -114,3 +188,56 @@ stories:
   steps:
   - intent: decir_nombre
   - action: utter_decir_nombre
+
+#- story: interactive_story_1
+#  steps:
+#  - intent: saludo
+#  - action: action_saludo_telegram
+#  - intent: crear_pagina
+#  - action: utter_preguntar_nombre
+#  - intent: nombre_pagina
+#    entities:
+#    - page_name: test
+#  - slot_was_set:
+#    - page_name: test
+#  - action: utter_tipo_pagina
+#  - intent: despues_te_digo
+#  - action: action_guardar_tipo
+#  - slot_was_set:
+#    - tipo_pagina: null
+#  - action: action_crear_pagina
+#  - action: action_creando_encabezado
+#  - slot_was_set:
+#    - creando_encabezado: true
+#  - action: utter_preguntar_color_encabezado
+#  - intent: decir_color
+#    entities:
+#    - color: rojo
+#  - slot_was_set:
+#    - color_encabezado: rojo
+#  - action: action_guardar_color
+#  - slot_was_set:
+#    - color_encabezado: rojo
+#  - action: utter_preguntar_logo
+#  - intent: denegar
+#  - action: action_recibir_imagen
+#  - action: action_crear_encabezado
+#
+- story: interactive_story_1
+  steps:
+  - intent: crear_pagina
+  - action: utter_preguntar_nombre
+  - intent: nombre_pagina
+    entities:
+    - page_name: super_mega_pagina_piola
+  - action: action_crear_pagina
+  - intent: editar_encabezado
+  - action: action_preguntar_color_encabezado
+  - intent: decir_color
+    entities:
+    - color: bordo
+  - action: action_guardar_color
+  - action: utter_preguntar_logo
+  - intent: enviar_imagen
+  - action: action_recibir_imagen
+  - action: action_crear_encabezado

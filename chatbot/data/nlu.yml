@@ -1,754 +1,709 @@
 version: "3.1"
-
 nlu:
 
-# Look up tables
-  - lookup: usuario
-    examples: |
-      - Lleyton
-      - Bautista
-      - Fermin
-      - Tadeo
-      - Julian
-      - Analia
-      - Santiago
-      - Francisco
-      - Joaquin
-      - Belen
-      - Julieta
-      - Macarena
-      - Mercedes
-      - Agustina
-      - Alan
-      - Pablo
-      - Milagros
-      - Gabriel
-      - Micaela
-      - Rocio
-      - Sol
-      - Andrea
-      - Tomas
-      - Ricardo
-      - Facundo
-      - Simon
-      - Eduardo
-      - Jorge
-      - Esteban
-      - Mariana
-      - Luciano
-      - Romina
-      - Leonardo
-      - Victoria
-      - Matias
-      - Ignacio
-      - Natalia
-      - Lucas
-      - Camila
-      - Maximiliano
-      - Valentina
-      - Martin
-      - Carla
-      - Juan
-      - Sofia
-      - Manuel
-      - Maria
-      - Emiliano
-      - Antonella
-      - Agustin
-      - Marina
-      - Nicolas
-      - Antonia
-      - Diego
-      - Celeste
-      - Federico
-      - Gonzalo
-      - Luciana
-      - Florencia
-      - Sebastian
-      - Lucia
-      - Alejandro
-      - Leandro
-      - Adrian
-      - Carolina
-      - Daiana
-      - Oscar
-      - Paula
-      - Ivan
-      - Jonathan
-      - Rodrigo
-      - Virginia
-      - Lara
-      - David
-      - Emanuel
-      - Brenda
-      - Melina
-      - Lujan
-      - Guadalupe
-      - Yanina
-      - Mauro
-      - Franco
-      - Daniela
-      - Candela
-      - Gaston
-      - Solange
-      - Marcos
-      - Enzo
-      - Juan
-      - Valeria
-      - Miguel
-      - Ramiro
-      - Victor
-      - Pamela
-      - Javier
-      - Celeste
-      - Jimena
-      - Nicolas
-      - Leonardo
-      - Mariano
-      - Ezequiel
-      - Natalia
-      - Lucia
-      - Sofia
-      - Antonella
-      - Micaela
-      - Valentina
-      - Florencia
-      - Tomas
-      - Martin
-      - Manuel
-      - Laura
-      - Gabriel
-      - Belen
-      - Fernando
-      - Emanuel
-      - Marina
-      - Julieta
-      - Facundo
-      - Maximiliano
-      - Diego
-      - Ariel
-      - Ezequiel
-      - Gaston
-      - Franco
-      - Miguel
-      - Javier
-      - Jonathan
-      - Leonardo
-      - Mariano
-      - Nicolas
-      - Ramiro
-      - Victor
-      - Pamela
-      - Jimena
-      - Celeste
-      - Solange
-      - Marcos
-      - Enzo
-      - Valeria
-      - Matias
-      - Luciana
-      - Paula
-      - Ricardo
-      - Alan
-      - Federico
-      - Mariana
-      - Jorge
-      - Andrea
-      - Matias
-      - Belen
-      - Luciano
-      - Natalia
-      - Ignacio
-      - Antonia
-      - Federico
-      - Luciana
-      - Sebastian
-      - Carolina
-      - Daiana
-      - Jonathan
-      - Virginia
-      - Lara
-      - David
-      - Brenda
-      - Melina
-      - Lujan
-      - Mauro
-      - Daniela
-      - Candela
-      - Gaston
-      - Marcos
-      - Enzo
-      - Valeria
-      - Miguel
-      - Ramiro
-      - Victor
-      - Pamela
-      - Javier
-      - Jimena
-      - Celeste
-      - Solange
-      - Ezequiel
-      - Franco
-      - Ariel
-      - Diego
-      - Maximiliano
-      - Facundo
-      - Julieta
-      - Marina
-      - Emanuel
-      - Fernando
-      - Leonardo
-      - Martin
-      - Manuel
-      - Laura
-      - Gabriel
-      - Belen
-      - Nicolás
-      - Ramiro
-      - Victor
-      - Pamela
-      - Jimena
-      - Celeste
-      - Solange
-      - Marcos
-      - Enzo
-      - Valeria
-      - Matías
-      - Luciana
-      - Paula
-      - Ricardo
-      - Alan
-      - Federico
-      - Mariana
-      - Jorge
-      - Andrea
-      - Belén
-      - Luciano
-      - Natalia
-      - Ignacio
-      - Sebastián
-      - Carolina
-      - Daiana
-      - Jonathan
-      - Virginia
-      - Lara
-      - David
-      - Brenda
-      - Melina
-      - Luján
-      - Mauro
-      - Daniela
-      - Candela
-      - Gastón
-      - Marcos
-      - Enzo
-      - Valeria
-      - Miguel
-      - Ariel
-      - Julieta
-      - Facundo
-      - Leonardo
-      - Emanuel
-      - Javier
-      - Manuel
-      - Laura
-      - Gabriel
-      - Nicolás
-      - Jimena
-      - Celeste
-      - Solange
-      - Franco
-      - Maximiliano
-      - Marina
-      - Ezequiel
-      - Fernando
-      - Ramiro
-      - Martín
-      - Paula
-      - Ricardo
-      - Federico
-      - Andrea
-      - Jorge
-      - Marcos
-      - Luciano
-      - Natalia
-      - Ignacio
-      - Sebastián
-      - Carolina
-      - Daiana
-      - Jonathan
-      - Virginia
-      - Lara
-      - David
-      - Brenda
-      - Melina
-      - Luján
-      - Mauro
-      - Daniela
-      - Candela
-      - Gastón
-      - Marcos
-      - Enzo
-      - Valeria
-      - Miguel
-      - Ariel
-      - Julieta
-      - Facundo
-      - Leonardo
-      - Emanuel
-      - Javier
-      - Manuel
-      - Laura
-      - Gabriel
-      - Nicolás
-      - Jimena
-      - Celeste
-      - Solange
-      - Franco
-      - Maximiliano
-      - Marina
-      - Ezequiel
-      - Fernando
-      - Ramiro
-      - Martín
-      - Paula
-      - Ricardo
-      - Federico
-      - Andrea
-      - Jorge
-      - Marcos
-      - Luciano
-      - Natalia
-      - Ignacio
-      - Sebastián
-      - Carolina
-      - Daiana
-      - Jonathan
-      - Virginia
-      - Lara
-      - David
-      - Brenda
-      - Melina
+- intent: crear_pagina
+  examples: |
+    - quiero crear una pagina
+    - quiero una pagina
+    - quiero una nueva pagina
+    - quiero crear
+    - perfecto, quiero una pagina web
+    - quiero otra pagina
 
-  - lookup: dia
-    examples: |
-      - Lunes
-      - Martes
-      - Miercoles
-      - Jueves
-      - Viernes
-      - Sabado
-      - Domingo
-  - lookup: colores
-    examples: |
-      - Azul
-      - Rojo
-      - Naranja
-      - Violeta
-      - Marron
-      - Verde
-      - Amarillo
-      - Celeste
-      - Blanco
-      - Negro
-      - Gris
-      - Rosa
-      - Bordo
-  - lookup: componentes
-    examples: |
-      - Boton
-      - Titulo
-      - Imagen
-      - Texto
-      - Subtitulo
-      - Video
-      - Nombre
-      - Producto
-      - Carrito
-  - lookup: pagina
-    examples: |
-      - E-commerce
-      - Informativa
-      - Foro
-      - Blog
-      - Red Social
-      - Portal de noticias
-      - Encuesta
-      - ABM
-  - lookup: page_name
-    examples: |
-      - facebook
-      - instagram
-      - whatsapp
-      - miforo
-      - foroexactas
-      - pagina1
-      - mipagina
-      - borrador
-      - myweb
-      - miprimerpaginaweb
-      - holamundo
+- intent: tipo_seccion
+  examples: |
+    - que sea [e-commerce](seccion)
+    - el tipo de la seccion es [informativa](seccion)
+    - mi pagina es [foro](seccion)
+    - una [red social](seccion)
+    - quiero un [Blog](seccion)
+    - me gustaria una [ABM](seccion)
+    - e-commerce(seccion)
 
+- intent: despues_te_digo
+  examples: |
+    - todavia no se
+    - mas adelante te digo
+    - no se que quiero
+    - despues te digo
+    - no se que decirte
 
-  - lookup: tema
-    examples: |
-      - Auto
-      - Ropa
-      - Comida
-      - Computadoras
-      - Vestimenta
-      - Plantas
-      - Atuendos
-      - Deportes
-      -
-# Intents
+- intent: nombre_pagina
+  examples: |
+    - www. [design-label](page_name) .com
+    - www. [google](page_name) .com
+    - www. [facebook](page_name) .com
+    - www. [miprimerpagina](page_name) .com
+    - www. [miprimerforo](page_name) .com
+    - www. [pagina1](page_name) .com
+    - www. [borrador](page_name) .com
+    - www. [test](page_name) .com
+    - www. [super_mega_pagina_piola](page_name) .com
 
-# Intents funcionamiento bot
-  - intent: agregaciones
-    examples: |
-      - Puedo agregar un [boton](componente)?
-      - puedo agregar un [titulo](componente) [negro](color)
-      - quiero agregar un [boton](componente) [azul](color)
-      - quiero agregar un [titulo](componente)
-      - quiero agregar una [imagen](componente)
-      - quiero agregar un [filtro](componente)
-      - puedo agregar una [imagen](componente)
-      - quiero agregar un [boton](componente) [rojo](color)
-  - intent: crear_pagina
-    examples: |
-      - quiero crear una pagina
-      - quiero una pagina
-      - quiero una nueva pagina
-      - pagina
-      - perfecto, quiero una pagina web
-      - quiero otra pagina
-  - intent: crear_seccion
-    examples: |
-      - quiero crear una seccion
-      - quiero una seccion
-      - quiero una nueva seccion
-      - seccion
-      - perfecto, quiero una nueva seccion
-      - quiero otra seccion
+- intent: editar_encabezado
+  examples: |
+    - te voy a explicar como quiero el encabezado
+    - hagamos el encabezado
+    - terminemos el encabezado
+    - quiero modificar el encabezado
+    - quiero editar el encabezado
 
-  - intent: decir_color
-    examples: |
-      - color [rojo](color)
-      - que sea [violeta](color)
-      - lo quiero [rosa](color)
-      - que sea [bordo](color)
-      - elijo color [marron](color)
-  - intent: detener_pagina
-    examples: |
-      - detenela
-      - quiero que la apagues
-      - apagala
-      - frena [test](page_name)
+- intent: crear_seccion
+  examples: |
+    - quiero crear una seccion
+    - quiero una seccion
+    - quiero una nueva seccion
+    - seccion
+    - perfecto, quiero una nueva seccion
+    - quiero otra seccion
 
-  - intent: editar_encabezado
-    examples: |
-      - te voy a explicar como quiero el encabezado
-      - hagamos el encabezado
-      - terminemos el encabezado
-      - quiero modificar el encabezado
-      - quiero editar el encabezado
-  - intent: editar_encabezado
-    examples: |
-      - quiero cambiar una seccion
-      - modificar seccion
-      - cambiar seccion
-      - editar seccion
-      - quiero modificar una seccion
-      - quiero editar una seccion
-  - intent: ejecutar_pagina
-    examples: |
-      - ejecutala
-      - quiero abrirla pagina
-      - quiero ejecutrar la pagina web
-      - quiero iniciar la pagina
-      - quiero inicial la pagina web
-      - iniciala
-      - mandala a la pagina
-      - mandala
-      - ponela a correr
-      - ejecuta [test](page_name)
-  - intent: enviar_imagen
-    examples: |
-      - img.jpg
+- intent: ejecutar_pagina
+  examples: |
+    - ejecutala
+    - quiero abrirla pagina
+    - quiero ejecutrar la pagina web
+    - quiero iniciar la pagina
+    - quiero inicial la pagina web
+    - iniciala
+    - mandala a la pagina
+    - mandala
+    - ponela a correr
+    - ejecuta [test](page_name)
 
-  - intent: funcionalidad
-    examples: |
-      - que podes hacer?
-      - que utilidad tenes?
-      - para que servis?
-      - en que me podes ayudar?
-      - en que podes colaborar
-      - cual es tu funcion
-      - para q servis
-      - mostrame q sabes
-      - mostrame que sabes
-      - nada vos que haces?
-      - que haces?
-      - a ver q haces
-      - a ver mostrame
-      - que andas haciendo
-      - que estas haciendo?
-      - haces algo?
-      - que hacias?
+- intent: detener_pagina
+  examples: |
+    - detenela
+    - quiero que la apagues
+    - apagala
+    - frena [test](page_name)
 
+- intent: funcionalidad
+  examples: |
+    - que podes hacer?
+    - que utilidad tenes?
+    - para que servis?
+    - en que me podes ayudar?
+    - en que podes colaborar
+    - cual es tu funcion
+    - para q servis
+    - mostrame q sabes
+    - mostrame que sabes
+    - nada vos que haces?
+    - que haces?
+    - a ver q haces
+    - a ver mostrame
+    - que andas haciendo
+    - que estas haciendo?
+    - haces algo?
+    - que hacias?
 
-  - intent: nombre_pagina
-    examples: |
-      - www. [design-label](page_name) .com
-      - www. [google](page_name) .com
-      - www. [facebook](page_name) .com
-      - www. [miprimerpagina](page_name) .com
-      - www. [miprimerforo](page_name) .com
-      - www. [pagina1](page_name) .com
-      - www. [borrador](page_name) .com
-      - www. [test](page_name) .com
-      - www. [super_mega_pagina_piola](page_name) .com
+- intent: enviar_imagen
+  examples: |
+    - img.jpg
 
-  - intent: tema_especifico
-    examples: |
-      - quiero que mi [foro](pagina) sea de [autos](tema)
-      - si, que sea de [comida](tema)
-      - que sea de [ropa](tema)
-      - no quiero que sea de nada en especifico
-      - nada en especifico
-      - no tengo un tema pensado
-      - mi tema es [ropa](tema)
-  - intent: tipo_pagina
-    examples: |
-      - Quiero que mi pagina sea [e-commerce](pagina)
-      - el tipo de mi pagina es [informativa](pagina)
-      - mi pagina es [foro](pagina)
-      - quiero una [red social](pagina)
-      - no se que tipo pagina quiero
-      - quiero un [Blog](pagina)
-      - todavia no se
-      - mas adelante te digo
-      - despues te digo
-      - no se que decirte
-      - me gustaria una [ABM](pagina)
-  - regex: regex_page_name
-    examples: |
-      - '^[a-zA-Z0-9-_]+$'
+- intent: agregaciones
+  examples: |
+    - Puedo agregar un [boton](componente)?
+    - puedo agregar un [titulo](componente) [negro](color)
+    - quiero agregar un [boton](componente) [azul](color)
+    - quiero agregar un [titulo](componente)
+    - quiero agregar una [imagen](componente)
+    - quiero agregar un [filtro](componente)
+    - puedo agregar una [imagen](componente)
+    - quiero agregar un [boton](componente) [rojo](color)
 
-#- intent: nombre_pagina
-#  examples: |
-#    - www.des(regex_page_name).com
-#    - el nombre es www.regex_page_name(regex_page_name).com
-#    - que se llame www.regex_page_name(regex_page_name).com
+- intent: decir_color
+  examples: |
+    - color [rojo](color)
+    - que sea [violeta](color)
+    - lo quiero [rosa](color)
+    - que sea [bordo](color)
 
-# Intents randoms
-  - intent: out_of_scope
-    examples: |
-      - I want to order food
-      - What is 2 + 2?
-      - Who's the US President?
-      - Cuantos autos hay en el mundo
-      - ¿Que hay para comer?
-      - ¿Tenes mascotas?
-      - ¿Lugar mas frio de la tierra?
-      - ¿En que continente esta Ecuador?
-      - ¿Rio mas largo del mundo?
-      - ¿Pizza o panchos?
-      - ¿Donde queda Italia?
-      - ¿Que son los humanos?
-      - Cual es tu comida favorita?
-      - Quien es Leo Messi?
-      - Que musica te gusta?
-      - como te cae?
-      - te cae bien tal?
-      - como se llaman tus viejos?
-      - que te gusta?
-      - que jueguito te gusta?
-      - que jugas?
-      - idolo de chico?
-      - que relacion tiene?
+- intent: out_of_scope
+  examples: |
+    - I want to order food
+    - What is 2 + 2?
+    - Who's the US President?
+    - Cuantos autos hay en el mundo
+    - ¿Que hay para comer?
+    - ¿Tenes mascotas?
+    - ¿Lugar mas frio de la tierra?
+    - ¿En que continente esta Ecuador?
+    - ¿Rio mas largo del mundo?
+    - ¿Pizza o panchos?
+    - ¿Donde queda Italia?
+    - ¿Que son los humanos?
+    - Cual es tu comida favorita?
+    - Quien es Leo Messi?
+    - Que musica te gusta?
+    - como te cae?
+    - te cae bien tal?
+    - como se llaman tus viejos?
+    - que te gusta?
+    - que jueguito te gusta?
+    - que jugas?
+    - idolo de chico?
+    - que relacion tiene?
 
-  - intent: bot_challenge
-    examples: |
-      - Sos un bot?
-      - Sos humano?
-      - Estoy hablando con un bot?
-      - Estoy hablando con un humano?
-      - am I talking to a bot?
-      - am I talking to a human?
+- intent: bot_challenge
+  examples: |
+    - Sos un bot?
+    - Sos humano?
+    - Estoy hablando con un bot?
+    - Estoy hablando con un humano?
+    - am I talking to a bot?
+    - am I talking to a human?
 
+- intent: decir_nombre
+  examples: |
+    - Como te llamas?
+    - ¿Vos quien sos?
+    - ¿como es tu nombre?
+    - como se llaman?
+    - como son sus nombres
+    - presentensen en el grupo
+    - digan sus nombres
+    - Cual es tu nombre?
 
-  - intent: decir_nombre
-    examples: |
-      - Como te llamas?
-      - ¿Vos quien sos?
-      - ¿como es tu nombre?
-      - como se llaman?
-      - como son sus nombres
-      - presentensen en el grupo
-      - digan sus nombres
-      - Cual es tu nombre?
+- intent: reirse
+  examples: |
+    - jaajjaja
+    - JAJAJAJAJAJAJAJAJA
+    - kkkkkkk
+    - AJJAJA
+    - SJSJJS
+    - jsjsjsjsjjs
+    - jua jua juaa
+    - jaaaaaaaaaja
+    - jaaaaaaa
 
+- intent: saludo
+  examples: |
+    - Buen [dia](horario)
+    - Hola buen [dia](horario)
+    - Buenas [tardes](horario)
+    - Hola buenas [tardes](horario)
+    - Buenas [noches](horario)
+    - Hola buenas [noches](horario)
+    - Holaa
+    - Buenaas
+    - Que tal
+    - Hi
+    - holaaa hola hol
+    - olaa
+    - ola
+    - hola
 
-  - intent: reirse
-    examples: |
-      - jaajjaja
-      - JAJAJAJAJAJAJAJAJA
-      - kkkkkkk
-      - AJJAJA
-      - SJSJJS
-      - jsjsjsjsjjs
-      - jua jua juaa
-      - jaaaaaaaaaja
-      - jaaaaaaa
+- intent: despedidasc
+  examples: |
+    - nos vemos
+    - bueno adios
+    - Chau
+    - Adios
+    - hasta luego
+    - Nos vemos pronto
+    - Bye
+    - que sigas bien!
+    - perfecto, bueno me tengo que ir, chau!
+    - me tengo que ir
+    - tengo otro plan, nos vemos!
+    - seguimos en otro momento, me tengo que ir!
 
+- intent: como_estas
+  examples: |
+    - ¿Todo bien?
+    - ¿Que te contas?
+    - ¿Como va?
+    - ¿Que onda?
+    - ¿Como estas?
+    - vos?
+    - Acá andamos santi, tod bien?
+    - todo bien vos?
+    - como te sentis?
 
-# Saludos // Comienzo de conversacion
-  - intent: saludo
-    examples: |
-      - Buen [dia](horario)
-      - Hola buen [dia](horario)
-      - Buenas [tardes](horario)
-      - Hola buenas [tardes](horario)
-      - Buenas [noches](horario)
-      - Hola buenas [noches](horario)
-      - Holaa
-      - Buenaas
-      - Que tal
-      - Hi
-      - holaaa hola hol
-      - olaa
-      - ola
+- intent: estado_de_animo_feliz
+  examples: |
+    - muy bien
+    - muy feliz por suerte
+    - feliz
+    - estoy muy feliz
+    - me siento contento
+    - super feliz
+    - bieen
+    - bien gracias
+    - god
+    - good
+    - fine
+    - espectacular
+    - es pec ta cu laaar
+    - normal
+    - ahi vamos
+    - tranquiloo
+- intent: estado_de_animo_triste
+  examples: |
+    - estoy triste
+    - triste
+    - extremadamente triste
+    - tan triste
+    - bajon
+    - mal
+    - muy triste la verdad
+    - bajoneado
+    - medio bajon
+- intent: me_alegro
+  examples: |
+    - Me alegro!
+    - Me alegro por vos!
+    - Me alegra escuchar eso!
+    - Exitos
+    - exitos con eso
+- intent: triste_facu
+  examples: |
+    - Me fue mal en la facultad
+    - me esta yendo mal en la facu
+    - estoy complicado con la facu
+    - estoy complicada con la facultad
+    - me va mal en la universidad
+    - no entiendo nada en la uni
+- intent: triste_pelea
+  examples: |
+    - Me pelee con mi familia
+    - tuve una discusion con mi novio
+    - tuve una discusion con mi novia
+    - me pelee con mi viejo
+    - me pelee con mi mama
+    - discuti con un amigo
+    - discuti con un amiga
+- intent: afirmar
+  examples: |
+    - Si
+    - Dale
+    - okey
+    - ok
+    - bueno
+- intent: denegar
+  examples: |
+    - no
+    - na
+    - nunca
+    - no lo creo
+    - no me sirve
+    - nao
+    - no quiero
+- intent: hora
+  examples: |
+    - Que hora es?
+    - me decis la hora?
+    - no se que hora es
+    - cual es la hora?
+    - me podes decir la hora? q tengo mal configurado el cel
+    - tengo mal la hora
+    - q horario es
+    - q dia es
+    - me das hora?
+- intent: gracias
+  examples: |
+    - Graciasss
+    - muchas gracias
+    - aw graciass
+    - Gracias
+    - graciela
+    - thanks
 
-  - intent: despedidasc
-    examples: |
-      - nos vemos
-      - bueno adios
-      - Chau
-      - Adios
-      - hasta luego
-      - Nos vemos pronto
-      - Bye
-      - que sigas bien!
-      - perfecto, bueno me tengo que ir, chau!
-      - me tengo que ir
-      - tengo otro plan, nos vemos!
-      - seguimos en otro momento, me tengo que ir!
+- regex: pregunta
+  examples: |
+    - ((([aA-zZ]\w+ ){1,})+(, )){1,}
 
+- regex: regex_page_name
+  examples: |
+    - '^[a-zA-Z0-9-_]+$'
 
-# Estado de animo
-  - intent: como_estas
-    examples: |
-      - ¿Todo bien?
-      - ¿Que te contas?
-      - ¿Como va?
-      - ¿Que onda?
-      - ¿Como estas?
-      - vos?
-      - Acá andamos santi, tod bien?
-      - todo bien vos?
-      - como te sentis?
+- lookup: usuario
+  examples: |
+    - Lleyton
+    - Bautista
+    - Fermin
+    - Tadeo
+    - Julian
+    - Analia
+    - Santiago
+    - Francisco
+    - Joaquin
+    - Belen
+    - Julieta
+    - Macarena
+    - Mercedes
+    - Agustina
+    - Alan
+    - Pablo
+    - Milagros
+    - Gabriel
+    - Micaela
+    - Rocio
+    - Sol
+    - Andrea
+    - Tomas
+    - Ricardo
+    - Facundo
+    - Simon
+    - Eduardo
+    - Jorge
+    - Esteban
+    - Mariana
+    - Luciano
+    - Romina
+    - Leonardo
+    - Victoria
+    - Matias
+    - Ignacio
+    - Natalia
+    - Lucas
+    - Camila
+    - Maximiliano
+    - Valentina
+    - Martin
+    - Carla
+    - Juan
+    - Sofia
+    - Manuel
+    - Maria
+    - Emiliano
+    - Antonella
+    - Agustin
+    - Marina
+    - Nicolas
+    - Antonia
+    - Diego
+    - Celeste
+    - Federico
+    - Gonzalo
+    - Luciana
+    - Florencia
+    - Sebastian
+    - Lucia
+    - Alejandro
+    - Leandro
+    - Adrian
+    - Carolina
+    - Daiana
+    - Oscar
+    - Paula
+    - Ivan
+    - Jonathan
+    - Rodrigo
+    - Virginia
+    - Lara
+    - David
+    - Emanuel
+    - Brenda
+    - Melina
+    - Lujan
+    - Guadalupe
+    - Yanina
+    - Mauro
+    - Franco
+    - Daniela
+    - Candela
+    - Gaston
+    - Solange
+    - Marcos
+    - Enzo
+    - Juan
+    - Valeria
+    - Miguel
+    - Ramiro
+    - Victor
+    - Pamela
+    - Javier
+    - Celeste
+    - Jimena
+    - Nicolas
+    - Leonardo
+    - Mariano
+    - Ezequiel
+    - Natalia
+    - Lucia
+    - Sofia
+    - Antonella
+    - Micaela
+    - Valentina
+    - Florencia
+    - Tomas
+    - Martin
+    - Manuel
+    - Laura
+    - Gabriel
+    - Belen
+    - Fernando
+    - Emanuel
+    - Marina
+    - Julieta
+    - Facundo
+    - Maximiliano
+    - Diego
+    - Ariel
+    - Ezequiel
+    - Gaston
+    - Franco
+    - Miguel
+    - Javier
+    - Jonathan
+    - Leonardo
+    - Mariano
+    - Nicolas
+    - Ramiro
+    - Victor
+    - Pamela
+    - Jimena
+    - Celeste
+    - Solange
+    - Marcos
+    - Enzo
+    - Valeria
+    - Matias
+    - Luciana
+    - Paula
+    - Ricardo
+    - Alan
+    - Federico
+    - Mariana
+    - Jorge
+    - Andrea
+    - Matias
+    - Belen
+    - Luciano
+    - Natalia
+    - Ignacio
+    - Antonia
+    - Federico
+    - Luciana
+    - Sebastian
+    - Carolina
+    - Daiana
+    - Jonathan
+    - Virginia
+    - Lara
+    - David
+    - Brenda
+    - Melina
+    - Lujan
+    - Mauro
+    - Daniela
+    - Candela
+    - Gaston
+    - Marcos
+    - Enzo
+    - Valeria
+    - Miguel
+    - Ramiro
+    - Victor
+    - Pamela
+    - Javier
+    - Jimena
+    - Celeste
+    - Solange
+    - Ezequiel
+    - Franco
+    - Ariel
+    - Diego
+    - Maximiliano
+    - Facundo
+    - Julieta
+    - Marina
+    - Emanuel
+    - Fernando
+    - Leonardo
+    - Martin
+    - Manuel
+    - Laura
+    - Gabriel
+    - Belen
+    - Nicolás
+    - Ramiro
+    - Victor
+    - Pamela
+    - Jimena
+    - Celeste
+    - Solange
+    - Marcos
+    - Enzo
+    - Valeria
+    - Matías
+    - Luciana
+    - Paula
+    - Ricardo
+    - Alan
+    - Federico
+    - Mariana
+    - Jorge
+    - Andrea
+    - Belén
+    - Luciano
+    - Natalia
+    - Ignacio
+    - Sebastián
+    - Carolina
+    - Daiana
+    - Jonathan
+    - Virginia
+    - Lara
+    - David
+    - Brenda
+    - Melina
+    - Luján
+    - Mauro
+    - Daniela
+    - Candela
+    - Gastón
+    - Marcos
+    - Enzo
+    - Valeria
+    - Miguel
+    - Ariel
+    - Julieta
+    - Facundo
+    - Leonardo
+    - Emanuel
+    - Javier
+    - Manuel
+    - Laura
+    - Gabriel
+    - Nicolás
+    - Jimena
+    - Celeste
+    - Solange
+    - Franco
+    - Maximiliano
+    - Marina
+    - Ezequiel
+    - Fernando
+    - Ramiro
+    - Martín
+    - Paula
+    - Ricardo
+    - Federico
+    - Andrea
+    - Jorge
+    - Marcos
+    - Luciano
+    - Natalia
+    - Ignacio
+    - Sebastián
+    - Carolina
+    - Daiana
+    - Jonathan
+    - Virginia
+    - Lara
+    - David
+    - Brenda
+    - Melina
+    - Luján
+    - Mauro
+    - Daniela
+    - Candela
+    - Gastón
+    - Marcos
+    - Enzo
+    - Valeria
+    - Miguel
+    - Ariel
+    - Julieta
+    - Facundo
+    - Leonardo
+    - Emanuel
+    - Javier
+    - Manuel
+    - Laura
+    - Gabriel
+    - Nicolás
+    - Jimena
+    - Celeste
+    - Solange
+    - Franco
+    - Maximiliano
+    - Marina
+    - Ezequiel
+    - Fernando
+    - Ramiro
+    - Martín
+    - Paula
+    - Ricardo
+    - Federico
+    - Andrea
+    - Jorge
+    - Marcos
+    - Luciano
+    - Natalia
+    - Ignacio
+    - Sebastián
+    - Carolina
+    - Daiana
+    - Jonathan
+    - Virginia
+    - Lara
+    - David
+    - Brenda
+    - Melina
+- lookup: dia
+  examples: |
+    - Lunes
+    - Martes
+    - Miercoles
+    - Jueves
+    - Viernes
+    - Sabado
+    - Domingo
+- lookup: colores
+  examples: |
+    - Azul
+    - Rojo
+    - Naranja
+    - Violeta
+    - Marron
+    - Verde
+    - Amarillo
+    - Celeste
+    - Blanco
+    - Negro
+    - Gris
+    - Rosa
+    - Bordo
 
-  - intent: estado_de_animo_feliz
-    examples: |
-      - muy bien
-      - muy feliz por suerte
-      - feliz
-      - estoy muy feliz
-      - me siento contento
-      - super feliz
-      - bieen
-      - bien gracias
-      - god
-      - good
-      - fine
-      - espectacular
-      - es pec ta cu laaar
-      - normal
-      - ahi vamos
-      - tranquiloo
+- lookup: componentes
+  examples: |
+    - Encabezado
+    - Boton
+    - Titulo
+    - Imagen
+    - Texto
+    - Subtitulo
+    - Video
+    - Nombre
+    - Producto
+    - Carrito
 
-  - intent: estado_de_animo_triste
-    examples: |
-      - estoy triste
-      - triste
-      - extremadamente triste
-      - tan triste
-      - bajon
-      - mal
-      - muy triste la verdad
-      - bajoneado
-      - medio bajon
+- lookup: seccion
+  examples: |
+    - E-commerce
+    - Informativa
+    - Foro
+    - Blog
+    - Red Social
+    - Portal de noticias
+    - Encuesta
+    - ABM
 
-  - intent: me_alegro
-    examples: |
-      - Me alegro!
-      - Me alegro por vos!
-      - Me alegra escuchar eso!
-      - Exitos
-      - exitos con eso
-
-  - intent: triste_facu
-    examples: |
-      - Me fue mal en la facultad
-      - me esta yendo mal en la facu
-      - estoy complicado con la facu
-      - estoy complicada con la facultad
-      - me va mal en la universidad
-      - no entiendo nada en la uni
-
-  - intent: triste_pelea
-    examples: |
-      - Me pelee con mi familia
-      - tuve una discusion con mi novio
-      - tuve una discusion con mi novia
-      - me pelee con mi viejo
-      - me pelee con mi mama
-      - discuti con un amigo
-      - discuti con un amiga
-
-  # Afirmaciones
-  - intent: afirmar
-    examples: |
-      - Si
-      - Dale
-      - okey
-      - ok
-      - bueno
-
-  - intent: denegar
-    examples: |
-      - no
-      - na
-      - nunca
-      - no lo creo
-      - no me sirve
-      - nao
-
-  - regex: pregunta
-    examples: |
-      - ((([aA-zZ]\w+ ){1,})+(, )){1,}
-
-  - intent: hora
-    examples: |
-      - Que hora es?
-      - me decis la hora?
-      - no se que hora es
-      - cual es la hora?  
-      - me podes decir la hora? q tengo mal configurado el cel
-      - tengo mal la hora
-      - q horario es
-      - q dia es
-      - me das hora?
-
-  - intent: gracias
-    examples: |
-      - Graciasss
-      - muchas gracias
-      - aw graciass
-      - Gracias
-      - graciela
-      - thanks
-
-
+- lookup: page_name
+  examples: |
+    - facebook
+    - instagram
+    - whatsapp
+    - miforo
+    - foroexactas
+    - pagina1
+    - mipagina
+    - borrador
+    - myweb
+    - miprimerpaginaweb
+    - holamundo
 
