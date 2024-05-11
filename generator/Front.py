@@ -1,6 +1,8 @@
+import threading
+
 import CONSTANTS
+from generator import PageManager
 from generator.PageRunner import PageRunner
-from generator.Generator import Generator
 
 class Front(PageRunner):
     # Clase encargada de la ejecución del front-end.
@@ -21,11 +23,12 @@ class Front(PageRunner):
     def get_page_adress(self) -> str:
         return "http://localhost:" + str(self.page_port)
 
-    def build_page(self):
-        Generator.start_running_thread(target=Generator.build_project, args=(self.user, self.page_name))
+    def build(self):
+        PageManager.PageManager.build_project(self.user, self.page_name)
 
     def run(self):
-        Generator.run_project(self.user, self.page_name, self.page_port)
+        print("----EN FRONT.RUN()----")
+        self.start_running_thread(target=self.target, args=(self.user, self.page_name, self.page_port))
 
     def stop(self):
-        Generator.kill_project(self.page_port)
+        PageManager.PageManager.kill_project(self.page_port)

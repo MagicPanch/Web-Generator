@@ -1,173 +1,194 @@
-version: "3.1"
+version: '3.1'
 
 intents:
   - afirmar
   - agregaciones
   - bot_challenge
-  - crear_pagina
   - como_estas
+  - editar_encabezado
+  - crear_pagina
+  - decir_color
+  - decir_nombre
   - denegar
   - despedidasc
+  - despues_te_digo
   - detener_pagina
   - ejecutar_pagina
+  - enviar_imagen
   - estado_de_animo_feliz
   - estado_de_animo_triste
-  - nombre_pagina
-  - saludo
-  - out_of_scope
+  - funcionalidad
+  - gracias
+  - hora
   - me_alegro
+  - nlu_fallback
+  - nombre_pagina
+  - out_of_scope
+  - pregunta
+  - reirse
+  - saludo
   - tipo_pagina
   - triste_facu
   - triste_pelea
-  - decir_nombre
-  - reirse
-  - hora
-  - gracias
-  - pregunta
-  - funcionalidad
-  - enviar_imagen
 
 entities:
+  - page_name
+  - color
   - animo
   - componentes
-  - color
   - dia
   - horario
   - id_user
   - usuario
   - pagina
-  - page_name
   - preguntas
   - regex_page_name
   - imagen
 
 actions:
   - action_animo
-  - action_crear_pagina
   - action_crear_documento_pagina
   - action_crear_documento_usuario
-  - action_detener_pagina
+  - action_crear_encabezado
+  - action_crear_pagina
   - action_despedida_telegram
+  - action_detener_pagina
   - action_ejecutar_pagina
-  - action_hora
+  - action_guardar_color
   - action_guardar_tipo
+  - action_hora
   - action_preguntar_titulo
+  - action_recibir_imagen
   - action_saludo_telegram
   - action_triste
-  - action_recibir_imagen
+  - action_preguntar_color_encabezado
+  - utter_preguntar_logo
+  - utter_preguntar_nombre
+  - utter_tipo_pagina
+  - action_ejecutar_dev
 
 slots:
   page_name:
     type: text
     mappings:
-      - type: from_entity
-        entity: page_name
-
+    - type: from_entity
+      entity: page_name
   id_user:
     type: text
     mappings:
-      - type: from_entity
-        entity: id_user
-
+    - type: from_entity
+      entity: id_user
   tipo_pagina:
     type: text
     mappings:
-      - type: from_entity
-        entity: pagina
-
+    - type: from_entity
+      entity: pagina
+  creando_encabezado:
+    type: bool
+    initial_value: false
+    mappings:
+    - type: custom
+  color_encabezado:
+    type: text
+    mappings:
+    - type: from_entity
+      entity: color
   dia:
     type: text
     mappings:
-      - type: from_entity
-        entity: dia
-
+    - type: from_entity
+      entity: dia
   usuario:
     type: text
     mappings:
-      - type: from_entity
-        entity: usuario
-
+    - type: from_entity
+      entity: usuario
   horario:
     type: text
     mappings:
-      - type: from_entity
-        entity: horario
-
+    - type: from_entity
+      entity: horario
   animo:
     type: text
     mappings:
-      - type: from_entity
-        entity: animo
-
+    - type: from_entity
+      entity: animo
 
 responses:
+
   utter_tipo_pagina:
-    - text: "Que tipo de pagina queres? Algunos de los ejemplos que te podemos ofrecer son:\n  - Sitio E-Commerce\n  - Blog\n  - ABM\n  - Foro\nEntre otras. "
+  - text: |-
+      Que tipo de pagina queres? Algunos de los ejemplos que te podemos ofrecer son:
+        - Sitio E-Commerce
+        - Blog
+        - ABM
+        - Foro
+      Entre otras.
 
   utter_preguntar_nombre:
-    - text: "¿Como queres que se llame tu pagina? Por favor indica su nombre en el siguiente formato: www. nombre-pagina .com"
+  - text: '¿Como queres que se llame tu pagina? Por favor indica su nombre en el siguiente formato: www. nombre-pagina .com'
 
   utter_preguntar_logo:
-    - text: "Si lo deseas podes enviarme una imagen con el logo de tu página para el encabezado"
+  - text: Si lo deseas podes enviarme una imagen con el logo de tu página para el encabezado
 
   utter_funcionalidad:
-    - text: "Por el momento puedo crear una pagina y permitirte correrla o detenerla."
+  - text: Por el momento puedo crear una pagina y permitirte correrla o detenerla.
 
   utter_saludo:
-    - text: "buenas {usuario}! tanto tiempoooo"
+  - text: buenas {usuario}! tanto tiempoooo
 
   utter_me_alegro:
-  - text: "Muchas gracias!"
+  - text: Muchas gracias!
 
   utter_despedida_horario_nombre:
-  - text: "Chau nos vemos! Que tengas una buena {horario} {usuario}"
+  - text: Chau nos vemos! Que tengas una buena {horario} {usuario}
 
   utter_despedida_nombre:
-  - text: "Chau! nos vemos {usuario}"
+  - text: Chau! nos vemos {usuario}
 
   utter_despedidasc:
-  - text: "Chau nos vemos!"
-  - text: "Hasta luego, que sigas bien!"
+  - text: Chau nos vemos!
+  - text: Hasta luego, que sigas bien!
 
   utter_out_of_scope:
-  - text: "Mejor hablemos de otra cosa"
-  - text: "Preguntame otra cosa"
-  - text: "hablemos de la facu mejor"
+  - text: Mejor hablemos de otra cosa
+  - text: Preguntame otra cosa
+  - text: hablemos de la facu mejor
 
   utter_reirse:
-  - text: "jajajajaj"
-  - text: "jajajajjaa"
-  - text: "jsjsjajaj"
+  - text: jajajajaj
+  - text: jajajajjaa
+  - text: jsjsjajaj
 
   utter_como_estas:
-  - text: "Muy bien, gracias por preguntar, vos?"
-  - text: "Re bien!, vos como estas?"
-  - text: "Todo bien!, vos?"
+  - text: Muy bien, gracias por preguntar, vos?
+  - text: Re bien!, vos como estas?
+  - text: Todo bien!, vos?
 
   utter_estado_de_animo_feliz:
-   - text: "Que bueno!, me alegro"
-   - text: "Bien ahi! me alegro"
+  - text: Que bueno!, me alegro
+  - text: Bien ahi! me alegro
 
   utter_estado_de_animo_triste:
-   - text: "Uh que mal, ¿que te paso?"
-   - text: "Que bajon, ¿que te paso?"
+  - text: Uh que mal, ¿que te paso?
+  - text: Que bajon, ¿que te paso?
 
   utter_triste_pelea:
-   - text: "Que lastima, espero que se puedan arreglar"
-   - text: "Que lastima, culaquier cosa que necesites decime"
+  - text: Que lastima, espero que se puedan arreglar
+  - text: Que lastima, culaquier cosa que necesites decime
 
   utter_triste_facu:
-   - text: "Bueno no pasa nada, no te estreses, intenta organizate mejor y vas a ver que van a salir los resultados"
+  - text: Bueno no pasa nada, no te estreses, intenta organizate mejor y vas a ver que van a salir los resultados
 
   utter_iamabot:
-   - text: "Si, soy un bot generador por el grupo de desarrollo Design Label"
+  - text: Si, soy un bot generador por el grupo de desarrollo Design Label
 
   utter_decir_nombre:
-   - text: "Mi nombre es WebGenerator"
+  - text: Mi nombre es WebGenerator
 
   utter_gracias:
-   - text: "de nada!"
-   - text: "no hay problemaa"
+  - text: de nada!
+  - text: no hay problemaa
 
 session_config:
   session_expiration_time: 60
