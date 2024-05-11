@@ -14,6 +14,7 @@ intents:
   - despedidasc
   - despues_te_digo
   - detener_pagina
+  - editar_encabezado
   - ejecutar_pagina
   - enviar_imagen
   - estado_de_animo_feliz
@@ -28,11 +29,14 @@ intents:
   - pregunta
   - reirse
   - saludo
+  - tema_especifico
   - tipo_seccion
   - triste_facu
   - triste_pelea
 
 entities:
+
+  - adress
   - page_name
   - color
   - animo
@@ -40,11 +44,13 @@ entities:
   - dia
   - horario
   - id_user
+  - imagen
   - usuario
   - seccion
   - preguntas
   - regex_page_name
-  - imagen
+  - titulo
+
 
 actions:
   - action_animo
@@ -71,17 +77,20 @@ actions:
   - action_preguntar_tipo_seccion
 
 slots:
+#Slots de la pagina
+  adress:
+    type: text
+    mappings:
+      - type: from_entity
+        entity: adress
+
+
   page_name:
     type: text
     mappings:
-    - type: from_entity
-      entity: page_name
+      - type: from_entity
+        entity: page_name
 
-  id_user:
-    type: text
-    mappings:
-    - type: from_entity
-      entity: id_user
 
   tipo_seccion:
     type: text
@@ -109,17 +118,50 @@ slots:
     - type: from_entity
       entity: color
 
-  dia:
+  titulo:
     type: text
     mappings:
-    - type: from_entity
-      entity: dia
+      - type: from_entity
+        entity: titulo
+
+  colorTitulo:
+    type: text
+    mappings:
+      - type: from_entity
+        entity: color
+
+  creando_encabezado:
+    type: bool
+    initial_value: false
+    mappings:
+      - type: custom
+
+  color_encabezado:
+    type: text
+    mappings:
+      - type: from_entity
+        entity: color
+
+#Slots Telegram
+  id_user:
+    type: text
+    mappings:
+      - type: from_entity
+        entity: id_user
+
 
   usuario:
     type: text
     mappings:
-    - type: from_entity
-      entity: usuario
+      - type: from_entity
+        entity: usuario
+#Slots Randoms
+  dia:
+    type: text
+    mappings:
+      - type: from_entity
+        entity: dia
+
 
   horario:
     type: text
@@ -134,6 +176,15 @@ slots:
       entity: animo
 
 responses:
+  utter_color_nuevo:
+    - text: "Ingrese un nuevo color."
+
+  utter_funcionalidad:
+    - text: "Por el momento puedo crear una pagina y permitirte correrla o detenerla. En el caso de que ya poseas una pagina creada. Puedo permitirte editar seccion, crear seccion, o editar encabezado por el momento."
+
+  utter_preguntar_logo:
+  - text: "Si lo deseas podes enviarme una imagen con el logo de tu página para el encabezado"
+
 
   utter_preguntar_nombre:
   - text: '¿Como queres que se llame tu pagina? Por favor indica su nombre en el siguiente formato: www. nombre-pagina .com'
@@ -141,9 +192,17 @@ responses:
   utter_preguntar_logo:
   - text: Si lo deseas podes enviarme una imagen con el logo de tu página para el encabezado
 
-  utter_funcionalidad:
-  - text: Por el momento puedo crear una pagina y permitirte correrla o detenerla.
 
+  utter_tema_especifico:
+    - text: "Queres que tu pagina tipo {tipo_pagina} sea de un tema en especifico?"
+
+  utter_tipo_pagina:
+    - text: "Que tipo de pagina queres? Algunos de los ejemplos que te podemos ofrecer son:\n  - Sitio E-Commerce\n  - Blog\n  - ABM\n  - Foro\nEntre otras. "
+
+
+
+
+#Utters Randoms
   utter_saludo:
   - text: buenas {usuario}! tanto tiempoooo
 

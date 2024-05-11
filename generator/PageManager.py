@@ -1,6 +1,8 @@
 import os
+
 import random
 import socket
+
 import subprocess
 import threading
 from typing import Tuple, Dict, List
@@ -38,6 +40,7 @@ class PageManager(object):
         else:
             return PageManager.get_port()
 
+
     @classmethod
     def get_instance(cls):
         if not cls._instance:
@@ -48,6 +51,7 @@ class PageManager(object):
         if PageManager._instance is None:
             PageManager._instance = self
             self.running_pages = {}
+
             self.bot = Bot(token=CONSTANTS.TELEGRAM_BOT_TOKEN)
         else:
             raise Exception("No se puede crear otra instancia de PageManager")
@@ -93,6 +97,7 @@ class PageManager(object):
         return os.listdir(os.getcwd())
 
     @staticmethod
+
     def get_running_user_pages(user):
         pages = []
         for key in PageManager.running_pages.keys():
@@ -141,6 +146,7 @@ class PageManager(object):
         # Crear back y front
         PageManager.running_pages[(args[0], args[1])] = [None, None]
         # Generator.running[(args[0], args[1])][0] = Back(args[0], args[1], PageManager.current_back_port)
+
         PageManager.running_pages[(args[0], args[1])][1] = Front(args[0], args[1], PageManager.get_port(), "")  # running[(user, page_name)][0].get_app_adress())
         print("----OBJETO FRONT CREADO----")
 
@@ -205,6 +211,4 @@ class PageManager(object):
         print("path de la imagen con nombre: " + str(path))
         await file.download_to_drive(path)
         print("Imagen descargada con éxito.")
-
-
 

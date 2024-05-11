@@ -2,6 +2,8 @@ version: "3.1"
 
 stories:
 
+
+
 #Stories funciones
 #- story: flujo_creacion_completo
 #  steps:
@@ -121,17 +123,36 @@ stories:
   - intent: detener_pagina
   - action: action_detener_pagina
 
-- story: Decir funcionalidad
+#Stories editar seccion
+- story: editar_seccion
   steps:
-    - intent: funcionalidad
-    - action: utter_funcionalidad
+  - intent: editar_seccion
+  - action:
+
+#Stories crear seccion
+- story: crear_seccion
+  steps:
+
+  - intent: crear_seccion
+  - action: utter_tipo_pagina
+  - intent: tipo_pagina
+  - action: action_guardar_tipo
+# - action: action_crear_seccion
+
+#Stories editar encabezado
+- story: editar_encabezado
+  steps:
+  - intent: editar_encabezado
+  - action: utter_color_nuevo
+  - intent: decir_color
+  - action: action_guardar_color
+  - action: utter_preguntar_logo
+  - intent: enviar_foto
+  - action: action_recibir_imagen
+  - action: action_crear_encabezado
+
 
 #Stories Conversacion normal
-- story: Comienzo de charla
-  steps:
-  - intent: saludo
-  - action: action_saludo_telegram #Aca se guarda al usuario en la DB
-
 - story: Como estas
   steps:
   - intent: como_estas

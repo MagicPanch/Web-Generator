@@ -1,5 +1,6 @@
 version: "3.1"
 nlu:
+
 - intent: crear_pagina
   examples: |
     - quiero crear una pagina
@@ -705,3 +706,4 @@ nlu:
     - myweb
     - miprimerpaginaweb
     - holamundo
+

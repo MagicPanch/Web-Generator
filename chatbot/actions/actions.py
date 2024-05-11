@@ -1,7 +1,5 @@
 import threading
 
-from generator.PageManager import PageManager
-from generator.ReactGenerator import ReactGenerator
 from generator.Front import Front
 import CONSTANTS
 from typing import Any, Text, Dict, List
@@ -11,9 +9,108 @@ from rasa_sdk.events import SlotSet, FollowupAction
 import datetime
 import os.path
 import json
+from generator.PageManager import PageManager
+from generator.ReactGenerator import ReactGenerator
 from generator.DBManager import DBManager
 
 #Actions Pagina
+class ActionAgregarPagina(Action):
+
+    def name(self) -> Text:
+        return "action_crear_documento_pagina"
+
+    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        # Conectarse a la base de datos MongoDB
+        client = MongoClient('mongodb+srv://design:label123@cluster0.3yowbc8.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0',27017)  # cambiar localhost por url propio
+        db = client['web_generator']
+        usuarios = db['users']
+        # Buscar el usuario por su ID
+        usuario = usuarios.find_one({'_id': tracker.get_slot("id_user")})
+        if usuario:
+            # Crear el documento de la nueva página
+            nueva_pagina = {
+                'id': random()*100, #pagina_info.get('id', ''),  # ID de la página
+                'nombre': tracker.get_slot("page_name"), #pagina nombre
+                'contact':  tracker.get_slot("usuario"), #pagina_info.get('contact', ''),  # Información de contacto
+                'creationDate': datetime.datetime.utcnow(),  # Fecha de creación (actual)
+                'lastModification': datetime.datetime.now(),  # Última fecha de modificación (actual)
+                'compilada': False, #pagina_info.get('compilada', False),
+                # Indicador de compilación (predeterminado: False)
+                'webType': tracker.get_slot("tipo_pagina") #pagina_info.get('webType', '')  # Tipo de página web
+            }
+            # Agregar la nueva página a la subcolección 'paginas' del usuario
+            usuarios.update_one(
+                {'_id': tracker.get_slot("id_user")},
+                {'$push': {'paginas': nueva_pagina}}
+            )
+            dispatcher.utter_message("Página agregada correctamente.")
+        else:
+            dispatcher.utter_message("Usuario no encontrado")
+        # Cerrar la conexión con la base de datos al finalizar
+        client.close()
+        dispatcher.utter_message("¡Nueva pagina ingresada en MongoDB!")
+        return [SlotSet("tipo_pagina", None)]
+
+class ActionCrearEncabezado(Action):
+    def name(self) -> Text:
+        return "action_crear_encabezado"
+
+    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker,
+                  domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        page_path = PageManager.get_path(tracker.sender_id, tracker.get_slot('page_name'))
+        dataHeader = {
+            "titulo": tracker.get_slot('page_name'),
+            "address": page_path,
+            "addressLogo": page_path + "\\img\\logo.png",
+            "colorTitulo": "text-yellow-600"
+        }
+        PageManager.go_to_main_dir()
+        PageManager.go_to_dir(tracker.sender_id)
+        PageManager.go_to_dir(tracker.get_slot('page_name'))
+        PageManager.go_to_dir("components")
+        ReactGenerator.generarHeader(dataHeader)
+        print("-------------ENCABEZADO CREADO-------------")
+        dispatcher.utter_message(text="Podes ver los cambios que realizamos en el encabezado")
+        return [SlotSet("creando_encabezado", False)]
+
+class ActionCrearUsuario(Action):
+        def name(self) -> Text:
+            return "action_crear_documento_usuario"
+
+        def run(self, dispatcher: CollectingDispatcher,
+                tracker: Tracker,
+                domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+            # Conectarse a la base de datos MongoDB
+            client = MongoClient(
+                'mongodb+srv://design:label123@cluster0.3yowbc8.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0',
+                27017)  # cambiar localhost por url propio
+            db = client['web_generator']
+            usuarios = db['users']
+
+            # Extraer la información del tracker de la conversación
+            ide = tracker.get_slot("id_user")
+            username = tracker.get_slot("usuario")
+
+            # Verificar si el usuario ya existe en la base de datos
+            existing_user = usuarios.find_one({"_id": ide})
+            if existing_user:
+                dispatcher.utter_message("¡El usuario ya existe en MongoDB!")
+            else:
+                # Crear un documento para insertar en la colección
+                nuevo_usuario = {
+                    "_id": ide,
+                    "username": username,
+                    "paginas": []  # nueva subcoleccion de paginas creadas vacia
+                }
+                # Insertar el documento en la colección
+                usuarios.insert_one(nuevo_usuario)
+                dispatcher.utter_message("¡Nuevo usuario ingresado en MongoDB!")
+
+            # Cerrar la conexión con MongoDB
+            client.close()
+
+            return []
+
 class ActionCrearPagina(Action):
 
     def name(self) -> Text:
@@ -63,6 +160,18 @@ class ActionEjecutarDev(Action):
             print("--------------------")
 
 
+        return []
+
+class ActionEjecutarDev(Action):
+
+    def name(self) -> Text:
+        return "action_ejecutar_dev"
+
+    async def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        PageManager.running_pages[(tracker.sender_id, tracker.get_slot('page_name'))][1].join_running_thread()
+        PageManager.running_pages[(tracker.sender_id, tracker.get_slot('page_name'))][1].start_running_thread(target=PageManager.run_dev, args=(tracker.sender_id, tracker.get_slot('page_name'), PageManager.running_pages[(tracker.sender_id, tracker.get_slot('page_name'))][1].page_port))
+        PageManager.inc_front_port()
+        dispatcher.utter_message(text="Podes visualizar tu página en el siguiente link: " + PageManager.running_pages[(tracker.sender_id, tracker.get_slot('page_name'))][1].get_page_adress())
         return []
 
 class ActionEjecutarPagina(Action):
@@ -154,6 +263,7 @@ class ActionGuardarSeccion(Action):
 
 class ActionCrearSeccion(Action):
 
+
     def name(self) -> Text:
         return "action_crear_seccion"
 
@@ -227,6 +337,7 @@ class ActionPreguntarColorEncabezado(Action):
         dispatcher.utter_message(text="De que color te gustaria que sea el encabezado?")
         return [SlotSet("creando_encabezado", True)]
 
+
 class ActionCrearEncabezado(Action):
     def name(self) -> Text:
         return "action_crear_encabezado"
@@ -277,7 +388,6 @@ class ActionSaludoTelegram(Action):
 
         return [SlotSet("usuario", user_name),SlotSet("horario", horario),SlotSet("id_user", ide)]
 
-#Random Actions
 class ActionDespedidaTelegram(Action):
 
     def name(self) -> Text:
@@ -299,8 +409,21 @@ class ActionDespedidaTelegram(Action):
         dispatcher.utter_message(text=str(message))
         return []
 
-
+#Random Actions
 # Action Devolver Hora
+class ActionTriste(Action):
+     def name(self) -> Text:
+         return "action_triste"
+
+     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker,
+             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+         triste = tracker.latest_message['intent'].get('name')
+         if str(triste) == 'triste_facu':
+             dispatcher.utter_message(template="utter_triste_facu")
+         else:
+             dispatcher.utter_message(template="utter_triste_pelea")
+         return []
+
 class ActionHora(Action):
 
     def name(self) -> Text:
@@ -319,8 +442,6 @@ class ActionHora(Action):
             dispatcher.utter_message("Y la hora es " + now.strftime("%H:%M") + " , medio tarde jaja")
         return []
 
-
-# Estado de animo Action
 class ActionAnimo(Action):
 
     def name(self) -> Text:
@@ -335,21 +456,6 @@ class ActionAnimo(Action):
         else:
             SlotSet("animo", "Triste")
             dispatcher.utter_message(template="utter_estado_de_animo_triste")
-        return []
-
-
-class ActionTriste(Action):
-
-    def name(self) -> Text:
-        return "action_triste"
-
-    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker,
-            domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        triste = tracker.latest_message['intent'].get('name')
-        if str(triste) == 'triste_facu':
-            dispatcher.utter_message(template="utter_triste_facu")
-        else:
-            dispatcher.utter_message(template="utter_triste_pelea")
         return []
 
 # Json actions
@@ -371,7 +477,6 @@ class OperarArchivoDia():
             retorno = {}
         return retorno
 
-
 class OperarArchivoUser():
 
     @staticmethod
@@ -389,3 +494,5 @@ class OperarArchivoUser():
         else:
             retorno = {}
         return retorno
+
+

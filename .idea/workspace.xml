@@ -5,6 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="121f2593-11ee-405e-a8d8-1c2f43d81e54" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/generator/PageManager.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/generator/ReactGenerator.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CONSTANTS.PY" beforeDir="false" afterPath="$PROJECT_DIR$/CONSTANTS.PY" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/chatbot/actions/actions.py" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/actions/actions.py" afterDir="false" />
@@ -72,6 +74,7 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
+
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "ASKED_ADD_EXTERNAL_FILES": "true",
@@ -162,8 +165,12 @@
       <workItem from="1714921143478" duration="13788000" />
       <workItem from="1714946777219" duration="14604000" />
       <workItem from="1714967079793" duration="284000" />
-      <workItem from="1715261863667" duration="23818000" />
-      <workItem from="1715287814854" duration="846000" />
+      <workItem from="1715014574065" duration="4969000" />
+      <workItem from="1715037073821" duration="7485000" />
+      <workItem from="1715046806039" duration="2364000" />
+      <workItem from="1715099564028" duration="3627000" />
+      <workItem from="1715111181775" duration="1955000" />
+      <workItem from="1715370004921" duration="8958000" />
     </task>
     <servers />
   </component>
