@@ -29,36 +29,21 @@ class PageRunner(threading.Thread):
         self.process = process
 
     def start_running_thread(self, target, args):
-        print("----EN START RUNNING THREAD----")
-        print("THREAD ID: " + threading.currentThread().getName())
-        print("target: " + str(target))
-        print("cant args: " + str(len(args)))
-        print("args: " + str(args))
         if self.running_thread is None:
-            print("el hilo es None")
             if len(args) == 2:
                 self.running_thread = threading.Thread(target=target, args=args)
             else:
                 self.running_thread = threading.Thread(target=target, args=args)
-            print("despues de crear el nuevo hilo")
             self.running_thread.start()
-            print("THREAD ID: " + threading.currentThread().getName())
         else:
-            print("el hilo no es None")
             self.join_running_thread()
             self.start_running_thread(target, args)
 
     def join_running_thread(self):
-        print("----EN JOIN RUNNING THREAD----")
         if self.running_thread is not None:
-            print("el hilo no es None")
             self.process.wait()
             self.running_thread.join()
-            print("despues de join()")
             self.running_thread = None
-            print("despues de asignar None")
-        else:
-            print("el hilo es None")
 
 
     @abstractmethod

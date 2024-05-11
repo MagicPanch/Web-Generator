@@ -2,11 +2,11 @@ version: "3.1"
 
 rules:
 
-#- rule: Siempre preguntar nombre despues de crear pagina
-#  steps:
-#  - intent: crear_pagina
-#  - action: utter_preguntar_nombre
-#  - action: action_listen
+- rule: Siempre preguntar nombre despues de crear pagina
+  steps:
+  - intent: crear_pagina
+  - action: utter_preguntar_nombre
+
 #
 #- rule: Siempre preguntar tipo después del nombre
 #  steps:

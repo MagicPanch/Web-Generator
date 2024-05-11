@@ -2,12 +2,10 @@ import os
 import random
 import socket
 import subprocess
-import threading
 from typing import Tuple, Dict, List
 from telegram import Bot
 import CONSTANTS
 import psutil
-from generator import DBManager
 from generator.PageRunner import PageRunner
 from generator.Front import Front
 
@@ -142,7 +140,6 @@ class PageManager(object):
         PageManager.running_pages[(args[0], args[1])] = [None, None]
         # Generator.running[(args[0], args[1])][0] = Back(args[0], args[1], PageManager.current_back_port)
         PageManager.running_pages[(args[0], args[1])][1] = Front(args[0], args[1], PageManager.get_port(), "")  # running[(user, page_name)][0].get_app_adress())
-        print("----OBJETO FRONT CREADO----")
 
         # Iniciar la ejecucion de los hilos
         # running[(user, page_name)][0].start()
@@ -199,12 +196,9 @@ class PageManager(object):
         PageManager.go_to_dir(user)
         PageManager.go_to_dir(page_name)
         PageManager.go_to_dir('img')
-        print("path actual: " + os.getcwd())
         file = await self.bot.get_file(image_id)
         path = os.getcwd() + '\\' + str(short_id) + '.jpg'
-        print("path de la imagen con nombre: " + str(path))
         await file.download_to_drive(path)
-        print("Imagen descargada con éxito.")
 
 
 

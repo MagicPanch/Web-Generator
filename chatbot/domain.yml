@@ -65,7 +65,6 @@ actions:
   - action_preguntar_color_encabezado
   - utter_preguntar_logo
   - utter_preguntar_nombre
-  - utter_tipo_pagina
   - action_ejecutar_dev
   - action_guardar_seccion
   - action_preguntar_tipo_seccion

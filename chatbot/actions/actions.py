@@ -1,9 +1,7 @@
 import threading
-
 from generator.PageManager import PageManager
 from generator.ReactGenerator import ReactGenerator
 from generator.Front import Front
-import CONSTANTS
 from typing import Any, Text, Dict, List
 from rasa_sdk import Action, Tracker
 from rasa_sdk.executor import CollectingDispatcher
@@ -11,7 +9,7 @@ from rasa_sdk.events import SlotSet, FollowupAction
 import datetime
 import os.path
 import json
-from generator.DBManager import DBManager
+from database.DBManager import DBManager
 
 #Actions Pagina
 class ActionCrearPagina(Action):
@@ -25,19 +23,21 @@ class ActionCrearPagina(Action):
             dispatcher.utter_message(text="Repetime como queres que se llame tu página. Te recuerdo que el formato es: www. nombre-pagina .com")
             return []
         else:
-            # Crear back y front
-            PageManager.running_pages[(tracker.sender_id, tracker.get_slot('page_name'))] = [None, None]
-            # Generator.running[(args[0], args[1])][0] = Back(args[0], args[1], PageManager.current_back_port)
-            PageManager.running_pages[(tracker.sender_id, tracker.get_slot('page_name'))][1] = Front(tracker.sender_id, tracker.get_slot('page_name'), PageManager.get_port(),
-                                                                     "")  # running[(user, page_name)][0].get_app_adress())
-            print("THREAD ID: " + threading.currentThread().getName())
-            threading.Thread(target=PageManager.running_pages[(tracker.sender_id, tracker.get_slot('page_name'))][1].start_running_thread, args=(PageManager.create_project, (tracker.sender_id, tracker.get_slot('page_name')))).start()
-            print("THREAD ID: " + threading.currentThread().getName())
+            if (await DBManager.get_page(DBManager.get_instance(), tracker.sender_id, tracker.get_slot('page_name')) is None):
+                # Crear back y front
+                PageManager.running_pages[(tracker.sender_id, tracker.get_slot('page_name'))] = [None, None]
+                # Generator.running[(args[0], args[1])][0] = Back(args[0], args[1], PageManager.current_back_port)
+                PageManager.running_pages[(tracker.sender_id, tracker.get_slot('page_name'))][1] = Front(tracker.sender_id, tracker.get_slot('page_name'), PageManager.get_port(),
+                                                                         "")  # running[(user, page_name)][0].get_app_adress())
+                threading.Thread(target=PageManager.running_pages[(tracker.sender_id, tracker.get_slot('page_name'))][1].start_running_thread, args=(PageManager.create_project, (tracker.sender_id, tracker.get_slot('page_name')))).start()
 
-            #PageManager.running_pages[(tracker.sender_id, tracker.get_slot('page_name'))][1].start_running_thread(target=PageManager.create_project, args=(tracker.sender_id, tracker.get_slot('page_name')))
-            await DBManager.add_page(DBManager.get_instance(), tracker.sender_id, tracker.get_slot('page_name'), tracker.get_slot('usuario'), tracker.get_slot('tipo_seccion'))
-            dispatcher.utter_message(text="Aguarda un momento mientras se crea tu página")
-            return [SlotSet("page_name", tracker.get_slot('page_name')), FollowupAction("action_ejecutar_dev")]
+                #PageManager.running_pages[(tracker.sender_id, tracker.get_slot('page_name'))][1].start_running_thread(target=PageManager.create_project, args=(tracker.sender_id, tracker.get_slot('page_name')))
+                await DBManager.add_page(DBManager.get_instance(), tracker.sender_id, tracker.get_slot('page_name'), tracker.get_slot('usuario'), tracker.get_slot('tipo_seccion'))
+                dispatcher.utter_message(text="Aguarda un momento mientras se crea tu página")
+                return [SlotSet("page_name", tracker.get_slot('page_name')), FollowupAction("action_ejecutar_dev")]
+            else:
+                dispatcher.utter_message(text="Ya tenes una pagina con ese nombre. Elige otro")
+                return []
 
 class ActionEjecutarDev(Action):
 
@@ -47,23 +47,10 @@ class ActionEjecutarDev(Action):
     async def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         print("----EN ACTION EJECUTAR DEV----")
         PageManager.running_pages[(tracker.sender_id, tracker.get_slot('page_name'))][1].join_running_thread()
-        print("THREAD ID: " + threading.currentThread().getName())
         threading.Thread(target=PageManager.running_pages[(tracker.sender_id, tracker.get_slot('page_name'))][1].start_running_thread, args=(PageManager.run_dev, (tracker.sender_id, tracker.get_slot('page_name'), PageManager.running_pages[(tracker.sender_id, tracker.get_slot('page_name'))][1].page_port))).start()
-        print("THREAD ID: " + threading.currentThread().getName())
         #PageManager.running_pages[(tracker.sender_id, tracker.get_slot('page_name'))][1].start_running_thread(target=PageManager.run_dev, args=(tracker.sender_id, tracker.get_slot('page_name'), PageManager.running_pages[(tracker.sender_id, tracker.get_slot('page_name'))][1].page_port))
         dispatcher.utter_message(text="Podes visualizar tu página en el siguiente link: " + PageManager.running_pages[(tracker.sender_id, tracker.get_slot('page_name'))][1].get_page_adress())
-
-        ###
-        print("#########")
-        threads = threading.enumerate()
-        for thread in threads:
-            print("Nombre del hilo:", thread.getName())
-            print("Identificador del hilo:", thread.ident)
-            print("Hilo en ejecución:", thread.is_alive())
-            print("--------------------")
-
-
-        return []
+        return [FollowupAction("action_listen")]
 
 class ActionEjecutarPagina(Action):
 
@@ -73,15 +60,22 @@ class ActionEjecutarPagina(Action):
     async def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         if (tracker.get_slot('page_name') is None):
             message = "Indicame el nombre de la pagina que deseas ejecutar. Te recuerdo que tus paginas son: "
-            pags = PageManager.get_user_pages(tracker.sender_id)
+            pags = await DBManager.get_user_pages(DBManager.get_instance(), tracker.sender_id)
             for pag in pags:
-                message += str(pag) + "\n"
+                message += str(pag['name']) + "\n"
         else:
-            if (not await DBManager.was_compiled(DBManager.get_instance(), tracker.sender_id, tracker.get_slot('page_name'))):threading.Thread(target=PageManager.running_pages[(tracker.sender_id, tracker.get_slot('page_name'))][1].start_running_thread, args=(PageManager.build, (tracker.sender_id, tracker.get_slot('page_name')))).start()
+            if (await DBManager.get_page(DBManager.get_instance(), tracker.sender_id, tracker.get_slot('page_name')) is None):
+                message = "No se encuentra la pagina que deseas ejecutar. Te recuerdo que tus paginas son: "
+                pags = await DBManager.get_user_pages(DBManager.get_instance(), tracker.sender_id)
+                for pag in pags:
+                    message += str(pag['name']) + "\n"
             else:
-                threading.Thread(target=PageManager.running_pages[(tracker.sender_id, tracker.get_slot('page_name'))][1].start_running_thread, args=(PageManager.run_project, (tracker.sender_id, tracker.get_slot('page_name'), PageManager.running_pages[(tracker.sender_id, tracker.get_slot('page_name'))][1].page_port))).start()
-                #PageManager.running_pages[(tracker.sender_id, tracker.get_slot('page_name'))][1].start_running_thread(target=PageManager.run_project, args=(tracker.sender_id, tracker.get_slot('page_name'), PageManager.running_pages[(tracker.sender_id, tracker.get_slot('page_name'))][1].page_port))
-            message = "Puedes acceder a tu pagina en: " + PageManager.running_pages[(tracker.sender_id, tracker.get_slot('page_name'))][1].get_page_adress()
+                if (not await DBManager.was_compiled(DBManager.get_instance(), tracker.sender_id, tracker.get_slot('page_name'))):
+                    threading.Thread(target=PageManager.running_pages[(tracker.sender_id, tracker.get_slot('page_name'))][1].start_running_thread, args=(PageManager.build, (tracker.sender_id, tracker.get_slot('page_name')))).start()
+                else:
+                    threading.Thread(target=PageManager.running_pages[(tracker.sender_id, tracker.get_slot('page_name'))][1].start_running_thread, args=(PageManager.run_project, (tracker.sender_id, tracker.get_slot('page_name'), PageManager.running_pages[(tracker.sender_id, tracker.get_slot('page_name'))][1].page_port))).start()
+                    #PageManager.running_pages[(tracker.sender_id, tracker.get_slot('page_name'))][1].start_running_thread(target=PageManager.run_project, args=(tracker.sender_id, tracker.get_slot('page_name'), PageManager.running_pages[(tracker.sender_id, tracker.get_slot('page_name'))][1].page_port))
+                message = "Puedes acceder a tu pagina en: " + PageManager.running_pages[(tracker.sender_id, tracker.get_slot('page_name'))][1].get_page_adress()
         dispatcher.utter_message(message)
         return []
 
@@ -268,11 +262,12 @@ class ActionSaludoTelegram(Action):
         variable = tracker.latest_message["metadata"]["message"]
         nombre = variable["from"]["first_name"]
         user_name = variable["from"].get("user_name", None)
-        ide = variable["from"]["id"]
+        ide = tracker.sender_id
         message = "Hola " + nombre + ", como va tu " + horario + "? Soy el Chatbot WebGenerator, el encargado de ayudarte a crear tu pagina web! Si queres preguntame y te explico un poco en que cosas puedo contribuir."
         dispatcher.utter_message(text=str(message))
 
-        await DBManager.add_user(DBManager.get_instance(), tracker.get_slot("id_user"), tracker.get_slot("usuario"))
+        print("en saludo telegram")
+        await DBManager.add_user(DBManager.get_instance(), ide, tracker.get_slot("usuario"), nombre)
         print("----FINALIZA SALUDO TELEGRAM----")
 
         return [SlotSet("usuario", user_name),SlotSet("horario", horario),SlotSet("id_user", ide)]
