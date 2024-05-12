@@ -8,28 +8,29 @@ class Front(PageRunner):
     # Clase encargada de la ejecución del front-end.
     # En ella se deben definir los métodos para la gestión de estas páginas.
 
-    page_adress:str
-    back_address:str
 
-    def generate_page_adress(self) -> str:
+    def _generate_page_address(self) -> str:
         # Método para acceder a la API que nos dará la dirección de la página
-        return CONSTANTS.ADRESS
+        return CONSTANTS.ADDRESS
 
-    def __init__(self, user, page_name, page_port, back_adress):
+    def __init__(self, user, page_name, page_port, running):
         super().__init__(user, page_name, page_port)
-        self.back_address = back_adress
-        self.page_adress = self.generate_page_adress()
+        self._running = running
+        self._page_adress = self._generate_page_address()
 
-    def get_page_adress(self) -> str:
-        print("puerto de la pagina: " + str(self.page_port))
-        return "http://localhost:" + str(self.page_port)
+    def get_page_address(self) -> str:
+        return "http://localhost:" + str(self._page_port)
 
     def build(self):
-        PageManager.PageManager.build_project(self.user, self.page_name)
+        PageManager.PageManager.build_project(self._user, self._page_name)
 
     def run(self):
-        print("----EN FRONT.RUN()----")
-        self.start_running_thread(target=self.target, args=(self.user, self.page_name, self.page_port))
+        while not self._stop_event.is_set():
+            self._restarted.wait()  # Esperar a que se reinicie
+            self._restarted.clear()
+            self._target(user=self._user, page_name=self._page_name, page_port=self._page_port)
 
-    def stop(self):
-        PageManager.PageManager.kill_project(self.page_port)
+    def stop_exec(self):
+        if self._running:
+            PageManager.PageManager.kill_project(self._page_port)
+            self._running = False

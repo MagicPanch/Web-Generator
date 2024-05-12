@@ -1,4 +1,6 @@
 import threading
+
+import CONSTANTS
 from generator.PageManager import PageManager
 from generator.ReactGenerator import ReactGenerator
 from generator.Front import Front
@@ -17,40 +19,64 @@ class ActionCrearPagina(Action):
     def name(self) -> Text:
         return "action_crear_pagina"
 
-    async def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        print("----EN ACTION CREAR PAGINA----")
+    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        #print("----EN ACTION CREAR PAGINA----")
+        #print("--------", threading.current_thread().getName())
         if (tracker.get_slot('page_name') is None):
             dispatcher.utter_message(text="Repetime como queres que se llame tu página. Te recuerdo que el formato es: www. nombre-pagina .com")
             return []
         else:
-            if (await DBManager.get_page(DBManager.get_instance(), tracker.sender_id, tracker.get_slot('page_name')) is None):
-                # Crear back y front
-                PageManager.running_pages[(tracker.sender_id, tracker.get_slot('page_name'))] = [None, None]
-                # Generator.running[(args[0], args[1])][0] = Back(args[0], args[1], PageManager.current_back_port)
-                PageManager.running_pages[(tracker.sender_id, tracker.get_slot('page_name'))][1] = Front(tracker.sender_id, tracker.get_slot('page_name'), PageManager.get_port(),
-                                                                         "")  # running[(user, page_name)][0].get_app_adress())
-                threading.Thread(target=PageManager.running_pages[(tracker.sender_id, tracker.get_slot('page_name'))][1].start_running_thread, args=(PageManager.create_project, (tracker.sender_id, tracker.get_slot('page_name')))).start()
+            if (DBManager.get_page_by_name(DBManager.get_instance(), tracker.get_slot('page_name')) is None):
+                #La pagina no existe
 
-                #PageManager.running_pages[(tracker.sender_id, tracker.get_slot('page_name'))][1].start_running_thread(target=PageManager.create_project, args=(tracker.sender_id, tracker.get_slot('page_name')))
-                await DBManager.add_page(DBManager.get_instance(), tracker.sender_id, tracker.get_slot('page_name'), tracker.get_slot('usuario'), tracker.get_slot('tipo_seccion'))
+                #Se crea la entrada para la pagina en PageManager
+                page = PageManager.add_page(tracker.sender_id, tracker.get_slot('page_name'))
+
+                #Se crea en un nuevo hilo el proyecto de la pagina
+                page.set_target(PageManager.create_project)
+                page.start()
+
+                #Se guarda su entrada en la base de datos
+                DBManager.add_page(DBManager.get_instance(), tracker.sender_id, tracker.get_slot('page_name'), tracker.get_slot('usuario'), tracker.get_slot('tipo_seccion'))
+
                 dispatcher.utter_message(text="Aguarda un momento mientras se crea tu página")
-                return [SlotSet("page_name", tracker.get_slot('page_name')), FollowupAction("action_ejecutar_dev")]
+                return [FollowupAction("action_copiar_template")]
             else:
-                dispatcher.utter_message(text="Ya tenes una pagina con ese nombre. Elige otro")
+                #La pagina ya existe
+                dispatcher.utter_message(text="Ya existe una pagina con ese nombre. Elige otro")
                 return []
+
+class ActionCopiarTemplate(Action):
+    def name(self) -> Text:
+        return "action_copiar_template"
+
+    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        #print("----EN ACTION COPIAR TEMPLATE----")
+        #print("--------", threading.current_thread().getName())
+        page = PageManager.get_page(tracker.sender_id, tracker.get_slot('page_name'))
+
+        # Se asigna el nuevo target para el hilo de ejecución de la página
+        page.set_target(PageManager.copy_template)
+        page.restart()
+        return [FollowupAction("action_ejecutar_dev")]
 
 class ActionEjecutarDev(Action):
 
     def name(self) -> Text:
         return "action_ejecutar_dev"
 
-    async def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        print("----EN ACTION EJECUTAR DEV----")
-        PageManager.running_pages[(tracker.sender_id, tracker.get_slot('page_name'))][1].join_running_thread()
-        threading.Thread(target=PageManager.running_pages[(tracker.sender_id, tracker.get_slot('page_name'))][1].start_running_thread, args=(PageManager.run_dev, (tracker.sender_id, tracker.get_slot('page_name'), PageManager.running_pages[(tracker.sender_id, tracker.get_slot('page_name'))][1].page_port))).start()
-        #PageManager.running_pages[(tracker.sender_id, tracker.get_slot('page_name'))][1].start_running_thread(target=PageManager.run_dev, args=(tracker.sender_id, tracker.get_slot('page_name'), PageManager.running_pages[(tracker.sender_id, tracker.get_slot('page_name'))][1].page_port))
-        dispatcher.utter_message(text="Podes visualizar tu página en el siguiente link: " + PageManager.running_pages[(tracker.sender_id, tracker.get_slot('page_name'))][1].get_page_adress())
-        return [FollowupAction("action_listen")]
+    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        #print("----EN ACTION EJECUTAR DEV----")
+        #print("--------", threading.current_thread().getName())
+        page = PageManager.get_page(tracker.sender_id, tracker.get_slot('page_name'))
+
+        #Se asigna el nuevo target para el hilo de ejecución de la página
+        page.set_target(PageManager.run_dev)
+        page.restart()
+
+        page_address = page.get_page_address()
+        dispatcher.utter_message(text="Podes visualizar tu página en el siguiente link: " + page_address)
+        return []
 
 class ActionEjecutarPagina(Action):
 
@@ -59,23 +85,36 @@ class ActionEjecutarPagina(Action):
 
     async def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         if (tracker.get_slot('page_name') is None):
+            #No hay contexto de ninguna pagina en especial
+
             message = "Indicame el nombre de la pagina que deseas ejecutar. Te recuerdo que tus paginas son: "
-            pags = await DBManager.get_user_pages(DBManager.get_instance(), tracker.sender_id)
+            pags = DBManager.get_user_pages(DBManager.get_instance(), tracker.sender_id)
             for pag in pags:
                 message += str(pag['name']) + "\n"
         else:
-            if (await DBManager.get_page(DBManager.get_instance(), tracker.sender_id, tracker.get_slot('page_name')) is None):
+            #Se estuvo hablando de una pagina en particular
+
+            if (DBManager.get_page(DBManager.get_instance(), tracker.sender_id, tracker.get_slot('page_name')) is None):
+                #Esa pagina no pertenece al usuario
                 message = "No se encuentra la pagina que deseas ejecutar. Te recuerdo que tus paginas son: "
                 pags = await DBManager.get_user_pages(DBManager.get_instance(), tracker.sender_id)
                 for pag in pags:
                     message += str(pag['name']) + "\n"
             else:
-                if (not await DBManager.was_compiled(DBManager.get_instance(), tracker.sender_id, tracker.get_slot('page_name'))):
-                    threading.Thread(target=PageManager.running_pages[(tracker.sender_id, tracker.get_slot('page_name'))][1].start_running_thread, args=(PageManager.build, (tracker.sender_id, tracker.get_slot('page_name')))).start()
-                else:
-                    threading.Thread(target=PageManager.running_pages[(tracker.sender_id, tracker.get_slot('page_name'))][1].start_running_thread, args=(PageManager.run_project, (tracker.sender_id, tracker.get_slot('page_name'), PageManager.running_pages[(tracker.sender_id, tracker.get_slot('page_name'))][1].page_port))).start()
-                    #PageManager.running_pages[(tracker.sender_id, tracker.get_slot('page_name'))][1].start_running_thread(target=PageManager.run_project, args=(tracker.sender_id, tracker.get_slot('page_name'), PageManager.running_pages[(tracker.sender_id, tracker.get_slot('page_name'))][1].page_port))
-                message = "Puedes acceder a tu pagina en: " + PageManager.running_pages[(tracker.sender_id, tracker.get_slot('page_name'))][1].get_page_adress()
+                #La pagina pertenece al usuario
+
+                page = PageManager.get_page(tracker.sender_id, tracker.get_slot('page_name'))
+                if DBManager.was_compiled(DBManager.get_instance(), tracker.sender_id, tracker.get_slot('page_name')):
+                    #Hay que compilarla
+
+                    page.set_target(PageManager.build_project)
+                    page.restart()
+                #Se ejecuta
+
+                page.set_target(PageManager.run_project)
+                page.restart()
+                page_address = page.get_page_address()
+                message = "Puedes acceder a tu pagina en: " + page_address
         dispatcher.utter_message(message)
         return []
 
@@ -85,30 +124,33 @@ class ActionEjecutarPagina(Action):
             return "action_detener_pagina"
 
         def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-            print("----EN ACTION DETENER PAGINA----")
             last_entities = tracker.latest_message.get("entities", None)
-            print("last entities: " + str(last_entities))
-            print("text: " + tracker.latest_message.get("text"))
-            if last_entities is None:
-                print("last_entities es None")
-            else:
-                print("last_entities no es None")
             if len(last_entities) == 0:
+                #No se especifico ninguna pagina
+
                 if "todas" in tracker.latest_message.get("text"):
-                    for pag in PageManager.get_running_user_pages(tracker.sender_id):
-                        PageManager.stop_page(tracker.sender_id, pag.page_name)
+                    #Quiere detener todas
+
+                    for pag in PageManager.get_user_running_pages(tracker.sender_id):
+                        PageManager.stop_page(tracker.sender_id, pag.get_name())
                         print("------------PAGINA detenida---------")
                     message = "Tus paginas fueron apagadas con exito."
                 else:
-                    message = "Indicame el nombre de la pagina que deseas detener. Te recuerdo que tus paginas son: \n"
-                    pags = PageManager.get_user_pages(tracker.sender_id)
+                    #Quiere detener una en particular
+
+                    message = "Indicame el nombre de la pagina que deseas detener. Te recuerdo que tus paginas en ejecución son: \n"
+                    pags = PageManager.get_user_running_pages(tracker.sender_id)
                     for pag in pags:
-                        message += str(pag) + "\n"
+                        message += str(pag.get_name()) + "\n"
             elif "page_name" in (entity.keys() for entity in last_entities):
+                #Se especifico una pagina en el ultimo mensaje
+
                 PageManager.stop_page(tracker.sender_id, tracker.get_latest_entity_values('page_name'))
                 print("------------PAGINA detenida---------")
                 message = "Tu pagina fue apagada con exito."
             else:
+                #Se detiene la ultima pagina de la que se hablo anteriormente
+
                 PageManager.stop_page(tracker.sender_id, tracker.get_slot('page_name'))
                 print("------------PAGINA detenida---------")
                 message = "Tu pagina fue apagada con exito."
@@ -235,6 +277,7 @@ class ActionCrearEncabezado(Action):
             "colorTitulo": "text-yellow-600"
         }
         PageManager.go_to_main_dir()
+        PageManager.go_to_dir(CONSTANTS.USER_PAGES_DIR)
         PageManager.go_to_dir(tracker.sender_id)
         PageManager.go_to_dir(tracker.get_slot('page_name'))
         PageManager.go_to_dir("components")
@@ -249,7 +292,7 @@ class ActionSaludoTelegram(Action):
     def name(self) -> Text:
         return "action_saludo_telegram"
 
-    async def run(self, dispatcher: CollectingDispatcher, tracker: Tracker,
+    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         now = datetime.datetime.now()
         hora = int(now.strftime("%H"))
@@ -267,7 +310,7 @@ class ActionSaludoTelegram(Action):
         dispatcher.utter_message(text=str(message))
 
         print("en saludo telegram")
-        await DBManager.add_user(DBManager.get_instance(), ide, tracker.get_slot("usuario"), nombre)
+        DBManager.add_user(DBManager.get_instance(), ide, tracker.get_slot("usuario"), nombre)
         print("----FINALIZA SALUDO TELEGRAM----")
 
         return [SlotSet("usuario", user_name),SlotSet("horario", horario),SlotSet("id_user", ide)]

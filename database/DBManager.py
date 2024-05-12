@@ -27,7 +27,7 @@ class DBManager(object):
         else:
             raise Exception("No se puede crear otra instancia de DB Manager")
 
-    async def add_user(self, id, username, nombre):
+    def add_user(self, id, username, nombre):
         user = User.objects(id=id)
         print(user)
         if not user:
@@ -37,7 +37,7 @@ class DBManager(object):
         else:
             print("----USUARIO YA EXISTENTE EN LA DB----")
 
-    async def add_page(self, user_id, page_name, contact, webType):
+    def add_page(self, user_id, page_name, contact, webType):
         user = User.objects(id=user_id).first()
         if user:
             page_id = user_id + '-' + page_name
@@ -48,7 +48,7 @@ class DBManager(object):
         else:
             raise Exception("El usuario " + str(user_id) + " no existe")
 
-    async def get_page(self, user_id, page_name):
+    def get_page(self, user_id, page_name):
         page_id = user_id + '-' + page_name
         page = Page.objects(id=page_id).first()
         if page:
@@ -56,14 +56,21 @@ class DBManager(object):
         else:
             return None
 
-    async def get_user_pages(self, user_id):
+    def get_page_by_name(self, page_name):
+        page = Page.objects(id__icontains=page_name).first()
+        if page:
+            return page
+        else:
+            return None
+
+    def get_user_pages(self, user_id):
         user = User.objects(id=user_id).first()
         if user:
             return user.paginas
         else:
             return None
 
-    async def was_compiled(self, user_id, page_name):
+    def was_compiled(self, user_id, page_name):
         page_id = user_id + '-' + page_name
         page = Page.objects(id=page_id).first()
         if page:
