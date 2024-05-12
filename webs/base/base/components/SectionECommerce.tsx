@@ -27,10 +27,7 @@ const  SectionECommerce = () => {
            
            
             <div className="w-full my-5 flex flex-wrap justify-center  gap-1 justify-items-center">
-            {/* <ProductTile titulo="producto A" descripcion="El producto a1 es una verdadera maravilla de la creatividad"/> */}
-            {/*<ProductTile {...productData1} /> */}
-            {/*<ProductTile titulo="producto A" descripcion="d1"/> */}
-            
+           
             {productos.map((producto, index) => (
                  <ProductTile key={index} {...producto} />  
             ))}
