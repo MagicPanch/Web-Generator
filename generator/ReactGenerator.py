@@ -19,7 +19,7 @@ class ReactGenerator:
         text = f""""use client";
 
         import React from "react";
-        import logo from '{data["addressLogo"]}';
+        import logo from './logo.png';
         import Image from "next/image";
         import Link from "next/link";
 

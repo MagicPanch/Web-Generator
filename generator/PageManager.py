@@ -111,6 +111,7 @@ class PageManager(object):
     @staticmethod
     def copy_template(user, page_name, page_port):
         #Se copian los templates en el nuevo proyecto
+        print("----En PageManager.copy_template----")
 
         #Obtener directorio origen
         PageManager.go_to_main_dir()
@@ -123,8 +124,12 @@ class PageManager(object):
         PageManager.go_to_dir(user)
         PageManager.go_to_dir(page_name)
 
+        print("--------origen: " + origin_dir)
+        print("--------destino: " + os.getcwd())
+
         #Copiar
         PageManager._copy_dir(origin_dir, os.getcwd())
+        print("--------despues de PageManager._copy_dir()")
 
 
     @staticmethod
@@ -217,9 +222,9 @@ class PageManager(object):
         PageManager.go_to_dir(CONSTANTS.USER_PAGES_DIR)
         PageManager.go_to_dir(user)
         PageManager.go_to_dir(page_name)
-        PageManager.go_to_dir('img')
+        PageManager.go_to_dir('components')
         file = await self.bot.get_file(image_id)
-        path = os.getcwd() + '\\' + str(short_id) + '.jpg'
+        path = os.getcwd() + '\\' + str(short_id) + '.png'
         await file.download_to_drive(path)
 
 

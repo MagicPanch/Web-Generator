@@ -20,8 +20,9 @@ class ActionCrearPagina(Action):
         return "action_crear_pagina"
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        #print("----EN ACTION CREAR PAGINA----")
-        #print("--------", threading.current_thread().getName())
+        print("----EN ACTION CREAR PAGINA----")
+        print("--------", threading.current_thread().getName())
+
         if (tracker.get_slot('page_name') is None):
             dispatcher.utter_message(text="Repetime como queres que se llame tu página. Te recuerdo que el formato es: www. nombre-pagina .com")
             return []
@@ -53,11 +54,29 @@ class ActionCopiarTemplate(Action):
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         #print("----EN ACTION COPIAR TEMPLATE----")
         #print("--------", threading.current_thread().getName())
+
         page = PageManager.get_page(tracker.sender_id, tracker.get_slot('page_name'))
 
+        PageManager.copy_template(page.get_user(), page.get_name(), page.get_port())
+        #dispatcher.utter_message(text=". . .")
+
         # Se asigna el nuevo target para el hilo de ejecución de la página
+        '''
         page.set_target(PageManager.copy_template)
         page.restart()
+        print("----EN ACTION COPIAR TEMPLATE DE NUEVO----")
+        print("--------", threading.current_thread().getName())
+        dispatcher.utter_message(text=". . .")
+        print("--------hilos despues de dispatcher")
+        hilos = threading.enumerate()
+        for hilo in hilos:
+            print(hilo.getName())
+            print('\n')
+        page.stop()
+        print("despues de stop")
+        page.join()
+        print("despues de join")        
+        '''
         return [FollowupAction("action_ejecutar_dev")]
 
 class ActionEjecutarDev(Action):
@@ -66,16 +85,20 @@ class ActionEjecutarDev(Action):
         return "action_ejecutar_dev"
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        #print("----EN ACTION EJECUTAR DEV----")
-        #print("--------", threading.current_thread().getName())
+        print("----EN ACTION EJECUTAR DEV----")
+        print("--------", threading.current_thread().getName())
         page = PageManager.get_page(tracker.sender_id, tracker.get_slot('page_name'))
 
         #Se asigna el nuevo target para el hilo de ejecución de la página
         page.set_target(PageManager.run_dev)
+        print("despues de set_target")
         page.restart()
+        print("despues de restart")
 
         page_address = page.get_page_address()
+        print("despues de set_page_address")
         dispatcher.utter_message(text="Podes visualizar tu página en el siguiente link: " + page_address)
+        print("despues de utter message")
         return []
 
 class ActionEjecutarPagina(Action):
@@ -238,14 +261,14 @@ class ActionRecibirImagen(Action):
         latest_message = tracker.latest_message
         if 'photo' in latest_message['metadata']['message']:
             error = False
-            for photo in latest_message['metadata']['message']['photo']:
-                image_id = photo['file_id']
-                if not image_id:
-                    error = True
-                else:
-                    if tracker.get_slot("creando_encabezado"):
-                        img_name = "logo-" + photo['file_unique_id']
-                        await PageManager.download_telegram_image(PageManager.get_instance(), tracker.sender_id, tracker.get_slot('page_name'), image_id=image_id, short_id=img_name)
+            photo = latest_message['metadata']['message']['photo'][1]
+            image_id = photo['file_id']
+            if not image_id:
+                error = True
+            else:
+                if tracker.get_slot("creando_encabezado"):
+                    img_name = "logo"
+                    await PageManager.download_telegram_image(PageManager.get_instance(), tracker.sender_id, tracker.get_slot('page_name'), image_id=image_id, short_id=img_name)
             if not error:
                 dispatcher.utter_message(text="Imagen recibida con éxito.")
             else:
@@ -273,7 +296,6 @@ class ActionCrearEncabezado(Action):
         dataHeader = {
             "titulo": tracker.get_slot('page_name'),
             "address": page_path,
-            "addressLogo": page_path + "\\img\\logo.png",
             "colorTitulo": "text-yellow-600"
         }
         PageManager.go_to_main_dir()

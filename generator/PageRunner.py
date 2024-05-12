@@ -18,8 +18,14 @@ class PageRunner(threading.Thread):
         self._restarted.set()
         pass
 
+    def get_user(self) -> str:
+        return self._user
+
     def get_name(self) -> str:
         return self._page_name
+
+    def get_port(self) -> int:
+        return self._page_port
 
     def set_target(self, target):
         #Se asigna el nuevo target con la funcion a ejecutar.
