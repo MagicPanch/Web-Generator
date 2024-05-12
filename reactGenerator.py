@@ -33,7 +33,6 @@ def generarHeader(data):
 
 def generarFooter(dataDicFooter):
     print("genero footer")
-    dataDicFooter = json.loads(dataDicFooter) 
     text = f""""
 
     export const FOOTER_LINKS = [
