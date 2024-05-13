@@ -172,38 +172,40 @@ class PageManager(object):
 
     @staticmethod
     def _build_project(user, page_name):
-        PageManager.go_to_main_dir()
-        PageManager.go_to_dir(CONSTANTS.USER_PAGES_DIR)
-        PageManager.go_to_dir(user)
-        PageManager.go_to_dir(page_name)
+        print("(" + threading.current_thread().getName() + ") " + "----PageManager._build_project----")
+
+        #Posicionarse en el path donde se creara el proyecto
+        path = PageManager.get_page_path(user, page_name)
+        os.chdir(path)
+
         command = 'npx next build '
         PageManager._running_pages[(user, page_name)].get_page().set_process(PageManager._run_process(command))
 
     @staticmethod
     def build_project(user, page_name):
-        print("----En PageManager.build_project----")
-        print("--------", threading.current_thread().getName())
+        print("(" + threading.current_thread().getName() + ") " + "----PageManager.build_project----")
         thread = threading.Thread(target=PageManager._build_project, args=(user, page_name))
         PageManager._running_pages[(user, page_name)].set_thread(thread)
         thread.start()
 
     @staticmethod
     def _run_project(user, page_name, page_port):
-        PageManager.go_to_main_dir()
-        PageManager.go_to_dir(CONSTANTS.USER_PAGES_DIR)
-        PageManager.go_to_dir(user)
-        PageManager.go_to_dir(page_name)
+        print("(" + threading.current_thread().getName() + ") " + "----PageManager._run_project----")
+
+        #Posicionarse en el path donde se creara el proyecto
+        path = PageManager.get_page_path(user, page_name)
+        os.chdir(path)
         command = 'npm start -- --port ' + str(page_port)
         PageManager._running_pages[(user, page_name)].get_page().set_process(PageManager._run_process(command))
 
     @staticmethod
     def run_project(user, page_name):
-        print("----En PageManager.run_project----")
-        print("--------", threading.current_thread().getName())
+        print("(" + threading.current_thread().getName() + ") " + "----PageManager.run_project----")
         page = PageManager._running_pages[(user, page_name)].get_page()
         thread = threading.Thread(target=PageManager._run_project, args=(user, page_name, page.get_port()))
         PageManager._running_pages[(user, page_name)].set_thread(thread)
         thread.start()
+        page.set_running(True)
 
     @staticmethod
     def join_thread(user, page_name):
@@ -218,7 +220,7 @@ class PageManager(object):
     @staticmethod
     def add_page(user, page_name) -> Front:
         #Crear la pagina
-        page = Front(user, page_name, PageManager.get_port(), False)
+        page = Front(user, page_name, PageManager.get_port())
 
         #Crea sus directorios
         PageManager.go_to_main_dir()
@@ -289,14 +291,12 @@ class PageManager(object):
         process.terminate()
         process.wait()
 
-    async def download_telegram_image(self, user, page_name, image_id, short_id):
-        PageManager.go_to_main_dir()
-        PageManager.go_to_dir(CONSTANTS.USER_PAGES_DIR)
-        PageManager.go_to_dir(user)
-        PageManager.go_to_dir(page_name)
+    @staticmethod
+    async def download_telegram_image(user, page_name, image_id, short_id):
+        path = PageManager.get_page_path(user, page_name)
         PageManager.go_to_dir('components')
-        file = await self._bot.get_file(image_id)
-        path = os.getcwd() + '\\' + str(short_id) + '.png'
+        file = await PageManager._bot.get_file(image_id)
+        path = path + '\\' + str(short_id) + '.png'
         await file.download_to_drive(path)
 
 
