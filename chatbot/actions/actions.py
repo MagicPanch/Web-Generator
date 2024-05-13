@@ -58,12 +58,16 @@ class ActionEjecutarDev(Action):
         print("(" + threading.current_thread().getName() + ") " + "----ACTION EJECUTAR DEV----")
         page = PageManager.get_page(tracker.sender_id, tracker.get_slot('page_name'))
 
-        #Se asigna el nuevo target para el hilo de ejecución de la página
+        #Se espera a que el hilo de creación finalice
         PageManager.join_thread(page.get_user(), page.get_name())
-        page_address = PageManager.run_dev(page.get_user(), page.get_name())
+
+        #Inicia la ejecución del proyecto en modo desarrollo en un nuevo hilo
+        PageManager.run_dev(page.get_user(), page.get_name())
+
+        page_address = page.get_page_address()
         print("(" + threading.current_thread().getName() + ") " + "--------page_address: ", page_address)
         dispatcher.utter_message(text="Podes visualizar tu página en el siguiente link: " + page_address)
-        return [FollowupAction("action_listen")]
+        return []
 
 class ActionEjecutarPagina(Action):
 

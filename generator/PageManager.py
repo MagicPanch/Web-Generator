@@ -139,7 +139,7 @@ class PageManager(object):
         destino = PageManager.get_page_path(user, page_name)
         #print("(" + threading.current_thread().getName() + ") " + "--------destino: " + destino)
 
-        #Copiar
+        #Copiar template al nuevo proyecto
         PageManager._copy_dir(CONSTANTS.TEMPLATE_DIR, destino)
 
     @staticmethod
@@ -163,13 +163,12 @@ class PageManager(object):
         PageManager._running_pages[(user, page_name)].get_page().set_process(PageManager._run_process(command))
 
     @staticmethod
-    def run_dev(user, page_name) -> str:
+    def run_dev(user, page_name):
         print("(" + threading.current_thread().getName() + ") " + "----PageManager.run_dev----")
         page = PageManager._running_pages[(user, page_name)].get_page()
         thread = threading.Thread(target=PageManager._run_dev, args=(user, page_name, page.get_port()))
         PageManager._running_pages[(user, page_name)].set_thread(thread)
         thread.start()
-        return page.get_page_address()
 
     @staticmethod
     def _build_project(user, page_name):
