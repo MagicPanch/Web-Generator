@@ -1,4 +1,5 @@
 import threading
+import time
 
 import CONSTANTS
 from generator.PageManager import PageManager
@@ -59,11 +60,10 @@ class ActionEjecutarDev(Action):
 
         #Se asigna el nuevo target para el hilo de ejecución de la página
         PageManager.join_thread(page.get_user(), page.get_name())
-        PageManager.run_dev(page.get_user(), page.get_name())
-
-        page_address = page.get_page_address()
+        page_address = PageManager.run_dev(page.get_user(), page.get_name())
+        print("(" + threading.current_thread().getName() + ") " + "--------page_address: ", page_address)
         dispatcher.utter_message(text="Podes visualizar tu página en el siguiente link: " + page_address)
-        return []
+        return [FollowupAction("action_listen")]
 
 class ActionEjecutarPagina(Action):
 
@@ -256,7 +256,7 @@ class ActionCrearEncabezado(Action):
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker,
                   domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        page_path = PageManager.get_path(tracker.sender_id, tracker.get_slot('page_name'))
+        page_path = PageManager.get_page_path(tracker.sender_id, tracker.get_slot('page_name'))
         dataHeader = {
             "titulo": tracker.get_slot('page_name'),
             "address": page_path,

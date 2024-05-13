@@ -5,13 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="121f2593-11ee-405e-a8d8-1c2f43d81e54" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/generator/Generator.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/reactGenerator.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/Web-Generator.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Web-Generator.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/base/components/Header.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/webs/base/components/Header.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/base/components/ProductTile.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/webs/base/components/ProductTile.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/base/components/SectionECommerce.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/webs/base/components/SectionECommerce.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chatbot/actions/actions.py" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/actions/actions.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/generator/Generator.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/generator/PageManager.py" beforeDir="false" afterPath="$PROJECT_DIR$/generator/PageManager.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/reactGenerator.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/webs/base/components/logo.png" beforeDir="false" afterPath="$PROJECT_DIR$/webs/base/components/logo.png" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -83,7 +82,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
     "deletionFromPopupRequiresConfirmation": "false",
-    "git-widget-placeholder": "Merging lucas__merge",
+    "git-widget-placeholder": "lucas",
     "ignore.virus.scanning.warn.message": "true",
     "last_opened_file_path": "C:/Users/Rodríguez/OneDrive/Escritorio/Facultad/IngSoft/Web-Generator",
     "node.js.detected.package.eslint": "true",
@@ -92,7 +91,7 @@
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
     "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
-    "ts.external.directory.path": "C:\\Program Files\\JetBrains\\PyCharm 2023.2.1\\plugins\\javascript-impl\\jsLanguageServicesImpl\\external",
+    "ts.external.directory.path": "D:\\Desarrollo\\Web-Generator\\user-pages\\2086036019\\test8\\node_modules\\typescript\\lib",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>

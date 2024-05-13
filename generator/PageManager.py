@@ -163,12 +163,13 @@ class PageManager(object):
         PageManager._running_pages[(user, page_name)].get_page().set_process(PageManager._run_process(command))
 
     @staticmethod
-    def run_dev(user, page_name):
+    def run_dev(user, page_name) -> str:
         print("(" + threading.current_thread().getName() + ") " + "----PageManager.run_dev----")
         page = PageManager._running_pages[(user, page_name)].get_page()
         thread = threading.Thread(target=PageManager._run_dev, args=(user, page_name, page.get_port()))
         PageManager._running_pages[(user, page_name)].set_thread(thread)
         thread.start()
+        return page.get_page_address()
 
     @staticmethod
     def _build_project(user, page_name):
@@ -236,6 +237,10 @@ class PageManager(object):
         return PageManager._running_pages[(user, page_name)].get_page()
 
     @staticmethod
+    def get_thread(user, page_name) -> threading.Thread:
+        return PageManager._running_pages[(user, page_name)].get_thread()
+
+    @staticmethod
     def get_page_path(user, page_name) -> str:
         path = CONSTANTS.USER_PAGES_DIR + "\\" + user + "\\" + page_name
         return path
@@ -291,7 +296,7 @@ class PageManager(object):
         PageManager.go_to_dir(user)
         PageManager.go_to_dir(page_name)
         PageManager.go_to_dir('components')
-        file = await self.bot.get_file(image_id)
+        file = await self._bot.get_file(image_id)
         path = os.getcwd() + '\\' + str(short_id) + '.png'
         await file.download_to_drive(path)
 
