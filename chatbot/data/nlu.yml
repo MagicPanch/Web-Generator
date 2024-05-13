@@ -9,6 +9,7 @@ nlu:
     - perfecto, quiero una pagina web
     - quiero otra pagina
 
+
 - intent: tipo_seccion
   examples: |
     - que sea [e-commerce](seccion)
