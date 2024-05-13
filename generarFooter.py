@@ -43,7 +43,7 @@ export const SOCIALS = {
 
 
 
-addres ="C:/Users/Agustin/Desktop/DesingLabelBranchSanti/Web-Generator/webs/base/base" #direccion donde se ubica la web react
+addres ="C:/Users/Nahu/Desktop/Web-Generator/webs/base/base" #direccion donde se ubica la web react
 dataFooter =  {"address":addres , "email":"contactDesignLabel@gmail.com", "ubicacion": "Pinto 399 Argentina, Tandil"} 
 dataFooter = json.dumps(dataFooter)
 print(dataFooter)

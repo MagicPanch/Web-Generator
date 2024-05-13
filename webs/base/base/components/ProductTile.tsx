@@ -1,16 +1,23 @@
 "use client";
 
 import React from "react";
-import Image from "next/image";
-import Link from "next/link";
+
 const ProductTile = () => {
-    return(
-        
-        <div className=" bg-blue-500  rounded border-2 border-white items-center justify-between h-40 w-40 px-4 m-4">
-            <h1 className="text-2xl  mb-2  font-semibold text-center flex-1">
-                productTile
-            </h1>
+    return (
+        <div className="bg-white rounded-lg overflow-hidden shadow-md p-4 m-4"> {/* Agrega margen aquí */}
+            <img src="https://via.placeholder.com/300" alt="Product" className="w-full" />
+            <div className="p-4">
+                <h2 className="text-xl font-semibold mb-2">Nombre del Producto</h2>
+                <p className="text-gray-600">Descripción breve del producto.</p>
+                <div className="mt-4 flex items-center justify-between">
+                    <button className="bg-blue-500 text-white px-4 py-2 rounded-md">Comprar</button>
+                    <span className="text-gray-600">Precio de $$$</span>
+                </div>
+            </div>
         </div>
-    )
+    );
 }
+
 export default ProductTile;
+
+

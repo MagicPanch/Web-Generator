@@ -14,7 +14,7 @@ def generarHeader(data):
         return(
         
             <div className=" bg-blue-500 flex  items-center justify-between h-20 px-4">
-                <div className="border-green-300 border-2  rounded h-30 w-30  bg-green-400 items-center">
+                <div className="border-green-300 border-2  rounded h-30 w-30  bg-blue-400 items-center">
                     <Image src= {{{data["addresImg"]}}}  
                     width={{100}}
                     height={{100}}
@@ -33,8 +33,8 @@ def generarHeader(data):
 
 
 
-addres ="C:/Users/Agustin/Desktop/DesingLabelBranchSanti/Web-Generator/webs/base/base" #direccion donde se ubica la web react
-dataHeader =  { "titulo": " holar reinas" , "address":addres , "addresImg": "logo"} 
+addres ="C:/Users/Nahu/Desktop/Web-Generator/webs/base/base" #direccion donde se ubica la web react
+dataHeader =  { "titulo": " hola reinas" , "address":addres , "addresImg": "logo"} 
 dataHeader = json.dumps(dataHeader)
 print(dataHeader)
 dataDicHeader = json.loads(dataHeader)
