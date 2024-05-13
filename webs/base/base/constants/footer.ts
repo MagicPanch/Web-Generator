@@ -2,10 +2,9 @@ export const FOOTER_LINKS = [
   {
     title: "Navegacion",
     links: [
-      { label: "Services", href: "/#services" },
-      { label: "Portfolio", href: "/#portfolio" },
-      { label: "Contact", href: "/contact-us" },
-      { label: "About us", href: "/about-us" },
+      { label: "Inicio", href: "/" },
+      { label: "Shop", href: "/shop" },
+      { label: "Contacto", href: "/contact" },
     ],
   },
 ];
