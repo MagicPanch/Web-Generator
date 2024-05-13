@@ -1,3 +1,4 @@
+import asyncio
 import os
 import random
 import shutil
@@ -14,8 +15,27 @@ from generator.Front import Front
 
 class PageManager(object):
 
+    class Entry():
+        def __init__(self, page, thread):
+            self._page = page
+            self._thread = thread
+
+        def set_page(self, page):
+            self._page = page
+
+        def get_page(self):
+            return self._page
+
+        def set_thread(self, thread):
+            self._thread = thread
+
+        def get_thread(self):
+            return self._thread
+
+
     _instance = None
-    _running_pages: Dict[Tuple[str, str], Front] = {}
+    _running_pages: Dict[Tuple[str, str], Entry]= {}
+    _bot = None
 
     @staticmethod
     def _is_port_in_use(port) -> bool:
@@ -47,35 +67,27 @@ class PageManager(object):
     def __init__(self) -> None:
         if PageManager._instance is None:
             PageManager._instance = self
-            self.running_pages = {}
-            self.bot = Bot(token=CONSTANTS.TELEGRAM_BOT_TOKEN)
+            self._running_pages = {}
+            self._bot = Bot(token=CONSTANTS.TELEGRAM_BOT_TOKEN)
         else:
             raise Exception("No se puede crear otra instancia de PageManager")
 
     @staticmethod
     def go_to_dir(dir_name):
         #Nos posiciona en el subdirectorio indicado. Si no existe, lo crea
-        #print("dir actual: " + os.getcwd())
         os.makedirs(dir_name, exist_ok=True)
         os.chdir(dir_name)
-        #print("nuevo dir: " + os.getcwd())
+        print("(" + threading.current_thread().getName() + ") " + "nuevo dir: " + os.getcwd())
 
     @staticmethod
     def go_to_main_dir():
         while os.path.basename(os.getcwd()) != CONSTANTS.MAIN_DIR:
             os.chdir("..")
+        print("(" + threading.current_thread().getName() + ") " + "nuevo dir: " + os.getcwd())
 
     @staticmethod
     def _run_process(command):
         return subprocess.Popen(command, shell=True)
-
-    @staticmethod
-    def get_path(user, page_name):
-        PageManager.go_to_main_dir()
-        PageManager.go_to_dir(CONSTANTS.USER_PAGES_DIR)
-        PageManager.go_to_dir(user)
-        PageManager.go_to_dir(page_name)
-        return os.getcwd()
 
     @staticmethod
     def get_user_running_pages(user) -> List[Front]:
@@ -83,103 +95,159 @@ class PageManager(object):
         for key in PageManager._running_pages.keys():
             if key[0] == user:
                 # Agregar la pagina al resultado
-                pages.append(PageManager._running_pages[key])
+                pages.append(PageManager._running_pages[key].get_page())
         return pages
 
     @staticmethod
     def _copy_dir(origen, destino):
-        try:
-            # Copiar el contenido del directorio origen al directorio destino
-            print("antes de copiar")
-            shutil.copytree(origen, destino, dirs_exist_ok=True)
-            print("despues de copiar")
-        except Exception as e:
-            print(f"Error al copiar el contenido de '{origen}' a '{destino}': {e}")
+        # Copiar el contenido del directorio origen al directorio destino
+        shutil.copytree(origen, destino, dirs_exist_ok=True)
 
     @staticmethod
-    def create_project(user, page_name, page_port):
-        print("----EN PageManager.create_project----")
-        print("--------", threading.current_thread().getName())
+    def _create_project(user, page_name):
+        #Posicionarse en el path donde se creara el proyecto
+        path = PageManager.get_page_path(user, page_name)
+        os.chdir(path)
 
-        #Crea el proyecto de la página
-        PageManager.go_to_main_dir()
-        PageManager.go_to_dir(CONSTANTS.USER_PAGES_DIR)
-        PageManager.go_to_dir(user)
-        command = 'npx create-next-app ' + str(page_name) + ' --typescript --eslint --tailwind --app --src-dir --no-import-alias'
-        PageManager._running_pages[(user, page_name)].set_process(PageManager._run_process(command))
+        #Iniciar la creacion del proyecto y esperar a que termine
+        command = 'npx create-next-app . --typescript --eslint --tailwind --app --src-dir --no-import-alias'
+        process = PageManager._run_process(command)
+        PageManager._running_pages[(user, page_name)].get_page().set_process(process)
+        process.wait()
+
+        #Copiar los templates al proyecto creado
+        PageManager.copy_template(user, page_name)
+
+        PageManager._running_pages[(user, page_name)].get_page().set_process(None)
+        print("(" + threading.current_thread().getName() + ") " + "----Ejecucion finalizada----")
 
     @staticmethod
-    def copy_template(user, page_name, page_port):
+    def create_project(user, page_name):
+        #print("(" + threading.current_thread().getName() + ") " + "----PageManager.create_project----")
+        thread = threading.Thread(target= PageManager._create_project, args=(user, page_name))
+        PageManager._running_pages[(user, page_name)].set_thread(thread)
+        thread.start()
+
+    @staticmethod
+    def _copy_template(user, page_name):
         #Se copian los templates en el nuevo proyecto
-        print("----En PageManager.copy_template----")
-
-        #Obtener directorio origen
+        #print("(" + threading.current_thread().getName() + ") " + "----PageManager._copy_template----")
+        #print("(" + threading.current_thread().getName() + ") " + "--------origen: " + CONSTANTS.TEMPLATE_DIR)
         PageManager.go_to_main_dir()
-        PageManager.go_to_dir(CONSTANTS.TEMPLATE_DIR)
-        origin_dir = os.getcwd()
 
         #Obtener directorio destino
-        PageManager.go_to_main_dir()
-        PageManager.go_to_dir(CONSTANTS.USER_PAGES_DIR)
-        PageManager.go_to_dir(user)
-        PageManager.go_to_dir(page_name)
-
-        print("--------origen: " + origin_dir)
-        print("--------destino: " + os.getcwd())
+        destino = PageManager.get_page_path(user, page_name)
+        #print("(" + threading.current_thread().getName() + ") " + "--------destino: " + destino)
 
         #Copiar
-        PageManager._copy_dir(origin_dir, os.getcwd())
-        print("--------despues de PageManager._copy_dir()")
-
+        PageManager._copy_dir(CONSTANTS.TEMPLATE_DIR, destino)
 
     @staticmethod
-    def run_dev(user, page_name, page_port):
+    def copy_template(user, page_name):
+        #print("(" + threading.current_thread().getName() + ") " + "----PageManager.copy_template----")
+        #thread = threading.Thread(target=PageManager._copy_template, args=(user, page_name))
+        #PageManager._running_pages[(user, page_name)].set_thread(thread)
+        #thread.start()
+        PageManager._copy_template(user, page_name)
+
+    @staticmethod
+    def _run_dev(user, page_name, page_port):
         # Ejecuta la página en modo Dev para que el usuario visualice las modificaciones
-        PageManager.go_to_main_dir()
-        PageManager.go_to_dir(CONSTANTS.USER_PAGES_DIR)
-        PageManager.go_to_dir(user)
-        PageManager.go_to_dir(page_name)
+        print("(" + threading.current_thread().getName() + ") " + "----PageManager._run_dev----")
+
+        #Posicionarse en el path donde se creara el proyecto
+        path = PageManager.get_page_path(user, page_name)
+        os.chdir(path)
+
         command = 'npm run dev -- --port=' + str(page_port)
-        PageManager._running_pages[(user, page_name)].set_process(PageManager._run_process(command))
+        PageManager._running_pages[(user, page_name)].get_page().set_process(PageManager._run_process(command))
 
     @staticmethod
-    def build_project(user, page_name, page_port):
+    def run_dev(user, page_name):
+        print("(" + threading.current_thread().getName() + ") " + "----PageManager.run_dev----")
+        page = PageManager._running_pages[(user, page_name)].get_page()
+        thread = threading.Thread(target=PageManager._run_dev, args=(user, page_name, page.get_port()))
+        PageManager._running_pages[(user, page_name)].set_thread(thread)
+        thread.start()
+
+    @staticmethod
+    def _build_project(user, page_name):
         PageManager.go_to_main_dir()
         PageManager.go_to_dir(CONSTANTS.USER_PAGES_DIR)
         PageManager.go_to_dir(user)
         PageManager.go_to_dir(page_name)
         command = 'npx next build '
-        PageManager._running_pages[(user, page_name)].set_process(PageManager._run_process(command))
+        PageManager._running_pages[(user, page_name)].get_page().set_process(PageManager._run_process(command))
 
     @staticmethod
-    def run_project(user, page_name, page_port):
+    def build_project(user, page_name):
+        print("----En PageManager.build_project----")
+        print("--------", threading.current_thread().getName())
+        thread = threading.Thread(target=PageManager._build_project, args=(user, page_name))
+        PageManager._running_pages[(user, page_name)].set_thread(thread)
+        thread.start()
+
+    @staticmethod
+    def _run_project(user, page_name, page_port):
         PageManager.go_to_main_dir()
         PageManager.go_to_dir(CONSTANTS.USER_PAGES_DIR)
         PageManager.go_to_dir(user)
         PageManager.go_to_dir(page_name)
         command = 'npm start -- --port ' + str(page_port)
-        PageManager._running_pages[(user, page_name)][1].set_process(PageManager._run_process(command))
+        PageManager._running_pages[(user, page_name)].get_page().set_process(PageManager._run_process(command))
+
+    @staticmethod
+    def run_project(user, page_name):
+        print("----En PageManager.run_project----")
+        print("--------", threading.current_thread().getName())
+        page = PageManager._running_pages[(user, page_name)].get_page()
+        thread = threading.Thread(target=PageManager._run_project, args=(user, page_name, page.get_port()))
+        PageManager._running_pages[(user, page_name)].set_thread(thread)
+        thread.start()
+
+    @staticmethod
+    def join_thread(user, page_name):
+        print("(" + threading.current_thread().getName() + ") " + "----PageManager.join_thread----")
+        thread = PageManager._running_pages[(user, page_name)].get_thread()
+        if thread:
+            print("(" + threading.current_thread().getName() + ") " + "--------hilo a esperar: ", thread.getName())
+            thread.join()
+            print("(" + threading.current_thread().getName() + ") " + "--------finalizo la espera de ", thread.getName())
+            PageManager._running_pages[(user, page_name)].set_thread(None)
 
     @staticmethod
     def add_page(user, page_name) -> Front:
-        #Crear la entrada
-        PageManager._running_pages[(user, page_name)] = None
-
         #Crear la pagina
         page = Front(user, page_name, PageManager.get_port(), False)
 
+        #Crea sus directorios
+        PageManager.go_to_main_dir()
+        PageManager.go_to_dir(CONSTANTS.USER_PAGES_DIR)
+        PageManager.go_to_dir(user)
+        PageManager.go_to_dir(page_name)
+        PageManager.go_to_main_dir()
+
         #Agregarla a la coleccion
-        PageManager._running_pages[(user, page_name)] = page
+        PageManager._running_pages[(user, page_name)] = PageManager.Entry(page, None)
         return page
 
     @staticmethod
     def get_page(user, page_name) -> Front:
-        return PageManager._running_pages[(user, page_name)]
+        return PageManager._running_pages[(user, page_name)].get_page()
+
+    @staticmethod
+    def get_page_path(user, page_name) -> str:
+        path = CONSTANTS.USER_PAGES_DIR + "\\" + user + "\\" + page_name
+        return path
 
     @staticmethod
     def stop_page(user, page_name):
         # Matar la página
-        PageManager._running_pages[(user, page_name)].stop_exec()
+        page = PageManager._running_pages[(user, page_name)].get_page()
+        PageManager.kill_project(page.get_port())
+        thread = PageManager._running_pages[(user, page_name)].get_thread()
+        thread.join()
+        PageManager._running_pages[(user, page_name)].set_thread(None)
 
     @staticmethod
     def get_pid(port):

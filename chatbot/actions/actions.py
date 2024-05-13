@@ -20,8 +20,7 @@ class ActionCrearPagina(Action):
         return "action_crear_pagina"
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        print("----EN ACTION CREAR PAGINA----")
-        print("--------", threading.current_thread().getName())
+        print("(" + threading.current_thread().getName() + ") " + "----ACTION CREAR PAGINA----")
 
         if (tracker.get_slot('page_name') is None):
             dispatcher.utter_message(text="Repetime como queres que se llame tu página. Te recuerdo que el formato es: www. nombre-pagina .com")
@@ -31,53 +30,23 @@ class ActionCrearPagina(Action):
                 #La pagina no existe
 
                 #Se crea la entrada para la pagina en PageManager
-                page = PageManager.add_page(tracker.sender_id, tracker.get_slot('page_name'))
+                PageManager.add_page(tracker.sender_id, tracker.get_slot('page_name'))
 
                 #Se crea en un nuevo hilo el proyecto de la pagina
-                page.set_target(PageManager.create_project)
-                page.start()
+                PageManager.create_project(tracker.sender_id, tracker.get_slot('page_name'))
 
                 #Se guarda su entrada en la base de datos
                 DBManager.add_page(DBManager.get_instance(), tracker.sender_id, tracker.get_slot('page_name'), tracker.get_slot('usuario'), tracker.get_slot('tipo_seccion'))
 
-                dispatcher.utter_message(text="Aguarda un momento mientras se crea tu página")
-                return [FollowupAction("action_copiar_template")]
+                #Se copia el template al nuevo proyecto
+                #PageManager.copy_template(tracker.sender_id, tracker.get_slot('page_name'))
+
+                dispatcher.utter_message(text="Aguarda un momento mientras se crea tu página.")
+                return [FollowupAction("action_ejecutar_dev")]
             else:
                 #La pagina ya existe
-                dispatcher.utter_message(text="Ya existe una pagina con ese nombre. Elige otro")
+                dispatcher.utter_message(text="Ya existe una pagina con ese nombre. Por favor elige otro.")
                 return []
-
-class ActionCopiarTemplate(Action):
-    def name(self) -> Text:
-        return "action_copiar_template"
-
-    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        #print("----EN ACTION COPIAR TEMPLATE----")
-        #print("--------", threading.current_thread().getName())
-
-        page = PageManager.get_page(tracker.sender_id, tracker.get_slot('page_name'))
-
-        PageManager.copy_template(page.get_user(), page.get_name(), page.get_port())
-        #dispatcher.utter_message(text=". . .")
-
-        # Se asigna el nuevo target para el hilo de ejecución de la página
-        '''
-        page.set_target(PageManager.copy_template)
-        page.restart()
-        print("----EN ACTION COPIAR TEMPLATE DE NUEVO----")
-        print("--------", threading.current_thread().getName())
-        dispatcher.utter_message(text=". . .")
-        print("--------hilos despues de dispatcher")
-        hilos = threading.enumerate()
-        for hilo in hilos:
-            print(hilo.getName())
-            print('\n')
-        page.stop()
-        print("despues de stop")
-        page.join()
-        print("despues de join")        
-        '''
-        return [FollowupAction("action_ejecutar_dev")]
 
 class ActionEjecutarDev(Action):
 
@@ -85,20 +54,15 @@ class ActionEjecutarDev(Action):
         return "action_ejecutar_dev"
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        print("----EN ACTION EJECUTAR DEV----")
-        print("--------", threading.current_thread().getName())
+        print("(" + threading.current_thread().getName() + ") " + "----ACTION EJECUTAR DEV----")
         page = PageManager.get_page(tracker.sender_id, tracker.get_slot('page_name'))
 
         #Se asigna el nuevo target para el hilo de ejecución de la página
-        page.set_target(PageManager.run_dev)
-        print("despues de set_target")
-        page.restart()
-        print("despues de restart")
+        PageManager.join_thread(page.get_user(), page.get_name())
+        PageManager.run_dev(page.get_user(), page.get_name())
 
         page_address = page.get_page_address()
-        print("despues de set_page_address")
         dispatcher.utter_message(text="Podes visualizar tu página en el siguiente link: " + page_address)
-        print("despues de utter message")
         return []
 
 class ActionEjecutarPagina(Action):
