@@ -31,9 +31,9 @@ def generarHeader(data):
     with open(data["address"]+"\components\Header.tsx", "w") as file:
         file.write(text)
 
-def generarFooter(dataDicFooter):
+def generarFooter(dataFooter):
     print("genero footer")
-    dataDicFooter = json.loads(dataDicFooter)
+    dataFooter = json.loads(dataFooter)
     text = f""" export const FOOTER_LINKS = [
     {{
         title: "Navegacion",
@@ -49,8 +49,8 @@ def generarFooter(dataDicFooter):
     export const FOOTER_CONTACT_INFO = {{
     title: "Contactanos",
     links: [
-        {{ label: "Email", value: "{dataDicFooter["email"]}" }},
-        {{ label: "Ubicacion", value: "{dataDicFooter["ubicacion"]}" }},
+        {{ label: "Email", value: "{dataFooter["email"]}" }},
+        {{ label: "Ubicacion", value: "{dataFooter["ubicacion"]}" }},
     ],
     }};
 
@@ -67,7 +67,34 @@ def generarFooter(dataDicFooter):
     }};
     """
 
-    with open(dataDicFooter["address"]+"\constants\/footer.ts", "w") as file:
+    with open(dataFooter["address"]+"\constants\/footer.ts", "w") as file:
+      file.write(text)
+
+def generarBody(dataBody):
+    print("genero body")
+    dataBody = json.loads(dataBody)
+    text = f""" export const CARDS_DATA = [
+    {{
+        image: "https://via.placeholder.com/300",
+        title: "Producto 1",
+        description: "Descripción breve del producton 1",
+        price: "340",
+    }},
+    {{
+        image: "https://via.placeholder.com/300",
+        title: "Producto 2",
+        description: "Descripción breve del producto 2",
+        price: "5000",
+    }},
+    {{
+        image: "https://via.placeholder.com/300",
+        title: "Producto 3",
+        description: "Descripción breve del producto 3",
+        price: "{dataBody["price"]}",
+    }},
+    ];  """
+
+    with open(dataBody["address"]+"\constants\/body.ts", "w") as file:
       file.write(text)
 
 
@@ -81,3 +108,6 @@ print(dataDicHeader["titulo"])
 dataFooter =  {"address":addres , "email":"contactDesignLabel@gmail.com", "ubicacion": "Pinto 401 Argentina, Tandil"} 
 dataFooter = json.dumps(dataFooter)
 generarFooter(dataFooter)
+
+dataBody =  {"address":addres , "price":"5000"} 
+dataBody = json.dumps(dataBody)
