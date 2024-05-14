@@ -77,3 +77,21 @@ class DBManager(object):
             return page.compiled
         else:
             raise Exception("La pagina " + str(page_name) + " no existe o no te pertenece")
+
+    def set_page_mail(self, user_id, page_name, page_mail):
+        page_id = user_id + '-' + page_name
+        page = Page.objects(id=page_id).first()
+        if page:
+            page.mail = page_mail
+            page.save()
+        else:
+            raise Exception("La pagina " + str(page_name) + " no existe o no te pertenece")
+
+    def set_page_location(self, user_id, page_name, page_location):
+        page_id = user_id + '-' + page_name
+        page = Page.objects(id=page_id).first()
+        if page:
+            page.location = page_location
+            page.save()
+        else:
+            raise Exception("La pagina " + str(page_name) + " no existe o no te pertenece")

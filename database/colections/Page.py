@@ -9,3 +9,5 @@ class Page(Document):
     creationDate = DateField(required=True)
     lastModification = DateField(required=True)
     compiled = BooleanField()
+    mail = StringField(required=False)
+    location = StringField(required=False)

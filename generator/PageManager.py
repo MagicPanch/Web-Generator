@@ -1,4 +1,3 @@
-import asyncio
 import os
 import random
 import shutil
@@ -9,7 +8,6 @@ from typing import Tuple, Dict, List
 from telegram import Bot
 import CONSTANTS
 import psutil
-from generator.PageRunner import PageRunner
 from generator.Front import Front
 
 
@@ -35,7 +33,6 @@ class PageManager(object):
 
     _instance = None
     _running_pages: Dict[Tuple[str, str], Entry]= {}
-    _bot = None
 
     @staticmethod
     def _is_port_in_use(port) -> bool:
@@ -291,13 +288,12 @@ class PageManager(object):
         process.terminate()
         process.wait()
 
-    @staticmethod
-    async def download_telegram_image(user, page_name, image_id, short_id):
-        path = PageManager.get_page_path(user, page_name)
-        PageManager.go_to_dir('components')
-        file = await PageManager._bot.get_file(image_id)
-        path = path + '\\' + str(short_id) + '.png'
-        await file.download_to_drive(path)
-
-
-
+    async def download_telegram_image(self, user, page_name, image_id, short_id):
+        page_path = PageManager.get_page_path(user, page_name)
+        file = await self._bot.get_file(image_id)
+        PageManager.go_to_dir("components")
+        path = os.getcwd() + "\\" + page_path + '\\components\\' + str(short_id) + '.png'
+        print("path to save: ", os.getcwd() + '\\' + str(short_id) + '.png')
+        print("current path: ", os.getcwd())
+        await file.download_to_drive(custom_path=os.getcwd()+ '\\' + str(short_id) + '.png')
+        PageManager.go_to_main_dir()

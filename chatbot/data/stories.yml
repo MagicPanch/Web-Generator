@@ -34,10 +34,45 @@ stories:
   - intent: decir_nombre
   - action: action_crear_pagina  #Aca se crea el proyecto y se guarda la pagina en la DB. Posteriormente se ejecuta en modo DEV
 
+#- story: editar encabezado 1
+#  steps:
+#  - intent: editar_encabezado
+#  - action: action_preguntar_color_encabezado
+#  - slot_was_set:
+#    - creando_encabezado: true
+#  - or:
+#    - intent: decir_color
+#    - intent: despues_te_digo
+#  - action: action_guardar_color
+#  - checkpoint: color_encabezado
+
+#- story: editar encabezado 2
+#  steps:
+#  - checkpoint: color_encabezado
+#  - action: utter_preguntar_logo
+#  - or:
+#    - intent: enviar_imagen
+#    - intent: denegar
+#  - action: action_recibir_imagen
+#  - action: action_crear_encabezado
+#  - slot_was_set:
+#    - creando_encabezado: false
+
+# EDICION DE COMPONENTES
+
+- story: editar componente
+  steps:
+  - intent: editar_componente
+  - action: action_capturar_componente_edicion
+  - checkpoint: componente_capturado
+
+## ENCABEZADO
+
 - story: editar encabezado 1
   steps:
-  - intent: editar_encabezado
-  - action: action_preguntar_color_encabezado
+  - checkpoint: componente_capturado
+  - slot_was_set:
+    - componente: encabezado
   - slot_was_set:
     - creando_encabezado: true
   - or:
@@ -49,6 +84,8 @@ stories:
 - story: editar encabezado 2
   steps:
   - checkpoint: color_encabezado
+  - slot_was_set:
+    - componente: encabezado
   - action: utter_preguntar_logo
   - or:
     - intent: enviar_imagen
@@ -57,6 +94,35 @@ stories:
   - action: action_crear_encabezado
   - slot_was_set:
     - creando_encabezado: false
+
+## FOOTER
+
+- story: editar footer 1
+  steps:
+  - checkpoint: componente_capturado
+  - slot_was_set:
+    - componente: footer
+  - slot_was_set:
+    - creando_footer: true
+  - or:
+    - intent: decir_mail
+    - intent: denegar
+  - action: action_guardar_mail_footer
+  - checkpoint: mail_footer
+
+- story: editar footer 2
+  steps:
+  - checkpoint: mail_footer
+  - slot_was_set:
+    - componente: footer
+  - action: utter_preguntar_ubicacion
+  - or:
+    - intent: decir_ubicacion
+    - intent: denegar
+  - action: action_guardar_ubicacion_footer
+  - action: action_crear_footer
+  - slot_was_set:
+    - creando_footer: false
 
 - story: crear seccion
   steps:

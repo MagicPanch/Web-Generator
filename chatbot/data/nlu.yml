@@ -9,6 +9,15 @@ nlu:
     - perfecto, quiero una pagina web
     - quiero otra pagina
 
+- intent: editar_componente
+  examples: |
+    - quiero modificar el [encabezado](componente)
+    - editemos el [footer](componente)
+    - te voy a explicar como quiero el [encabezado](componente)
+    - hagamos el [encabezado](componente)
+    - terminemos el [footer](componente)
+    - quiero modificar el [footer](componente)
+    - quiero editar el [encabezado](componente)
 
 - intent: tipo_seccion
   examples: |
@@ -39,14 +48,6 @@ nlu:
     - www. [borrador](page_name) .com
     - www. [test](page_name) .com
     - www. [super_mega_pagina_piola](page_name) .com
-
-- intent: editar_encabezado
-  examples: |
-    - te voy a explicar como quiero el encabezado
-    - hagamos el encabezado
-    - terminemos el encabezado
-    - quiero modificar el encabezado
-    - quiero editar el encabezado
 
 - intent: crear_seccion
   examples: |
@@ -118,6 +119,18 @@ nlu:
     - que sea [violeta](color)
     - lo quiero [rosa](color)
     - que sea [bordo](color)
+
+- intent: decir_mail
+  examples: |
+    - mi mail es [lucas_123@gmail.com](mail)
+    - [totox@hotmail.com](mail)
+    - el correo es [xx-mail-xx@yahoo.com](mail)
+
+- intent: decir_ubicacion
+  examples: |
+    - la ubicacion es [Pinto 401 Tandil, Argentina](ubicacion)
+    - [4 de abril 568 Tandil, Argentina](ubicacion)
+    - la direccion es [Calle 18 3235 Necochea, Argentina](ubicacion)
 
 - intent: out_of_scope
   examples: |

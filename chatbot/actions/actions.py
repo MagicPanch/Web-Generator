@@ -162,6 +162,28 @@ class ActionEjecutarPagina(Action):
             dispatcher.utter_message(message)
             return []
 
+class ActionCapturarComponenteEdicion(Action):
+
+    def name(self) -> Text:
+        return "action_capturar_componente_edicion"
+
+    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        print("(" + threading.current_thread().getName() + ") " + "----ACTION EDICION COMPONENTE----")
+        componente = tracker.get_slot('componente')
+        print("(" + threading.current_thread().getName() + ") " + "--------componente: ", componente)
+        if not componente:
+            #No se especifico el componente a editar
+            message = "Que componente quisieras editar? Te recuerdo que los componentes son: \n"
+            message += "Encabezado \n"
+            message += "Footer \n"
+            dispatcher.utter_message(text=message)
+        elif componente == "encabezado":
+            return[FollowupAction("action_preguntar_color_encabezado")]
+        elif componente == "footer":
+            return[FollowupAction("action_preguntar_mail_footer")]
+        else:
+            return[FollowupAction("action_default_fallback")]
+
 
 class ActionPreguntarTipoSeccion(Action):
     def name(self) -> Text:
@@ -251,7 +273,7 @@ class ActionRecibirImagen(Action):
             else:
                 if tracker.get_slot("creando_encabezado"):
                     img_name = "logo"
-                    await PageManager.download_telegram_image(tracker.sender_id, tracker.get_slot('page_name'), image_id=image_id, short_id=img_name)
+                    await PageManager.download_telegram_image(PageManager.get_instance(), tracker.sender_id, tracker.get_slot('page_name'), image_id=image_id, short_id=img_name)
             if not error:
                 dispatcher.utter_message(text="Imagen recibida con éxito.")
             else:
@@ -260,7 +282,6 @@ class ActionRecibirImagen(Action):
             if 'denegar' in latest_message:
                 dispatcher.utter_message(text="Perfecto, el encabezado de tu página no contendrá ningún logo")
         return []
-
 
 class ActionPreguntarColorEncabezado(Action):
     def name(self) -> Text:
@@ -278,24 +299,95 @@ class ActionCrearEncabezado(Action):
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         page_path = PageManager.get_page_path(tracker.sender_id, tracker.get_slot('page_name'))
+        print(page_path)
         dataHeader = {
             "titulo": tracker.get_slot('page_name'),
             "address": page_path,
+            "addressLogo": "./logo.png",
             "colorTitulo": "text-yellow-600"
         }
-        PageManager.go_to_main_dir()
-        PageManager.go_to_dir(CONSTANTS.USER_PAGES_DIR)
-        PageManager.go_to_dir(tracker.sender_id)
-        PageManager.go_to_dir(tracker.get_slot('page_name'))
-        PageManager.go_to_dir("components")
         ReactGenerator.generarHeader(dataHeader)
-        print("-------------ENCABEZADO CREADO-------------")
+        print("-------------ENCABEZADO MODIFICADO-------------")
         dispatcher.utter_message(text="Podes ver los cambios que realizamos en el encabezado")
         return [SlotSet("creando_encabezado", False)]
 
-    # Saludo Actions
+
+class ActionPreguntarMailFooter(Action):
+    def name(self) -> Text:
+        return "action_preguntar_mail_footer"
+
+    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        print("(" + threading.current_thread().getName() + ") " + "----ACTION PREGUNTAR MAIL FOOTER----")
+        dispatcher.utter_message(text="Queres cambiar tu e-mail en el footer?")
+        return [SlotSet("creando_footer", True)]
+
+class ActionGuardarMailFooter(Action):
+    def name(self) -> Text:
+        return "action_guardar_mail_footer"
+
+    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        print("(" + threading.current_thread().getName() + ") " + "----ACTION GUARDAR MAIL FOOTER----")
+        latest_message = tracker.latest_message
+        if 'mail' in latest_message:
+        #El usuario proporciono el mail
+            mail = str(tracker.get_slot("mail"))
+            #Guardar el mail en la pagina
+            DBManager.set_page_mail(DBManager.get_instance(), tracker.sender_id, tracker.get_slot('page_name'), mail)
+            dispatcher.utter_message(text="E-mail guardado.")
+            return [SlotSet("mail_footer", mail), FollowupAction("utter_preguntar_ubicacion")]
+        elif 'denegar' in latest_message:
+        #El usuario no quiere modificar el mail
+            dispatcher.utter_message(text="Perfecto, no se modificara el mail mostrado en el footer de su pagina.")
+            return [FollowupAction("utter_preguntar_ubicacion")]
+        else:
+            return [FollowupAction("action_default_fallback")]
+
+class ActionGuardarUbicacionFooter(Action):
+    def name(self) -> Text:
+        return "action_guardar_ubicacion_footer"
+
+    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        print("(" + threading.current_thread().getName() + ") " + "----ACTION GUARDAR UBICACION FOOTER----")
+        latest_message = tracker.latest_message
+        if 'ubicacion' in latest_message:
+        #El usuario proporciono su ubicacion
+            ubicacion = str(tracker.get_slot("ubicacion"))
+            #Guardar la ubicacion en la pagina
+            DBManager.set_page_location(DBManager.get_instance(), tracker.sender_id, tracker.get_slot('page_name'), ubicacion)
+            dispatcher.utter_message(text="Ubicacion guardada.")
+            return [SlotSet("ubicacion_footer", ubicacion)]
+        elif 'denegar' in latest_message:
+        #El usuario no quiere modificar el mail
+            dispatcher.utter_message(text="Perfecto, no se modificara la ubicacion mostrada en el footer de su pagina.")
+            return []
+        else:
+            return [FollowupAction("action_default_fallback")]
+
+class ActionCrearFooter(Action):
+    def name(self) -> Text:
+        return "action_crear_Footer"
+
+    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        print("(" + threading.current_thread().getName() + ") " + "----ACTION CREAR FOOTER----")
+        page_path = PageManager.get_page_path(tracker.sender_id, tracker.get_slot('page_name'))
+        mail = str(tracker.get_slot("mail_footer"))
+        if not mail:
+            mail = "contactDesignLabel@gmail.com"
+        ubicacion = str(tracker.get_slot("ubicacion_footer"))
+        if not ubicacion:
+            ubicacion = "Pinto 401 Tandil, Argentina"
+        dataFooter = {
+            "address": page_path,
+            "email": mail,
+            "ubicacion": ubicacion
+        }
+        ReactGenerator.generarFooter(dataFooter)
+        print("-------------FOOTER MODIFICADO-------------")
+        dispatcher.utter_message(text="Podes ver los cambios que realizamos en el footer")
+        return [SlotSet("creando_encabezado", False)]
 
 
+# Saludo Actions
 class ActionSaludoTelegram(Action):
 
     def name(self) -> Text:
