@@ -14,6 +14,7 @@ const NavBar = () => {
             </Link>
           ))}
       </nav>
+      
     </div>
   );
 };
