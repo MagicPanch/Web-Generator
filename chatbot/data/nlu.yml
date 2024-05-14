@@ -1,5 +1,9 @@
 version: "3.1"
 nlu:
+- intent: start
+  examples: |
+    - /start
+
 - intent: crear_pagina
   examples: |
     - quiero crear una pagina

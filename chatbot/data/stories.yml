@@ -2,6 +2,11 @@ version: "3.1"
 
 stories:
 
+- story: start
+  steps:
+    - intent: start
+    - action: action_listen
+
 #Stories funciones
 #- story: flujo_creacion_completo
 #  steps:
@@ -120,7 +125,6 @@ stories:
     - intent: decir_ubicacion
     - intent: denegar
   - action: action_guardar_ubicacion_footer
-  - action: action_crear_footer
   - slot_was_set:
     - creando_footer: false
 

@@ -52,7 +52,6 @@ class ReactGenerator:
     @staticmethod
     def generarFooter(dataFooter):
         print("genero footer")
-        dataFooter = json.loads(dataFooter)
         text = f""" export const FOOTER_LINKS = [
         {{
             title: "Navegacion",
@@ -86,14 +85,13 @@ class ReactGenerator:
         }};
         """
 
-        with open(dataFooter["address"]+"\constants//footer.ts", "w") as file:
+        with open(dataFooter["address"]+"\components\Footer.tsx", "w") as file:
             file.write(text)
             file.close()
 
     @staticmethod
     def generarBody(dataBody):
         print("genero body")
-        dataBody = json.loads(dataBody)
         text = f""" export const CARDS_DATA = [
         {{
             image: "https://via.placeholder.com/300",

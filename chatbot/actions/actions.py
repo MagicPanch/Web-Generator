@@ -37,8 +37,7 @@ class ActionCrearPagina(Action):
                 PageManager.create_project(tracker.sender_id, tracker.get_slot('page_name'))
 
                 #Se guarda su entrada en la base de datos
-                DBManager.add_page(DBManager.get_instance(), tracker.sender_id, tracker.get_slot('page_name'),
-                                   tracker.get_slot('usuario'), tracker.get_slot('tipo_seccion'))
+                DBManager.add_page(DBManager.get_instance(), tracker.sender_id, tracker.get_slot('page_name'), tracker.get_slot('usuario'), tracker.get_slot('tipo_seccion'))
 
                 #Se copia el template al nuevo proyecto
                 #PageManager.copy_template(tracker.sender_id, tracker.get_slot('page_name'))
@@ -127,40 +126,41 @@ class ActionEjecutarPagina(Action):
         def name(self) -> Text:
             return "action_detener_pagina"
 
-        def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[
-            Dict[Text, Any]]:
-            last_entities = tracker.latest_message.get("entities", None)
-            if len(last_entities) == 0:
-                #No se especifico ninguna pagina
+        def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+            print("(" + threading.current_thread().getName() + ") " + "----ACTION DETENER PAGINA----")
+            last_message_intent = tracker.get_intent_of_latest_message()
+            if "detener_pagina" in last_message_intent:
+                last_message_entities = tracker.get_latest_entity_values("text")
+                print("(" + threading.current_thread().getName() + ") " + "--------last_message_entities: ", last_message_entities)
 
-                if "todas" in tracker.latest_message.get("text"):
-                    #Quiere detener todas
+                if "page_name" in last_message_entities:
+                    # Se especifico una pagina en el ultimo mensaje
+
+                    PageManager.stop_page(tracker.sender_id, tracker.get_latest_entity_values('page_name'))
+                    print("(" + threading.current_thread().getName() + ") " + "------------PAGINA DETENIDA CON EXITO------------")
+                    message = "Tu pagina fue apagada con exito."
+                elif "todas" in tracker.latest_message.get("text"):
+                    # Quiere detener todas
 
                     for pag in PageManager.get_user_running_pages(tracker.sender_id):
                         PageManager.stop_page(tracker.sender_id, pag.get_name())
-                        print("------------PAGINA detenida---------")
+                    print("(" + threading.current_thread().getName() + ") " + "------------PAGINA DETENIDA CON EXITO------------")
                     message = "Tus paginas fueron apagadas con exito."
                 else:
-                    #Quiere detener una en particular
-
-                    message = "Indicame el nombre de la pagina que deseas detener. Te recuerdo que tus paginas en ejecución son: \n"
-                    pags = PageManager.get_user_running_pages(tracker.sender_id)
-                    for pag in pags:
-                        message += str(pag.get_name()) + "\n"
-            elif "page_name" in (entity.keys() for entity in last_entities):
-                # Se especifico una pagina en el ultimo mensaje
-
-                PageManager.stop_page(tracker.sender_id, tracker.get_latest_entity_values('page_name'))
-                print("------------PAGINA detenida---------")
-                message = "Tu pagina fue apagada con exito."
+                    #No especifico cual quiere detener
+                    page_name = tracker.get_slot('page_name')
+                    if page_name:
+                        PageManager.stop_page(tracker.sender_id, page_name)
+                        print("(" + threading.current_thread().getName() + ") " + "------------PAGINA DETENIDA CON EXITO------------")
+                        message = "Tu pagina fue apagada con exito."
+                    else:
+                        message = "Indicame el nombre de la pagina que deseas detener. Te recuerdo que tus paginas en ejecución son: \n"
+                        pags = PageManager.get_user_running_pages(tracker.sender_id)
+                        for pag in pags:
+                            message += str(pag.get_name()) + "\n"
+                dispatcher.utter_message(message)
             else:
-                #Se detiene la ultima pagina de la que se hablo anteriormente
-
-                PageManager.stop_page(tracker.sender_id, tracker.get_slot('page_name'))
-                print("------------PAGINA detenida---------")
-                message = "Tu pagina fue apagada con exito."
-            dispatcher.utter_message(message)
-            return []
+                return[FollowupAction("action_default_fallback")]
 
 class ActionCapturarComponenteEdicion(Action):
 
@@ -319,7 +319,7 @@ class ActionPreguntarMailFooter(Action):
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         print("(" + threading.current_thread().getName() + ") " + "----ACTION PREGUNTAR MAIL FOOTER----")
         dispatcher.utter_message(text="Queres cambiar tu e-mail en el footer?")
-        return [SlotSet("creando_footer", True)]
+        return [SlotSet("creando_footer", True), FollowupAction("action_listen")]
 
 class ActionGuardarMailFooter(Action):
     def name(self) -> Text:
@@ -327,19 +327,23 @@ class ActionGuardarMailFooter(Action):
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         print("(" + threading.current_thread().getName() + ") " + "----ACTION GUARDAR MAIL FOOTER----")
-        latest_message = tracker.latest_message
-        if 'mail' in latest_message:
+        last_message_intent = tracker.latest_message.get('intent').get('name')
+        print("(" + threading.current_thread().getName() + ") " + "--------last message intent: ", last_message_intent)
+        if 'decir_mail' in last_message_intent:
         #El usuario proporciono el mail
-            mail = str(tracker.get_slot("mail"))
+            mail = tracker.get_slot('mail')
+            print("(" + threading.current_thread().getName() + ") " + "------------mail: ", mail)
             #Guardar el mail en la pagina
             DBManager.set_page_mail(DBManager.get_instance(), tracker.sender_id, tracker.get_slot('page_name'), mail)
             dispatcher.utter_message(text="E-mail guardado.")
             return [SlotSet("mail_footer", mail), FollowupAction("utter_preguntar_ubicacion")]
-        elif 'denegar' in latest_message:
+        elif 'denegar' in last_message_intent:
         #El usuario no quiere modificar el mail
+            print("(" + threading.current_thread().getName() + ") " + "------------denegar")
             dispatcher.utter_message(text="Perfecto, no se modificara el mail mostrado en el footer de su pagina.")
-            return [FollowupAction("utter_preguntar_ubicacion")]
+            return []
         else:
+            print("(" + threading.current_thread().getName() + ") " + "------------default fallback")
             return [FollowupAction("action_default_fallback")]
 
 class ActionGuardarUbicacionFooter(Action):
@@ -348,24 +352,28 @@ class ActionGuardarUbicacionFooter(Action):
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         print("(" + threading.current_thread().getName() + ") " + "----ACTION GUARDAR UBICACION FOOTER----")
-        latest_message = tracker.latest_message
-        if 'ubicacion' in latest_message:
+        last_message_intent = tracker.latest_message.get('intent').get('name')
+        print("(" + threading.current_thread().getName() + ") " + "--------last message intent: ", last_message_intent)
+        if 'decir_ubicacion' in last_message_intent:
         #El usuario proporciono su ubicacion
-            ubicacion = str(tracker.get_slot("ubicacion"))
+            ubicacion = tracker.get_slot("ubicacion")
+            print("(" + threading.current_thread().getName() + ") " + "------------ubicacion: ", ubicacion)
             #Guardar la ubicacion en la pagina
             DBManager.set_page_location(DBManager.get_instance(), tracker.sender_id, tracker.get_slot('page_name'), ubicacion)
             dispatcher.utter_message(text="Ubicacion guardada.")
-            return [SlotSet("ubicacion_footer", ubicacion)]
-        elif 'denegar' in latest_message:
+            return [SlotSet("ubicacion_footer", ubicacion), FollowupAction("action_crear_footer")]
+        elif 'denegar' in last_message_intent:
         #El usuario no quiere modificar el mail
+            print("(" + threading.current_thread().getName() + ") " + "------------denegar")
             dispatcher.utter_message(text="Perfecto, no se modificara la ubicacion mostrada en el footer de su pagina.")
-            return []
+            return [FollowupAction("action_crear_footer")]
         else:
+            print("(" + threading.current_thread().getName() + ") " + "------------default fallback")
             return [FollowupAction("action_default_fallback")]
 
 class ActionCrearFooter(Action):
     def name(self) -> Text:
-        return "action_crear_Footer"
+        return "action_crear_footer"
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         print("(" + threading.current_thread().getName() + ") " + "----ACTION CREAR FOOTER----")
@@ -385,6 +393,7 @@ class ActionCrearFooter(Action):
         print("-------------FOOTER MODIFICADO-------------")
         dispatcher.utter_message(text="Podes ver los cambios que realizamos en el footer")
         return [SlotSet("creando_encabezado", False)]
+
 
 
 # Saludo Actions
