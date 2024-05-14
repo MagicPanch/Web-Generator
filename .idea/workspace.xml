@@ -6,11 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="121f2593-11ee-405e-a8d8-1c2f43d81e54" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chatbot/actions/actions.py" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/actions/actions.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chatbot/data/nlu.yml" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/data/nlu.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chatbot/data/stories.yml" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/data/stories.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chatbot/domain.yml" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/domain.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/generator/ReactGenerator.py" beforeDir="false" afterPath="$PROJECT_DIR$/generator/ReactGenerator.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -161,7 +156,8 @@
       <workItem from="1715625968550" duration="3189000" />
       <workItem from="1715629329939" duration="238000" />
       <workItem from="1715635714490" duration="1525000" />
-      <workItem from="1715692007500" duration="5290000" />
+      <workItem from="1715692007500" duration="5866000" />
+      <workItem from="1715704368333" duration="297000" />
     </task>
     <servers />
   </component>
