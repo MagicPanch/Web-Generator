@@ -22,7 +22,7 @@ class ReactGenerator:
     def generarHeader(data):
         print("genero header")
         text = f""""use client";
-    
+
         import React from "react";
         import logo from '{data["addressLogo"]}';
         import Image from "next/image";
