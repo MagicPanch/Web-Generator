@@ -65,27 +65,32 @@ class ActionModificarPagina(Action):
         print("(" + threading.current_thread().getName() + ") " + "----ACTION MODIFICAR PAGINA----")
 
         if tracker.get_slot('page_name') is None:
-            message = "Indicame el nombre de la pagina que deseas modificar. Te recuerdo que tus paginas son: "
+            message = "Indicame el nombre de la pagina que deseas modificar. Te recuerdo que tus paginas son: \n"
             pags = DBManager.get_user_pages(DBManager.get_instance(), tracker.sender_id)
             for pag in pags:
                 message += str(pag['name']) + "\n"
+            dispatcher.utter_message(text=message)
             return [SlotSet("pregunta_modificacion", True)]
         else:
             # Se estuvo hablando de una pagina en particular
-            page = DBManager.get_page(DBManager.get_instance(), tracker.sender_id, tracker.get_slot('page_name'))
-            if not page:
+            page_doc = DBManager.get_page(DBManager.get_instance(), tracker.sender_id, tracker.get_slot('page_name'))
+            if not page_doc:
                 # Esa pagina no pertenece al usuario
-                message = "No se encuentra la pagina que deseas ejecutar. Te recuerdo que tus paginas son: "
+                message = "No se encuentra la pagina que deseas ejecutar. Te recuerdo que tus paginas son: \n"
                 pags = DBManager.get_user_pages(DBManager.get_instance(), tracker.sender_id)
                 for pag in pags:
-                    message += str(pag['name']) + "\n"
+                    message += pag.name + "\n"
                 dispatcher.utter_message(text=message)
                 return [SlotSet("pregunta_modificacion", True)]
             else:
             # La pagina pertenece al usuario
-                # Verificar si la pagina está ejecutando
-                if PageManager.is_running(tracker.sender_id, page.name):
-                    PageManager.stop_page(tracker.sender_id, tracker.get_slot('page_name'))
+                # Verificar si la pagina está viva
+                page_obj = PageManager.get_page(tracker.sender_id, page_doc.name)
+                if page_obj:
+                    # La pagina esta viva
+                    if page_obj.is_running():
+                        # La pagina está ejecutando
+                        PageManager.stop_page(tracker.sender_id, page_doc.name)
                 return [SlotSet("pregunta_modificacion", False), FollowupAction("action_ejecutar_dev")]
 
 
@@ -106,7 +111,7 @@ class ActionEjecutarDev(Action):
 
         page_address = page.get_page_address()
         print("(" + threading.current_thread().getName() + ") " + "--------page_address: ", page_address)
-        dispatcher.utter_message(text="Podes visualizar tu página en el siguiente link: " + page_address)
+        dispatcher.utter_message(text="Tu pagina se encuentra en modo edición. Podrás visualizar los cambios que realices en: " + page_address)
         return []
 
 
@@ -144,6 +149,7 @@ class ActionEjecutarPagina(Action):
                     if page_obj.is_running():
                     # Verificar si la pagina está ejecutando
                         dispatcher.utter_message(text="Tu pagina ya esta ejecutando. Puedes acceder a ella en el siguiente link: " + PageManager.get_page(tracker.sender_id, page_doc.name).get_page_address())
+                        return []
                     else:
                     # Se esta ejecutando en modo dev
                         PageManager.stop_page(tracker.sender_id, page_doc.name)
@@ -186,30 +192,28 @@ class ActionEjecutarPagina(Action):
 
                 PageManager.stop_page(tracker.sender_id, tracker.get_latest_entity_values('page_name'))
                 print("(" + threading.current_thread().getName() + ") " + "------------PAGINA DETENIDA CON EXITO------------")
-                message = "Tu pagina fue apagada con exito."
+                dispatcher.utter_message(text="Tu pagina fue apagada con exito.")
             elif "todas" in tracker.latest_message.get("text"):
                 # Quiere detener todas
 
                 for pag in PageManager.get_user_running_pages(tracker.sender_id):
                     PageManager.stop_page(tracker.sender_id, pag.get_name())
-                print("(" + threading.current_thread().getName() + ") " + "------------PAGINA DETENIDA CON EXITO------------")
-                message = "Tus paginas fueron apagadas con exito."
+                    dispatcher.utter_message(text="La pagina " + pag.get_name() + " fue detenida con éxito.")
+                print("(" + threading.current_thread().getName() + ") " + "------------PAGINAS DETENIDA CON EXITO------------")
             else:
-                #No especifico cual quiere detener
+                #No especifico cual quiere detener pero hay slot de contexto
                 page_name = tracker.get_slot('page_name')
                 if page_name:
                     PageManager.stop_page(tracker.sender_id, page_name)
                     print("(" + threading.current_thread().getName() + ") " + "------------PAGINA DETENIDA CON EXITO------------")
-                    message = "Tu pagina fue apagada con exito."
+                    dispatcher.utter_message(text="Tu pagina fue apagada con exito.")
                 else:
                     message = "Indicame el nombre de la pagina que deseas detener. Te recuerdo que tus paginas en ejecución son: \n"
                     pags = PageManager.get_user_running_pages(tracker.sender_id)
                     for pag in pags:
                         message += str(pag.get_name()) + "\n"
-
                     dispatcher.utter_message(message)
                     return [SlotSet("pregunta_ejecucion", True)]
-            dispatcher.utter_message(message)
             return []
 
 class ActionCapturarEdicion(Action):
@@ -412,6 +416,7 @@ class ActionCrearEncabezado(Action):
             "addressLogo": "./logo.png",
             "colorTitulo": "text-yellow-600"
         }
+        PageManager.go_to_main_dir()
         ReactGenerator.generarHeader(dataHeader)
         print("-------------ENCABEZADO MODIFICADO-------------")
         DBManager.updt_modification_date(DBManager.get_instance(), tracker.sender_id, tracker.get_slot('page_name'))
@@ -553,7 +558,7 @@ class ActionDespedidaTelegram(Action):
         nombre = variable["from"]["first_name"]
         message = "Que siga bien su " + horario + ", nos vemos " + nombre + "!!"
         dispatcher.utter_message(text=str(message))
-        return []
+        return [FollowupAction("action_restart")]
 
 
 # Action Devolver Hora
