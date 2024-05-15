@@ -105,7 +105,7 @@ print(dataHeader)
 dataDicHeader = json.loads(dataHeader)
 print(dataDicHeader["titulo"])
 
-dataFooter =  {"address":addres , "email":"contactDesignLabel@gmail.com", "ubicacion": "Pinto 401 Tandil, Argentina"}
+dataFooter =  {"address":addres , "email":"contactDesignLabel@gmail.com", "ubicacion": "Pinto 401 Argentina, Tandil"} 
 dataFooter = json.dumps(dataFooter)
 generarFooter(dataFooter)
 

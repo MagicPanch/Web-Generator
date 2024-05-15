@@ -16,7 +16,7 @@
                     alt="Logo"/>
                 </div>
                 <h1 className="text-5xl text-yellow-600  mb-5  font-semibold text-center flex-1">
-                    Template
+                    ecommerce
                 </h1>
             </div>
         )
