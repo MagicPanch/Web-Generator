@@ -1,8 +1,7 @@
-from mongoengine import Document, StringField, DateTimeField
+from mongoengine import Document, StringField, DateTimeField, ListField
 
 
 class Page(Document):
-
     id = StringField(primary_key=True)
     name = StringField(required=True)
     contact = StringField(required=False)
@@ -11,3 +10,4 @@ class Page(Document):
     lastModificationDate = DateTimeField(required=True)
     mail = StringField(required=False)
     location = StringField(required=False)
+    sections = ListField(required=False)

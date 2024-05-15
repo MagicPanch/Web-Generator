@@ -2,7 +2,6 @@ from mongoengine import Document, StringField, ListField, ReferenceField, IntFie
 
 
 class User(Document):
-
     id = IntField(primary_key=True)
     username = StringField(required=False)
     name = StringField(required=False)
