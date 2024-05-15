@@ -7,14 +7,10 @@
     <list default="true" id="121f2593-11ee-405e-a8d8-1c2f43d81e54" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/chatbot/actions/actions.py" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/actions/actions.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chatbot/data/nlu.yml" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/data/nlu.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chatbot/data/rules.yml" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/data/rules.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/chatbot/data/stories.yml" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/data/stories.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chatbot/domain.yml" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/domain.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/database/DBManager.py" beforeDir="false" afterPath="$PROJECT_DIR$/database/DBManager.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/database/colections/Page.py" beforeDir="false" afterPath="$PROJECT_DIR$/database/colections/Page.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/generator/PageManager.py" beforeDir="false" afterPath="$PROJECT_DIR$/generator/PageManager.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/generator/ReactGenerator.py" beforeDir="false" afterPath="$PROJECT_DIR$/generator/ReactGenerator.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -167,7 +163,8 @@
       <workItem from="1715635714490" duration="1525000" />
       <workItem from="1715692007500" duration="5866000" />
       <workItem from="1715704368333" duration="297000" />
-      <workItem from="1715724396570" duration="7782000" />
+      <workItem from="1715724396570" duration="7992000" />
+      <workItem from="1715776823461" duration="7047000" />
     </task>
     <servers />
   </component>

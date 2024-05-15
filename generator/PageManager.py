@@ -74,13 +74,13 @@ class PageManager(object):
         #Nos posiciona en el subdirectorio indicado. Si no existe, lo crea
         os.makedirs(dir_name, exist_ok=True)
         os.chdir(dir_name)
-        print("(" + threading.current_thread().getName() + ") " + "nuevo dir: " + os.getcwd())
+        #print("(" + threading.current_thread().getName() + ") " + "nuevo dir: " + os.getcwd())
 
     @staticmethod
     def go_to_main_dir():
         while os.path.basename(os.getcwd()) != CONSTANTS.MAIN_DIR:
             os.chdir("..")
-        print("(" + threading.current_thread().getName() + ") " + "nuevo dir: " + os.getcwd())
+        #print("(" + threading.current_thread().getName() + ") " + "nuevo dir: " + os.getcwd())
 
     @staticmethod
     def _run_process(command):
@@ -177,7 +177,10 @@ class PageManager(object):
         os.chdir(path)
 
         command = 'npx next build '
-        PageManager._running_pages[(user, page_name)].get_page().set_process(PageManager._run_process(command))
+        process = PageManager._run_process(command)
+        PageManager._running_pages[(user, page_name)].get_page().set_process(process)
+        process.wait()
+        PageManager._running_pages[(user, page_name)].get_page().set_process(None)
 
     @staticmethod
     def build_project(user, page_name):
@@ -234,7 +237,11 @@ class PageManager(object):
 
     @staticmethod
     def get_page(user, page_name) -> Front:
-        return PageManager._running_pages[(user, page_name)].get_page()
+        entry = PageManager._running_pages.get((user, page_name))
+        if entry:
+            return entry.get_page()
+        else:
+            return None
 
     @staticmethod
     def get_thread(user, page_name) -> threading.Thread:
@@ -247,15 +254,26 @@ class PageManager(object):
 
     @staticmethod
     def is_running(user, page_name) -> bool:
-        return (user, page_name) in PageManager._running_pages.keys()
+        entry = PageManager._running_pages.get((user, page_name))
+        if entry:
+            return entry.get_page().is_running()
+        else:
+            return False
 
     @staticmethod
     def stop_page(user, page_name):
         # Matar la página
+        print("(" + threading.current_thread().getName() + ") " + "----EN STOP_PAGE----")
         page = PageManager._running_pages[(user, page_name)].get_page()
+        page.set_running(False)
+        print("(" + threading.current_thread().getName() + ") " + "--------Antes de kill_project")
         PageManager.kill_project(page.get_port())
+        print("(" + threading.current_thread().getName() + ") " + "--------Despues de kill_project")
         thread = PageManager._running_pages[(user, page_name)].get_thread()
+        print("(" + threading.current_thread().getName() + ") " + "--------thread: ", thread.getName())
+        print("(" + threading.current_thread().getName() + ") " + "--------Antes de join")
         thread.join()
+        print("(" + threading.current_thread().getName() + ") " + "--------Despues de join")
         PageManager._running_pages[(user, page_name)].set_thread(None)
         PageManager._running_pages.pop((user, page_name))
 

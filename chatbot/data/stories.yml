@@ -5,7 +5,7 @@ stories:
 - story: start
   steps:
     - intent: start
-    - action: action_listen
+    - action: action_saludo_telegram #Aca se guarda al usuario en la DB
 
 # CREACION
 

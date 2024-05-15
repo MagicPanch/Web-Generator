@@ -138,34 +138,37 @@ class ActionEjecutarPagina(Action):
                 return [SlotSet("pregunta_ejecucion", True)]
             else:
             # La pagina pertenece al usuario
-                # Verificar si la pagina está ejecutando
-                if PageManager.is_running(tracker.sender_id, page_doc.name):
-                    dispatcher.utter_message(text="Tu pagina ya esta ejecutando. Puedes acceder a ella en el siguiente link: " + PageManager.get_page(tracker.sender_id, page_doc.name).get_page_address())
+                page_obj = PageManager.get_page(tracker.sender_id, page_doc.name)
+                if page_obj:
+                # La pagina esta viva
+                    if page_obj.is_running():
+                    # Verificar si la pagina está ejecutando
+                        dispatcher.utter_message(text="Tu pagina ya esta ejecutando. Puedes acceder a ella en el siguiente link: " + PageManager.get_page(tracker.sender_id, page_doc.name).get_page_address())
+                    else:
+                    # Se esta ejecutando en modo dev
+                        PageManager.stop_page(tracker.sender_id, page_doc.name)
+                        page_obj = PageManager.add_page(tracker.sender_id, page_doc.name)
+                        print("(" + threading.current_thread().getName() + ") " + "------------page_obj: ", page_obj)
                 else:
+                # La pagina no vive en PageManager
                     page_obj = PageManager.add_page(tracker.sender_id, page_doc.name)
-                    print("(" + threading.current_thread().getName() + ") " + "------------page_obj: ", page_obj)
 
-                    print("(" + threading.current_thread().getName() + ") " + "------------Antes de join_thread")
-                    # Se espera a que el hilo finalice
-                    PageManager.join_thread(tracker.sender_id, page_doc.name)
-                    print("(" + threading.current_thread().getName() + ") " + "------------Despues de join_thread")
-
-                    #Verificar si esta compilada
-                    if not DBManager.was_compiled(DBManager.get_instance(), tracker.sender_id, page_doc.name):
-                        print("(" + threading.current_thread().getName() + ") " + "----------------pagina no compilada")
-                        PageManager.build_project(tracker.sender_id, page_doc.name)
-                        DBManager.set_compilation_date(DBManager.get_instance(), tracker.sender_id, page_doc.name)
-                        print("(" + threading.current_thread().getName() + ") " + "----------------compilacion finalizada")
-
+                #Verificar si esta compilada
+                if not DBManager.was_compiled(DBManager.get_instance(), tracker.sender_id, page_doc.name):
+                    print("(" + threading.current_thread().getName() + ") " + "----------------pagina no compilada")
+                    PageManager.build_project(tracker.sender_id, page_doc.name)
+                    DBManager.set_compilation_date(DBManager.get_instance(), tracker.sender_id, page_doc.name)
                     PageManager.join_thread(tracker.sender_id, page_doc.name)
                     print("(" + threading.current_thread().getName() + ") " + "------------PAGINA COMPILADA")
+                else:
+                    print("(" + threading.current_thread().getName() + ") " + "----------------pagina ya compilada")
 
-                    # Inicia la ejecución del proyecto en modo desarrollo en un nuevo hilo
-                    PageManager.run_project(tracker.sender_id, page_doc.name)
+                # Inicia la ejecución del proyecto en modo desarrollo en un nuevo hilo
+                PageManager.run_project(tracker.sender_id, page_doc.name)
 
-                    page_address = page_obj.get_page_address()
-                    print("(" + threading.current_thread().getName() + ") " + "------------page_address: ", page_address)
-                    dispatcher.utter_message(text="Podes acceder a tu página en el siguiente link: " + page_address)
+                page_address = page_obj.get_page_address()
+                print("(" + threading.current_thread().getName() + ") " + "------------page_address: ", page_address)
+                dispatcher.utter_message(text="Podes acceder a tu página en el siguiente link: " + page_address)
                 return [SlotSet("pregunta_ejecucion", False)]
 
     class ActionDetenerPagina(Action):
@@ -222,10 +225,39 @@ class ActionCapturarEdicion(Action):
         # Hay pagina y componente a editar
             print("(" + threading.current_thread().getName() + ") " + "--------componente: ", componente)
             print("(" + threading.current_thread().getName() + ") " + "--------pagina: ", page_name)
-            if componente == "encabezado":
-                return[FollowupAction("action_preguntar_color_encabezado"), SlotSet("pregunta_componente", False), SlotSet("pregunta_nombre", False), SlotSet("pregunta_edicion", False)]
-            elif componente == "footer":
-                return[FollowupAction("action_preguntar_mail_footer"), SlotSet("pregunta_componente", False), SlotSet("pregunta_nombre", False), SlotSet("pregunta_edicion", False)]
+
+            page_doc = DBManager.get_page(DBManager.get_instance(), tracker.sender_id, tracker.get_slot('page_name'))
+            print("(" + threading.current_thread().getName() + ") " + "--------page_doc: ", page_doc)
+            if not page_doc:
+                # Esa pagina no pertenece al usuario
+                message = "La pagina que estas intentando modificar no te pertenece. Te recuerdo que tus paginas son: "
+                pags = DBManager.get_user_pages(DBManager.get_instance(), tracker.sender_id)
+                for pag in pags:
+                    message += str(pag.name) + "\n"
+                dispatcher.utter_message(text=message)
+                return [SlotSet("pregunta_nombre", True)]
+            else:
+                # La pagina pertenece al usuario
+                print("(" + threading.current_thread().getName() + ") " + "------------la pagina es del usuario")
+                page_obj = PageManager.get_page(tracker.sender_id, page_doc.name)
+                if page_obj:
+                    # La pagina esta viva
+                    print("(" + threading.current_thread().getName() + ") " + "----------------la pagina esta viva")
+                    print("(" + threading.current_thread().getName() + ") " + "------------page_obj: ", page_obj)
+                    PageManager.stop_page(tracker.sender_id, page_doc.name)
+                    print("(" + threading.current_thread().getName() + ") " + "----------------pagina_detenida")
+                else:
+                    # La pagina no vive en PageManager
+                    print("(" + threading.current_thread().getName() + ") " + "----------------la pagina NO esta viva")
+                page_obj = PageManager.add_page(tracker.sender_id, page_doc.name)
+                print("(" + threading.current_thread().getName() + ") " + "--------page_obj: ", page_obj)
+                PageManager.run_dev(tracker.sender_id, page_doc.name)
+                page_address = page_obj.get_page_address()
+                dispatcher.utter_message(text="Tu pagina se encuentra en modo edición. Podrás visualizar los cambios que realices en: " + page_address)
+                if componente == "encabezado":
+                    return[FollowupAction("action_preguntar_color_encabezado"), SlotSet("pregunta_componente", False), SlotSet("pregunta_nombre", False), SlotSet("pregunta_edicion", False)]
+                elif componente == "footer":
+                    return[FollowupAction("action_preguntar_mail_footer"), SlotSet("pregunta_componente", False), SlotSet("pregunta_nombre", False), SlotSet("pregunta_edicion", False)]
 
         elif page_name and not componente:
         # Hay pagina y no hay componente a editar
@@ -242,7 +274,7 @@ class ActionCapturarEdicion(Action):
             message = "Indicame el nombre de la pagina que deseas modificar. Te recuerdo que tus paginas son: \n"
             pags = DBManager.get_user_pages(DBManager.get_instance(), tracker.sender_id)
             for pag in pags:
-                message += str(pag.get_name()) + "\n"
+                message += str(pag.name) + "\n"
             dispatcher.utter_message(text=message)
             return [SlotSet("pregunta_nombre", True)]
         else:
@@ -250,8 +282,9 @@ class ActionCapturarEdicion(Action):
             message = "Indicame el nombre de la pagina que deseas modificar. Te recuerdo que tus paginas son: \n"
             pags = DBManager.get_user_pages(DBManager.get_instance(), tracker.sender_id)
             for pag in pags:
-                message += str(pag.get_name()) + "\n"
-            message += "Que componente quisieras editar? Te recuerdo que los componentes son: \n"
+                message += str(pag.name) + "\n"
+            dispatcher.utter_message(text=message)
+            message = "\n Además necesito que me proporciones el componente que quieras editar. Ellos pueden ser: \n"
             message += "Encabezado \n"
             message += "Footer \n"
             dispatcher.utter_message(text=message)
@@ -381,8 +414,9 @@ class ActionCrearEncabezado(Action):
         }
         ReactGenerator.generarHeader(dataHeader)
         print("-------------ENCABEZADO MODIFICADO-------------")
+        DBManager.updt_modification_date(DBManager.get_instance(), tracker.sender_id, tracker.get_slot('page_name'))
         dispatcher.utter_message(text="Podes ver los cambios que realizamos en el encabezado")
-        return [SlotSet("creando_encabezado", False)]
+        return [SlotSet("creando_encabezado", False), SlotSet("componente", None)]
 
 
 class ActionPreguntarMailFooter(Action):
@@ -465,7 +499,7 @@ class ActionCrearFooter(Action):
         ReactGenerator.generarFooter(dataFooter)
         print("-------------FOOTER MODIFICADO-------------")
         dispatcher.utter_message(text="Podes ver los cambios que realizamos en el footer")
-        return [SlotSet("creando_encabezado", False)]
+        return [SlotSet("creando_encabezado", False), SlotSet("componente", None)]
 
 
 

@@ -41,7 +41,7 @@ class DBManager(object):
         user = User.objects(id=user_id).first()
         if user:
             page_id = user_id + '-' + page_name
-            page = Page(id=page_id, name=page_name, contact=contact, creationDate=datetime.datetime.now(), lastModification=datetime.datetime.now())
+            page = Page(id=page_id, name=page_name, contact=contact, creationDate=datetime.datetime.utcnow(), lastModificationDate=datetime.datetime.now())
             page.save()
             user.paginas.append(page)
             user.save()
@@ -74,7 +74,14 @@ class DBManager(object):
         page_id = user_id + '-' + page_name
         page = Page.objects(id=page_id).first()
         if page:
-            return page.compilationDate == datetime.datetime.now()
+            print("page.name", page.name)
+            print("page.compilationDate", page.compilationDate)
+            print("page.lastModificationDate", page.lastModificationDate)
+
+            if page.compilationDate is None:
+                return False
+            else:
+                return page.compilationDate >= page.lastModificationDate
         else:
             raise Exception("La pagina " + str(page_name) + " no existe o no te pertenece")
 
@@ -83,7 +90,7 @@ class DBManager(object):
         page = Page.objects(id=page_id).first()
         if page:
             page.mail = page_mail
-            page.lastModification = datetime.datetime.now()
+            page.lastModificationDate = datetime.datetime.now()
             page.save()
         else:
             raise Exception("La pagina " + str(page_name) + " no existe o no te pertenece")
@@ -93,7 +100,16 @@ class DBManager(object):
         page = Page.objects(id=page_id).first()
         if page:
             page.location = page_location
-            page.lastModification = datetime.datetime.now()
+            page.lastModificationDate = datetime.datetime.now()
+            page.save()
+        else:
+            raise Exception("La pagina " + str(page_name) + " no existe o no te pertenece")
+
+    def updt_modification_date(self, user_id, page_name):
+        page_id = user_id + '-' + page_name
+        page = Page.objects(id=page_id).first()
+        if page:
+            page.lastModificationDate = datetime.datetime.now()
             page.save()
         else:
             raise Exception("La pagina " + str(page_name) + " no existe o no te pertenece")
@@ -103,7 +119,6 @@ class DBManager(object):
         page = Page.objects(id=page_id).first()
         if page:
             page.compilationDate = datetime.datetime.now()
-            page.lastModification = datetime.datetime.now()
             page.save()
         else:
             raise Exception("La pagina " + str(page_name) + " no existe o no te pertenece")
