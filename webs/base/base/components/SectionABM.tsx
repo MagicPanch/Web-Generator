@@ -5,10 +5,10 @@ const SectionABM = () => {
     <section>
       <div className="max-w-screen bg-blue-300 p-4 h-full px-4">
        <h1>
-        titulo
+        soy ABM
        </h1>
        <p>
-        texto
+        aca opciones para agregar parametros
        </p>
       </div>
     </section>
