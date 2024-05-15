@@ -4,11 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="121f2593-11ee-405e-a8d8-1c2f43d81e54" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chatbot/actions/actions.py" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/actions/actions.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chatbot/components/logo.png" beforeDir="false" />
-    </list>
+    <list default="true" id="121f2593-11ee-405e-a8d8-1c2f43d81e54" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -163,7 +159,7 @@
       <workItem from="1715724396570" duration="7992000" />
       <workItem from="1715776823461" duration="8048000" />
       <workItem from="1715794114264" duration="1687000" />
-      <workItem from="1715808253898" duration="1560000" />
+      <workItem from="1715808253898" duration="1886000" />
     </task>
     <servers />
   </component>
