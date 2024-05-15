@@ -173,6 +173,7 @@ class PageManager(object):
 
         #Posicionarse en el path donde se creara el proyecto
         path = PageManager.get_page_path(user, page_name)
+        PageManager.go_to_main_dir()
         os.chdir(path)
 
         command = 'npx next build '
@@ -191,6 +192,7 @@ class PageManager(object):
 
         #Posicionarse en el path donde se creara el proyecto
         path = PageManager.get_page_path(user, page_name)
+        PageManager.go_to_main_dir()
         os.chdir(path)
         command = 'npm start -- --port ' + str(page_port)
         PageManager._running_pages[(user, page_name)].get_page().set_process(PageManager._run_process(command))
@@ -244,6 +246,10 @@ class PageManager(object):
         return path
 
     @staticmethod
+    def is_running(user, page_name) -> bool:
+        return (user, page_name) in PageManager._running_pages.keys()
+
+    @staticmethod
     def stop_page(user, page_name):
         # Matar la página
         page = PageManager._running_pages[(user, page_name)].get_page()
@@ -251,6 +257,7 @@ class PageManager(object):
         thread = PageManager._running_pages[(user, page_name)].get_thread()
         thread.join()
         PageManager._running_pages[(user, page_name)].set_thread(None)
+        PageManager._running_pages.pop((user, page_name))
 
     @staticmethod
     def get_pid(port):

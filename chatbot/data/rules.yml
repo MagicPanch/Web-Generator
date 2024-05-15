@@ -5,7 +5,7 @@ rules:
 - rule: Siempre preguntar nombre despues de crear pagina
   steps:
   - intent: crear_pagina
-  - action: utter_preguntar_nombre
+  - action: action_preguntar_nombre_pagina
 
 #
 #- rule: Siempre preguntar tipo después del nombre

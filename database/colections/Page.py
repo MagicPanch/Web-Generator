@@ -7,7 +7,7 @@ class Page(Document):
     name = StringField(required=True)
     contact = StringField(required=False)
     creationDate = DateField(required=True)
+    compilationDate = DateField(required=False)
     lastModification = DateField(required=True)
-    compiled = BooleanField()
     mail = StringField(required=False)
     location = StringField(required=False)

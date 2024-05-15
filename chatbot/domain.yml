@@ -1,13 +1,14 @@
 version: '3.1'
 
 intents:
-  - intent
+  - start
   - afirmar
   - agregaciones
   - bot_challenge
   - como_estas
   - editar_encabezado
   - crear_pagina
+  - modificar_pagina
   - editar_componente
   - crear_seccion
   - decir_color
@@ -68,13 +69,13 @@ actions:
   - action_recibir_imagen
   - action_saludo_telegram
   - action_triste
-  - utter_preguntar_logo
-  - utter_preguntar_nombre
+  - action_preguntar_nombre_pagina
   - action_copiar_template
+  - action_modificar_pagina
   - action_ejecutar_dev
   - action_guardar_seccion
   - action_preguntar_tipo_seccion
-  - action_capturar_componente_edicion
+  - action_capturar_edicion
   - action_preguntar_color_encabezado
   - action_preguntar_mail_footer
   - action_guardar_mail_footer
@@ -129,6 +130,55 @@ slots:
     - type: from_entity
       entity: seccion
 
+  creando_pagina:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: custom
+
+  pregunta_componente:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: custom
+
+  pregunta_nombre:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: custom
+
+  pregunta_edicion:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: custom
+
+  pregunta_modificacion:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: custom
+
+  pregunta_ejecucion:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: custom
+
+  pregunta_detencion:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: custom
+
   creando_seccion:
     type: bool
     influence_conversation: true
@@ -181,9 +231,6 @@ slots:
       entity: animo
 
 responses:
-
-  utter_preguntar_nombre:
-  - text: '¿Como queres que se llame tu pagina? Por favor indica su nombre en el siguiente formato: www. nombre-pagina .com'
 
   utter_preguntar_logo:
   - text: Si lo deseas podes enviarme una imagen con el logo de tu página para el encabezado

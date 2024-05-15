@@ -13,8 +13,12 @@ nlu:
     - perfecto, quiero una pagina web
     - quiero otra pagina
 
-- intent: editar_componente
+- intent: modificar_pagina
   examples: |
+    - quiero modificar una pagina
+    - quiero modificar [facebook](page_name)
+    - hay que hacerle una modificacion a [twitter](page_name)
+    - tengo que cambiar algo de una pagina
     - quiero modificar el [encabezado](componente)
     - editemos el [footer](componente)
     - te voy a explicar como quiero el [encabezado](componente)
@@ -74,6 +78,8 @@ nlu:
     - mandala
     - ponela a correr
     - ejecuta [test](page_name)
+    - pagina terminada
+    - dame la version final
 
 - intent: detener_pagina
   examples: |
@@ -133,7 +139,7 @@ nlu:
 - intent: decir_ubicacion
   examples: |
     - la ubicacion es [Pinto 401 Tandil, Argentina](ubicacion)
-    - [4 de abril 568 Tandil, Argentina](ubicacion)
+    - [4 de abril 568 (5) Tandil, Argentina](ubicacion)
     - la direccion es [Calle 18 3235 Necochea, Argentina](ubicacion)
 
 - intent: out_of_scope
