@@ -3,8 +3,9 @@ import json
 
 def generarHeader(data):
     print("genero header")
+    data = json.loads(data)
     text = f""""use client";
-
+    
     import React from "react";
     import logo from '{data["addressLogo"]}';
     import Image from "next/image";
@@ -20,7 +21,7 @@ def generarHeader(data):
                     height={{100}}
                     alt="Logo"/>
                 </div>
-                <h1 className="text-5xl {data["colorTitulo"]}  mb-5  font-semibold text-center flex-1">
+                <h1 className="text-5xl text-colorTituloHeader  mb-5  font-semibold text-center flex-1">
                     {data["titulo"]}
                 </h1>
             </div>
@@ -28,8 +29,52 @@ def generarHeader(data):
     }}
     export default Header;
     """
+    configColor = f"""/** @type {{import('tailwindcss').Config}} */
+    module.exports = {{
+    content: [
+        "./pages/**/*.{{js,ts,jsx,tsx,mdx}}",
+        "./components/**/*.{{js,ts,jsx,tsx,mdx}}",
+        "./app/**/*.{{js,ts,jsx,tsx,mdx}}",
+    ],
+    theme: {{
+    extend: {{
+        fontFamily: {{
+            body: ["Korolev Medium"],
+        }},
+    colors: {{
+        primary: {{
+            400: "#CBEAF2",
+            500: "#66b7cb",
+            600: "#55a4b7",
+        }},
+            bgGray: "#E2E2E2",
+            bgBlack: "#1C1C1C",
+            colorTituloHeader : "{data["colorTitulo"]}",
+        }},
+        backgroundSize: {{
+            "16": "4rem",
+        }},
+        screens: {{
+            xs: "400px",
+            "3xl": "1680px",
+             "4xl": "2200px",
+        }},
+        maxWidth: {{
+            "10xl": "1512px",
+        }},
+        borderRadius: {{
+            "5xl": "40px",
+          }},
+         }},
+        }},
+        plugins: [],
+    }};"""
+
+
     with open(data["address"]+"\components\Header.tsx", "w") as file:
         file.write(text)
+    with open(data["address"]+"\/tailwind.config.ts", "w") as file:
+        file.write(configColor)
 
 def generarFooter(dataFooter):
     print("genero footer")
@@ -99,7 +144,7 @@ def generarBody(dataBody):
 
 
 addres ="C:/Users/Agustin/Desktop/DesingLabel22/Web-Generator/webs/base/base" #direccion donde se ubica la web react
-dataHeader =  { "titulo": "ecommerce" , "address":addres , "addressLogo": "./logo.png" ,"colorTitulo":"text-yellow-600"} 
+dataHeader =  { "titulo": "ecommerce" , "address":addres , "addressLogo": "./logo.png" ,"colorTitulo":"#E1704F"} 
 dataHeader = json.dumps(dataHeader)
 print(dataHeader)
 dataDicHeader = json.loads(dataHeader)
@@ -107,7 +152,7 @@ print(dataDicHeader["titulo"])
 
 dataFooter =  {"address":addres , "email":"contactDesignLabel@gmail.com", "ubicacion": "Pinto 401 Argentina, Tandil"} 
 dataFooter = json.dumps(dataFooter)
-generarFooter(dataFooter)
+generarHeader(dataHeader)
 
 dataBody =  {"address":addres , "price":"5000"} 
 dataBody = json.dumps(dataBody)
