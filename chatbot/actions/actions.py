@@ -361,10 +361,13 @@ class ActionGuardarColor(Action):
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+
+        print("(" + threading.current_thread().getName() + ") " + "----EN ACTION GUARDAR COLOR----")
         color = next(tracker.get_latest_entity_values("color"), None)
+        print("(" + threading.current_thread().getName() + ") " + "--------color: ", color)
         #text - yellow - 600
 
-        if (str(color)) == "None" or tracker.get_intent_of_latest_message() == "despues_te_digo":
+        if not color or tracker.get_intent_of_latest_message() == "despues_te_digo":
             message = "Bueno, podemos ver el tipo mas tarde"
         else:
             message = "Perfecto! Ya se guardo que color queres, el cual sera: \n" + str(color) + "."
@@ -373,6 +376,7 @@ class ActionGuardarColor(Action):
         if tracker.get_slot("creando_encabezado"):
             slot_key = "color_encabezado"
         if slot_key is not None:
+            print("(" + threading.current_thread().getName() + ") " + "--------slot_key: ", slot_key)
             return [SlotSet(slot_key, color)]
         else:
             return []
@@ -409,8 +413,8 @@ class ActionPreguntarColorEncabezado(Action):
         return "action_preguntar_color_encabezado"
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        dispatcher.utter_message(text="De que color te gustaria que sea el encabezado?")
-        return [SlotSet("creando_encabezado", True)]
+        dispatcher.utter_message(text="De que color te gustaria que sea el encabezado? Para ello necesito que me proveas su codigo hexadecimal. Podes seleccionar tu color y copiar su codigo en el siguiente link: https://g.co/kgs/FMBcG8K")
+        return [SlotSet("creando_encabezado", True), FollowupAction("action_listen")]
 
 
 class ActionCrearEncabezado(Action):
@@ -419,13 +423,16 @@ class ActionCrearEncabezado(Action):
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        print("(" + threading.current_thread().getName() + ")" + "----EN ACTION CREAR ENCABEZADO----")
         page_path = PageManager.get_page_path(tracker.sender_id, tracker.get_slot('page_name'))
-        print(page_path)
+        print("(" + threading.current_thread().getName() + ")" + "--------page_path: ", page_path)
+        color = tracker.get_slot('color_encabezado')
+        print("(" + threading.current_thread().getName() + ")" + "--------color: ", color)
         dataHeader = {
             "titulo": tracker.get_slot('page_name'),
             "address": page_path,
             "addressLogo": "./logo.png",
-            "colorTitulo": "text-yellow-600"
+            "colorTitulo": color
         }
         PageManager.go_to_main_dir()
         ReactGenerator.generarHeader(dataHeader)

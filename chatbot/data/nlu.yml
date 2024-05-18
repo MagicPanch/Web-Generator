@@ -115,20 +115,20 @@ nlu:
 - intent: agregaciones
   examples: |
     - Puedo agregar un [boton](componente)?
-    - puedo agregar un [titulo](componente) [negro](color)
-    - quiero agregar un [boton](componente) [azul](color)
+    - puedo agregar un [titulo](componente) [#b01a5e](color)
+    - quiero agregar un [boton](componente) [#b4db9e](color)
     - quiero agregar un [titulo](componente)
     - quiero agregar una [imagen](componente)
     - quiero agregar un [filtro](componente)
     - puedo agregar una [imagen](componente)
-    - quiero agregar un [boton](componente) [rojo](color)
+    - quiero agregar un [boton](componente) [#2a2475](color)
 
 - intent: decir_color
   examples: |
-    - color [rojo](color)
-    - que sea [violeta](color)
-    - lo quiero [rosa](color)
-    - que sea [bordo](color)
+    - color [#4287f5](color)
+    - que sea [#275c29](color)
+    - lo quiero [#ffffff](color)
+    - que sea [#000000](color)
 
 - intent: decir_mail
   examples: |
