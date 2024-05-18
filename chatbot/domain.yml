@@ -81,6 +81,7 @@ actions:
   - action_guardar_mail_footer
   - action_guardar_ubicacion_footer
   - action_crear_footer
+  - action_prueba
 
 slots:
   page_name:
@@ -266,6 +267,7 @@ responses:
   - text: jajajajaj
   - text: jajajajjaa
   - text: jsjsjajaj
+  - text: kkkkkk
 
   utter_como_estas:
   - text: Muy bien, gracias por preguntar, vos?

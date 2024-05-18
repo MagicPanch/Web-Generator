@@ -102,6 +102,7 @@ class ActionEjecutarDev(Action):
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         print("(" + threading.current_thread().getName() + ") " + "----ACTION EJECUTAR DEV----")
         page = PageManager.get_page(tracker.sender_id, tracker.get_slot('page_name'))
+        #dispatcher.utter_message(text="Tu pagina se encuentra en modo edición. Podrás visualizar los cambios que realices en: " + page.get_page_address())
 
         #Se espera a que el hilo finalice
         PageManager.join_thread(page.get_user(), page.get_name())
@@ -111,7 +112,17 @@ class ActionEjecutarDev(Action):
 
         #Esperar a que la pagina este lista
         page.wait_for_ready()
+        print("(" + threading.current_thread().getName() + ") " + "--------Despues de espera, antes de utter_message")
         dispatcher.utter_message(text="Tu pagina se encuentra en modo edición. Podrás visualizar los cambios que realices en: " + page.get_page_address())
+        print("(" + threading.current_thread().getName() + ") " + "--------Despues de utter_message")
+        return [FollowupAction("action_prueba")]
+
+class ActionPrueba(Action):
+
+    def name(self) -> Text:
+        return "action_prueba"
+    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        print("(" + threading.current_thread().getName() + ") " + "----ACTION PRUEBA----")
         return []
 
 
