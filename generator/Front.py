@@ -15,10 +15,12 @@ class Front(PageRunner):
     def __init__(self, user, page_name, page_port):
         super().__init__(user, page_name, page_port)
         self._running = False
-        self._page_adress = self._generate_page_address()
+        self._page_adress = None
 
     def get_page_address(self) -> str:
-        return "http://localhost:" + str(self._page_port)
+        if self._page_adress is None:
+            self._page_adress = self._generate_page_address()
+        return self._page_adress + ":" + str(self._page_port)
 
     def is_running(self) -> bool:
         return self._running

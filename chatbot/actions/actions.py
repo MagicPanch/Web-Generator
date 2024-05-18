@@ -109,9 +109,9 @@ class ActionEjecutarDev(Action):
         #Inicia la ejecución del proyecto en modo desarrollo en un nuevo hilo
         PageManager.run_dev(page.get_user(), page.get_name())
 
-        page_address = page.get_page_address()
-        print("(" + threading.current_thread().getName() + ") " + "--------page_address: ", page_address)
-        dispatcher.utter_message(text="Tu pagina se encuentra en modo edición. Podrás visualizar los cambios que realices en: " + page_address)
+        #Esperar a que la pagina este lista
+        page.wait_for_ready()
+        dispatcher.utter_message(text="Tu pagina se encuentra en modo edición. Podrás visualizar los cambios que realices en: " + page.get_page_address())
         return []
 
 

@@ -23,7 +23,8 @@ class DBManager(object):
             self._client = MongoClient(CONSTANTS.DB_URI)
             connect(
                 db='web_generator',  # Nombre de la base de datos
-                host=CONSTANTS.DB_URI)
+                host=CONSTANTS.DB_URI,
+                uuidRepresentation='standard')
         else:
             raise Exception("No se puede crear otra instancia de DB Manager")
 
@@ -57,10 +58,12 @@ class DBManager(object):
             return None
 
     def get_page_by_name(self, page_name):
-        page = Page.objects(id__icontains=page_name).first()
-        if page:
-            return page
-        else:
+        pages = Page.objects(id__icontains=page_name)
+        found = False
+        for page in pages:
+            if page.name == page_name:
+                return page
+        if not found:
             return None
 
     def get_user_pages(self, user_id):

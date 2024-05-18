@@ -84,7 +84,8 @@ class PageManager(object):
 
     @staticmethod
     def _run_process(command):
-        return subprocess.Popen(command, shell=True)
+        return subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=os.getcwd(), shell=True)
+        #return subprocess.Popen(command, shell=True)
 
     @staticmethod
     def get_user_running_pages(user) -> List[Front]:
@@ -111,11 +112,11 @@ class PageManager(object):
         process = PageManager._run_process(command)
         PageManager._running_pages[(user, page_name)].get_page().set_process(process)
         process.wait()
+        process.terminate()
+        PageManager._running_pages[(user, page_name)].get_page().set_process(None)
 
         #Copiar los templates al proyecto creado
         PageManager.copy_template(user, page_name)
-
-        PageManager._running_pages[(user, page_name)].get_page().set_process(None)
         print("(" + threading.current_thread().getName() + ") " + "----Ejecucion finalizada----")
 
     @staticmethod
@@ -156,8 +157,22 @@ class PageManager(object):
         path = PageManager.get_page_path(user, page_name)
         os.chdir(path)
 
+        #Ejecutar el proceso
         command = 'npm run dev -- --port=' + str(page_port)
-        PageManager._running_pages[(user, page_name)].get_page().set_process(PageManager._run_process(command))
+        process = PageManager._run_process(command)
+        page = PageManager._running_pages[(user, page_name)].get_page()
+        page.set_process(process)
+
+        #Capturar su salida
+        it = True
+        while it:
+            output = process.stdout.readline()
+            if output == '' and process.poll() is not None:
+                break
+            if output:
+                decoded_output = output.decode().strip()
+                it = page.append_output(decoded_output)
+                print("(" + threading.current_thread().getName() + ") " + decoded_output)
 
     @staticmethod
     def run_dev(user, page_name):

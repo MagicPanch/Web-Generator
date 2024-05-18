@@ -7,11 +7,12 @@ class PageRunner():
     @abstractmethod
     def __init__(self, user, page_name, page_port):
         super().__init__()
+        self._output_ready = threading.Condition()
+        self._output_buffer = []
         self._user = user
         self._page_name = page_name
         self._page_port = page_port
         self._process = None
-        pass
 
     def get_user(self) -> str:
         return self._user
@@ -23,8 +24,30 @@ class PageRunner():
         return self._page_port
 
     def set_process(self, process):
-        self._process = process
+        with self._output_ready:
+            self._process = process
+            self._output_ready.notify_all()
 
     def get_process(self):
-        return self._process
+        with self._output_ready:
+            while self._process is None:
+                self._output_ready.wait()
+            return self._process
+
+    def append_output(self, output) -> bool:
+        with self._output_ready:
+            self._output_buffer.append(output)
+            if "Ready" in output:
+                self._output_ready.notify_all()
+                return False
+            else:
+                return True
+
+    def wait_for_ready(self):
+        print("(" + threading.current_thread().getName() + ") " + "----PageRunner.wait_for_ready----")
+        with self._output_ready:
+            print("(" + threading.current_thread().getName() + ") " + "--------Salida lista, esperando")
+            while not any("Ready" in line for line in self._output_buffer):
+                self._output_ready.wait()
+            print("(" + threading.current_thread().getName() + ") " + "--------Espera finalizada")
 
