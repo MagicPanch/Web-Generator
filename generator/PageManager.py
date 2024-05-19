@@ -5,18 +5,22 @@ import socket
 import subprocess
 import threading
 from typing import Tuple, Dict, List
+
+import requests
 from telegram import Bot
 import CONSTANTS
 import psutil
 from generator.Front import Front
+import socket
 
 
 class PageManager(object):
 
     class Entry():
-        def __init__(self, page, thread):
+        def __init__(self, page, thread_exec, thread_tunnel):
             self._page = page
-            self._thread = thread
+            self._thread_exec = thread_exec
+            self._thread_tunnel = thread_tunnel
 
         def set_page(self, page):
             self._page = page
@@ -24,10 +28,16 @@ class PageManager(object):
         def get_page(self):
             return self._page
 
-        def set_thread(self, thread):
+        def set_thread_exec(self, thread):
             self._thread = thread
 
-        def get_thread(self):
+        def get_thread_exec(self):
+            return self._thread
+
+        def set_thread_tunnel(self, thread):
+            self._thread = thread
+
+        def get_thread_tunnel(self):
             return self._thread
 
 
@@ -54,6 +64,21 @@ class PageManager(object):
             return port
         else:
             return PageManager.get_port()
+
+    @staticmethod
+    def get_tunnel_password():
+        try:
+            # Realizar la solicitud HTTP GET
+            response = requests.get(CONSTANTS.LOCAL_TUNNEL_PASSWORD_URL)
+            # Verificar si la solicitud fue exitosa (código de estado 200)
+            if response.status_code == 200:
+                # Extraer la dirección IP del cuerpo de la respuesta
+                ip = response.text.strip()
+                return ip
+            else:
+                print(f"Error: Código de estado {response.status_code}")
+        except requests.exceptions.RequestException as e:
+            print(f"Error al realizar la solicitud: {e}")
 
     @classmethod
     def get_instance(cls):
@@ -83,6 +108,32 @@ class PageManager(object):
         #print("(" + threading.current_thread().getName() + ") " + "nuevo dir: " + os.getcwd())
 
     @staticmethod
+    def _get_tunnel_address(page, dev=False):
+        print("(" + threading.current_thread().getName() + ") " + "----EN GET NGROK ADDRESS----")
+        #Ejecutar el proceso
+        if dev:
+            command = 'lt --port ' + str(page.get_port())
+        else:
+            command = 'lt --port ' + str(page.get_port()) + " --subdomain " + page.get_name()
+        process = PageManager._run_process(command)
+        page.set_tunnel_process(process)
+        address = None
+
+        it = True
+        #Capturar su salida
+        while it:
+            output = process.stdout.readline()
+            if output == '' and process.poll() is not None:
+                break
+            if output:
+                decoded_output = output.decode().strip()
+                print("(" + threading.current_thread().getName() + ") " + decoded_output)
+                if "https:" in decoded_output:
+                    it = False
+                    address = decoded_output[decoded_output.index("https")::]
+        page.set_page_address(address)
+
+    @staticmethod
     def _run_process(command):
         return subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=os.getcwd(), shell=True)
         #return subprocess.Popen(command, shell=True)
@@ -110,20 +161,20 @@ class PageManager(object):
         #Iniciar la creacion del proyecto y esperar a que termine
         command = 'npx create-next-app . --typescript --eslint --tailwind --app --src-dir --no-import-alias'
         process = PageManager._run_process(command)
-        PageManager._running_pages[(user, page_name)].get_page().set_process(process)
+        PageManager._running_pages[(user, page_name)].get_page().set_exec_process(process)
         process.wait()
         process.terminate()
-        PageManager._running_pages[(user, page_name)].get_page().set_process(None)
+        PageManager._running_pages[(user, page_name)].get_page().set_exec_process(None)
 
         #Copiar los templates al proyecto creado
-        PageManager.copy_template(user, page_name)
+        PageManager._copy_template(user, page_name)
         print("(" + threading.current_thread().getName() + ") " + "----Ejecucion finalizada----")
 
     @staticmethod
     def create_project(user, page_name):
         #print("(" + threading.current_thread().getName() + ") " + "----PageManager.create_project----")
         thread = threading.Thread(target= PageManager._create_project, args=(user, page_name))
-        PageManager._running_pages[(user, page_name)].set_thread(thread)
+        PageManager._running_pages[(user, page_name)].set_thread_exec(thread)
         thread.start()
 
     @staticmethod
@@ -141,14 +192,6 @@ class PageManager(object):
         PageManager._copy_dir(CONSTANTS.TEMPLATE_DIR, destino)
 
     @staticmethod
-    def copy_template(user, page_name):
-        #print("(" + threading.current_thread().getName() + ") " + "----PageManager.copy_template----")
-        #thread = threading.Thread(target=PageManager._copy_template, args=(user, page_name))
-        #PageManager._running_pages[(user, page_name)].set_thread(thread)
-        #thread.start()
-        PageManager._copy_template(user, page_name)
-
-    @staticmethod
     def _run_dev(user, page_name, page_port):
         # Ejecuta la página en modo Dev para que el usuario visualice las modificaciones
         print("(" + threading.current_thread().getName() + ") " + "----PageManager._run_dev----")
@@ -161,7 +204,7 @@ class PageManager(object):
         command = 'npm run dev -- --port=' + str(page_port)
         process = PageManager._run_process(command)
         page = PageManager._running_pages[(user, page_name)].get_page()
-        page.set_process(process)
+        page.set_exec_process(process)
 
         #Capturar su salida
         it = True
@@ -178,9 +221,12 @@ class PageManager(object):
     def run_dev(user, page_name):
         print("(" + threading.current_thread().getName() + ") " + "----PageManager.run_dev----")
         page = PageManager._running_pages[(user, page_name)].get_page()
-        thread = threading.Thread(target=PageManager._run_dev, args=(user, page_name, page.get_port()))
-        PageManager._running_pages[(user, page_name)].set_thread(thread)
-        thread.start()
+        thread_exec = threading.Thread(target=PageManager._run_dev, args=(user, page_name, page.get_port()))
+        thread_tunnel = threading.Thread(target=PageManager._get_tunnel_address, args=(page, True))
+        PageManager._running_pages[(user, page_name)].set_thread_exec(thread_exec)
+        PageManager._running_pages[(user, page_name)].set_thread_tunnel(thread_tunnel)
+        thread_exec.start()
+        thread_tunnel.start()
 
     @staticmethod
     def _build_project(user, page_name):
@@ -193,46 +239,72 @@ class PageManager(object):
 
         command = 'npx next build '
         process = PageManager._run_process(command)
-        PageManager._running_pages[(user, page_name)].get_page().set_process(process)
+        PageManager._running_pages[(user, page_name)].get_page().set_exec_process(process)
         process.wait()
-        PageManager._running_pages[(user, page_name)].get_page().set_process(None)
+        PageManager._running_pages[(user, page_name)].get_page().set_exec_process(None)
 
     @staticmethod
     def build_project(user, page_name):
         print("(" + threading.current_thread().getName() + ") " + "----PageManager.build_project----")
         thread = threading.Thread(target=PageManager._build_project, args=(user, page_name))
-        PageManager._running_pages[(user, page_name)].set_thread(thread)
+        PageManager._running_pages[(user, page_name)].set_thread_exec(thread)
         thread.start()
 
     @staticmethod
     def _run_project(user, page_name, page_port):
         print("(" + threading.current_thread().getName() + ") " + "----PageManager._run_project----")
+        page = PageManager._running_pages[(user, page_name)].get_page()
 
         #Posicionarse en el path donde se creara el proyecto
+        # Posicionarse en el path donde se creara el proyecto
         path = PageManager.get_page_path(user, page_name)
         PageManager.go_to_main_dir()
         os.chdir(path)
+
+
         command = 'npm start -- --port ' + str(page_port)
-        PageManager._running_pages[(user, page_name)].get_page().set_process(PageManager._run_process(command))
+        process = PageManager._run_process(command)
+        page = PageManager._running_pages[(user, page_name)].get_page()
+        page.set_exec_process(process)
+
+        # Capturar su salida
+        it = True
+        while it:
+            output = process.stdout.readline()
+            if output == '' and process.poll() is not None:
+                break
+            if output:
+                decoded_output = output.decode().strip()
+                it = page.append_output(decoded_output)
+                print("(" + threading.current_thread().getName() + ") " + decoded_output)
 
     @staticmethod
     def run_project(user, page_name):
         print("(" + threading.current_thread().getName() + ") " + "----PageManager.run_project----")
         page = PageManager._running_pages[(user, page_name)].get_page()
-        thread = threading.Thread(target=PageManager._run_project, args=(user, page_name, page.get_port()))
-        PageManager._running_pages[(user, page_name)].set_thread(thread)
-        thread.start()
+        thread_exec = threading.Thread(target=PageManager._run_project, args=(user, page_name, page.get_port()))
+        thread_tunnel = threading.Thread(target=PageManager._get_tunnel_address, args=(page, False))
+        PageManager._running_pages[(user, page_name)].set_thread_exec(thread_exec)
+        PageManager._running_pages[(user, page_name)].set_thread_tunnel(thread_tunnel)
+        thread_exec.start()
+        thread_tunnel.start()
         page.set_running(True)
 
     @staticmethod
     def join_thread(user, page_name):
         print("(" + threading.current_thread().getName() + ") " + "----PageManager.join_thread----")
-        thread = PageManager._running_pages[(user, page_name)].get_thread()
-        if thread:
-            print("(" + threading.current_thread().getName() + ") " + "--------hilo a esperar: ", thread.getName())
-            thread.join()
-            print("(" + threading.current_thread().getName() + ") " + "--------finalizo la espera de ", thread.getName())
-            PageManager._running_pages[(user, page_name)].set_thread(None)
+        thread_exec = PageManager._running_pages[(user, page_name)].get_thread_exec()
+        if thread_exec:
+            print("(" + threading.current_thread().getName() + ") " + "--------hilo a esperar: ", thread_exec.getName())
+            thread_exec.join()
+            print("(" + threading.current_thread().getName() + ") " + "--------finalizo la espera de ", thread_exec.getName())
+            PageManager._running_pages[(user, page_name)].set_thread_exec(None)
+        thread_tunnel = PageManager._running_pages[(user, page_name)].get_thread_tunnel()
+        if thread_tunnel:
+            print("(" + threading.current_thread().getName() + ") " + "--------hilo a esperar: ", thread_tunnel.getName())
+            thread_tunnel.join()
+            print("(" + threading.current_thread().getName() + ") " + "--------finalizo la espera de ", thread_tunnel.getName())
+            PageManager._running_pages[(user, page_name)].set_thread_tunnel(None)
 
     @staticmethod
     def add_page(user, page_name) -> Front:
@@ -247,7 +319,7 @@ class PageManager(object):
         PageManager.go_to_main_dir()
 
         #Agregarla a la coleccion
-        PageManager._running_pages[(user, page_name)] = PageManager.Entry(page, None)
+        PageManager._running_pages[(user, page_name)] = PageManager.Entry(page, None, None)
         return page
 
     @staticmethod
@@ -259,8 +331,12 @@ class PageManager(object):
             return None
 
     @staticmethod
-    def get_thread(user, page_name) -> threading.Thread:
-        return PageManager._running_pages[(user, page_name)].get_thread()
+    def get_thread_exec(user, page_name) -> threading.Thread:
+        return PageManager._running_pages[(user, page_name)].get_thread_exec()
+
+    @staticmethod
+    def get_thread_tunnel(user, page_name) -> threading.Thread:
+        return PageManager._running_pages[(user, page_name)].get_thread_tunnel()
 
     @staticmethod
     def get_page_path(user, page_name) -> str:
@@ -281,15 +357,23 @@ class PageManager(object):
         print("(" + threading.current_thread().getName() + ") " + "----EN STOP_PAGE----")
         page = PageManager._running_pages[(user, page_name)].get_page()
         page.set_running(False)
-        print("(" + threading.current_thread().getName() + ") " + "--------Antes de kill_project")
+
+
+        #Detener el proceso con la ejecucion de la pagina
         PageManager.kill_project(page.get_port())
-        print("(" + threading.current_thread().getName() + ") " + "--------Despues de kill_project")
-        thread = PageManager._running_pages[(user, page_name)].get_thread()
-        print("(" + threading.current_thread().getName() + ") " + "--------thread: ", thread.getName())
-        print("(" + threading.current_thread().getName() + ") " + "--------Antes de join")
-        thread.join()
-        print("(" + threading.current_thread().getName() + ") " + "--------Despues de join")
-        PageManager._running_pages[(user, page_name)].set_thread(None)
+
+        #Detener el proceso con el http tunnel
+        tunnel_process = page.get_tunnel_process()
+        tunnel_process.terminate()
+        tunnel_process.wait()
+
+        #Esperar por la finalizacion del hilo
+        thread_exec = PageManager._running_pages[(user, page_name)].get_thread_exec()
+        thread_exec.join()
+        thread_tunnel = PageManager._running_pages[(user, page_name)].get_thread_tunnel()
+        thread_tunnel.join()
+
+        #Eliminar la entrada de la pagina
         PageManager._running_pages.pop((user, page_name))
 
     @staticmethod
@@ -337,3 +421,5 @@ class PageManager(object):
         print("current path: ", os.getcwd())
         await file.download_to_drive(custom_path=os.getcwd()+ '\\' + str(short_id) + '.png')
         PageManager.go_to_main_dir()
+
+

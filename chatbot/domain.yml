@@ -81,7 +81,6 @@ actions:
   - action_guardar_mail_footer
   - action_guardar_ubicacion_footer
   - action_crear_footer
-  - action_prueba
 
 slots:
   page_name:
@@ -132,6 +131,13 @@ slots:
       entity: seccion
 
   creando_pagina:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: custom
+
+  running_dev:
     type: bool
     influence_conversation: true
     initial_value: false

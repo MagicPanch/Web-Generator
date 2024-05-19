@@ -11,7 +11,7 @@ stories:
 
 ## PAGINA
 
-- story: crear pagina dev
+- story: crear pagina correcto
   steps:
   - intent: crear_pagina
   - action: action_preguntar_nombre_pagina
@@ -19,17 +19,38 @@ stories:
       - creando_pagina: true
   - intent: nombre_pagina
   - action: action_crear_pagina  #Aca se crea el proyecto y se guarda la pagina en la DB. Posteriormente se ejecuta en modo DEV
+  - slot_was_set:
+      - creando_pagina: false
+  - slot_was_set:
+      - running_dev: true
+
+- story: crear pagina conflicto nombre
+  steps:
+  - intent: crear_pagina
+  - action: action_preguntar_nombre_pagina
+  - slot_was_set:
+      - creando_pagina: true
+  - intent: nombre_pagina
+  - action: action_crear_pagina  #Aca se detecta el conflicto con el nombre y se le repregunta al usuario
+  - slot_was_set:
+      - creando_pagina: true
+  - intent: nombre_pagina
+  - action: action_crear_pagina  #Aca se crea el proyecto y se guarda la pagina en la DB. Posteriormente se ejecuta en modo DEV
+  - slot_was_set:
+      - creando_pagina: false
+  - slot_was_set:
+      - running_dev: true
 
 ## SECCION
 
-- story: crear seccion
-  steps:
-  - intent: crear_seccion
-  - action: action_preguntar_tipo_seccion
-  - slot_was_set:
-    - creando_seccion: true
-  - intent: tipo_seccion
-  - action: action_guardar_seccion
+#- story: crear seccion
+#  steps:
+#  - intent: crear_seccion
+#  - action: action_preguntar_tipo_seccion
+#  - slot_was_set:
+#    - creando_seccion: true
+#  - intent: tipo_seccion
+#  - action: action_guardar_seccion
 
 # EDICION
 

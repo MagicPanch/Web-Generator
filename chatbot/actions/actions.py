@@ -1,6 +1,5 @@
 import threading
 
-import CONSTANTS
 from generator.PageManager import PageManager
 from generator.ReactGenerator import ReactGenerator
 from typing import Any, Text, Dict, List
@@ -21,6 +20,7 @@ class ActionPreguntarNombrePagina(Action):
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         print("(" + threading.current_thread().getName() + ") " + "----ACTION PREGUNTAR NOMBRE PAGINA----")
+        print("(" + threading.current_thread().getName() + ") ", tracker.slots.items())
         dispatcher.utter_message(text="¿Como queres que se llame tu pagina? Por favor indica su nombre en el siguiente formato: www. nombre-pagina .com")
         return [SlotSet("creando_pagina", True)]
 
@@ -31,30 +31,44 @@ class ActionCrearPagina(Action):
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         print("(" + threading.current_thread().getName() + ") " + "----ACTION CREAR PAGINA----")
+        print("(" + threading.current_thread().getName() + ") ", tracker.slots.items())
+        print("(" + threading.current_thread().getName() + ") " + "--------page_name_slot: ", tracker.get_slot('page_name'))
+        entities = tracker.latest_message.get("entities", [])
+        # Filtrar las entidades para obtener solo las de tipo "page_name"
+        page_name_entities = [entity["value"] for entity in entities if entity["entity"] == "page_name"]
+        # Obtener el último valor de la lista de entidades de tipo "page_name" (si existe)
+        if page_name_entities:
+            last_page_name = page_name_entities[-1]
+            print("(" + threading.current_thread().getName() + ") " + "--------page_name_entity: ", last_page_name)
+        print("(" + threading.current_thread().getName() + ") " + "--------creando_pagina: ", tracker.get_slot("creando_pagina"))
 
-        if tracker.get_slot('page_name') is None:
-            dispatcher.utter_message(
-                text="Repetime como queres que se llame tu página. Te recuerdo que el formato es: www. nombre-pagina .com")
-            return [SlotSet("creando_pagina", True)]
-        else:
-            if DBManager.get_page_by_name(DBManager.get_instance(), tracker.get_slot('page_name')) is None:
-                #La pagina no existe
 
-                #Se crea la entrada para la pagina en PageManager
-                PageManager.add_page(tracker.sender_id, tracker.get_slot('page_name'))
-
-                #Se crea en un nuevo hilo el proyecto de la pagina
-                PageManager.create_project(tracker.sender_id, tracker.get_slot('page_name'))
-
-                #Se guarda su entrada en la base de datos
-                DBManager.add_page(DBManager.get_instance(), tracker.sender_id, tracker.get_slot('page_name'), tracker.get_slot('usuario'))
-
-                dispatcher.utter_message(text="Aguarda un momento mientras se crea tu página.")
-                return [FollowupAction("action_ejecutar_dev"), SlotSet("creando_pagina", False)]
-            else:
-                #La pagina ya existe
-                dispatcher.utter_message(text="Ya existe una pagina con ese nombre. Por favor elige otro.")
+        if tracker.get_slot("creando_pagina"):
+            if tracker.get_slot('page_name') is None:
+                dispatcher.utter_message(
+                    text="Repetime como queres que se llame tu página. Te recuerdo que el formato es: www. nombre-pagina .com")
                 return [SlotSet("creando_pagina", True)]
+            else:
+                if DBManager.get_page_by_name(DBManager.get_instance(), tracker.get_slot('page_name')) is None:
+                    #La pagina no existe
+
+                    #Se crea la entrada para la pagina en PageManager
+                    PageManager.add_page(tracker.sender_id, tracker.get_slot('page_name'))
+
+                    #Se crea en un nuevo hilo el proyecto de la pagina
+                    PageManager.create_project(tracker.sender_id, tracker.get_slot('page_name'))
+
+                    #Se guarda su entrada en la base de datos
+                    DBManager.add_page(DBManager.get_instance(), tracker.sender_id, tracker.get_slot('page_name'), tracker.get_slot('usuario'))
+
+                    dispatcher.utter_message(text="Aguarda un momento mientras se crea tu página. Este proceso puede demorar unos minutos.")
+                    return [SlotSet("creando_pagina", False), FollowupAction("action_ejecutar_dev")]
+                else:
+                    #La pagina ya existe
+                    dispatcher.utter_message(text="Ya existe una pagina con ese nombre. Por favor elige otro.")
+                    return [SlotSet("creando_pagina", True)]
+        else:
+            return []
 
 class ActionModificarPagina(Action):
 
@@ -63,6 +77,7 @@ class ActionModificarPagina(Action):
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         print("(" + threading.current_thread().getName() + ") " + "----ACTION MODIFICAR PAGINA----")
+        print("(" + threading.current_thread().getName() + ") ", tracker.slots.items())
 
         if tracker.get_slot('page_name') is None:
             message = "Indicame el nombre de la pagina que deseas modificar. Te recuerdo que tus paginas son: \n"
@@ -101,6 +116,9 @@ class ActionEjecutarDev(Action):
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         print("(" + threading.current_thread().getName() + ") " + "----ACTION EJECUTAR DEV----")
+        print("(" + threading.current_thread().getName() + ") ", tracker.slots.items())
+        SlotSet("creando_pagina", False)
+        print("(" + threading.current_thread().getName() + ") ", tracker.slots.items())
         page = PageManager.get_page(tracker.sender_id, tracker.get_slot('page_name'))
         #dispatcher.utter_message(text="Tu pagina se encuentra en modo edición. Podrás visualizar los cambios que realices en: " + page.get_page_address())
 
@@ -112,18 +130,15 @@ class ActionEjecutarDev(Action):
 
         #Esperar a que la pagina este lista
         page.wait_for_ready()
-        print("(" + threading.current_thread().getName() + ") " + "--------Despues de espera, antes de utter_message")
-        dispatcher.utter_message(text="Tu pagina se encuentra en modo edición. Podrás visualizar los cambios que realices en: " + page.get_page_address())
+        message = "Tu pagina se encuentra en modo edición. Podrás visualizar los cambios que realices en: " + page.get_page_address()
+        print("(" + threading.current_thread().getName() + ") " + "--------message: ", message)
+        dispatcher.utter_message(text=message)
+
+        message = "Si la pagina te solicita una contraseña ingresa: " + PageManager.get_tunnel_password()
+        print("(" + threading.current_thread().getName() + ") " + "--------message: ", message)
+        dispatcher.utter_message(text=message)
         print("(" + threading.current_thread().getName() + ") " + "--------Despues de utter_message")
-        return [FollowupAction("action_prueba")]
-
-class ActionPrueba(Action):
-
-    def name(self) -> Text:
-        return "action_prueba"
-    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        print("(" + threading.current_thread().getName() + ") " + "----ACTION PRUEBA----")
-        return []
+        return [SlotSet("running_dev", True)]
 
 
 class ActionEjecutarPagina(Action):
@@ -133,6 +148,7 @@ class ActionEjecutarPagina(Action):
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         print("(" + threading.current_thread().getName() + ") " + "----ACTION EJECUTAR PAGINA----")
+        print("(" + threading.current_thread().getName() + ") ", tracker.slots.items())
 
         if tracker.get_slot('page_name') is None:
             message = "Indicame el nombre de la pagina que deseas ejecutar. Te recuerdo que tus paginas son: "
@@ -160,6 +176,7 @@ class ActionEjecutarPagina(Action):
                     if page_obj.is_running():
                     # Verificar si la pagina está ejecutando
                         dispatcher.utter_message(text="Tu pagina ya esta ejecutando. Puedes acceder a ella en el siguiente link: " + PageManager.get_page(tracker.sender_id, page_doc.name).get_page_address())
+                        dispatcher.utter_message(text="Si la pagina te solicita una contraseña ingresa: " + PageManager.get_tunnel_password())
                         return []
                     else:
                     # Se esta ejecutando en modo dev
@@ -186,6 +203,7 @@ class ActionEjecutarPagina(Action):
                 page_address = page_obj.get_page_address()
                 print("(" + threading.current_thread().getName() + ") " + "------------page_address: ", page_address)
                 dispatcher.utter_message(text="Podes acceder a tu página en el siguiente link: " + page_address)
+                dispatcher.utter_message(text="Si la pagina te solicita una contraseña ingresa: " + PageManager.get_tunnel_password())
                 return [SlotSet("pregunta_ejecucion", False)]
 
     class ActionDetenerPagina(Action):
@@ -195,12 +213,12 @@ class ActionEjecutarPagina(Action):
 
         def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
             print("(" + threading.current_thread().getName() + ") " + "----ACTION DETENER PAGINA----")
+            print("(" + threading.current_thread().getName() + ") ", tracker.slots.items())
             last_message_entities = tracker.get_latest_entity_values("text")
             print("(" + threading.current_thread().getName() + ") " + "--------last_message_entities: ", last_message_entities)
 
             if "page_name" in last_message_entities:
                 # Se especifico una pagina en el ultimo mensaje
-
                 PageManager.stop_page(tracker.sender_id, tracker.get_latest_entity_values('page_name'))
                 print("(" + threading.current_thread().getName() + ") " + "------------PAGINA DETENIDA CON EXITO------------")
                 dispatcher.utter_message(text="Tu pagina fue apagada con exito.")
@@ -234,6 +252,7 @@ class ActionCapturarEdicion(Action):
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         print("(" + threading.current_thread().getName() + ") " + "----ACTION EDICION COMPONENTE----")
+        print("(" + threading.current_thread().getName() + ") ", tracker.slots.items())
         componente = tracker.get_slot('componente')
         page_name = tracker.get_slot('page_name')
         if page_name and componente:
@@ -269,6 +288,7 @@ class ActionCapturarEdicion(Action):
                 PageManager.run_dev(tracker.sender_id, page_doc.name)
                 page_address = page_obj.get_page_address()
                 dispatcher.utter_message(text="Tu pagina se encuentra en modo edición. Podrás visualizar los cambios que realices en: " + page_address)
+                dispatcher.utter_message(text="Si la pagina te solicita una contraseña ingresa: " + PageManager.get_tunnel_password())
                 if componente == "encabezado":
                     return[FollowupAction("action_preguntar_color_encabezado"), SlotSet("pregunta_componente", False), SlotSet("pregunta_nombre", False), SlotSet("pregunta_edicion", False)]
                 elif componente == "footer":
@@ -327,7 +347,8 @@ class ActionGuardarSeccion(Action):
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        print("----EN GUARDAR SECCION----")
+        print("(" + threading.current_thread().getName() + ") " + "----EN ACTION GUARDAR SECCION----")
+        print("(" + threading.current_thread().getName() + ") ", tracker.slots.items())
         tipo_seccion = next(tracker.get_latest_entity_values("seccion"), None)
 
         if (str(tipo_seccion)) == "None" or tracker.get_intent_of_latest_message() == "despues_te_digo":
@@ -346,7 +367,8 @@ class ActionCrearSeccion(Action):
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        print("----EN CREAR SECCION----")
+        print("(" + threading.current_thread().getName() + ") " + "----EN ACTION CREAR SECCION----")
+        print("(" + threading.current_thread().getName() + ") ", tracker.slots.items())
         page_path = PageManager.get_page_path(tracker.sender_id, tracker.get_slot('page_name'))
         dataSection = {}
         #ReactGenerator.generarSection(dataSection)
@@ -361,8 +383,8 @@ class ActionGuardarColor(Action):
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-
         print("(" + threading.current_thread().getName() + ") " + "----EN ACTION GUARDAR COLOR----")
+        print("(" + threading.current_thread().getName() + ") ", tracker.slots.items())
         color = next(tracker.get_latest_entity_values("color"), None)
         print("(" + threading.current_thread().getName() + ") " + "--------color: ", color)
         #text - yellow - 600
@@ -424,6 +446,7 @@ class ActionCrearEncabezado(Action):
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         print("(" + threading.current_thread().getName() + ")" + "----EN ACTION CREAR ENCABEZADO----")
+        print("(" + threading.current_thread().getName() + ") ", tracker.slots.items())
         page_path = PageManager.get_page_path(tracker.sender_id, tracker.get_slot('page_name'))
         print("(" + threading.current_thread().getName() + ")" + "--------page_path: ", page_path)
         color = tracker.get_slot('color_encabezado')
@@ -448,6 +471,7 @@ class ActionPreguntarMailFooter(Action):
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         print("(" + threading.current_thread().getName() + ") " + "----ACTION PREGUNTAR MAIL FOOTER----")
+        print("(" + threading.current_thread().getName() + ") ", tracker.slots.items())
         dispatcher.utter_message(text="Queres cambiar tu e-mail en el footer?")
         return [SlotSet("creando_footer", True), FollowupAction("action_listen")]
 
@@ -457,6 +481,7 @@ class ActionGuardarMailFooter(Action):
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         print("(" + threading.current_thread().getName() + ") " + "----ACTION GUARDAR MAIL FOOTER----")
+        print("(" + threading.current_thread().getName() + ") ", tracker.slots.items())
         last_message_intent = tracker.latest_message.get('intent').get('name')
         print("(" + threading.current_thread().getName() + ") " + "--------last message intent: ", last_message_intent)
         if 'decir_mail' in last_message_intent:
@@ -482,6 +507,7 @@ class ActionGuardarUbicacionFooter(Action):
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         print("(" + threading.current_thread().getName() + ") " + "----ACTION GUARDAR UBICACION FOOTER----")
+        print("(" + threading.current_thread().getName() + ") ", tracker.slots.items())
         last_message_intent = tracker.latest_message.get('intent').get('name')
         print("(" + threading.current_thread().getName() + ") " + "--------last message intent: ", last_message_intent)
         if 'decir_ubicacion' in last_message_intent:
@@ -507,6 +533,7 @@ class ActionCrearFooter(Action):
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         print("(" + threading.current_thread().getName() + ") " + "----ACTION CREAR FOOTER----")
+        print("(" + threading.current_thread().getName() + ") ", tracker.slots.items())
         page_path = PageManager.get_page_path(tracker.sender_id, tracker.get_slot('page_name'))
         mail = str(tracker.get_slot("mail_footer"))
         if not mail:
@@ -519,6 +546,7 @@ class ActionCrearFooter(Action):
             "email": mail,
             "ubicacion": ubicacion
         }
+        PageManager.go_to_main_dir()
         ReactGenerator.generarFooter(dataFooter)
         print("-------------FOOTER MODIFICADO-------------")
         dispatcher.utter_message(text="Podes ver los cambios que realizamos en el footer")

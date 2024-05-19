@@ -12,7 +12,7 @@ class PageRunner():
         self._user = user
         self._page_name = page_name
         self._page_port = page_port
-        self._process = None
+        self._exec_process = None
 
     def get_user(self) -> str:
         return self._user
@@ -23,16 +23,16 @@ class PageRunner():
     def get_port(self) -> int:
         return self._page_port
 
-    def set_process(self, process):
+    def set_exec_process(self, process):
         with self._output_ready:
-            self._process = process
+            self._exec_process = process
             self._output_ready.notify_all()
 
-    def get_process(self):
+    def get_exec_process(self):
         with self._output_ready:
-            while self._process is None:
+            while self._exec_process is None:
                 self._output_ready.wait()
-            return self._process
+            return self._exec_process
 
     def append_output(self, output) -> bool:
         with self._output_ready:

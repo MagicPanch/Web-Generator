@@ -46,7 +46,7 @@ class ReactGenerator:
         }}
         export default Header;
         """
-        with open(os.getcwd() + "\\" + data["address"]+"\components\Header.tsx", "w") as file:
+        with open(os.getcwd() + "\\" + data["address"]+"\\components\\Header.tsx", "w") as file:
             file.write(text)
             file.close()
 
@@ -86,7 +86,7 @@ class ReactGenerator:
         }};
         """
 
-        with open(os.getcwd() + "\\" + dataFooter["address"]+"\components\Footer.tsx", "w") as file:
+        with open(os.getcwd() + "\\" + dataFooter["address"]+"\\components\\Footer.tsx", "w") as file:
             file.write(text)
             file.close()
 

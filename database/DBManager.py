@@ -30,13 +30,9 @@ class DBManager(object):
 
     def add_user(self, id, username, nombre):
         user = User.objects(id=id)
-        print(user)
         if not user:
             user = User(id=id, username=username, name=nombre, paginas=[])
             user.save()
-            print("----USUARIO INSERTADO EN LA DB----")
-        else:
-            print("----USUARIO YA EXISTENTE EN LA DB----")
 
     def add_page(self, user_id, page_name, contact):
         user = User.objects(id=user_id).first()
@@ -77,10 +73,6 @@ class DBManager(object):
         page_id = user_id + '-' + page_name
         page = Page.objects(id=page_id).first()
         if page:
-            print("page.name", page.name)
-            print("page.compilationDate", page.compilationDate)
-            print("page.lastModificationDate", page.lastModificationDate)
-
             if page.compilationDate is None:
                 return False
             else:
