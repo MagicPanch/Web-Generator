@@ -22,7 +22,7 @@ class ReactGenerator:
     def generarHeader(data):
         print("genero header")
         text = f""""use client";
-
+        
         import React from "react";
         import logo from '{data["addressLogo"]}';
         import Image from "next/image";
@@ -38,7 +38,7 @@ class ReactGenerator:
                         height={{100}}
                         alt="Logo"/>
                     </div>
-                    <h1 className="text-5xl {data["colorTitulo"]}  mb-5  font-semibold text-center flex-1">
+                    <h1 className="text-5xl text-colorTituloHeader  mb-5  font-semibold text-center flex-1">
                         {data["titulo"]}
                     </h1>
                 </div>
@@ -46,8 +46,53 @@ class ReactGenerator:
         }}
         export default Header;
         """
-        with open(os.getcwd() + "\\" + data["address"]+"\\components\\Header.tsx", "w") as file:
+        configColor = f"""/** @type {{import('tailwindcss').Config}} */
+        module.exports = {{
+        content: [
+            "./pages/**/*.{{js,ts,jsx,tsx,mdx}}",
+            "./components/**/*.{{js,ts,jsx,tsx,mdx}}",
+            "./app/**/*.{{js,ts,jsx,tsx,mdx}}",
+        ],
+        theme: {{
+        extend: {{
+            fontFamily: {{
+                body: ["Korolev Medium"],
+            }},
+        colors: {{
+            primary: {{
+                400: "#CBEAF2",
+                500: "#66b7cb",
+                600: "#55a4b7",
+            }},
+                bgGray: "#E2E2E2",
+                bgBlack: "#1C1C1C",
+                colorTituloHeader : "{data["colorTitulo"]}",
+            }},
+            backgroundSize: {{
+                "16": "4rem",
+            }},
+            screens: {{
+                xs: "400px",
+                "3xl": "1680px",
+                "4xl": "2200px",
+            }},
+            maxWidth: {{
+                "10xl": "1512px",
+            }},
+            borderRadius: {{
+                "5xl": "40px",
+            }},
+            }},
+            }},
+            plugins: [],
+        }};"""
+
+        with open(data["address"]+"\\components\\Header.tsx", "w") as file:
             file.write(text)
+            file.close()
+
+        with open(data["address"]+"\\tailwind.config.ts", "w") as file:
+            file.write(configColor)
             file.close()
 
     @staticmethod
@@ -86,7 +131,7 @@ class ReactGenerator:
         }};
         """
 
-        with open(os.getcwd() + "\\" + dataFooter["address"]+"\\components\\Footer.tsx", "w") as file:
+        with open(dataFooter["address"] + "\\components\\Footer.tsx", "w") as file:
             file.write(text)
             file.close()
 
@@ -114,6 +159,6 @@ class ReactGenerator:
         }},
         ];  """
 
-        with open(dataBody["address"] + "\constants\/body.ts", "w") as file:
+        with open(dataBody["address"] + "\\constants\\body.ts", "w") as file:
             file.write(text)
             file.close()
