@@ -83,7 +83,6 @@ class ActionModificarPagina(Action):
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         print("(" + threading.current_thread().getName() + ") " + "----ACTION MODIFICAR PAGINA----")
-        print("(" + threading.current_thread().getName() + ") ", tracker.slots.items())
 
         if tracker.get_slot('page_name') is None:
             message = "Indicame el nombre de la pagina que deseas modificar. Te recuerdo que tus paginas son: \n"
@@ -97,7 +96,7 @@ class ActionModificarPagina(Action):
             page_doc = DBManager.get_page(DBManager.get_instance(), tracker.sender_id, tracker.get_slot('page_name'))
             if not page_doc:
                 # Esa pagina no pertenece al usuario
-                message = "No se encuentra la pagina que deseas ejecutar. Te recuerdo que tus paginas son: \n"
+                message = "No se encuentra la pagina que deseas modificar. Te recuerdo que tus paginas son: \n"
                 pags = DBManager.get_user_pages(DBManager.get_instance(), tracker.sender_id)
                 for pag in pags:
                     message += pag.name + "\n"
@@ -109,7 +108,10 @@ class ActionModificarPagina(Action):
                 page_obj = PageManager.get_page(tracker.sender_id, page_doc.name)
                 if page_obj:
                     if page_obj.is_running_dev():
+                        print("(" + threading.current_thread().getName() + ") " + "--------la pagina esta running dev")
                         return [SlotSet("pregunta_modificacion", False)]
+                    else:
+                        print("(" + threading.current_thread().getName() + ") " + "--------la pagina no esta running dev")
             return [SlotSet("pregunta_modificacion", False), FollowupAction("action_ejecutar_dev")]
 
 
@@ -185,6 +187,7 @@ class ActionEjecutarPagina(Action):
                     elif page_obj.is_running_dev():
                     # Se esta ejecutando en modo dev
                         PageManager.stop_page(tracker.sender_id, page_doc.name)
+                        PageManager.stop_tunnel(tracker.sender_id, page_doc.name)
                         page_obj = PageManager.add_page(tracker.sender_id, page_doc.name)
                         print("(" + threading.current_thread().getName() + ") " + "------------page_obj: ", page_obj)
                 else:
@@ -225,6 +228,8 @@ class ActionEjecutarPagina(Action):
             if "page_name" in last_message_entities:
                 # Se especifico una pagina en el ultimo mensaje
                 PageManager.stop_page(tracker.sender_id, tracker.get_latest_entity_values('page_name'))
+                PageManager.stop_tunnel(tracker.sender_id, tracker.get_latest_entity_values('page_name'))
+                PageManager.pop_page(tracker.sender_id, tracker.get_latest_entity_values('page_name'))
                 print("(" + threading.current_thread().getName() + ") " + "------------PAGINA DETENIDA CON EXITO------------")
                 dispatcher.utter_message(text="Tu pagina fue apagada con exito.")
             elif "todas" in tracker.latest_message.get("text"):
@@ -232,6 +237,8 @@ class ActionEjecutarPagina(Action):
 
                 for pag in PageManager.get_user_running_pages(tracker.sender_id):
                     PageManager.stop_page(tracker.sender_id, pag.get_name())
+                    PageManager.stop_tunnel(tracker.sender_id, pag.get_name())
+                    PageManager.pop_page(tracker.sender_id, pag.get_name())
                     dispatcher.utter_message(text="La pagina " + pag.get_name() + " fue detenida con éxito.")
                 print("(" + threading.current_thread().getName() + ") " + "------------PAGINAS DETENIDA CON EXITO------------")
             else:
@@ -239,6 +246,8 @@ class ActionEjecutarPagina(Action):
                 page_name = tracker.get_slot('page_name')
                 if page_name:
                     PageManager.stop_page(tracker.sender_id, page_name)
+                    PageManager.stop_tunnel(tracker.sender_id, page_name)
+                    PageManager.pop_page(tracker.sender_id, page_name)
                     print("(" + threading.current_thread().getName() + ") " + "------------PAGINA DETENIDA CON EXITO------------")
                     dispatcher.utter_message(text="Tu pagina fue apagada con exito.")
                 else:
@@ -256,8 +265,7 @@ class ActionCapturarEdicion(Action):
         return "action_capturar_edicion"
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        print("(" + threading.current_thread().getName() + ") " + "----ACTION EDICION COMPONENTE----")
-        print("(" + threading.current_thread().getName() + ") ", tracker.slots.items())
+        print("(" + threading.current_thread().getName() + ") " + "----ACTION CAPTURAR EDICION----")
         componente = tracker.get_slot('componente')
         page_name = tracker.get_slot('page_name')
         if page_name and componente:
@@ -279,21 +287,18 @@ class ActionCapturarEdicion(Action):
                 # La pagina pertenece al usuario
                 print("(" + threading.current_thread().getName() + ") " + "------------la pagina es del usuario")
                 page_obj = PageManager.get_page(tracker.sender_id, page_doc.name)
-                if page_obj:
-                    # La pagina esta viva
-                    print("(" + threading.current_thread().getName() + ") " + "----------------la pagina esta viva")
-                    print("(" + threading.current_thread().getName() + ") " + "------------page_obj: ", page_obj)
-                    PageManager.stop_page(tracker.sender_id, page_doc.name)
-                    print("(" + threading.current_thread().getName() + ") " + "----------------pagina_detenida")
+                if not page_obj:
+                    page_obj = PageManager.add_page(tracker.sender_id, page_doc.name)
+                    PageManager.run_dev(tracker.sender_id, page_doc.name)
+                    page_address = page_obj.get_page_address()
+                    dispatcher.utter_message(text="Tu pagina se encuentra en modo edición. Podrás visualizar los cambios que realices en: " + page_address)
+                    dispatcher.utter_message(text="Si la pagina te solicita una contraseña ingresa: " + PageManager.get_tunnel_password())
                 else:
-                    # La pagina no vive en PageManager
-                    print("(" + threading.current_thread().getName() + ") " + "----------------la pagina NO esta viva")
-                page_obj = PageManager.add_page(tracker.sender_id, page_doc.name)
-                print("(" + threading.current_thread().getName() + ") " + "--------page_obj: ", page_obj)
-                PageManager.run_dev(tracker.sender_id, page_doc.name)
-                page_address = page_obj.get_page_address()
-                dispatcher.utter_message(text="Tu pagina se encuentra en modo edición. Podrás visualizar los cambios que realices en: " + page_address)
-                dispatcher.utter_message(text="Si la pagina te solicita una contraseña ingresa: " + PageManager.get_tunnel_password())
+                    if page_obj.is_running():
+                        PageManager.switch_dev(tracker.sender_id, page_doc.name)
+                        page_address = page_obj.get_page_address()
+                        dispatcher.utter_message(text="Tu pagina se encuentra en modo edición. Podrás visualizar los cambios que realices en: " + page_address)
+                        dispatcher.utter_message(text="Si la pagina te solicita una contraseña ingresa: " + PageManager.get_tunnel_password())
                 if componente == "encabezado":
                     return[FollowupAction("action_preguntar_color_encabezado"), SlotSet("pregunta_componente", False), SlotSet("pregunta_nombre", False), SlotSet("pregunta_edicion", False)]
                 elif componente == "footer":

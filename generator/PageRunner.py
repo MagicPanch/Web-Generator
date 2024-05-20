@@ -37,7 +37,7 @@ class PageRunner():
     def append_output(self, output) -> bool:
         with self._output_ready:
             self._output_buffer.append(output)
-            if "Ready" in output:
+            if ("Ready"  in output) or ("Error" in output):
                 self._output_ready.notify_all()
                 return False
             else:

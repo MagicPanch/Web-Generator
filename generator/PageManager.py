@@ -234,6 +234,7 @@ class PageManager(object):
     @staticmethod
     def run_dev(user, page_name):
         print("(" + threading.current_thread().getName() + ") " + "----PageManager.run_dev----")
+        PageManager.go_to_main_dir()
         page = PageManager._running_pages[(user, page_name)].get_page()
         page.set_running_dev(True)
         thread_exec = threading.Thread(target=PageManager._run_dev, args=(user, page_name, page.get_port()))
@@ -263,7 +264,7 @@ class PageManager(object):
                 break
             if output:
                 decoded_output = output.decode().strip()
-                if "Success" in decoded_output:
+                if "(Static)" in decoded_output:
                     it = False
                 print("(" + threading.current_thread().getName() + ") " + decoded_output)
 
@@ -380,6 +381,33 @@ class PageManager(object):
             return False
 
     @staticmethod
+    def switch_dev(user, page_name):
+        #Detener la ejecucion de la pagina
+        page = PageManager._running_pages[(user, page_name)].get_page()
+        page.set_running(False)
+        PageManager.kill_project(page.get_port())
+        thread_exec = PageManager._running_pages[(user, page_name)].get_thread_exec()
+        thread_exec.join()
+
+        #Iniciar la ejecucion en modo dev
+        PageManager.run_dev(user, page_name)
+        page.wait_for_ready()
+
+    @staticmethod
+    def stop_tunnel(user, page_name):
+        page = PageManager._running_pages[(user, page_name)].get_page()
+
+        #Detener el proceso con el http tunnel
+        tunnel_process = page.get_tunnel_process()
+        tunnel_process.terminate()
+        tunnel_process.wait()
+
+        #Detener el hilo
+        thread_tunnel = PageManager._running_pages[(user, page_name)].get_thread_tunnel()
+        thread_tunnel.join()
+
+
+    @staticmethod
     def stop_page(user, page_name):
         # Matar la página
         print("(" + threading.current_thread().getName() + ") " + "----EN STOP_PAGE----")
@@ -391,19 +419,13 @@ class PageManager(object):
         #Detener el proceso con la ejecucion de la pagina
         PageManager.kill_project(page.get_port())
 
-        #Detener el proceso con el http tunnel
-        tunnel_process = page.get_tunnel_process()
-        tunnel_process.terminate()
-        tunnel_process.wait()
-
         #Esperar por la finalizacion del hilo
         thread_exec = PageManager._running_pages[(user, page_name)].get_thread_exec()
         thread_exec.join()
-        thread_tunnel = PageManager._running_pages[(user, page_name)].get_thread_tunnel()
-        thread_tunnel.join()
 
-        #Eliminar la entrada de la pagina
-        PageManager._running_pages.pop((user, page_name))
+    @staticmethod
+    def pop_page(user, page_name):
+        PageManager._running_pages.pop(user, page_name)
 
     @staticmethod
     def get_pid(port):

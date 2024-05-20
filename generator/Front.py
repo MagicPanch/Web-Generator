@@ -13,18 +13,19 @@ class Front(PageRunner):
         self._running = False
         self._dev = False
         self._page_adress = None
+        self._address_event = threading.Event()
         self._tunnel_process = None
 
     def set_page_address(self, address):
         with self._output_ready:
-            self._page_adress = address
-            self._output_ready.notify_all()
+            self._page_address = address
+            self._address_event.set()  # Indica que el valor está listo
+            self._address_event.clear()  # Reinicia el evento para futuras esperas
 
     def get_page_address(self) -> str:
+        self._address_event.wait()  # Espera hasta que el evento esté listo
         with self._output_ready:
-            while self._page_adress is None:
-                self._output_ready.wait()
-            return self._page_adress
+            return self._page_address
 
     def is_running(self) -> bool:
         return self._running
