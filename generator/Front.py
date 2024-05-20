@@ -11,6 +11,7 @@ class Front(PageRunner):
     def __init__(self, user, page_name, page_port):
         super().__init__(user, page_name, page_port)
         self._running = False
+        self._dev = False
         self._page_adress = None
         self._tunnel_process = None
 
@@ -28,8 +29,14 @@ class Front(PageRunner):
     def is_running(self) -> bool:
         return self._running
 
+    def is_running_dev(self) -> bool:
+        return self._dev
+
     def set_running(self, is_running: bool):
         self._running = is_running
+
+    def set_running_dev(self, dev: bool):
+        self._dev = dev
 
     def set_tunnel_process(self, process):
         with self._output_ready:

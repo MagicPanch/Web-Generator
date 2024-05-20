@@ -235,6 +235,7 @@ class PageManager(object):
     def run_dev(user, page_name):
         print("(" + threading.current_thread().getName() + ") " + "----PageManager.run_dev----")
         page = PageManager._running_pages[(user, page_name)].get_page()
+        page.set_running_dev(True)
         thread_exec = threading.Thread(target=PageManager._run_dev, args=(user, page_name, page.get_port()))
         thread_tunnel = threading.Thread(target=PageManager._get_tunnel_address, args=(page, True))
         PageManager._running_pages[(user, page_name)].set_thread_exec(thread_exec)
@@ -281,7 +282,6 @@ class PageManager(object):
     @staticmethod
     def _run_project(user, page_name, page_port):
         print("(" + threading.current_thread().getName() + ") " + "----PageManager._run_project----")
-        page = PageManager._running_pages[(user, page_name)].get_page()
 
         #Posicionarse en el path donde se creara el proyecto
         # Posicionarse en el path donde se creara el proyecto
@@ -385,6 +385,7 @@ class PageManager(object):
         print("(" + threading.current_thread().getName() + ") " + "----EN STOP_PAGE----")
         page = PageManager._running_pages[(user, page_name)].get_page()
         page.set_running(False)
+        page.set_running_dev(False)
 
 
         #Detener el proceso con la ejecucion de la pagina

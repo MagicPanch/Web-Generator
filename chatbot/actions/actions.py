@@ -108,11 +108,9 @@ class ActionModificarPagina(Action):
                 # Verificar si la pagina está viva
                 page_obj = PageManager.get_page(tracker.sender_id, page_doc.name)
                 if page_obj:
-                    # La pagina esta viva
-                    if page_obj.is_running():
-                        # La pagina está ejecutando
-                        PageManager.stop_page(tracker.sender_id, page_doc.name)
-                return [SlotSet("pregunta_modificacion", False), FollowupAction("action_ejecutar_dev")]
+                    if page_obj.is_running_dev():
+                        return [SlotSet("pregunta_modificacion", False)]
+            return [SlotSet("pregunta_modificacion", False), FollowupAction("action_ejecutar_dev")]
 
 
 class ActionEjecutarDev(Action):
@@ -184,7 +182,7 @@ class ActionEjecutarPagina(Action):
                         dispatcher.utter_message(text="Tu pagina ya esta ejecutando. Puedes acceder a ella en el siguiente link: " + PageManager.get_page(tracker.sender_id, page_doc.name).get_page_address())
                         dispatcher.utter_message(text="Si la pagina te solicita una contraseña ingresa: " + PageManager.get_tunnel_password())
                         return []
-                    else:
+                    elif page_obj.is_running_dev():
                     # Se esta ejecutando en modo dev
                         PageManager.stop_page(tracker.sender_id, page_doc.name)
                         page_obj = PageManager.add_page(tracker.sender_id, page_doc.name)
@@ -205,6 +203,7 @@ class ActionEjecutarPagina(Action):
 
                 # Inicia la ejecución del proyecto en modo desarrollo en un nuevo hilo
                 PageManager.run_project(tracker.sender_id, page_doc.name)
+                page_obj.wait_for_ready()
 
                 page_address = page_obj.get_page_address()
                 print("(" + threading.current_thread().getName() + ") " + "------------page_address: ", page_address)
