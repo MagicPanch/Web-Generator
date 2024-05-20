@@ -43,6 +43,12 @@ class ActionCrearPagina(Action):
         print("(" + threading.current_thread().getName() + ") " + "--------creando_pagina: ", tracker.get_slot("creando_pagina"))
 
 
+
+        last_message_intent = tracker.latest_message.get('intent').get('name')
+        if 'denegar' in last_message_intent:
+            dispatcher.utter_message(text="Entendido, si mas tarde deseas retomar la creacion de tu pagina puedes pedirmelo.")
+            return [SlotSet("creando_pagina", False)]
+
         if tracker.get_slot("creando_pagina"):
             if tracker.get_slot('page_name') is None:
                 dispatcher.utter_message(

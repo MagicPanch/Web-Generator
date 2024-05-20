@@ -163,17 +163,21 @@ class PageManager(object):
         process = PageManager._run_process(command)
 
         #Capturar su salida
-        while True:
+        it = True
+        while it:
             output = process.stdout.readline()
             if output == '' and process.poll() is not None:
                 break
             if output:
                 decoded_output = output.decode().strip()
+                if "Success" in decoded_output:
+                    it = False
                 print("(" + threading.current_thread().getName() + ") " + decoded_output)
 
-        PageManager._running_pages[(user, page_name)].get_page().set_exec_process(process)
         process.wait()
         process.terminate()
+
+        PageManager._running_pages[(user, page_name)].get_page().set_exec_process(process)
         PageManager._running_pages[(user, page_name)].get_page().set_exec_process(None)
 
         #Copiar los templates al proyecto creado
@@ -251,16 +255,20 @@ class PageManager(object):
         process = PageManager._run_process(command)
 
         # Capturar su salida
-        while True:
+        it = True
+        while it:
             output = process.stdout.readline()
             if output == '' and process.poll() is not None:
                 break
             if output:
                 decoded_output = output.decode().strip()
+                if "Success" in decoded_output:
+                    it = False
                 print("(" + threading.current_thread().getName() + ") " + decoded_output)
 
         PageManager._running_pages[(user, page_name)].get_page().set_exec_process(process)
         process.wait()
+        process.terminate()
         PageManager._running_pages[(user, page_name)].get_page().set_exec_process(None)
 
     @staticmethod
