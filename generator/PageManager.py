@@ -161,6 +161,16 @@ class PageManager(object):
         #Iniciar la creacion del proyecto y esperar a que termine
         command = 'npx create-next-app . --typescript --eslint --tailwind --app --src-dir --no-import-alias'
         process = PageManager._run_process(command)
+
+        #Capturar su salida
+        while True:
+            output = process.stdout.readline()
+            if output == '' and process.poll() is not None:
+                break
+            if output:
+                decoded_output = output.decode().strip()
+                print("(" + threading.current_thread().getName() + ") " + decoded_output)
+
         PageManager._running_pages[(user, page_name)].get_page().set_exec_process(process)
         process.wait()
         process.terminate()
@@ -239,6 +249,16 @@ class PageManager(object):
 
         command = 'npx next build '
         process = PageManager._run_process(command)
+
+        # Capturar su salida
+        while True:
+            output = process.stdout.readline()
+            if output == '' and process.poll() is not None:
+                break
+            if output:
+                decoded_output = output.decode().strip()
+                print("(" + threading.current_thread().getName() + ") " + decoded_output)
+
         PageManager._running_pages[(user, page_name)].get_page().set_exec_process(process)
         process.wait()
         PageManager._running_pages[(user, page_name)].get_page().set_exec_process(None)
