@@ -142,13 +142,100 @@ def generarBody(dataBody):
     with open(dataBody["address"]+"\constants\/body.ts", "w") as file:
       file.write(text)
 
+def agregarSectionEcommerce(data):
+   #data nombre  y Folder address
+   #abrir json de secciones
+   #agregar la seccion actual al json
+   #y guaradar el json
+   #generar una sectionEcommerce pero que devuelva un component con el nombre la nueva section
+   #agregar la section a la lista de secciones del navBar
+    nombreSection = data["nombre"]
+    with open(data["address"]+'/dataSections.json') as file:
+        dataSections = json.load(file)
+    dataSections.append({"titulo":nombreSection})
+    textSections= ""
+    for section in dataSections:
+        textSections += section+":"+section + ","
+    textSectionNew = f"""import React from "react";
+    import SearchBar from "./SearchBar";
+    import ProductTile from "./ProductTile";
+    import {{ CARDS_DATA }} from "../constants/body";
 
-addres ="C:/Users/Agustin/Desktop/DesingLabel22/Web-Generator/webs/base/base" #direccion donde se ubica la web react
-dataHeader =  { "titulo": "ecommerce" , "address":addres , "addressLogo": "./logo.png" ,"colorTitulo":"#E1704F"} 
+    const {nombreSection} = () => {{
+    return (
+        <section>
+        <div className="max-w-screen bg-blue-300 p-4 h-full px-4">
+            <h1 className="text-2xl mb-3 font-semibold text-center p-2 h-full">
+            Compra nuestros productos
+            </h1>
+            <SearchBar />
+            <div className="grid gap-y-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 py-8 justify-center items-center">
+            {{CARDS_DATA &&
+                CARDS_DATA.map((item, i) => (
+                <ProductTile
+                    key={{i}}
+                    image={{item.image}}
+                    title={{item.title}}
+                    description={{item.description}}
+                    price={{item.price}}
+                />
+                ))}}
+            </div>
+        </div>
+        </section>
+    );
+    }};
+
+    export default {nombreSection};
+    """
+    with open(data["address"]+"\components\\"+nombreSection+".tsx", "w") as file:
+        file.write(textSectionNew)
+    textPage = f""" "use client";
+    import Image from "next/image";
+    import {{ SearchBar, SectionECommerce,SectionInformativa,SectionABM, }} from "../../components";
+    import {{ useState }} from "react";
+    import {{ NavBar, }} from "../../components";
+
+    // Mapea los nombres de los componentes a los componentes reales
+    const componentMap = {{
+    SectionECommerce: SectionECommerce,
+    SectionInformativa: SectionInformativa,
+    SectionABM: SectionABM,
+    // Agrega más componentes aquí según sea necesario
+    }};
+
+    export default function Home() {{
+    
+    const [nombre, setNombre]= useState("Mario")
+    const [mensaje,setMensaje] = useState("")
+    const addMensaje = (mensaje: any) => {{
+        console.log(mensaje)
+        setMensaje(mensaje);
+    }}
+    
+    const SelectedComponent = componentMap[mensaje] || SectionECommerce;
+    return (
+        <main className="h-full  items-center justify-between p-24 w-full">
+        
+        <NavBar nombre={{nombre}} addMensaje={{addMensaje}}/>
+        {{mensaje}}
+        <div> 
+        
+        {{SelectedComponent ? <SelectedComponent /> : <div>Componente no encontrado</div>}}
+        </div>
+        
+        </main>
+    );
+    }}
+    """
+
+
+addres ="C:/Users/Agustin/Desktop/DesingLabel22/Web-Generator/webs/base/base" #direccion donde se ubica la web reactS
+
+dataHeader =  { "titulo": "ecommerce" , "address":addres , "addressLogo": "./logo.png" ,"colorTitulo":"#12D7BF"} 
 dataHeader = json.dumps(dataHeader)
-print(dataHeader)
-dataDicHeader = json.loads(dataHeader)
-print(dataDicHeader["titulo"])
+
+
 
 dataFooter =  {"address":addres , "email":"contactDesignLabel@gmail.com", "ubicacion": "Pinto 401 Argentina, Tandil"} 
 dataFooter = json.dumps(dataFooter)
@@ -156,3 +243,7 @@ generarHeader(dataHeader)
 
 dataBody =  {"address":addres , "price":"5000"} 
 dataBody = json.dumps(dataBody)
+
+dataSectionEcommerce = {"nombre":"EcommercePrueba","address":addres}
+#dataSectionEcommerce = json.dumps(dataSectionEcommerce)
+#agregarSectionEcommerce(dataSectionEcommerce)
