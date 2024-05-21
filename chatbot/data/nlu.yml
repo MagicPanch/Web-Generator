@@ -262,6 +262,7 @@ nlu:
     - normal
     - ahi vamos
     - tranquiloo
+
 - intent: estado_de_animo_triste
   examples: |
     - estoy triste
@@ -273,6 +274,7 @@ nlu:
     - muy triste la verdad
     - bajoneado
     - medio bajon
+
 - intent: me_alegro
   examples: |
     - Me alegro!
@@ -280,6 +282,7 @@ nlu:
     - Me alegra escuchar eso!
     - Exitos
     - exitos con eso
+
 - intent: triste_facu
   examples: |
     - Me fue mal en la facultad
@@ -288,6 +291,7 @@ nlu:
     - estoy complicada con la facultad
     - me va mal en la universidad
     - no entiendo nada en la uni
+
 - intent: triste_pelea
   examples: |
     - Me pelee con mi familia
@@ -297,6 +301,7 @@ nlu:
     - me pelee con mi mama
     - discuti con un amigo
     - discuti con un amiga
+
 - intent: afirmar
   examples: |
     - Si
@@ -304,6 +309,7 @@ nlu:
     - okey
     - ok
     - bueno
+
 - intent: denegar
   examples: |
     - no
@@ -313,6 +319,7 @@ nlu:
     - no me sirve
     - nao
     - no quiero
+
 - intent: hora
   examples: |
     - Que hora es?
@@ -324,6 +331,14 @@ nlu:
     - q horario es
     - q dia es
     - me das hora?
+
+- intent: pedir_tutorial
+  examples: |
+    - quiero hacer el tutorial
+    - bueno hagamos el tutorial
+    - terminemos el tutorial
+    - matemos el tuto
+
 - intent: gracias
   examples: |
     - Graciasss

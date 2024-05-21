@@ -12,20 +12,24 @@ class Front(PageRunner):
         super().__init__(user, page_name, page_port)
         self._running = False
         self._dev = False
-        self._page_adress = None
         self._address_event = threading.Event()
         self._tunnel_process = None
+        self._page_address = None
 
     def set_page_address(self, address):
-        with self._output_ready:
-            self._page_address = address
-            self._address_event.set()  # Indica que el valor está listo
-            self._address_event.clear()  # Reinicia el evento para futuras esperas
+        print("(" + threading.current_thread().getName() + ") " + "----EN SET_PAGE_ADDRESS----")
+        self._address_event.clear()  # Reinicia el evento para futuras esperas
+        print("(" + threading.current_thread().getName() + ") " + "------------event.set()")
+        self._page_address = address
+        self._address_event.set()
+        print("(" + threading.current_thread().getName() + ") " + "------------event.clear()")
+        print("(" + threading.current_thread().getName() + ") " + "----TERMINA SET_PAGE_ADDRESS----")
 
     def get_page_address(self) -> str:
+        print("(" + threading.current_thread().getName() + ") " + "----EN GET_PAGE_ADDRESS----")
         self._address_event.wait()  # Espera hasta que el evento esté listo
-        with self._output_ready:
-            return self._page_address
+        print("(" + threading.current_thread().getName() + ") " + "--------Despues de esperar")
+        return self._page_address
 
     def is_running(self) -> bool:
         return self._running

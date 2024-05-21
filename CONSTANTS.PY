@@ -7,7 +7,5 @@ MIN_PORT = 6001
 MAX_PORT = 6999
 ADDRESS = "http://localhost"
 DB_URI = "mongodb+srv://design:label123@cluster0.3yowbc8.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
-IMGUR_API_CLIENT_ID = '31ad4568aa7f525'
-IMGUR_API_CLIENT_SECRET = '50e212c490039237abbfc5d16d8c35a2ad9e8bfe'
 TELEGRAM_BOT_TOKEN = '6804076373:AAGVfw6smnTUmLXzReSdSmVHmcYvvempgI0'
 LOCAL_TUNNEL_PASSWORD_URL = "https://loca.lt/mytunnelpassword"

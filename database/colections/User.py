@@ -1,4 +1,4 @@
-from mongoengine import Document, StringField, ListField, ReferenceField, IntField
+from mongoengine import Document, StringField, ListField, ReferenceField, IntField, BooleanField
 
 
 class User(Document):
@@ -7,3 +7,4 @@ class User(Document):
     username = StringField(required=False)
     name = StringField(required=False)
     paginas = ListField(ReferenceField('Page'))
+    hizo_tutorial = BooleanField(default=False)

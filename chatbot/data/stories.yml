@@ -2,10 +2,107 @@ version: "3.1"
 
 stories:
 
-- story: start
+# INICIO
+
+## HACE TUTORIAL
+
+- story: Usuario nuevo o existente hace tutorial
   steps:
     - intent: start
-    - action: action_saludo_telegram #Aca se guarda al usuario en la DB
+    - action: action_saludo_telegram
+    - slot_was_set:
+      - pregunta_tutorial: true
+    - intent: afirmar
+    - action: action_capturar_tutorial
+    - slot_was_set:
+      - inicia_tutorial: true
+    - checkpoint: pregunta_1_tutorial
+
+## NO HACE TUTORIAL
+
+- story: Usuario nuevo o existente no hace tutorial
+  steps:
+    - intent: start
+    - action: action_saludo_telegram
+    - slot_was_set:
+      - pregunta_tutorial: true
+    - intent: denegar
+    - action: action_capturar_tutorial
+
+## YA HIZO TUTORIAL
+
+- story: Usuario existente ya hizo tutorial
+  steps:
+    - intent: start
+    - action: action_saludo_telegram
+    - slot_was_set:
+      - pregunta_tutorial: false
+
+# TUTORIAL
+
+## PEDIR TUTORIAL
+
+- story: pedir tutorial
+  steps:
+  - intent: pedir_tutorial
+  - action: action_capturar_tutorial
+  - slot_was_set:
+    - inicia_tutorial: true
+  - checkpoint: pregunta_1_tutorial
+
+## INICIAR TUTORIAL
+
+### PREGUNTA 1
+
+- story: Entiende 1
+  steps:
+  - checkpoint: pregunta_1_tutorial
+  - slot_was_set:
+    - inicia_tutorial: true
+  - action: action_pregunta_1
+  - slot_was_set:
+    - pregunta_1_confirmacion: true
+  - intent: afirmar
+  - checkpoint: pregunta_1_entendida
+
+- story: No entiende 1
+  steps:
+  - checkpoint: pregunta_1_tutorial
+  - slot_was_set:
+    - inicia_tutorial: true
+  - action: action_pregunta_1
+  - slot_was_set:
+    - pregunta_1_confirmacion: true
+  - intent: denegar
+  - action: action_pregunta_1_repetir
+  - slot_was_set:
+    - pregunta_1_repetir_confirmacion: true
+  - intent: afirmar
+  - checkpoint: pregunta_1_entendida
+
+### PREGUNTA 2
+
+- story: Entiende 2
+  steps:
+  - checkpoint: pregunta_1_entendida
+  - action: action_pregunta_2
+  - slot_was_set:
+    - pregunta_2_confirmacion: true
+  - intent: afirmar
+  - checkpoint: pregunta_2_entendida
+
+- story: No entiende 2
+  steps:
+  - checkpoint: pregunta_1_entendida
+  - action: action_pregunta_2
+  - slot_was_set:
+    - pregunta_2_confirmacion: true
+  - intent: denegar
+  - action: action_pregunta_2_repetir
+  - slot_was_set:
+    - pregunta_2_repetir_confirmacion: true
+  - intent: afirmar
+  - checkpoint: pregunta_2_entendida
 
 # CREACION
 

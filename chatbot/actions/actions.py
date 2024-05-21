@@ -20,7 +20,6 @@ class ActionPreguntarNombrePagina(Action):
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         print("(" + threading.current_thread().getName() + ") " + "----ACTION PREGUNTAR NOMBRE PAGINA----")
-        print("(" + threading.current_thread().getName() + ") ", tracker.slots.items())
         dispatcher.utter_message(text="¿Como queres que se llame tu pagina? Por favor indica su nombre en el siguiente formato: www. nombre-pagina .com")
         return [SlotSet("creando_pagina", True)]
 
@@ -31,7 +30,6 @@ class ActionCrearPagina(Action):
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         print("(" + threading.current_thread().getName() + ") " + "----ACTION CREAR PAGINA----")
-        print("(" + threading.current_thread().getName() + ") ", tracker.slots.items())
         print("(" + threading.current_thread().getName() + ") " + "--------page_name_slot: ", tracker.get_slot('page_name'))
         entities = tracker.latest_message.get("entities", [])
         # Filtrar las entidades para obtener solo las de tipo "page_name"
@@ -122,9 +120,6 @@ class ActionEjecutarDev(Action):
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         print("(" + threading.current_thread().getName() + ") " + "----ACTION EJECUTAR DEV----")
-        print("(" + threading.current_thread().getName() + ") ", tracker.slots.items())
-        SlotSet("creando_pagina", False)
-        print("(" + threading.current_thread().getName() + ") ", tracker.slots.items())
         page = PageManager.get_page(tracker.sender_id, tracker.get_slot('page_name'))
         #dispatcher.utter_message(text="Tu pagina se encuentra en modo edición. Podrás visualizar los cambios que realices en: " + page.get_page_address())
 
@@ -584,14 +579,23 @@ class ActionSaludoTelegram(Action):
         nombre = variable["from"]["first_name"]
         user_name = variable["from"].get("user_name", None)
         ide = tracker.sender_id
-        message = "Hola " + nombre + ", como va tu " + horario + "? Soy el Chatbot WebGenerator, el encargado de ayudarte a crear tu pagina web! Si queres preguntame y te explico un poco en que cosas puedo contribuir."
-        dispatcher.utter_message(text=str(message))
+        user_doc = DBManager.get_user(DBManager.get_instance(), ide)
+        if user_doc:
+        #El usuario ya existe
+            dispatcher.utter_message(text="Bienvenido nuevamente " + nombre + ", ¿como puedo ayudarte?")
+            if not user_doc.hizo_tutorial:
+            #No hizo el tutorial
+                dispatcher.utter_message(text="¿Quisieras completar el tutorial en esta ocasión? Te recuerdo que debes finalizarlo antes de poder empezar a crear tus páginas.")
+                return [SlotSet("pregunta_tutorial", True), SlotSet("usuario", user_name), SlotSet("horario", horario), SlotSet("id_user", ide)]
+        else:
+        #El usuario no existe
+            message = "Hola " + nombre + ", como va tu " + horario + "? Soy el Chatbot WebGenerator, encargado de ayudarte a crear tu pagina web! Si queres preguntame y te explico un poco en que cosas puedo contribuir."
+            dispatcher.utter_message(text="Hola " + nombre + ", ¿como va tu " + horario + "? Soy el chatbot WebGenerator, tu asistente para crear páginas web.")
+            dispatcher.utter_message(text="¿Queres realizar el tutorial?")
+            DBManager.add_user(DBManager.get_instance(), ide, tracker.get_slot("usuario"), nombre)
+            return [SlotSet("pregunta_tutorial", True), SlotSet("usuario", user_name), SlotSet("horario", horario), SlotSet("id_user", ide)]
 
-        print("en saludo telegram")
-        DBManager.add_user(DBManager.get_instance(), ide, tracker.get_slot("usuario"), nombre)
-        print("----FINALIZA SALUDO TELEGRAM----")
-
-        return [SlotSet("usuario", user_name), SlotSet("horario", horario), SlotSet("id_user", ide)]
+        return [SlotSet("pregunta_tutorial", False), SlotSet("usuario", user_name), SlotSet("horario", horario), SlotSet("id_user", ide)]
 
 
 #Random Actions
@@ -669,41 +673,76 @@ class ActionTriste(Action):
             dispatcher.utter_message(template="utter_triste_pelea")
         return []
 
+# TUTORIAL
 
-# Json actions
-class OperarArchivoDia():
+class ActionCapturarTutorial(Action):
 
-    @staticmethod
-    def guardar(AGuardar):
-        with open(".\\actions\\dia", "w") as archivo_descarga:
-            json.dump(AGuardar, archivo_descarga, indent=4)
-        archivo_descarga.close()
+    def name(self) -> Text:
+        return "action_capturar_tutorial"
 
-    @staticmethod
-    def cargarArchivo():
-        if os.path.isfile(".\\actions\\dia"):
-            with open(".\\actions\\dia", "r") as archivo_carga:
-                retorno = json.load(archivo_carga)
-                archivo_carga.close()
+    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        print("(" + threading.current_thread().getName() + ") " + "----ACTION CAPTURAR TUTORIAL----")
+        last_message_intent = tracker.latest_message.get('intent').get('name')
+        if 'denegar' in last_message_intent:
+            dispatcher.utter_message(text="No hay problema, solo ten en cuenta que necesitarás completar el tutorial antes de empezar a crear tus páginas")
+            return []
+        elif 'afirmar' in last_message_intent or 'pedir_tutorial' in last_message_intent:
+            dispatcher.utter_message(text="Excelente, daremos inicio al tutorial")
+            return [SlotSet("inicia_tutorial", True)]
         else:
-            retorno = {}
-        return retorno
+            return [FollowupAction("action_default_fallback")]
+
+class ActionPregunta1(Action):
+
+    def name(self) -> Text:
+        return "action_pregunta_1"
+
+    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        print("(" + threading.current_thread().getName() + ") " + "----ACTION PREGUNTA 1----")
+        dispatcher.utter_message(text="Nuestras páginas se construyen mediante componentes. El primero de ellos es el encabezado, que se encuentra en la parte superior de la página web.")
+        dispatcher.utter_message(text="Este encabezado se compone por el título de la página, el color del título y un logo.")
+        dispatcher.utter_message(text="¿Entendido?")
+        return [SlotSet("pregunta_1_confirmacion", True)]
 
 
-class OperarArchivoUser():
+class ActionPregunta1Repetir(Action):
 
-    @staticmethod
-    def guardar(AGuardar):
-        with open(".\\actions\\user", "w") as archivo_descarga:
-            json.dump(AGuardar, archivo_descarga, indent=4)
-        archivo_descarga.close()
+    def name(self) -> Text:
+        return "action_pregunta_1_repetir"
 
-    @staticmethod
-    def cargarArchivo():
-        if os.path.isfile(".\\actions\\user"):
-            with open(".\\actions\\user", "r") as archivo_carga:
-                retorno = json.load(archivo_carga)
-                archivo_carga.close()
-        else:
-            retorno = {}
-        return retorno
+    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        print("(" + threading.current_thread().getName() + ") " + "----ACTION PREGUNTA 1 REPETIR----")
+        dispatcher.utter_message(text="Nuestras páginas se construyen mediante componentes. El primero de ellos es el encabezado, que se encuentra en la parte superior de la página web.")
+        dispatcher.utter_message(text="Este encabezado se compone por el título de la página, el color del título y un logo.")
+        dispatcher.utter_message(text="¿Entendido?")
+        return [SlotSet("pregunta_1_confirmacion", False), SlotSet("pregunta_1_repetir_confirmacion", True)]
+
+
+class ActionPregunta2(Action):
+
+    def name(self) -> Text:
+        return "action_pregunta_2"
+
+    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        print("(" + threading.current_thread().getName() + ") " + "----ACTION PREGUNTA 2----")
+        dispatcher.utter_message(text="El siguiente componente de nuestras páginas es el cuerpo, el cual dividimos según 3 tipos de secciones: e-commerce, informativa y ABM.")
+        dispatcher.utter_message(text="Seccion e-commerce: ")
+        dispatcher.utter_message(text="Seccion informativa: ")
+        dispatcher.utter_message(text="Seccion ABM: ")
+        dispatcher.utter_message(text="¿Entendido?")
+        return [SlotSet("pregunta_2_confirmacion", True)]
+
+
+class ActionPregunta2Repetir(Action):
+
+    def name(self) -> Text:
+        return "action_pregunta_2_repetir"
+
+    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        print("(" + threading.current_thread().getName() + ") " + "----ACTION PREGUNTA 2 REPETIR----")
+        dispatcher.utter_message(text="El siguiente componente de nuestras páginas es el cuerpo, el cual dividimos según 3 tipos de secciones: e-commerce, informativa y ABM.")
+        dispatcher.utter_message(text="Seccion e-commerce: ")
+        dispatcher.utter_message(text="Seccion informativa: ")
+        dispatcher.utter_message(text="Seccion ABM: ")
+        dispatcher.utter_message(text="¿Entendido?")
+        return [SlotSet("pregunta_2_confirmacion", False), SlotSet("pregunta_2_repetir_confirmacion", True)]

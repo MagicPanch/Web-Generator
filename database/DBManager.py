@@ -29,10 +29,17 @@ class DBManager(object):
             raise Exception("No se puede crear otra instancia de DB Manager")
 
     def add_user(self, id, username, nombre):
-        user = User.objects(id=id)
+        user = User.objects(id=id).first()
         if not user:
-            user = User(id=id, username=username, name=nombre, paginas=[])
+            user = User(id=id, username=username, name=nombre, paginas=[], hizo_tutorial=False)
             user.save()
+
+    def get_user(self, id):
+        user = User.objects(id=id).first()
+        if user:
+            return user
+        else:
+            return None
 
     def add_page(self, user_id, page_name, contact):
         user = User.objects(id=user_id).first()

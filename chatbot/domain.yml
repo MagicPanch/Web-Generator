@@ -36,6 +36,7 @@ intents:
   - tipo_seccion
   - triste_facu
   - triste_pelea
+  - pedir_tutorial
 
 entities:
   - page_name
@@ -81,6 +82,11 @@ actions:
   - action_guardar_mail_footer
   - action_guardar_ubicacion_footer
   - action_crear_footer
+  - action_capturar_tutorial
+  - action_pregunta_1
+  - action_pregunta_1_repetir
+  - action_pregunta_2
+  - action_pregunta_2_repetir
 
 slots:
   page_name:
@@ -138,6 +144,48 @@ slots:
       - type: custom
 
   running_dev:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: custom
+
+  inicia_tutorial:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: custom
+
+  pregunta_tutorial:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: custom
+
+  pregunta_1_confirmacion:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: custom
+
+  pregunta_1_repetir_confirmacion:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: custom
+
+  pregunta_2_confirmacion:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: custom
+
+  pregunta_2_repetir_confirmacion:
     type: bool
     influence_conversation: true
     initial_value: false
@@ -304,6 +352,9 @@ responses:
   utter_gracias:
   - text: de nada!
   - text: no hay problemaa
+
+  utter_tutorial_1:
+  - text: "indicacion tutorial 1. entendiste?"
 
 session_config:
   session_expiration_time: 60
