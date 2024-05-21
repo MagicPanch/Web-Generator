@@ -20,7 +20,6 @@ class ActionPreguntarNombrePagina(Action):
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         print("(" + threading.current_thread().getName() + ") " + "----ACTION PREGUNTAR NOMBRE PAGINA----")
-        print("(" + threading.current_thread().getName() + ") ", tracker.slots.items())
         dispatcher.utter_message(text="¿Como queres que se llame tu pagina? Por favor indica su nombre en el siguiente formato: www. nombre-pagina .com")
         return [SlotSet("creando_pagina", True)]
 
@@ -31,7 +30,6 @@ class ActionCrearPagina(Action):
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         print("(" + threading.current_thread().getName() + ") " + "----ACTION CREAR PAGINA----")
-        print("(" + threading.current_thread().getName() + ") ", tracker.slots.items())
         print("(" + threading.current_thread().getName() + ") " + "--------page_name_slot: ", tracker.get_slot('page_name'))
         entities = tracker.latest_message.get("entities", [])
         # Filtrar las entidades para obtener solo las de tipo "page_name"
@@ -122,9 +120,6 @@ class ActionEjecutarDev(Action):
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         print("(" + threading.current_thread().getName() + ") " + "----ACTION EJECUTAR DEV----")
-        print("(" + threading.current_thread().getName() + ") ", tracker.slots.items())
-        SlotSet("creando_pagina", False)
-        print("(" + threading.current_thread().getName() + ") ", tracker.slots.items())
         page = PageManager.get_page(tracker.sender_id, tracker.get_slot('page_name'))
         #dispatcher.utter_message(text="Tu pagina se encuentra en modo edición. Podrás visualizar los cambios que realices en: " + page.get_page_address())
 
@@ -136,7 +131,9 @@ class ActionEjecutarDev(Action):
 
         #Esperar a que la pagina este lista
         page.wait_for_ready()
+        print("(" + threading.current_thread().getName() + ") " + "--------Despues de page.wait_for_ready()")
         message = "Tu pagina se encuentra en modo edición. Podrás visualizar los cambios que realices en: " + page.get_page_address()
+        print("(" + threading.current_thread().getName() + ") " + "--------Despues de page.get_page_address()")
         print("(" + threading.current_thread().getName() + ") " + "--------message: ", message)
         dispatcher.utter_message(text=message)
 
