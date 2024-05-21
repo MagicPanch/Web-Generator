@@ -1,5 +1,5 @@
 "use client";
-
+    
     import React from "react";
     import logo from './logo.png';
     import Image from "next/image";
@@ -15,7 +15,7 @@
                     height={100}
                     alt="Logo"/>
                 </div>
-                <h1 className="text-5xl text-yellow-600  mb-5  font-semibold text-center flex-1">
+                <h1 className="text-5xl text-colorTituloHeader  mb-5  font-semibold text-center flex-1">
                     ecommerce
                 </h1>
             </div>

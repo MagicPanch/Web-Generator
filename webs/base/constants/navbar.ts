@@ -3,3 +3,4 @@ export const NAVIGATION_LINKS = [
   { label: "Shop", href: "/shop" },
   { label: "Contacto", href: "/contact" },
 ];
+

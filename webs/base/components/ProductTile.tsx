@@ -1,20 +1,28 @@
-"use client";
-
 import React from "react";
-import Image from "next/image";
-import Link from "next/link";
-const ProductTile = (data: { titulo: string,descripcion :string}) => {
-    return(
-        
-        <div className=" bg-blue-500 mx-1 my-0.5 rounded border-2 border-white items-center justify-between  px-1  min-h-52 min-w-52">
-            <h1 className="text-2xl  mb-2  font-semibold  flex-1">
-                {data.titulo}
-            </h1>
-            <span className="block  mx-0  m-0 text-sm whitespace-normal break-words overflow-hidden text-ellipsis max-h-20">
-                
-                {data.descripcion} 
-            </span>
+
+interface CardProps {
+  image: string;
+  title: string;
+  description: string;
+  price: string;
+}
+
+const ProductTile = ({ image, title, description, price }: CardProps) => {
+  return (
+    <div className="bg-white rounded-lg overflow-hidden shadow-md p-4 m-4">
+      <img src={image} alt="Product" className="w-full" />
+      <div className="p-4">
+        <h2 className="text-xl font-semibold mb-2">{title}</h2>
+        <p className="text-gray-600">{description}</p>
+        <div className="mt-4 flex items-center justify-between">
+          <button className="bg-blue-500 text-white px-4 py-2 rounded-md">
+            Comprar
+          </button>
+          <span className="text-gray-600">${price}</span>
         </div>
-    );
+      </div>
+    </div>
+  );
 };
+
 export default ProductTile;

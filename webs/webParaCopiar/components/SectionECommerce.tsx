@@ -1,43 +1,31 @@
-"use client";
-
 import React from "react";
-import Image from "next/image";
-import Link from "next/link";
 import SearchBar from "./SearchBar";
 import ProductTile from "./ProductTile";
-const  SectionECommerce = () => {
-    const productData1 = {titulo : "titulo",descripcion: "soy una descripcion"}
-    const productos =[ {titulo:"Mesa",descripcion:"Excelente mesa de alta madera"},{titulo:"tilo2",descripcion:"d2"},{titulo:"tilo2",descripcion:"d2"},{titulo:"tilo2",descripcion:"d2"},{titulo:"tilo2",descripcion:"d2"},{titulo:"tilo2",descripcion:"d2"}
-    ,{titulo:"tilo2",descripcion:"d2"},{titulo:"tilo2",descripcion:"d2"},{titulo:"tilo2",descripcion:"d2"},{titulo:"tilo2",descripcion:"d2"},{titulo:"tilo2",descripcion:"d2"}
-    ]
-    return(
-        <div>
-            
-            <div className=" max-w-screen bg-gray-500  p-4 justify-between h-full px-4">
-            <h1 className=" text-2xl  mb-3  font-semibold text-center  p-2 h-full max-w-3/4 ">
-                Compra nuestros productos
-            </h1>
-            <div className="flex justify-center">
-            <div className="w-3/4 ">
-                <SearchBar/>
-            </div>
-            </div>
-           
-            
-           
-           
-            <div className="w-full my-5 flex flex-wrap justify-center  gap-1 justify-items-center">
-           
-            {productos.map((producto, index) => (
-                 <ProductTile key={index} {...producto} />  
+import { CARDS_DATA } from "../constants/body";
+
+const SectionECommerce = () => {
+  return (
+    <section>
+      <div className="max-w-screen bg-blue-300 p-4 h-full px-4">
+        <h1 className="text-2xl mb-3 font-semibold text-center p-2 h-full">
+          Compra nuestros productos
+        </h1>
+        <SearchBar />
+        <div className="grid gap-y-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 py-8 justify-center items-center">
+          {CARDS_DATA &&
+            CARDS_DATA.map((item, i) => (
+              <ProductTile
+                key={i}
+                image={item.image}
+                title={item.title}
+                description={item.description}
+                price={item.price}
+              />
             ))}
-            </div>
-            
-            
-            </div>
         </div>
-    )
-        
-       
-}
+      </div>
+    </section>
+  );
+};
+
 export default SectionECommerce;
