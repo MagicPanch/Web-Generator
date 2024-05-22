@@ -1,7 +1,6 @@
 import os
 import random
 import shutil
-import socket
 import subprocess
 import threading
 from typing import Tuple, Dict, List
@@ -10,7 +9,7 @@ import requests
 from telegram import Bot, File
 import CONSTANTS
 import psutil
-from generator.Front import Front
+from generator.Objects.Front import Front
 import socket
 
 
@@ -463,12 +462,15 @@ class PageManager(object):
         process.terminate()
         process.wait()
 
-    async def download_telegram_image(self, image_id, short_id):
+    async def download_telegram_image(self, user, page_name, subdir, image_id, image_name=None):
+        file:File
         file = self._bot.get_file(image_id)
-        PageManager.go_to_dir("components")
-        print("path to save: ", os.getcwd() + '\\' + str(short_id) + '.png')
-        print("current path: ", os.getcwd())
-        file.download(custom_path=os.getcwd()+ '\\' + str(short_id) + '.png')
+        PageManager.go_to_main_dir()
+        PageManager.go_to_dir(CONSTANTS.USER_PAGES_DIR)
+        PageManager.go_to_dir(user)
+        PageManager.go_to_dir(page_name)
+        PageManager.go_to_dir(subdir)
+        file.download(custom_path=os.getcwd()+ '\\' + str(image_name) + '.png')
         PageManager.go_to_main_dir()
 
 

@@ -1,8 +1,8 @@
 import threading
-from flask import Flask, request
+from flask import Flask
 
 import CONSTANTS
-from generator.PageRunner import PageRunner
+from generator.Objects.PageRunner import PageRunner
 
 class Back(PageRunner):
     # Clase encargada de la ejecución de la API Flask asociado a una página web.

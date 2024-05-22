@@ -4,6 +4,7 @@ from mongoengine import connect
 import CONSTANTS
 from database.colections.Page import Page
 from database.colections.User import User
+from database.colections.InformativeSection import InformativeSection
 
 
 class DBManager(object):
@@ -55,7 +56,6 @@ class DBManager(object):
             return user.hizo_tutorial
         else:
             return False
-
 
     def add_page(self, user_id, page_name, contact):
         user = User.objects(id=user_id).first()
@@ -137,6 +137,19 @@ class DBManager(object):
         page = Page.objects(id=page_id).first()
         if page:
             page.compilationDate = datetime.datetime.now()
+            page.save()
+        else:
+            raise Exception("La pagina " + str(page_name) + " no existe o no te pertenece")
+
+    def add_inf_section(self, user_id, page_name, inf_section):
+        page_id = user_id + '-' + page_name
+        page = Page.objects(id=page_id).first()
+        if page:
+            section_id = page_id + '-' + inf_section.get_title()
+            section = InformativeSection(id=section_id, title=inf_section.get_title(), text=inf_section.get_text(), texts=inf_section.get_texts())
+            section.save()
+            page.sections.append(section)
+            page.lastModificationDate = datetime.datetime.now()
             page.save()
         else:
             raise Exception("La pagina " + str(page_name) + " no existe o no te pertenece")

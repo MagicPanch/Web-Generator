@@ -215,6 +215,17 @@ stories:
   - action: action_capturar_edicion
   - checkpoint: componente_capturado
 
+- story: editar con pagina y componente pero sin seccion
+  steps:
+  - intent: modificar_pagina
+  - action: action_capturar_edicion
+  - checkpoint: componente_capturado
+  - slot_was_set:
+    - pregunta_seccion: true
+  - intent: tipo_seccion
+  - action: action_capturar_edicion
+  - checkpoint: componente_capturado
+
 - story: editar pagina sin tutorial (si)
   steps:
     - intent: modificar_pagina
@@ -304,6 +315,102 @@ stories:
   - action: action_guardar_ubicacion_footer
   - slot_was_set:
     - creando_footer: false
+
+## SECCIÓN
+
+### INFORMATIVA
+
+- story: editar seccion informativa 1
+  steps:
+  - checkpoint: componente_capturado
+  - slot_was_set:
+    - componente: seccion
+  - slot_was_set:
+    - creando_seccion_informativa: true
+  - or:
+    - intent: decir_nombre_informativa
+    - intent: despues_te_digo
+  - action: action_crear_informativa_2
+  - checkpoint: crear_informativa_1
+
+- story: editar seccion informativa 2
+  steps:
+  - checkpoint: crear_informativa_1
+  - slot_was_set:
+    - componente: seccion
+    - creando_seccion_informativa: true
+  - intent: decir_texto_informativa
+  - action: action_crear_informativa_3
+  - checkpoint: crear_informativa_2
+
+- story: editar seccion informativa 3 (envia imagen)
+  steps:
+  - checkpoint: crear_informativa_2
+  - slot_was_set:
+    - componente: seccion
+    - creando_seccion_informativa: true
+  - intent: enviar_imagen
+  - action: action_recibir_imagen
+  - slot_was_set:
+    - componente: seccion
+    - creando_seccion_informativa: true
+    - pregunta_otra_imagen_seccion_informativa: true
+  - checkpoint: crear_informativa_3.1
+
+- story: editar seccion informativa 3 (envia otra imagen)
+  steps:
+  - checkpoint: crear_informativa_3.1
+  - slot_was_set:
+    - componente: seccion
+    - creando_seccion_informativa: true
+    - pregunta_otra_imagen_seccion_informativa: true
+  - intent: enviar_imagen
+  - action: action_recibir_imagen
+  - slot_was_set:
+    - componente: seccion
+    - creando_seccion_informativa: true
+    - pregunta_otra_imagen_seccion_informativa: true
+  - checkpoint: crear_informativa_3.1
+
+- story: editar seccion informativa 3 (no envia otra imagen)
+  steps:
+  - checkpoint: crear_informativa_3.1
+  - slot_was_set:
+    - componente: seccion
+  - slot_was_set:
+    - creando_seccion_informativa: true
+    - pregunta_otra_imagen_seccion_informativa: true
+  - intent: denegar
+  - action: action_recibir_imagen
+  - slot_was_set:
+    - componente: seccion
+    - creando_seccion_informativa: true
+    - pregunta_otra_imagen_seccion_informativa: false
+  - action: action_crear_informativa_4
+  - slot_was_set:
+    - creando_seccion_informativa: false
+
+- story: editar seccion informativa 3 (no envia imagen)
+  steps:
+  - checkpoint: crear_informativa_2
+  - slot_was_set:
+    - componente: seccion
+  - slot_was_set:
+    - creando_seccion_informativa: true
+  - intent: denegar
+  - action: action_recibir_imagen
+  - slot_was_set:
+    - componente: seccion
+    - creando_seccion_informativa: true
+    - pregunta_otra_imagen_seccion_informativa: false
+  - action: action_crear_informativa_4
+  - slot_was_set:
+    - creando_seccion_informativa: false
+
+
+### E-COMMERCE
+
+### ABM
 
 # ADMINISTRAR PAGINAS
 

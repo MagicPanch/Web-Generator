@@ -37,6 +37,8 @@ intents:
   - triste_facu
   - triste_pelea
   - pedir_tutorial
+  - decir_nombre_informativa
+  - decir_texto_informativa
 
 entities:
   - page_name
@@ -53,6 +55,7 @@ entities:
   - imagen
   - mail
   - ubicacion
+  - nombre_informativa
 
 actions:
   - action_animo
@@ -88,6 +91,12 @@ actions:
   - action_pregunta_2
   - action_pregunta_2_repetir
   - action_terminar_tutorial
+  - action_crear_ecommerce
+  - action_crear_informativa_1
+  - action_crear_informativa_2
+  - action_crear_informativa_3
+  - action_crear_informativa_4
+  - action_crear_abm
 
 slots:
   page_name:
@@ -136,6 +145,12 @@ slots:
     mappings:
     - type: from_entity
       entity: seccion
+
+  nombre_informativa:
+    type: text
+    mappings:
+    - type: from_entity
+      entity: nombre_informativa
 
   creando_pagina:
     type: bool
@@ -200,6 +215,13 @@ slots:
     mappings:
       - type: custom
 
+  pregunta_seccion:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: custom
+
   pregunta_nombre:
     type: bool
     influence_conversation: true
@@ -235,7 +257,21 @@ slots:
     mappings:
       - type: custom
 
-  creando_seccion:
+#  creando_seccion:
+#    type: bool
+#    influence_conversation: true
+#    initial_value: false
+#    mappings:
+#      - type: custom
+
+  creando_seccion_informativa:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: custom
+
+  pregunta_otra_imagen_seccion_informativa:
     type: bool
     influence_conversation: true
     initial_value: false

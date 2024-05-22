@@ -1,5 +1,6 @@
 import threading
 
+from generator.Objects.InformativeSection import InformativeSection
 from generator.PageManager import PageManager
 from generator.ReactGenerator import ReactGenerator
 from typing import Any, Text, Dict, List
@@ -308,11 +309,29 @@ class ActionCapturarEdicion(Action):
                             page_address = page_obj.get_page_address()
                             dispatcher.utter_message(text="Tu pagina se encuentra en modo edición. Podrás visualizar los cambios que realices en: " + page_address)
                             dispatcher.utter_message(text="Si la pagina te solicita una contraseña ingresa: " + PageManager.get_tunnel_password())
-                    if componente == "encabezado":
+                    if componente.lower() == "encabezado":
                         return[FollowupAction("action_preguntar_color_encabezado"), SlotSet("pregunta_componente", False), SlotSet("pregunta_nombre", False), SlotSet("pregunta_edicion", False)]
-                    elif componente == "footer":
+                    elif componente.lower() == "footer":
                         return[FollowupAction("action_preguntar_mail_footer"), SlotSet("pregunta_componente", False), SlotSet("pregunta_nombre", False), SlotSet("pregunta_edicion", False)]
-
+                    elif componente.lower() == "seccion":
+                    # Va a editar una seccion
+                        tipo_seccion = tracker.get_slot('tipo_seccion')
+                        print("(" + threading.current_thread().getName() + ") " + "--------tipo_seccion: ", tipo_seccion)
+                        if tipo_seccion:
+                        # Hay tipo seccion
+                            if tipo_seccion.lower() == "e-commerce":
+                                return [FollowupAction("action_crear_ecommerce"), SlotSet("pregunta_componente", False), SlotSet("pregunta_nombre", False), SlotSet("pregunta_edicion", False)]
+                            elif tipo_seccion.lower() == "informativa":
+                                return [FollowupAction("action_crear_informativa_1"), SlotSet("pregunta_componente", False), SlotSet("pregunta_nombre", False), SlotSet("pregunta_edicion", False)]
+                            elif tipo_seccion.lower() == "abm":
+                                return [FollowupAction("action_crear_abm"), SlotSet("pregunta_componente", False), SlotSet("pregunta_nombre", False), SlotSet("pregunta_edicion", False)]
+                            else:
+                                dispatcher.utter_message(text=str(tipo_seccion) + " no es un tipo de seccion válido. Te recuerdo que las secciones a crear son: \n E-Commerce \n Informativa \n ABM.")
+                                return [SlotSet("pregunta_componente", True), SlotSet("pregunta_seccion", True)]
+                        else:
+                        # No hay tipo seccion
+                            dispatcher.utter_message(text="¿Que sección te gustaría crear o modificar? Te recuerdo que las secciones a crear son: \n E-Commerce \n Informativa \n ABM.")
+                            return [SlotSet("pregunta_componente", True), SlotSet("pregunta_seccion", True)]
             elif page_name and not componente:
             # Hay pagina y no hay componente a editar
                 print("(" + threading.current_thread().getName() + ") " + "--------pagina: ", page_name)
@@ -348,7 +367,7 @@ class ActionCapturarEdicion(Action):
             return [SlotSet("pregunta_tutorial", True)]
 
 
-
+'''
 class ActionPreguntarTipoSeccion(Action):
     def name(self) -> Text:
         return "action_preguntar_tipo_seccion"
@@ -398,7 +417,7 @@ class ActionCrearSeccion(Action):
         print("-------------SECCION CREADA-------------")
         dispatcher.utter_message(text="Podes ver la nueva sección en tu página")
         return [SlotSet("creando_seccion", False)]
-
+'''
 
 class ActionGuardarColor(Action):
     def name(self) -> Text:
@@ -432,6 +451,12 @@ class ActionRecibirImagen(Action):
         return "action_recibir_imagen"
 
     async def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        print("(" + threading.current_thread().getName() + ") " + "----EN ACTION RECIBIR IMAGEN----")
+        print("(" + threading.current_thread().getName() + ") " + "--------creando_encabezado ", tracker.get_slot("creando_encabezado"))
+        print("(" + threading.current_thread().getName() + ") " + "--------creando_seccion_informativa ", tracker.get_slot("creando_seccion_informativa"))
+        print("(" + threading.current_thread().getName() + ") " + "--------pregunta_otra_imagen_seccion_informativa ", tracker.get_slot("pregunta_otra_imagen_seccion_informativa"))
+        print("(" + threading.current_thread().getName() + ") " + "--------last_message_intent: ", tracker.latest_message.get('intent').get('name'))
+
         # Verifica si el último mensaje contiene una imagen
         latest_message = tracker.latest_message
         if 'photo' in latest_message['metadata']['message']:
@@ -442,15 +467,22 @@ class ActionRecibirImagen(Action):
                 error = True
             else:
                 if tracker.get_slot("creando_encabezado"):
-                    img_name = "logo"
-                    await PageManager.download_telegram_image(PageManager.get_instance(), tracker.sender_id, tracker.get_slot('page_name'), image_id=image_id, short_id=img_name)
+                    await PageManager.download_telegram_image(PageManager.get_instance(), tracker.sender_id, tracker.get_slot('page_name'), subdir="components", image_id=image_id, image_name="logo")
+                elif tracker.get_slot("creando_seccion_informativa"):
+                    await PageManager.download_telegram_image(PageManager.get_instance(), tracker.sender_id, tracker.get_slot('page_name'), subdir="sect_inf_images", image_id=image_id, image_name=photo["file_unique_id"])
             if not error:
                 dispatcher.utter_message(text="Imagen recibida con éxito.")
+                if tracker.get_slot("creando_seccion_informativa"):
+                    dispatcher.utter_message(text="¿Queres agregar otra imagen?")
+                    return [SlotSet("pregunta_otra_imagen_seccion_informativa", True)]
             else:
                 dispatcher.utter_message(text="No se pudo procesar la imagen.")
         else:
-            if 'denegar' in latest_message:
-                dispatcher.utter_message(text="Perfecto, el encabezado de tu página no contendrá ningún logo")
+            if tracker.latest_message.get('intent').get('name') == "denegar":
+                if tracker.get_slot("creando_encabezado"):
+                    dispatcher.utter_message(text="Perfecto, el encabezado de tu página no contendrá ningún logo")
+                elif tracker.get_slot("creando_seccion_informativa"):
+                    return [SlotSet("pregunta_otra_imagen_seccion_informativa", False)]
         return []
 
 class ActionPreguntarColorEncabezado(Action):
@@ -575,7 +607,92 @@ class ActionCrearFooter(Action):
         dispatcher.utter_message(text="Podes ver los cambios que realizamos en el footer")
         return [SlotSet("creando_encabezado", False), SlotSet("componente", None)]
 
+# SECCIONES
 
+## INFORMATIVA
+
+class ActionCrearInformativa1(Action):
+
+    def name(self) -> Text:
+        return "action_crear_informativa_1"
+
+    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        print("(" + threading.current_thread().getName() + ") " + "----ACTION CREAR SECCION INFORMATIVA 1----")
+        dispatcher.utter_message(text="¿Que nombre llevará la sección?")
+        return [SlotSet("creando_seccion_informativa", True)]
+
+
+class ActionCrearInformativa2(Action):
+
+    def name(self) -> Text:
+        return "action_crear_informativa_2"
+
+    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        print("(" + threading.current_thread().getName() + ") " + "----ACTION CREAR SECCION INFORMATIVA 2----")
+        last_message_intent = tracker.latest_message.get('intent').get('name')
+        page = PageManager.get_page(tracker.sender_id, tracker.get_slot('page_name'))
+        nombre_informativa = "Informacion"
+        if "decir_nombre_informativa" in last_message_intent:
+            nombre_informativa = tracker.get_slot("nombre_informativa")
+            dispatcher.utter_message(text="Nombre de sección guardado.")
+        inf_section = InformativeSection(nombre_informativa)
+        page.add_section(inf_section)
+        dispatcher.utter_message(text="Proporcioname texto el informativo. Por favor, respeta el siguiente formato:")
+        dispatcher.utter_message(text="###\nTexto\n###")
+        dispatcher.utter_message(text="Si deseas agregar múltiples bloques de texto, envíalos en el mismo mensaje respetando el siguiente formato:")
+        dispatcher.utter_message(text="###\nTitulo texto1\n##\nTexto1\n##\nTitulo texto2\n##\nTexto2\n##\n###")
+        return [SlotSet("creando_seccion_informativa", True)]
+
+
+class ActionCrearInformativa3(Action):
+
+    def name(self) -> Text:
+        return "action_crear_informativa_3"
+
+    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        print("(" + threading.current_thread().getName() + ") " + "----ACTION CREAR SECCION INFORMATIVA 3----")
+        last_user_message = str(tracker.latest_message.get('text'))
+        text = last_user_message[3:len(last_user_message) - 3].strip()
+        textos = {}
+        if "##" in text:
+        # El texto tiene subtitulos
+            texts = text.split("##").strip()
+            i = 0;
+            while i < len(texts) / 2:
+                textos[texts[i]] = texts[i + 1]
+                i += 2
+        page = PageManager.get_page(tracker.sender_id, tracker.get_slot('page_name'))
+        if tracker.get_slot("nombre_informativa"):
+            nombre_informativa = tracker.get_slot("nombre_informativa")
+        else:
+            nombre_informativa = "Informacion"
+        inf_section = page.get_section("informativa", nombre_informativa)
+        if len(textos) > 0:
+            inf_section.set_texts(textos)
+        else:
+            inf_section.set_text(text)
+        dispatcher.utter_message(text="Texto informativo guardado.")
+        dispatcher.utter_message(text="Si lo deseas podes enviarme alguna imagen para mostrar en tu sección. Si vas a enviar imagenes, por favor envialas de a una.")
+        return [SlotSet("creando_seccion_informativa", True)]
+
+
+class ActionCrearInformativa4(Action):
+
+    def name(self) -> Text:
+        return "action_crear_informativa_4"
+
+    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        print("(" + threading.current_thread().getName() + ") " + "----ACTION CREAR SECCION INFORMATIVA 4----")
+        page = PageManager.get_page(tracker.sender_id, tracker.get_slot('page_name'))
+        if tracker.get_slot("nombre_informativa"):
+            nombre_informativa = tracker.get_slot("nombre_informativa")
+        else:
+            nombre_informativa = "Informacion"
+        inf_section = page.get_section("informativa", nombre_informativa)
+        DBManager.add_inf_section(DBManager.get_instance(), tracker.sender_id, tracker.get_slot("page_name"), inf_section)
+        #ReactGenerator.generarSeccionInformativa()
+        dispatcher.utter_message(text="Podrás ver la nueva sección en tu página")
+        return [SlotSet("creando_seccion_informativa", False)]
 
 # Saludo Actions
 class ActionSaludoTelegram(Action):

@@ -26,16 +26,29 @@ nlu:
     - terminemos el [footer](componente)
     - quiero modificar el [footer](componente)
     - quiero editar el [encabezado](componente)
+    - quiero modificar la [seccion](componente) [informativa](seccion) de [instagram](page_name)
+    - agrega una [seccion](componente) [e-commerce](seccion)
+    - hagamos la [seccion](componente) [ABM](seccion)    
+    - quiero agregar una [seccion](componente) en [test](page_name)
 
 - intent: tipo_seccion
   examples: |
     - que sea [e-commerce](seccion)
     - el tipo de la seccion es [informativa](seccion)
-    - mi pagina es [foro](seccion)
-    - una [red social](seccion)
-    - quiero un [Blog](seccion)
     - me gustaria una [ABM](seccion)
     - e-commerce(seccion)
+
+- intent: decir_nombre_informativa
+  examples: |
+    - el nombre es [nosotros](nombre_informativa)
+    - ponele [quienes somos](nombre_informativa)
+    - el titulo es [sobre nosotros](nombre_informativa)
+    - que se llame [productos](nombre_informativa)
+
+- intent: decir_texto_informativa
+  examples: |
+    - ###Desde nuestra fundación en 2010, hemos trabajado incansablemente para ofrecer productos de la más alta calidad a nuestros clientes. Nuestra pasión por la innovación y el compromiso con la excelencia nos han convertido en un referente en la industria###
+    - ###¿Cómo puedo realizar un pedido?##Para realizar un pedido, simplemente visita nuestra tienda en línea, elige los productos que deseas y sigue las instrucciones para completar la compra. Si necesitas ayuda, nuestro equipo de soporte está disponible para asistirte.##¿Cuáles son las opciones de envío?##Ofrecemos varias opciones de envío para adaptarnos a tus necesidades, incluyendo envío estándar y express. Consulta nuestra página de Envío y Entrega para más detalles.## ###
 
 - intent: despues_te_digo
   examples: |
