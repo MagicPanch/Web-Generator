@@ -104,6 +104,13 @@ stories:
   - intent: afirmar
   - checkpoint: pregunta_2_entendida
 
+## TERMINAR TUTORIAL
+
+- story: terminar tutorial
+  steps:
+  - checkpoint: pregunta_2_entendida
+  - action: action_terminar_tutorial
+
 # CREACION
 
 ## PAGINA
@@ -137,6 +144,27 @@ stories:
       - creando_pagina: false
   - slot_was_set:
       - running_dev: true
+
+- story: crear pagina sin tutorial (si)
+  steps:
+  - intent: crear_pagina
+  - action: action_preguntar_nombre_pagina
+  - slot_was_set:
+      - pregunta_tutorial: true
+  - intent: afirmar
+  - action: action_capturar_tutorial
+  - slot_was_set:
+    - inicia_tutorial: true
+  - checkpoint: pregunta_1_tutorial
+
+- story: crear pagina sin tutorial (no)
+  steps:
+  - intent: crear_pagina
+  - action: action_preguntar_nombre_pagina
+  - slot_was_set:
+      - pregunta_tutorial: true
+  - intent: denegar
+  - action: action_capturar_tutorial
 
 ## SECCION
 
@@ -186,6 +214,27 @@ stories:
   - intent: modificar_pagina
   - action: action_capturar_edicion
   - checkpoint: componente_capturado
+
+- story: editar pagina sin tutorial (si)
+  steps:
+    - intent: modificar_pagina
+    - action: action_capturar_edicion
+    - slot_was_set:
+        - pregunta_tutorial: true
+    - intent: afirmar
+    - action: action_capturar_tutorial
+    - slot_was_set:
+        - inicia_tutorial: true
+    - checkpoint: pregunta_1_tutorial
+
+- story: editar pagina sin tutorial (no)
+  steps:
+    - intent: modificar_pagina
+    - action: action_capturar_edicion
+    - slot_was_set:
+        - pregunta_tutorial: true
+    - intent: denegar
+    - action: action_capturar_tutorial
 
 ## ENCABEZADO
 
@@ -260,19 +309,21 @@ stories:
 
 ## MODIFICAR
 
-- story: modificar pagina dando nombre
-  steps:
-  - intent: modificar_pagina
-  - action: action_modificar_pagina
+#########POTENCIALMENTE PARA BORRAR
 
-- story: modificar pagina sin nombre
-  steps:
-  - intent: modificar_pagina
-  - action: action_modificar_pagina
-  - slot_was_set:
-    - pregunta_modificacion: true
-  - intent: nombre_pagina
-  - action: action_modificar_pagina
+#- story: modificar pagina dando nombre
+#  steps:
+#  - intent: modificar_pagina
+#  - action: action_modificar_pagina
+
+#- story: modificar pagina sin nombre
+#  steps:
+#  - intent: modificar_pagina
+#  - action: action_modificar_pagina
+#  - slot_was_set:
+#    - pregunta_modificacion: true
+#  - intent: nombre_pagina
+#  - action: action_modificar_pagina
 
 ## EJECUTAR
 
@@ -290,6 +341,27 @@ stories:
   - intent: nombre_pagina
   - action: action_ejecutar_pagina
 
+- story: ejecutar pagina sin tutorial (si)
+  steps:
+  - intent: ejecutar_pagina
+  - action: action_ejecutar_pagina
+  - slot_was_set:
+      - pregunta_tutorial: true
+  - intent: afirmar
+  - action: action_capturar_tutorial
+  - slot_was_set:
+      - inicia_tutorial: true
+  - checkpoint: pregunta_1_tutorial
+
+- story: editar pagina sin tutorial (no)
+  steps:
+  - intent: ejecutar_pagina
+  - action: action_ejecutar_pagina
+  - slot_was_set:
+      - pregunta_tutorial: true
+  - intent: denegar
+  - action: action_capturar_tutorial
+
 # DETENER
 
 - story: detener pagina dando nombre
@@ -305,6 +377,27 @@ stories:
     - pregunta_detencion: true
   - intent: nombre_pagina
   - action: action_detener_pagina
+
+- story: detener pagina sin tutorial (si)
+  steps:
+  - intent: detener_pagina
+  - action: action_detener_pagina
+  - slot_was_set:
+      - pregunta_tutorial: true
+  - intent: afirmar
+  - action: action_capturar_tutorial
+  - slot_was_set:
+      - inicia_tutorial: true
+  - checkpoint: pregunta_1_tutorial
+
+- story: detener pagina sin tutorial (no)
+  steps:
+  - intent: detener_pagina
+  - action: action_detener_pagina
+  - slot_was_set:
+      - pregunta_tutorial: true
+  - intent: denegar
+  - action: action_capturar_tutorial
 
 ## CONVERSACION
 

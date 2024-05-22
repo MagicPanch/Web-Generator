@@ -87,6 +87,7 @@ actions:
   - action_pregunta_1_repetir
   - action_pregunta_2
   - action_pregunta_2_repetir
+  - action_terminar_tutorial
 
 slots:
   page_name:
@@ -272,6 +273,11 @@ slots:
     mappings:
     - type: from_entity
       entity: usuario
+
+  nombre_usuario:
+    type: text
+    mappings:
+      - type: custom
 
   horario:
     type: text
