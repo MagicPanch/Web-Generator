@@ -78,7 +78,7 @@ actions:
   - action_modificar_pagina
   - action_ejecutar_dev
   - action_guardar_seccion
-  - action_preguntar_tipo_seccion
+  - action_capturar_tipo_seccion
   - action_capturar_edicion
   - action_preguntar_color_encabezado
   - action_preguntar_mail_footer
@@ -96,6 +96,10 @@ actions:
   - action_crear_informativa_2
   - action_crear_informativa_3
   - action_crear_informativa_4
+  - action_modificar_informativa_1
+  - action_modificar_informativa_2
+  - action_modificar_informativa_3
+  - action_modificar_informativa_4
   - action_crear_abm
 
 slots:
@@ -151,6 +155,11 @@ slots:
     mappings:
     - type: from_entity
       entity: nombre_informativa
+
+  nombre_seccion_editando:
+    type: text
+    mappings:
+      - type: custom
 
   creando_pagina:
     type: bool
@@ -257,14 +266,22 @@ slots:
     mappings:
       - type: custom
 
-#  creando_seccion:
-#    type: bool
-#    influence_conversation: true
-#    initial_value: false
-#    mappings:
-#      - type: custom
+  editando_seccion_informativa:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: custom
 
   creando_seccion_informativa:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: custom
+
+
+  pide_text_informativa:
     type: bool
     influence_conversation: true
     initial_value: false

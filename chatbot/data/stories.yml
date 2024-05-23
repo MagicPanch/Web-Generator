@@ -168,14 +168,118 @@ stories:
 
 ## SECCION
 
-#- story: crear seccion
-#  steps:
-#  - intent: crear_seccion
-#  - action: action_preguntar_tipo_seccion
-#  - slot_was_set:
-#    - creando_seccion: true
-#  - intent: tipo_seccion
-#  - action: action_guardar_seccion
+- story: crear seccion sin pagina
+  steps:
+    - intent: crear_seccion
+    - action: action_capturar_tipo_seccion
+    - slot_was_set:
+      - pregunta_nombre: true
+    - intent: nombre_pagina
+    - action: action_capturar_tipo_seccion
+
+- story: crear seccion con tipo y pagina
+  steps:
+  - intent: crear_seccion
+  - action: action_capturar_tipo_seccion
+  - checkpoint: crear_seccion
+
+- story: crear seccion sin tipo y pagina
+  steps:
+  - intent: crear_seccion
+  - action: action_capturar_tipo_seccion
+  - slot_was_set:
+    - pregunta_seccion: true
+  - intent: tipo_seccion
+  - action: action_capturar_tipo_seccion
+
+### INFORMATIVA
+
+- story: crear seccion informativa 1
+  steps:
+  - checkpoint: crear_seccion
+  - slot_was_set:
+    - componente: seccion
+    - creando_seccion_informativa: true
+  - or:
+    - intent: decir_nombre_informativa
+    - intent: despues_te_digo
+  - action: action_crear_informativa_2
+  - checkpoint: crear_informativa_1
+
+- story: crear seccion informativa 2
+  steps:
+  - checkpoint: crear_informativa_1
+  - slot_was_set:
+    - componente: seccion
+    - creando_seccion_informativa: true
+    - pide_text_informativa: true
+  - intent: decir_texto_informativa
+  - action: action_crear_informativa_3
+  - checkpoint: crear_informativa_2
+
+- story: crear seccion informativa 3 (envia imagen)
+  steps:
+  - checkpoint: crear_informativa_2
+  - slot_was_set:
+    - componente: seccion
+    - creando_seccion_informativa: true
+  - intent: enviar_imagen
+  - action: action_recibir_imagen
+  - slot_was_set:
+    - componente: seccion
+    - creando_seccion_informativa: true
+    - pregunta_otra_imagen_seccion_informativa: true
+  - checkpoint: crear_informativa_3.1
+
+- story: crear seccion informativa 3 (envia otra imagen)
+  steps:
+  - checkpoint: crear_informativa_3.1
+  - slot_was_set:
+    - componente: seccion
+    - creando_seccion_informativa: true
+    - pregunta_otra_imagen_seccion_informativa: true
+  - intent: enviar_imagen
+  - action: action_recibir_imagen
+  - slot_was_set:
+    - componente: seccion
+    - creando_seccion_informativa: true
+    - pregunta_otra_imagen_seccion_informativa: true
+  - checkpoint: crear_informativa_3.1
+
+- story: crear seccion informativa 3 (no envia otra imagen)
+  steps:
+  - checkpoint: crear_informativa_3.1
+  - slot_was_set:
+    - componente: seccion
+  - slot_was_set:
+    - creando_seccion_informativa: true
+    - pregunta_otra_imagen_seccion_informativa: true
+  - intent: denegar
+  - action: action_recibir_imagen
+  - slot_was_set:
+    - componente: seccion
+    - creando_seccion_informativa: true
+    - pregunta_otra_imagen_seccion_informativa: false
+  - action: action_crear_informativa_4
+  - slot_was_set:
+    - creando_seccion_informativa: false
+
+- story: crear seccion informativa 3 (no envia imagen)
+  steps:
+  - checkpoint: crear_informativa_2
+  - slot_was_set:
+    - componente: seccion
+  - slot_was_set:
+    - creando_seccion_informativa: true
+  - intent: denegar
+  - action: action_recibir_imagen
+  - slot_was_set:
+    - componente: seccion
+    - creando_seccion_informativa: true
+    - pregunta_otra_imagen_seccion_informativa: false
+  - action: action_crear_informativa_4
+  - slot_was_set:
+    - creando_seccion_informativa: false
 
 # EDICION
 
@@ -254,7 +358,6 @@ stories:
   - checkpoint: componente_capturado
   - slot_was_set:
     - componente: encabezado
-  - slot_was_set:
     - creando_encabezado: true
   - or:
     - intent: decir_color
@@ -267,7 +370,6 @@ stories:
   - checkpoint: color_encabezado
   - slot_was_set:
     - componente: encabezado
-  - slot_was_set:
     - creando_encabezado: true
   - action: utter_preguntar_logo
   - or:
@@ -275,7 +377,6 @@ stories:
     - intent: denegar
   - slot_was_set:
     - componente: encabezado
-  - slot_was_set:
     - creando_encabezado: true
   - action: action_recibir_imagen
   - action: action_crear_encabezado
@@ -289,7 +390,6 @@ stories:
   - checkpoint: componente_capturado
   - slot_was_set:
     - componente: footer
-  - slot_was_set:
     - creando_footer: true
   - or:
     - intent: decir_mail
@@ -302,7 +402,6 @@ stories:
   - checkpoint: mail_footer
   - slot_was_set:
     - componente: footer
-  - slot_was_set:
     - creando_footer: true
   - action: utter_preguntar_ubicacion
   - or:
@@ -310,7 +409,6 @@ stories:
     - intent: denegar
   - slot_was_set:
     - componente: footer
-  - slot_was_set:
     - creando_footer: true
   - action: action_guardar_ubicacion_footer
   - slot_was_set:
@@ -320,93 +418,94 @@ stories:
 
 ### INFORMATIVA
 
-- story: editar seccion informativa 1
+- story: modificar seccion informativa 1
   steps:
   - checkpoint: componente_capturado
   - slot_was_set:
     - componente: seccion
-  - slot_was_set:
-    - creando_seccion_informativa: true
+    - editando_seccion_informativa: true
   - or:
     - intent: decir_nombre_informativa
-    - intent: despues_te_digo
-  - action: action_crear_informativa_2
-  - checkpoint: crear_informativa_1
+    - intent: denegar
+  - action: action_modificar_informativa_2
+  - checkpoint: editar_informativa_1
 
-- story: editar seccion informativa 2
+- story: modificar seccion informativa 2
   steps:
-  - checkpoint: crear_informativa_1
+  - checkpoint: editar_informativa_1
   - slot_was_set:
     - componente: seccion
-    - creando_seccion_informativa: true
-  - intent: decir_texto_informativa
-  - action: action_crear_informativa_3
-  - checkpoint: crear_informativa_2
+    - editando_seccion_informativa: true
+    - pide_text_informativa: true
+  - or:
+    - intent: decir_texto_informativa
+    - intent: denegar
+  - action: action_modificar_informativa_3
+  - checkpoint: editar_informativa_2
 
-- story: editar seccion informativa 3 (envia imagen)
+- story: modificar seccion informativa 3 (envia imagen)
   steps:
-  - checkpoint: crear_informativa_2
+  - checkpoint: editar_informativa_2
   - slot_was_set:
     - componente: seccion
-    - creando_seccion_informativa: true
+    - editando_seccion_informativa: true
   - intent: enviar_imagen
   - action: action_recibir_imagen
   - slot_was_set:
     - componente: seccion
-    - creando_seccion_informativa: true
+    - editando_seccion_informativa: true
     - pregunta_otra_imagen_seccion_informativa: true
-  - checkpoint: crear_informativa_3.1
+  - checkpoint: editar_informativa_3.1
 
-- story: editar seccion informativa 3 (envia otra imagen)
+- story: modificar seccion informativa 3 (envia otra imagen)
   steps:
-  - checkpoint: crear_informativa_3.1
+  - checkpoint: editar_informativa_3.1
   - slot_was_set:
     - componente: seccion
-    - creando_seccion_informativa: true
+    - editando_seccion_informativa: true
     - pregunta_otra_imagen_seccion_informativa: true
   - intent: enviar_imagen
   - action: action_recibir_imagen
   - slot_was_set:
     - componente: seccion
-    - creando_seccion_informativa: true
+    - editando_seccion_informativa: true
     - pregunta_otra_imagen_seccion_informativa: true
-  - checkpoint: crear_informativa_3.1
+  - checkpoint: editar_informativa_3.1
 
-- story: editar seccion informativa 3 (no envia otra imagen)
+- story: modificar seccion informativa 3 (no envia otra imagen)
   steps:
-  - checkpoint: crear_informativa_3.1
+  - checkpoint: editar_informativa_3.1
   - slot_was_set:
     - componente: seccion
   - slot_was_set:
-    - creando_seccion_informativa: true
+    - editando_seccion_informativa: true
     - pregunta_otra_imagen_seccion_informativa: true
   - intent: denegar
   - action: action_recibir_imagen
   - slot_was_set:
     - componente: seccion
-    - creando_seccion_informativa: true
+    - editando_seccion_informativa: true
     - pregunta_otra_imagen_seccion_informativa: false
-  - action: action_crear_informativa_4
+  - action: action_modificar_informativa_4
   - slot_was_set:
-    - creando_seccion_informativa: false
+    - editando_seccion_informativa: false
 
-- story: editar seccion informativa 3 (no envia imagen)
+- story: modificar seccion informativa 3 (no envia imagen)
   steps:
-  - checkpoint: crear_informativa_2
+  - checkpoint: editar_informativa_2
   - slot_was_set:
     - componente: seccion
   - slot_was_set:
-    - creando_seccion_informativa: true
+    - editando_seccion_informativa: true
   - intent: denegar
   - action: action_recibir_imagen
   - slot_was_set:
     - componente: seccion
-    - creando_seccion_informativa: true
+    - editando_seccion_informativa: true
     - pregunta_otra_imagen_seccion_informativa: false
-  - action: action_crear_informativa_4
+  - action: action_modificar_informativa_4
   - slot_was_set:
-    - creando_seccion_informativa: false
-
+    - editando_seccion_informativa: false
 
 ### E-COMMERCE
 

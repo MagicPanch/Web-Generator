@@ -9,8 +9,13 @@ import requests
 from telegram import Bot, File
 import CONSTANTS
 import psutil
-from generator.Objects.Front import Front
+
+from database.DBManager import DBManager
+from generator.objects.pages.Front import Front
 import socket
+
+from generator.objects.sections.InformativeSection import InformativeSection
+from generator.objects.sections.Section import Section
 
 
 class PageManager(object):
@@ -338,6 +343,15 @@ class PageManager(object):
     def add_page(user, page_name) -> Front:
         #Crear la pagina
         page = Front(user, page_name, PageManager.get_port())
+
+        #Recuperar sus componentes
+        sections = DBManager.get_page_sections(DBManager.get_instance(), user, page_name)
+        for section in sections:
+            print(section.title)
+            if section.type == "informativa":
+                s = InformativeSection(section.title)
+                s.set_texts(section.texts)
+                page.add_section(s)
 
         #Crea sus directorios
         PageManager.go_to_main_dir()

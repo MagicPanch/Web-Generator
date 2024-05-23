@@ -27,9 +27,10 @@ nlu:
     - quiero modificar el [footer](componente)
     - quiero editar el [encabezado](componente)
     - quiero modificar la [seccion](componente) [informativa](seccion) de [instagram](page_name)
-    - agrega una [seccion](componente) [e-commerce](seccion)
+    - cambia la [seccion](componente) [e-commerce](seccion)
     - hagamos la [seccion](componente) [ABM](seccion)    
     - quiero agregar una [seccion](componente) en [test](page_name)
+    - quiero modificar la [seccion](componente) [nosotros](nombre_informativa) en [google](page_name)
 
 - intent: tipo_seccion
   examples: |
@@ -72,12 +73,11 @@ nlu:
 
 - intent: crear_seccion
   examples: |
-    - quiero crear una seccion
-    - quiero una seccion
-    - quiero una nueva seccion
-    - seccion
-    - perfecto, quiero una nueva seccion
-    - quiero otra seccion
+    - quiero crear una [seccion](componente) [abm](seccion)
+    - quiero una [seccion](componente) [e-commerce](seccion)
+    - quiero una nueva [seccion](componente)
+    - perfecto, quiero una nueva [seccion](componente)
+    - quiero otra [seccion](componente) [informativa](seccion)
 
 - intent: ejecutar_pagina
   examples: |
@@ -93,6 +93,7 @@ nlu:
     - ejecuta [test](page_name)
     - pagina terminada
     - dame la version final
+    - guardala
 
 - intent: detener_pagina
   examples: |

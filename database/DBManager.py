@@ -1,6 +1,8 @@
 import datetime
+from typing import List
+
 from pymongo.mongo_client import MongoClient
-from mongoengine import connect
+from mongoengine import connect, Document
 import CONSTANTS
 from database.colections.Page import Page
 from database.colections.User import User
@@ -35,7 +37,7 @@ class DBManager(object):
             user = User(id=user_id, username=username, name=nombre, paginas=[], hizo_tutorial=False)
             user.save()
 
-    def get_user(self, user_id):
+    def get_user(self, user_id) -> User:
         user = User.objects(id=user_id).first()
         if user:
             return user
@@ -68,7 +70,7 @@ class DBManager(object):
         else:
             raise Exception("El usuario " + str(user_id) + " no existe")
 
-    def get_page(self, user_id, page_name):
+    def get_page(self, user_id, page_name) -> Page:
         page_id = user_id + '-' + page_name
         page = Page.objects(id=page_id).first()
         if page:
@@ -76,7 +78,7 @@ class DBManager(object):
         else:
             return None
 
-    def get_page_by_name(self, page_name):
+    def get_page_by_name(self, page_name) -> Page:
         pages = Page.objects(id__icontains=page_name)
         found = False
         for page in pages:
@@ -85,14 +87,22 @@ class DBManager(object):
         if not found:
             return None
 
-    def get_user_pages(self, user_id):
+    def get_user_pages(self, user_id) -> List[Page]:
+        print("----DB.GET_USER_PAGES----")
         user = User.objects(id=user_id).first()
+        print("----" + str(user))
         if user:
-            return user.paginas
+            print("--------hay user")
+            expanded_pages = []
+            for page in user.paginas:
+                print("------------" + str(page))
+                expanded_pages.append(page)
+            print("--------extendes_pages: ", expanded_pages)
+            return expanded_pages
         else:
             return None
 
-    def was_compiled(self, user_id, page_name):
+    def was_compiled(self, user_id, page_name) -> bool:
         page_id = user_id + '-' + page_name
         page = Page.objects(id=page_id).first()
         if page:
@@ -146,10 +156,36 @@ class DBManager(object):
         page = Page.objects(id=page_id).first()
         if page:
             section_id = page_id + '-' + inf_section.get_title()
-            section = InformativeSection(id=section_id, title=inf_section.get_title(), text=inf_section.get_text(), texts=inf_section.get_texts())
+            section = InformativeSection(id=section_id, type="informativa", title=inf_section.get_title(), texts=inf_section.get_texts())
             section.save()
             page.sections.append(section)
             page.lastModificationDate = datetime.datetime.now()
             page.save()
+        else:
+            raise Exception("La pagina " + str(page_name) + " no existe o no te pertenece")
+
+    def updt_inf_section(self, user_id, page_name, section_title, inf_section):
+        page_id = user_id + '-' + page_name
+        page = Page.objects(id=page_id).first()
+        if page:
+            old_section_id = page_id + '-' + section_title
+            old_section = InformativeSection.objects(id=old_section_id).first()
+            new_section = InformativeSection(id=page_id + '-' + inf_section.get_title(), type="informativa", title=inf_section.get_title(), texts=inf_section.get_texts())
+            new_section.save()
+            page.sections = [new_section if section.id == old_section_id else section for section in page.sections]
+            page.lastModificationDate = datetime.datetime.now()
+            page.save()
+            old_section.delete()
+        else:
+            raise Exception("La pagina " + str(page_name) + " no existe o no te pertenece")
+
+    def get_page_sections(self, user_id, page_name) -> List[Document]:
+        page_id = user_id + '-' + page_name
+        page = Page.objects(id=page_id).first()
+        if page:
+            expanded_sections = []
+            for section in page.sections:
+                expanded_sections.append(section)
+            return expanded_sections
         else:
             raise Exception("La pagina " + str(page_name) + " no existe o no te pertenece")

@@ -1,8 +1,8 @@
 import threading
 from typing import List
 
-from generator.Objects.PageRunner import PageRunner
-from generator.Objects.Section import Section
+from generator.objects.pages.PageRunner import PageRunner
+from generator.objects.sections.Section import Section
 
 
 class Front(PageRunner):
@@ -59,14 +59,18 @@ class Front(PageRunner):
             return self._tunnel_process
 
     def add_section(self, section:Section):
+        print("---EN ADD SECTION----")
         self._sections.append(section)
+        print(self._sections)
 
-    def get_section(self, section_type, section_title):
+    def get_section(self, section_title) -> Section:
+        print("----EN GET_SECTION----")
+        print(self._sections)
+
         for section in self._sections:
-            if section.get_type() == section_type:
-                if section_type == "e-commerce":
-                    return section
-                elif section.get_type() == "informativa":
-                    if section.get_title() == section_title:
-                        return section
-        return None
+            print(section)
+            if section.get_title() == section_title:
+                return section
+        else:
+            print("----EN NOT FOUND----")
+            return None
