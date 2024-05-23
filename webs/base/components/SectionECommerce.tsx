@@ -2,8 +2,11 @@ import React from "react";
 import SearchBar from "./SearchBar";
 import ProductTile from "./ProductTile";
 import { CARDS_DATA } from "../constants/body";
+import { ItemInterface, useCart } from "./cartContext";
 
 const SectionECommerce = () => {
+  const { addToCart } = useCart();
+
   return (
     <section>
       <div className="max-w-screen bg-blue-300 p-4 h-full px-4">
@@ -13,13 +16,14 @@ const SectionECommerce = () => {
         <SearchBar />
         <div className="grid gap-y-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 py-8 justify-center items-center">
           {CARDS_DATA &&
-            CARDS_DATA.map((item, i) => (
+            CARDS_DATA.map((item: ItemInterface) => (
               <ProductTile
-                key={i}
+                key={item.key}
                 image={item.image}
                 title={item.title}
                 description={item.description}
                 price={item.price}
+                onAddToCart={() => addToCart(item)}
               />
             ))}
         </div>
