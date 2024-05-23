@@ -16,7 +16,7 @@ const ShoppingCart: React.FC = () => {
       <h1 className="text-2xl mb-3 font-semibold text-center">
         Carrito de Compras
       </h1>
-      <div className="grid gap-y-8 grid-cols-1 py-8 justify-center items-center">
+      <div className="grid gap-y-4 grid-cols-1 py-8 justify-center items-center">
         {cart.map((cartItem: CartItemInterface) => (
           <ProductShoppingTile
             key={cartItem.item.key}

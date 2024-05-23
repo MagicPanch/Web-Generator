@@ -20,7 +20,10 @@ const ProductShoppingTile = ({
 }: CardProps) => {
   return (
     <div className="flex flex-row bg-white rounded-lg overflow-hidden shadow-md p-4 m-4">
-      <div className="w-10 h-5 overflow-hidden rounded-lg">
+      <div
+        className="flex-shrink-0"
+        style={{ width: "180px", height: "180px" }}
+      >
         <img src={image} alt="Product" className="w-full h-full object-cover" />
       </div>
       <div className="p-4 flex-1">
@@ -36,7 +39,7 @@ const ProductShoppingTile = ({
       </div>
       <button
         onClick={removeFromCart}
-        className="bg-blue-500 text-white px-4 py-2 rounded-md self-start"
+        className="bg-blue-500 text-white px-4 rounded-md self-start"
       >
         Eliminar del carrito
       </button>
