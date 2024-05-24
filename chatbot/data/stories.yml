@@ -52,7 +52,7 @@ stories:
 
 ## INICIAR TUTORIAL
 
-### PREGUNTA 1
+### PREGUNTA 1(ENCABEZADO)
 
 - story: Entiende 1
   steps:
@@ -80,7 +80,7 @@ stories:
   - intent: afirmar
   - checkpoint: pregunta_1_entendida
 
-### PREGUNTA 2
+### PREGUNTA 2(SECCIONES)
 
 - story: Entiende 2
   steps:
@@ -104,11 +104,61 @@ stories:
   - intent: afirmar
   - checkpoint: pregunta_2_entendida
 
+
+### PREGUNTA 3(FOOTER)
+
+- story: Entiende 3
+  steps:
+  - checkpoint: pregunta_2_entendida
+  - action: action_pregunta_3
+  - slot_was_set:
+    - pregunta_3_confirmacion: true
+  - intent: afirmar
+  - checkpoint: pregunta_3_entendida
+
+- story: No entiende 3
+  steps:
+  - checkpoint: pregunta_2_entendida
+  - action: action_pregunta_3
+  - slot_was_set:
+    - pregunta_3_confirmacion: true
+  - intent: denegar
+  - action: action_pregunta_3_repetir
+  - slot_was_set:
+    - pregunta_3_repetir_confirmacion: true
+  - intent: afirmar
+  - checkpoint: pregunta_3_entendida
+
+### PREGUNTA 3(MODIFICACIONES)
+
+- story: Entiende 4
+  steps:
+  - checkpoint: pregunta_3_entendida
+  - action: action_pregunta_4
+  - slot_was_set:
+    - pregunta_4_confirmacion: true
+  - intent: afirmar
+  - checkpoint: pregunta_4_entendida
+
+- story: No entiende 4
+  steps:
+  - checkpoint: pregunta_3_entendida
+  - action: action_pregunta_4
+  - slot_was_set:
+    - pregunta_3_confirmacion: true
+  - intent: denegar
+  - action: action_pregunta_4_repetir
+  - slot_was_set:
+    - pregunta_3_repetir_confirmacion: true
+  - intent: afirmar
+  - checkpoint: pregunta_4_entendida
+
+
 ## TERMINAR TUTORIAL
 
 - story: terminar tutorial
   steps:
-  - checkpoint: pregunta_2_entendida
+  - checkpoint: pregunta_4_entendida
   - action: action_terminar_tutorial
 
 # CREACION

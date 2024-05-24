@@ -89,6 +89,10 @@ actions:
   - action_pregunta_1_repetir
   - action_pregunta_2
   - action_pregunta_2_repetir
+  - action_pregunta_3
+  - action_pregunta_3_repetir
+  - action_pregunta_4
+  - action_pregunta_4_repetir
   - action_terminar_tutorial
   - action_crear_ecommerce
   - action_crear_informativa_1
@@ -210,6 +214,34 @@ slots:
       - type: custom
 
   pregunta_2_repetir_confirmacion:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: custom
+
+  pregunta_3_confirmacion:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: custom
+
+  pregunta_3_repetir_confirmacion:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: custom
+
+  pregunta_4_confirmacion:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: custom
+
+  pregunta_4_repetir_confirmacion:
     type: bool
     influence_conversation: true
     initial_value: false
@@ -437,3 +469,4 @@ responses:
 session_config:
   session_expiration_time: 60
   carry_over_slots_to_new_session: true
+
