@@ -730,7 +730,9 @@ class ActionPregunta1Repetir(Action):
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         print("(" + threading.current_thread().getName() + ") " + "----ACTION PREGUNTA 1 REPETIR----")
-        dispatcher.utter_message(text="Nuestras páginas se construyen mediante componentes. El primero de ellos es el encabezado, que se encuentra en la parte superior de la página web.")
+        url_imagen = "https://ibb.co/dmsX1jY"
+        dispatcher.utter_message(image=url_imagen)
+        dispatcher.utter_message(text="En la imagen que esta arriba es un ejemplo de como esta formado el encabezado")
         dispatcher.utter_message(text="Este encabezado se compone por el título de la página, el color del título y un logo.")
         dispatcher.utter_message(text="¿Entendido?")
         return [SlotSet("pregunta_1_confirmacion", False), SlotSet("pregunta_1_repetir_confirmacion", True)]
@@ -748,7 +750,7 @@ class ActionPregunta2(Action):
         dispatcher.utter_message(text="Seccion informativa: ")
         dispatcher.utter_message(text="Seccion ABM: ")
         dispatcher.utter_message(text="¿Entendido?")
-        return [SlotSet("pregunta_1_confirmacion", False), SlotSet("pregunta_1_repetir_confirmacion", False), SlotSet("pregunta_2_confirmacion", True)]
+        return [SlotSet("pregunta_2_confirmacion", False), SlotSet("pregunta_2_repetir_confirmacion", False)]
 
 
 class ActionPregunta2Repetir(Action):
@@ -758,13 +760,74 @@ class ActionPregunta2Repetir(Action):
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         print("(" + threading.current_thread().getName() + ") " + "----ACTION PREGUNTA 2 REPETIR----")
+        url_imagen = "https://ibb.co/gTbpK4J"
+        dispatcher.utter_message(image=url_imagen)
         dispatcher.utter_message(text="El siguiente componente de nuestras páginas es el cuerpo, el cual dividimos según 3 tipos de secciones: e-commerce, informativa y ABM.")
-        dispatcher.utter_message(text="Seccion e-commerce: ")
-        dispatcher.utter_message(text="Seccion informativa: ")
+        url_imagen = "https://ibb.co/7bn2vC6"
+        dispatcher.utter_message(image=url_imagen)
+        dispatcher.utter_message(text="Seccion e-commerce aqui se encuentran los productos,cuenta con un buscardor y una lista de filtro ")
+        url_imagen = "https://ibb.co/Drtg946"
+        dispatcher.utter_message(image=url_imagen)
+        dispatcher.utter_message(text="Seccion informativa en ella se encontrara informacion sobre la pagina, tanto imagenes y video como tambien texto ")
+        url_imagen = "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhnbzi7uzaq2tEjb04MPpeLwrKv0CgoZQp4yndBR9T7OddZ2tclkp-QsGhSBBTy_kH_Ti5J85JryJ66JyogfqWPEYvmVBsEi2dZ7lL2Lf_Ugg5QBqh2XVpS42i4mf05bh9TyRWkJg/s1600/Fontanarrosa.jpg"
+        dispatcher.utter_message(image=url_imagen)
         dispatcher.utter_message(text="Seccion ABM: ")
         dispatcher.utter_message(text="¿Entendido?")
         return [SlotSet("pregunta_2_confirmacion", False), SlotSet("pregunta_2_repetir_confirmacion", True)]
 
+class ActionPregunta3(Action):
+
+    def name(self) -> Text:
+        return "action_pregunta_3"
+
+    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        print("(" + threading.current_thread().getName() + ") " + "----ACTION PREGUNTA 3----")
+        dispatcher.utter_message(text="Por ultimo se encuentra el footer que es un seccion de la pagina ubicada el final de la misma.")
+        dispatcher.utter_message(text="Este footer se compone por el informacion del contacto, licencias y mas.")
+        dispatcher.utter_message(text="¿Entendido?")
+        return [SlotSet("pregunta_3_confirmacion", True)]
+
+
+class ActionPregunta3Repetir(Action):
+
+    def name(self) -> Text:
+        return "action_pregunta_3_repetir"
+
+    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        print("(" + threading.current_thread().getName() + ") " + "----ACTION PREGUNTA 3 REPETIR----")
+        url_imagen = "https://ibb.co/QJ5dTX7"
+        dispatcher.utter_message(image=url_imagen)
+        dispatcher.utter_message(text="Por ultimo se encuentra el footer que es un seccion de la pagina ubicada el final de la misma.")
+        dispatcher.utter_message(text="Este footer se compone por el informacion del contacto, licencias y mas.")
+        dispatcher.utter_message(text="¿Entendido?")
+        return [SlotSet("pregunta_3_confirmacion", False), SlotSet("pregunta_3_repetir_confirmacion", True)]
+
+class ActionPregunta4(Action):
+
+    def name(self) -> Text:
+        return "action_pregunta_4"
+
+    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        print("(" + threading.current_thread().getName() + ") " + "----ACTION PREGUNTA 4----")
+        dispatcher.utter_message(text="Todos los componentes de una página web son editables incluso después de su creación.")
+        dispatcher.utter_message(text="Estos componentes incluyen el título, el logotipo, los productos en el caso de e-commerce, las secciones informativas y en el pie de página, la información de contacto como la ubicación y el correo electrónico.")
+        dispatcher.utter_message(text="¿Entendido?")
+        return [SlotSet("pregunta_4_confirmacion", True)]
+
+
+class ActionPregunta4Repetir(Action):
+
+    def name(self) -> Text:
+        return "action_pregunta_4_repetir"
+
+    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        print("(" + threading.current_thread().getName() + ") " + "----ACTION PREGUNTA 4 REPETIR----")
+        url_imagen = "https://ibb.co/QJ5dTX7"
+        dispatcher.utter_message(image=url_imagen)
+        dispatcher.utter_message(text="Todos los componentes que realizaste pueden ser modificados una vez creados")
+        dispatcher.utter_message(text="Te recuerdo algunos de ellos Titulo, logo, productos, seccion informativa y en el footer la ubicación y el mail.")
+        dispatcher.utter_message(text="¿Entendido?")
+        return [SlotSet("pregunta_4_confirmacion", False), SlotSet("pregunta_4_repetir_confirmacion", True),SlotSet("pregunta_4_confirmacion", True)]
 
 class ActionTerminarTutorial(Action):
 
@@ -775,4 +838,4 @@ class ActionTerminarTutorial(Action):
         print("(" + threading.current_thread().getName() + ") " + "----ACTION TERMINAR TUTORIAL----")
         dispatcher.utter_message(text="¡Felicitaciones " + str(tracker.get_slot("nombre_usuario")) + ", terminaste el tutorial! Ya estas listo para crear tu primera página web")
         DBManager.set_user_tutorial(DBManager.get_instance(), tracker.sender_id)
-        return [SlotSet("pregunta_2_confirmacion", False), SlotSet("pregunta_2_repetir_confirmacion", False)]
+        return [SlotSet("pregunta_4_confirmacion", False), SlotSet("pregunta_4_repetir_confirmacion", False)]
