@@ -113,42 +113,15 @@ stories:
 
 # CREACION
 
-## PAGINA
-
-- story: crear pagina correcto
+- story: crear pagina
   steps:
-  - intent: crear_pagina
-  - action: action_preguntar_nombre_pagina
-  - slot_was_set:
-      - creando_pagina: true
-  - intent: nombre_pagina
-  - action: action_crear_pagina  #Aca se crea el proyecto y se guarda la pagina en la DB. Posteriormente se ejecuta en modo DEV
-  - slot_was_set:
-      - creando_pagina: false
-  - slot_was_set:
-      - running_dev: true
+  - intent: crear_algo
+  - action: action_capturar_creacion
 
-- story: crear pagina conflicto nombre
+- story: crear sin tutorial (si)
   steps:
-  - intent: crear_pagina
-  - action: action_preguntar_nombre_pagina
-  - slot_was_set:
-      - creando_pagina: true
-  - intent: nombre_pagina
-  - action: action_crear_pagina  #Aca se detecta el conflicto con el nombre y se le repregunta al usuario
-  - slot_was_set:
-      - creando_pagina: true
-  - intent: nombre_pagina
-  - action: action_crear_pagina  #Aca se crea el proyecto y se guarda la pagina en la DB. Posteriormente se ejecuta en modo DEV
-  - slot_was_set:
-      - creando_pagina: false
-  - slot_was_set:
-      - running_dev: true
-
-- story: crear pagina sin tutorial (si)
-  steps:
-  - intent: crear_pagina
-  - action: action_preguntar_nombre_pagina
+  - intent: crear_algo
+  - action: action_capturar_creacion
   - slot_was_set:
       - pregunta_tutorial: true
   - intent: afirmar
@@ -159,18 +132,50 @@ stories:
 
 - story: crear pagina sin tutorial (no)
   steps:
-  - intent: crear_pagina
-  - action: action_preguntar_nombre_pagina
+  - intent: crear_algo
+  - action: action_capturar_creacion
   - slot_was_set:
       - pregunta_tutorial: true
   - intent: denegar
   - action: action_capturar_tutorial
 
+## PAGINA
+
+- story: crear pagina correcto
+  steps:
+  - slot_was_set:
+      - creando_pagina: true
+  - intent: nombre_pagina
+  - action: action_crear_pagina  #Aca se crea el proyecto y se guarda la pagina en la DB. Posteriormente se ejecuta en modo DEV
+  - slot_was_set:
+      - creando_pagina: false
+  - action: action_ejecutar_dev
+  - slot_was_set:
+      - running_dev: true
+
+- story: crear pagina conflicto nombre
+  steps:
+  - slot_was_set:
+      - creando_pagina: true
+  - intent: nombre_pagina
+  - action: action_crear_pagina  #Aca se detecta el conflicto con el nombre y se le repregunta al usuario
+  - slot_was_set:
+      - creando_pagina: true
+      - pregunta_nombre: true
+  - intent: nombre_pagina
+  - action: action_crear_pagina  #Aca se crea el proyecto y se guarda la pagina en la DB. Posteriormente se ejecuta en modo DEV
+  - slot_was_set:
+      - creando_pagina: false
+  - action: action_ejecutar_dev
+  - slot_was_set:
+      - running_dev: true
+
 ## SECCION
 
 - story: crear seccion sin pagina
   steps:
-    - intent: crear_seccion
+    - slot_was_set:
+      - creando_seccion: true
     - action: action_capturar_tipo_seccion
     - slot_was_set:
       - componente: seccion
@@ -180,13 +185,15 @@ stories:
 
 - story: crear seccion con tipo y pagina
   steps:
-  - intent: crear_seccion
+  - slot_was_set:
+    - creando_seccion: true
   - action: action_capturar_tipo_seccion
   - checkpoint: crear_seccion
 
 - story: crear seccion sin tipo y pagina
   steps:
-  - intent: crear_seccion
+  - slot_was_set:
+    - creando_seccion: true
   - action: action_capturar_tipo_seccion
   - slot_was_set:
     - componente: seccion
@@ -225,6 +232,7 @@ stories:
   - slot_was_set:
     - componente: seccion
     - creando_seccion_informativa: true
+    - pide_img_informativa: true
   - intent: enviar_imagen
   - action: action_recibir_imagen
   - slot_was_set:
@@ -271,8 +279,8 @@ stories:
   - checkpoint: crear_informativa_2
   - slot_was_set:
     - componente: seccion
-  - slot_was_set:
     - creando_seccion_informativa: true
+    - pide_img_informativa: true
   - intent: denegar
   - action: action_recibir_imagen
   - slot_was_set:

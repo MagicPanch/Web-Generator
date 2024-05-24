@@ -12,6 +12,24 @@ from database.DBManager import DBManager
 
 
 #Actions Pagina
+class ActionCapturarCreacion(Action):
+
+    def name(self) -> Text:
+        return "action_capturar_creacion"
+
+    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        print("(" + threading.current_thread().getName() + ") " + "----ACTION CAPTURAR CREACION----")
+        tuto = DBManager.get_user_tutorial(DBManager.get_instance(), tracker.sender_id)
+        if tuto:
+            seccion = tracker.get_slot('componente')
+            if seccion:
+                return [FollowupAction("action_capturar_tipo_seccion"), SlotSet("creando_seccion", True)]
+            else:
+                return [FollowupAction("action_preguntar_nombre_pagina"), SlotSet("creando_pagina", True)]
+        else:
+            dispatcher.utter_message(text="Para crear una pagina primero debes completar el tutorial. ¿Deseas hacerlo ahora?")
+            return [SlotSet("pregunta_tutorial", True)]
+
 class ActionPreguntarNombrePagina(Action):
 
     def name(self):
@@ -43,19 +61,16 @@ class ActionCrearPagina(Action):
             last_page_name = page_name_entities[-1]
             print("(" + threading.current_thread().getName() + ") " + "--------page_name_entity: ", last_page_name)
         print("(" + threading.current_thread().getName() + ") " + "--------creando_pagina: ", tracker.get_slot("creando_pagina"))
-
-
-
         last_message_intent = tracker.latest_message.get('intent').get('name')
         if 'denegar' in last_message_intent:
             dispatcher.utter_message(text="Entendido, si mas tarde deseas retomar la creacion de tu pagina puedes pedirmelo.")
-            return [SlotSet("creando_pagina", False)]
+            return [SlotSet("creando_pagina", False), SlotSet("pregunta_nombre", False)]
 
         if tracker.get_slot("creando_pagina"):
             if tracker.get_slot('page_name') is None:
                 dispatcher.utter_message(
                     text="Repetime como queres que se llame tu página. Te recuerdo que el formato es: www. nombre-pagina .com")
-                return [SlotSet("creando_pagina", True)]
+                return [SlotSet("creando_pagina", True), SlotSet("pregunta_nombre", True)]
             else:
                 if DBManager.get_page_by_name(DBManager.get_instance(), tracker.get_slot('page_name')) is None:
                     #La pagina no existe
@@ -74,7 +89,7 @@ class ActionCrearPagina(Action):
                 else:
                     #La pagina ya existe
                     dispatcher.utter_message(text="Ya existe una pagina con ese nombre. Por favor elige otro.")
-                    return [SlotSet("creando_pagina", True)]
+                    return [SlotSet("creando_pagina", True), SlotSet("pregunta_nombre", True)]
         else:
             return []
 
@@ -114,7 +129,7 @@ class ActionModificarPagina(Action):
                         return [SlotSet("pregunta_modificacion", False)]
                     else:
                         print("(" + threading.current_thread().getName() + ") " + "--------la pagina no esta running dev")
-            return [SlotSet("pregunta_modificacion", False), FollowupAction("action_ejecutar_dev")]
+            return [SlotSet("pregunta_modificacion", False)]#, FollowupAction("action_ejecutar_dev")]
 
 
 class ActionEjecutarDev(Action):
@@ -124,6 +139,7 @@ class ActionEjecutarDev(Action):
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         print("(" + threading.current_thread().getName() + ") " + "----ACTION EJECUTAR DEV----")
+        SlotSet("creando_pagina", False)
         page = PageManager.get_page(tracker.sender_id, tracker.get_slot('page_name'))
         #dispatcher.utter_message(text="Tu pagina se encuentra en modo edición. Podrás visualizar los cambios que realices en: " + page.get_page_address())
 
@@ -672,12 +688,16 @@ class ActionCapturarTipoSeccion(Action):
                 if not page_obj.is_running_dev():
                     PageManager.run_dev(tracker.sender_id, page_doc.name)
                     page_obj.wait_for_ready()
+                    message = "Tu pagina se encuentra en modo edición. Podrás visualizar los cambios que realices en: " + page_obj.get_page_address()
+                    dispatcher.utter_message(text=message)
+                    message = "Si la pagina te solicita una contraseña ingresa: " + PageManager.get_tunnel_password()
+                    dispatcher.utter_message(text=message)
                 elif page_obj.is_running():
                     PageManager.switch_dev(tracker.sender_id, page_doc.name)
-                message = "Tu pagina se encuentra en modo edición. Podrás visualizar los cambios que realices en: " + page_obj.get_page_address()
-                dispatcher.utter_message(text=message)
-                message = "Si la pagina te solicita una contraseña ingresa: " + PageManager.get_tunnel_password()
-                dispatcher.utter_message(text=message)
+                    message = "Tu pagina se encuentra en modo edición. Podrás visualizar los cambios que realices en: " + page_obj.get_page_address()
+                    dispatcher.utter_message(text=message)
+                    message = "Si la pagina te solicita una contraseña ingresa: " + PageManager.get_tunnel_password()
+                    dispatcher.utter_message(text=message)
             seccion = tracker.get_slot('componente')
             if seccion.lower() == "seccion":
             # Va a editar una seccion
@@ -696,7 +716,7 @@ class ActionCapturarTipoSeccion(Action):
                         return [SlotSet("pregunta_seccion", True), SlotSet("pregunta_nombre", True), SlotSet("componente", "seccion")]
                 else:
                     # No hay tipo seccion
-                    dispatcher.utter_message(text="¿Que sección te gustaría crear o modificar? Te recuerdo que las secciones a crear son: \n E-Commerce \n Informativa \n ABM.")
+                    dispatcher.utter_message(text="¿Que tipo de sección te gustaría crear? Te recuerdo que las posibles secciones son: \n E-Commerce \n Informativa \n ABM.")
                     return [SlotSet("pregunta_seccion", True), SlotSet("pregunta_nombre", True)]
             return [SlotSet("creando_seccion", True), SlotSet("pregunta_nombre", True), SlotSet("componente", "seccion")]
         else:
@@ -717,6 +737,10 @@ class ActionCrearInformativa1(Action):
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         print("(" + threading.current_thread().getName() + ") " + "----ACTION CREAR SECCION INFORMATIVA 1----")
+        page_name = tracker.get_slot("page_name")
+
+
+
         dispatcher.utter_message(text="¿Que nombre llevará la sección?")
         return [SlotSet("creando_seccion_informativa", True)]
 
@@ -775,7 +799,7 @@ class ActionCrearInformativa3(Action):
         inf_section.set_texts(textos)
         dispatcher.utter_message(text="Texto informativo guardado.")
         dispatcher.utter_message(text="Si lo deseas podes enviarme alguna imagen para mostrar en tu sección. Si vas a enviar imagenes, por favor envialas de a una.")
-        return [SlotSet("creando_seccion_informativa", True)]
+        return [SlotSet("creando_seccion_informativa", True), SlotSet("pide_img_informativa", True)]
 
 
 class ActionCrearInformativa4(Action):
@@ -794,7 +818,7 @@ class ActionCrearInformativa4(Action):
         DBManager.add_inf_section(DBManager.get_instance(), tracker.sender_id, tracker.get_slot("page_name"), inf_section)
         #ReactGenerator.generarSeccionInformativa()
         dispatcher.utter_message(text="Podrás ver la nueva sección en tu página")
-        return [SlotSet("creando_seccion_informativa", False)]
+        return [SlotSet("creando_seccion_informativa", False), SlotSet("pregunta_otra_imagen_seccion_informativa", False), SlotSet("pide_img_informativa", False), SlotSet("pide_text_informativa", False), SlotSet("pregunta_seccion", False), SlotSet("creando_seccion", False), SlotSet("componente", None)]
 
 ## EDITAR
 

@@ -4,7 +4,7 @@ nlu:
   examples: |
     - /start
 
-- intent: crear_pagina
+- intent: crear_algo
   examples: |
     - quiero crear una pagina
     - quiero una pagina
@@ -12,6 +12,12 @@ nlu:
     - quiero crear
     - perfecto, quiero una pagina web
     - quiero otra pagina
+    - quiero crear una [seccion](componente) [abm](seccion)
+    - quiero una [seccion](componente) [e-commerce](seccion)
+    - quiero una nueva [seccion](componente)
+    - perfecto, quiero una nueva [seccion](componente)
+    - quiero otra [seccion](componente) [informativa](seccion)
+    - quiero crear una [seccion](componente) en [design-lucas](page_name)
 
 - intent: modificar_pagina
   examples: |
@@ -70,14 +76,6 @@ nlu:
     - www. [borrador](page_name) .com
     - www. [test](page_name) .com
     - www. [super_mega_pagina_piola](page_name) .com
-
-- intent: crear_seccion
-  examples: |
-    - quiero crear una [seccion](componente) [abm](seccion)
-    - quiero una [seccion](componente) [e-commerce](seccion)
-    - quiero una nueva [seccion](componente)
-    - perfecto, quiero una nueva [seccion](componente)
-    - quiero otra [seccion](componente) [informativa](seccion)
 
 - intent: ejecutar_pagina
   examples: |

@@ -39,6 +39,7 @@ intents:
   - pedir_tutorial
   - decir_nombre_informativa
   - decir_texto_informativa
+  - crear_algo
 
 entities:
   - page_name
@@ -59,8 +60,7 @@ entities:
 
 actions:
   - action_animo
-  - action_crear_documento_pagina
-  - action_crear_documento_usuario
+  - action_capturar_creacion
   - action_crear_encabezado
   - action_crear_pagina
   - action_despedida_telegram
@@ -69,7 +69,6 @@ actions:
   - action_guardar_color
   - action_guardar_tipo
   - action_hora
-  - action_preguntar_titulo
   - action_recibir_imagen
   - action_saludo_telegram
   - action_triste
@@ -280,6 +279,13 @@ slots:
     mappings:
       - type: custom
 
+  creando_seccion:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: custom
+
   creando_seccion_informativa:
     type: bool
     influence_conversation: true
@@ -288,6 +294,13 @@ slots:
       - type: custom
 
   pide_text_informativa:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: custom
+
+  pide_img_informativa:
     type: bool
     influence_conversation: true
     initial_value: false
