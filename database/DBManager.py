@@ -4,9 +4,9 @@ from typing import List
 from pymongo.mongo_client import MongoClient
 from mongoengine import connect, Document
 import CONSTANTS
-from database.colections.Page import Page
-from database.colections.User import User
-from database.colections.InformativeSection import InformativeSection
+from database.collections.User import User
+from database.collections.Page import Page
+from database.collections.InformativeSection import InformativeSection
 
 
 class DBManager(object):

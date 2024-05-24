@@ -224,6 +224,13 @@ slots:
     mappings:
       - type: custom
 
+  pregunta_color:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: custom
+
   pregunta_seccion:
     type: bool
     influence_conversation: true
@@ -279,7 +286,6 @@ slots:
     initial_value: false
     mappings:
       - type: custom
-
 
   pide_text_informativa:
     type: bool

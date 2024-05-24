@@ -47,6 +47,7 @@ class PageManager(object):
 
     _instance = None
     _running_pages: Dict[Tuple[str, str], Entry]= {}
+    _tunnel_pwd:str = None
 
     @staticmethod
     def _is_port_in_use(port) -> bool:
@@ -70,19 +71,21 @@ class PageManager(object):
             return PageManager.get_port()
 
     @staticmethod
-    def get_tunnel_password():
-        try:
-            # Realizar la solicitud HTTP GET
-            response = requests.get(CONSTANTS.LOCAL_TUNNEL_PASSWORD_URL)
-            # Verificar si la solicitud fue exitosa (código de estado 200)
-            if response.status_code == 200:
-                # Extraer la dirección IP del cuerpo de la respuesta
-                ip = response.text.strip()
-                return ip
-            else:
-                print(f"Error: Código de estado {response.status_code}")
-        except requests.exceptions.RequestException as e:
-            print(f"Error al realizar la solicitud: {e}")
+    def get_tunnel_password() -> str:
+        if not PageManager._tunnel_pwd:
+            try:
+                # Realizar la solicitud HTTP GET
+                response = requests.get(CONSTANTS.LOCAL_TUNNEL_PASSWORD_URL)
+                # Verificar si la solicitud fue exitosa (código de estado 200)
+                if response.status_code == 200:
+                    # Extraer la dirección IP del cuerpo de la respuesta
+                    ip = response.text.strip()
+                    PageManager._tunnel_pwd = ip
+                else:
+                    print("(" + threading.current_thread().getName() + ") " + f"Error: Código de estado {response.status_code}")
+            except requests.exceptions.RequestException as e:
+                print("(" + threading.current_thread().getName() + ") " + f"Error al realizar la solicitud: {e}")
+        return str(PageManager._tunnel_pwd)
 
     @classmethod
     def get_instance(cls):

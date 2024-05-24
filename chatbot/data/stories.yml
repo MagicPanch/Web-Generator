@@ -173,6 +173,7 @@ stories:
     - intent: crear_seccion
     - action: action_capturar_tipo_seccion
     - slot_was_set:
+      - componente: seccion
       - pregunta_nombre: true
     - intent: nombre_pagina
     - action: action_capturar_tipo_seccion
@@ -188,6 +189,7 @@ stories:
   - intent: crear_seccion
   - action: action_capturar_tipo_seccion
   - slot_was_set:
+    - componente: seccion
     - pregunta_seccion: true
   - intent: tipo_seccion
   - action: action_capturar_tipo_seccion
@@ -359,6 +361,7 @@ stories:
   - slot_was_set:
     - componente: encabezado
     - creando_encabezado: true
+    - pregunta_color: true
   - or:
     - intent: decir_color
     - intent: despues_te_digo

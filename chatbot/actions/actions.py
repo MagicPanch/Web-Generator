@@ -60,14 +60,14 @@ class ActionCrearPagina(Action):
                 if DBManager.get_page_by_name(DBManager.get_instance(), tracker.get_slot('page_name')) is None:
                     #La pagina no existe
 
+                    #Se guarda su entrada en la base de datos
+                    DBManager.add_page(DBManager.get_instance(), tracker.sender_id, tracker.get_slot('page_name'), tracker.get_slot('usuario'))
+
                     #Se crea la entrada para la pagina en PageManager
                     PageManager.add_page(tracker.sender_id, tracker.get_slot('page_name'))
 
                     #Se crea en un nuevo hilo el proyecto de la pagina
                     PageManager.create_project(tracker.sender_id, tracker.get_slot('page_name'))
-
-                    #Se guarda su entrada en la base de datos
-                    DBManager.add_page(DBManager.get_instance(), tracker.sender_id, tracker.get_slot('page_name'), tracker.get_slot('usuario'))
 
                     dispatcher.utter_message(text="Aguarda un momento mientras se crea tu página. Este proceso puede demorar unos minutos.")
                     return [SlotSet("creando_pagina", False), FollowupAction("action_ejecutar_dev")]
@@ -515,6 +515,8 @@ class ActionRecibirImagen(Action):
                     dispatcher.utter_message(text="Perfecto, el encabezado de tu página no contendrá ningún logo")
                 elif tracker.get_slot("creando_seccion_informativa"):
                     return [SlotSet("pregunta_otra_imagen_seccion_informativa", False)]
+                elif tracker.get_slot("editando_seccion_informativa"):
+                    return [SlotSet("pregunta_otra_imagen_seccion_informativa", False)]
         return []
 
 class ActionPreguntarColorEncabezado(Action):
@@ -523,7 +525,7 @@ class ActionPreguntarColorEncabezado(Action):
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         dispatcher.utter_message(text="De que color te gustaria que sea el encabezado? Para ello necesito que me proveas su codigo hexadecimal. Podes seleccionar tu color y copiar su codigo en el siguiente link: https://g.co/kgs/FMBcG8K")
-        return [SlotSet("creando_encabezado", True), FollowupAction("action_listen")]
+        return [SlotSet("creando_encabezado", True), SlotSet("pregunta_color", True), FollowupAction("action_listen")]
 
 
 class ActionCrearEncabezado(Action):
@@ -660,7 +662,7 @@ class ActionCapturarTipoSeccion(Action):
                 for pag in pags:
                     message += pag.name + "\n"
                 dispatcher.utter_message(text=message)
-                return [SlotSet("pregunta_nombre", True)]
+                return [SlotSet("pregunta_nombre", True), SlotSet("componente", "seccion")]
             else:
                 print("(" + threading.current_thread().getName() + ") " + "--------page_doc.name: ", page_doc.name)
                 page_obj = PageManager.get_page(tracker.sender_id, page_doc.name)
@@ -691,19 +693,19 @@ class ActionCapturarTipoSeccion(Action):
                         return [FollowupAction("action_crear_abm")]
                     else:
                         dispatcher.utter_message(text=str(tipo_seccion) + " no es un tipo de seccion válido. Te recuerdo que las secciones a crear son: \n E-Commerce \n Informativa \n ABM.")
-                        return [SlotSet("pregunta_seccion", True), SlotSet("pregunta_nombre", True)]
+                        return [SlotSet("pregunta_seccion", True), SlotSet("pregunta_nombre", True), SlotSet("componente", "seccion")]
                 else:
                     # No hay tipo seccion
                     dispatcher.utter_message(text="¿Que sección te gustaría crear o modificar? Te recuerdo que las secciones a crear son: \n E-Commerce \n Informativa \n ABM.")
                     return [SlotSet("pregunta_seccion", True), SlotSet("pregunta_nombre", True)]
-            return [SlotSet("creando_seccion", True), SlotSet("pregunta_nombre", True)]
+            return [SlotSet("creando_seccion", True), SlotSet("pregunta_nombre", True), SlotSet("componente", "seccion")]
         else:
             message = "Indicame el nombre de la pagina en la que deseas crear la sección. Te recuerdo que tus paginas son: \n"
             pags = DBManager.get_user_pages(DBManager.get_instance(), tracker.sender_id)
             for pag in pags:
                 message += str(pag.name) + "\n"
             dispatcher.utter_message(text=message)
-            return [SlotSet("pregunta_nombre", True)]
+            return [SlotSet("pregunta_nombre", True), SlotSet("componente", "seccion")]
 
 
 ### INFORMATIVA
@@ -735,7 +737,7 @@ class ActionCrearInformativa2(Action):
             dispatcher.utter_message(text="Nombre de sección guardado.")
         inf_section = InformativeSection(nombre_informativa)
         page.add_section(inf_section)
-        dispatcher.utter_message(text="Proporcioname texto el informativo. Por favor, respeta el siguiente formato:")
+        dispatcher.utter_message(text="Proporcioname el texto informativo. Por favor, respeta el siguiente formato:")
         dispatcher.utter_message(text="###\nTexto\n###")
         dispatcher.utter_message(text="Si deseas agregar múltiples bloques de texto, envíalos en el mismo mensaje respetando el siguiente formato:")
         dispatcher.utter_message(text="###\nTitulo texto1\n##\nTexto1\n##\nTitulo texto2\n##\nTexto2\n##\n###")
@@ -769,7 +771,7 @@ class ActionCrearInformativa3(Action):
         else:
             textos[nombre_informativa] = text
         page = PageManager.get_page(tracker.sender_id, tracker.get_slot('page_name'))
-        inf_section = page.get_section("informativa", nombre_informativa)
+        inf_section = page.get_section(nombre_informativa)
         inf_section.set_texts(textos)
         dispatcher.utter_message(text="Texto informativo guardado.")
         dispatcher.utter_message(text="Si lo deseas podes enviarme alguna imagen para mostrar en tu sección. Si vas a enviar imagenes, por favor envialas de a una.")
@@ -788,7 +790,7 @@ class ActionCrearInformativa4(Action):
             nombre_informativa = tracker.get_slot("nombre_informativa")
         else:
             nombre_informativa = "Informacion"
-        inf_section = page.get_section("informativa", nombre_informativa)
+        inf_section = page.get_section(nombre_informativa)
         DBManager.add_inf_section(DBManager.get_instance(), tracker.sender_id, tracker.get_slot("page_name"), inf_section)
         #ReactGenerator.generarSeccionInformativa()
         dispatcher.utter_message(text="Podrás ver la nueva sección en tu página")
@@ -829,7 +831,7 @@ class ActionModificarInformativa2(Action):
             print("(" + threading.current_thread().getName() + ") " + "--------nuevo nombre seccion: ", nombre_informativa)
             inf_section.set_title(nombre_informativa)
             dispatcher.utter_message(text="Nombre de sección guardado.")
-        dispatcher.utter_message(text="Proporcioname texto el informativo. Por favor, respeta el siguiente formato:")
+        dispatcher.utter_message(text="¿Queres remplazar el texto informativo? De hacerlo, por favor respeta el siguiente formato:")
         dispatcher.utter_message(text="###\nTexto\n###")
         dispatcher.utter_message(text="Si deseas agregar múltiples bloques de texto, envíalos en el mismo mensaje respetando el siguiente formato:")
         dispatcher.utter_message(text="###\nTitulo texto1\n##\nTexto1\n##\nTitulo texto2\n##\nTexto2\n##\n###")
@@ -862,7 +864,7 @@ class ActionModificarInformativa3(Action):
             else:
                 textos[nombre_informativa] = text
             page = PageManager.get_page(tracker.sender_id, tracker.get_slot('page_name'))
-            inf_section = page.get_section("informativa", nombre_informativa)
+            inf_section = page.get_section(nombre_informativa)
             inf_section.set_texts(textos)
             dispatcher.utter_message(text="Texto informativo guardado.")
         dispatcher.utter_message(text="Si lo deseas podes agregar más imagenes. Si vas a enviar varias, por favor envialas de a una.")
@@ -885,7 +887,7 @@ class ActionModificarInformativa4(Action):
         DBManager.updt_inf_section(DBManager.get_instance(), tracker.sender_id, tracker.get_slot("page_name"), tracker.get_slot("nombre_seccion_editando"),  inf_section)
         #ReactGenerator.generarSeccionInformativa()
         dispatcher.utter_message(text="Podrás ver la nueva sección en tu página")
-        return [SlotSet("creando_seccion_informativa", False)]
+        return [SlotSet("editando_seccion_informativa", False)]
 
 # Saludo Actions
 class ActionSaludoTelegram(Action):

@@ -9,8 +9,6 @@ class Front(PageRunner):
     # Clase encargada de la ejecución del front-end.
     # En ella se deben definir los métodos para la gestión de estas páginas.
 
-    _sections = List[Section]
-
     def __init__(self, user, page_name, page_port):
         super().__init__(user, page_name, page_port)
         self._running = False
@@ -21,18 +19,12 @@ class Front(PageRunner):
         self._sections = []
 
     def set_page_address(self, address):
-        print("(" + threading.current_thread().getName() + ") " + "----EN SET_PAGE_ADDRESS----")
         self._address_event.clear()  # Reinicia el evento para futuras esperas
-        print("(" + threading.current_thread().getName() + ") " + "------------event.set()")
         self._page_address = address
         self._address_event.set()
-        print("(" + threading.current_thread().getName() + ") " + "------------event.clear()")
-        print("(" + threading.current_thread().getName() + ") " + "----TERMINA SET_PAGE_ADDRESS----")
 
     def get_page_address(self) -> str:
-        print("(" + threading.current_thread().getName() + ") " + "----EN GET_PAGE_ADDRESS----")
         self._address_event.wait()  # Espera hasta que el evento esté listo
-        print("(" + threading.current_thread().getName() + ") " + "--------Despues de esperar")
         return self._page_address
 
     def is_running(self) -> bool:
@@ -59,12 +51,10 @@ class Front(PageRunner):
             return self._tunnel_process
 
     def add_section(self, section:Section):
-        print("---EN ADD SECTION----")
         self._sections.append(section)
         print(self._sections)
 
     def get_section(self, section_title) -> Section:
-        print("----EN GET_SECTION----")
         print(self._sections)
 
         for section in self._sections:
@@ -72,5 +62,4 @@ class Front(PageRunner):
             if section.get_title() == section_title:
                 return section
         else:
-            print("----EN NOT FOUND----")
             return None
