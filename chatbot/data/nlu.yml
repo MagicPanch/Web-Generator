@@ -78,9 +78,6 @@ nlu:
 - intent: cargar_productos_archivo
   examples: |
     - archivo.csv
-    - te mando un archivo
-    - cargo con archivo
-    - te mando el archivo
     
 
 - intent: despues_te_digo

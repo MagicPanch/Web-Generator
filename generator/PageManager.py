@@ -6,14 +6,11 @@ import threading
 from typing import Tuple, Dict, List
 
 import requests
-from telegram import Bot, File
 from resources import CONSTANTS
 import psutil
-
 from database.DBManager import DBManager
 from generator.objects.pages.Front import Front
 import socket
-
 from generator.objects.sections.EcommerceSection import EcommerceSection
 from generator.objects.sections.InformativeSection import InformativeSection
 
@@ -97,7 +94,6 @@ class PageManager(object):
         if PageManager._instance is None:
             PageManager._instance = self
             self._running_pages = {}
-            self._bot = Bot(token=CONSTANTS.TELEGRAM_BOT_TOKEN)
         else:
             raise Exception("No se puede crear otra instancia de PageManager")
 
@@ -477,16 +473,5 @@ class PageManager(object):
         process = psutil.Process(PageManager.get_pid(port))
         process.terminate()
         process.wait()
-
-    async def download_telegram_image(self, user, page_name, subdir, image_id, image_name=None):
-        file:File
-        file = self._bot.get_file(image_id)
-        PageManager.go_to_main_dir()
-        PageManager.go_to_dir(CONSTANTS.USER_PAGES_DIR)
-        PageManager.go_to_dir(user)
-        PageManager.go_to_dir(page_name)
-        PageManager.go_to_dir(subdir)
-        file.download(custom_path=os.getcwd()+ '\\' + str(image_name) + '.png')
-        PageManager.go_to_main_dir()
 
 

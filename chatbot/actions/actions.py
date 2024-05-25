@@ -1,12 +1,13 @@
 import threading
-import requests
+from io import BytesIO
+
 import pandas as pd
 import tempfile
 import os
 
-from resources import CONSTANTS
 from generator.objects.sections.InformativeSection import InformativeSection
 from generator.PageManager import PageManager
+from generator.TelegramBotManager import TelegramBotManager
 from generator.ReactGenerator import ReactGenerator
 from typing import Any, Text, Dict, List
 from rasa_sdk import Action, Tracker
@@ -399,7 +400,7 @@ class ActionCapturarEdicion(Action):
                             message = "La pagina " + str(page_name) + " no cuenta con una sección e-commerce. Te recuerdo que tus paginas con sección e-commerce son: \n"
                             pags = DBManager.get_user_pages(DBManager.get_instance(), tracker.sender_id)
                             for pag in pags:
-                                if pag.has_ecomm_section():
+                                if pag.has_ecomm_section:
                                     message += str(pag.name) + "\n"
                             dispatcher.utter_message(text=message)
                             return [SlotSet("pregunta_nombre", True)]
@@ -450,12 +451,13 @@ class ActionRecibirImagen(Action):
     def name(self) -> Text:
         return "action_recibir_imagen"
 
-    async def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         print("(" + threading.current_thread().getName() + ") " + "----EN ACTION RECIBIR IMAGEN----")
         print("(" + threading.current_thread().getName() + ") " + "--------creando_encabezado ", tracker.get_slot("creando_encabezado"))
         print("(" + threading.current_thread().getName() + ") " + "--------creando_seccion_informativa ", tracker.get_slot("creando_seccion_informativa"))
         print("(" + threading.current_thread().getName() + ") " + "--------pregunta_otra_imagen_seccion_informativa ", tracker.get_slot("pregunta_otra_imagen_seccion_informativa"))
         print("(" + threading.current_thread().getName() + ") " + "--------last_message_intent: ", tracker.latest_message.get('intent').get('name'))
+        telegram_bot = TelegramBotManager.get_instance()
 
         # Verifica si el último mensaje contiene una imagen
         latest_message = tracker.latest_message
@@ -463,13 +465,14 @@ class ActionRecibirImagen(Action):
             error = False
             photo = latest_message['metadata']['message']['photo'][1]
             image_id = photo['file_id']
+            page_path = PageManager.get_page_path(tracker.sender_id, tracker.get_slot("page_name"))
             if not image_id:
                 error = True
             else:
                 if tracker.get_slot("creando_encabezado"):
-                    await PageManager.download_telegram_image(PageManager.get_instance(), tracker.sender_id, tracker.get_slot('page_name'), subdir="components", image_id=image_id, image_name="logo")
+                    telegram_bot.download_image(page_path=page_path, subdir="components", image_id=image_id, image_name="logo.png")
                 elif tracker.get_slot("creando_seccion_informativa"):
-                    await PageManager.download_telegram_image(PageManager.get_instance(), tracker.sender_id, tracker.get_slot('page_name'), subdir="sect_inf_images", image_id=image_id, image_name=photo["file_unique_id"])
+                    telegram_bot.download_image(page_path=page_path, subdir="sect_inf_images", image_id=image_id, image_name=(photo["file_unique_id"] + ".png"))
                 elif tracker.get_slot("agregando_productos"):
                     #Descargar imagen
                     print("descargar imagen")
@@ -726,23 +729,30 @@ class ActionCapturarProductoCargado(Action):
     def name(self) -> Text:
         return "action_capturar_producto_cargado"
 
-    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+    async def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         print("(" + threading.current_thread().getName() + ") " + "----ACTION CAPTURAR PRODUCTO CARGADO----")
-        if tracker.latest_message.get('attachments'):
-            attachment = tracker.latest_message['attachments'][0]
-            file_id = attachment['file_id']
-            file_url = f"https://api.telegram.org/bot{CONSTANTS.TELEGRAM_BOT_TOKEN}/getFile?file_id={file_id}"
-            response = requests.get(file_url)
-            file_path = response.json()['result']['file_path']
-            download_url = f"https://api.telegram.org/file/bot{CONSTANTS.TELEGRAM_BOT_TOKEN}/{file_path}"
-            csv_response = requests.get(download_url)
-            with tempfile.NamedTemporaryFile(delete=False, suffix='.csv') as tmp_file:
-                tmp_file.write(csv_response.content)
-                tmp_file_path = tmp_file.name
-            df = pd.read_csv(tmp_file_path)
-            os.remove(tmp_file_path)  # Elimina el archivo temporal
-            message = "El archivo CSV contiene las siguientes columnas: ", df.columns
-            dispatcher.utter_message(text=message)
+        # Verifica si el último mensaje contiene una imagen
+        latest_message = tracker.latest_message
+        if 'document' in latest_message['metadata']['message']:
+            error = False
+            documento = latest_message['metadata']['message']['document']
+            telegram_bot = TelegramBotManager.get_instance()
+            print("documento: ", documento)
+            file_id = documento['file_id']
+            if not documento:
+                error = True
+            else:
+                file = telegram_bot.get_csv_file(file_id)
+                file_bytes = BytesIO()
+                file.download(out=file_bytes)
+                file_bytes.seek(0)
+                df = pd.read_excel(file_bytes, engine='openpyxl')
+                for producto in df.itertuples(index=True, name='Pandas'):
+                    DBManager.add_product(DBManager.get_instance(), user=tracker.sender_id, page=tracker.get_slot("page_name"), cant=producto.Cantidad, title=producto.Titulo, desc=producto.Descripcion, precio=producto.Precio)
+            if not error:
+                dispatcher.utter_message(text="Productos recibidos con éxito.")
+            else:
+                dispatcher.utter_message(text="No se pudo recibir el archivo. Por favor envíalo nuevamente.")
         else:
             last_message = str(tracker.latest_message.get('text'))
             print("(" + threading.current_thread().getName() + ") " + "--------last_message: \n", last_message)

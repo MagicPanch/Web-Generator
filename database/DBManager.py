@@ -204,3 +204,6 @@ class DBManager(object):
             return expanded_sections
         else:
             raise Exception("La pagina " + str(page_name) + " no existe o no te pertenece")
+
+    def add_product(self, user, page, cant, title, desc, precio):
+        pass

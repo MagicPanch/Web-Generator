@@ -37,10 +37,12 @@ Tutorial para hacer la conexión de un chatbot desarrollado en RASA con Telegram
   ```python    
       elif msg.photo is not None:  # check if message contains an image
         text = 'img.jpg'  # set the text to the file name
+      elif msg.document is not None:
+        text = 'archivo.csv'
   ```
 - Antes de
   ```python    
-      else:
+    else:
         return response.text("success")
   ```
 
