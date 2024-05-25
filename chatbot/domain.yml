@@ -40,6 +40,7 @@ intents:
   - decir_nombre_informativa
   - decir_texto_informativa
   - crear_algo
+  - preguntar_paginas_propias
 
 entities:
   - page_name
@@ -104,6 +105,7 @@ actions:
   - action_modificar_informativa_3
   - action_modificar_informativa_4
   - action_crear_abm
+  - action_responder_paginas_propias
 
 slots:
   page_name:

@@ -65,6 +65,8 @@ class ActionCrearPagina(Action):
         if 'denegar' in last_message_intent:
             dispatcher.utter_message(text="Entendido, si mas tarde deseas retomar la creacion de tu pagina puedes pedirmelo.")
             return [SlotSet("creando_pagina", False), SlotSet("pregunta_nombre", False)]
+        elif not "nombre_pagina" in last_message_intent:
+            return [FollowupAction("action_default_fallback"), SlotSet("creando_pagina", False)]
 
         if tracker.get_slot("creando_pagina"):
             if tracker.get_slot('page_name') is None:
@@ -129,7 +131,7 @@ class ActionModificarPagina(Action):
                         return [SlotSet("pregunta_modificacion", False)]
                     else:
                         print("(" + threading.current_thread().getName() + ") " + "--------la pagina no esta running dev")
-            return [SlotSet("pregunta_modificacion", False)]#, FollowupAction("action_ejecutar_dev")]
+            return [SlotSet("pregunta_modificacion", False)]
 
 
 class ActionEjecutarDev(Action):
@@ -139,7 +141,6 @@ class ActionEjecutarDev(Action):
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         print("(" + threading.current_thread().getName() + ") " + "----ACTION EJECUTAR DEV----")
-        SlotSet("creando_pagina", False)
         page = PageManager.get_page(tracker.sender_id, tracker.get_slot('page_name'))
         #dispatcher.utter_message(text="Tu pagina se encuentra en modo edición. Podrás visualizar los cambios que realices en: " + page.get_page_address())
 
@@ -159,7 +160,7 @@ class ActionEjecutarDev(Action):
         print("(" + threading.current_thread().getName() + ") " + "--------message: ", message)
         dispatcher.utter_message(text=message)
         print("(" + threading.current_thread().getName() + ") " + "--------Despues de utter_message")
-        return [SlotSet("running_dev", True)]
+        return [SlotSet("creando_pagina", False), SlotSet("running_dev", True)]
 
 
 class ActionEjecutarPagina(Action):
@@ -974,6 +975,24 @@ class ActionDespedidaTelegram(Action):
         dispatcher.utter_message(text=str(message))
         return [FollowupAction("action_restart")]
 
+class ActionResponderPaginasPropias(Action):
+
+    def name(self) -> Text:
+        return "action_responder_paginas_propias"
+
+
+    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker,
+            domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        pages = DBManager.get_user_pages(DBManager.get_instance(), tracker.sender_id)
+        if pages:
+            message = "Tus paginas son: \n"
+            for page in pages:
+                message += page.name + "\n"
+            dispatcher.utter_message(text=message)
+        else:
+            dispatcher.utter_message(text="Todavía no creaste ninguna página.")
+        return []
+
 
 # Action Devolver Hora
 class ActionHora(Action):
@@ -1153,8 +1172,6 @@ class ActionPregunta4Repetir(Action):
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         print("(" + threading.current_thread().getName() + ") " + "----ACTION PREGUNTA 4 REPETIR----")
-        url_imagen = "https://ibb.co/QJ5dTX7"
-        dispatcher.utter_message(image=url_imagen)
         dispatcher.utter_message(text="Todos los componentes de una página pueden ser modificados una vez creados")
         dispatcher.utter_message(text="Encabezado: Puedes modificar su logotipo y el color del título.")
         dispatcher.utter_message(text="Sección informativa: Podes modificar su título y contenido, modificando el texto o agregando imágenes.")

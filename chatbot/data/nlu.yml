@@ -18,6 +18,7 @@ nlu:
     - perfecto, quiero una nueva [seccion](componente)
     - quiero otra [seccion](componente) [informativa](seccion)
     - quiero crear una [seccion](componente) en [design-lucas](page_name)
+    - quiero agregar una [seccion](componente) en [test](page_name)
 
 - intent: modificar_pagina
   examples: |
@@ -34,8 +35,7 @@ nlu:
     - quiero editar el [encabezado](componente)
     - quiero modificar la [seccion](componente) [informativa](seccion) de [instagram](page_name)
     - cambia la [seccion](componente) [e-commerce](seccion)
-    - hagamos la [seccion](componente) [ABM](seccion)    
-    - quiero agregar una [seccion](componente) en [test](page_name)
+    - hagamos la [seccion](componente) [ABM](seccion)
     - quiero modificar la [seccion](componente) [nosotros](nombre_informativa) en [google](page_name)
 
 - intent: tipo_seccion
@@ -76,6 +76,13 @@ nlu:
     - www. [borrador](page_name) .com
     - www. [test](page_name) .com
     - www. [super_mega_pagina_piola](page_name) .com
+
+- intent: preguntar_paginas_propias
+  examples: |
+    - que paginas tengo?
+    - cuales son mis paginas?
+    - me decis el nombre de mis paginas
+    - cuales son mis paginas
 
 - intent: ejecutar_pagina
   examples: |
@@ -123,17 +130,6 @@ nlu:
 - intent: enviar_imagen
   examples: |
     - img.jpg
-
-- intent: agregaciones
-  examples: |
-    - Puedo agregar un [boton](componente)?
-    - puedo agregar un [titulo](componente) [#b01a5e](color)
-    - quiero agregar un [boton](componente) [#b4db9e](color)
-    - quiero agregar un [titulo](componente)
-    - quiero agregar una [imagen](componente)
-    - quiero agregar un [filtro](componente)
-    - puedo agregar una [imagen](componente)
-    - quiero agregar un [boton](componente) [#2a2475](color)
 
 - intent: decir_color
   examples: |

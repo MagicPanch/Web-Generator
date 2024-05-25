@@ -9,6 +9,8 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/chatbot/actions/actions.py" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/actions/actions.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/chatbot/credentials.yml" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/credentials.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chatbot/data/nlu.yml" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/data/nlu.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chatbot/data/rules.yml" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/data/rules.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/chatbot/data/stories.yml" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/data/stories.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/chatbot/domain.yml" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/domain.yml" afterDir="false" />
     </list>
@@ -83,7 +85,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
     "deletionFromPopupRequiresConfirmation": "false",
-    "git-widget-placeholder": "Merging lucas",
+    "git-widget-placeholder": "lucas",
     "ignore.virus.scanning.warn.message": "true",
     "last_opened_file_path": "D:/Desarrollo/Web-Generator/generator/Front.py",
     "node.js.detected.package.eslint": "true",

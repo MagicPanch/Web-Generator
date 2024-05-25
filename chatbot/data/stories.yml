@@ -199,8 +199,6 @@ stories:
   - action: action_crear_pagina  #Aca se crea el proyecto y se guarda la pagina en la DB. Posteriormente se ejecuta en modo DEV
   - slot_was_set:
       - creando_pagina: false
-  - action: action_ejecutar_dev
-  - slot_was_set:
       - running_dev: true
 
 - story: crear pagina conflicto nombre
@@ -216,8 +214,6 @@ stories:
   - action: action_crear_pagina  #Aca se crea el proyecto y se guarda la pagina en la DB. Posteriormente se ejecuta en modo DEV
   - slot_was_set:
       - creando_pagina: false
-  - action: action_ejecutar_dev
-  - slot_was_set:
       - running_dev: true
 
 ## SECCION
@@ -667,6 +663,11 @@ stories:
   - action: action_capturar_tutorial
 
 ## CONVERSACION
+
+- story: preguntar paginas
+  steps:
+    - intent: preguntar_paginas_propias
+    - action: action_responder_paginas_propias
 
 - story: Decir funcionalidad
   steps:
