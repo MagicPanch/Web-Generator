@@ -656,7 +656,7 @@ class ActionCrearFooter(Action):
         ReactGenerator.generarFooter(dataFooter)
         print("-------------FOOTER MODIFICADO-------------")
         dispatcher.utter_message(text="Podes ver los cambios que realizamos en el footer")
-        return [SlotSet("creando_encabezado", False), SlotSet("componente", None)]
+        return [SlotSet("creando_footer", False), SlotSet("componente", None)]
 
 # SECCIONES
 
