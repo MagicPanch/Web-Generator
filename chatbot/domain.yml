@@ -36,6 +36,11 @@ intents:
   - tipo_seccion
   - triste_facu
   - triste_pelea
+  - pedir_tutorial
+  - decir_nombre_informativa
+  - decir_texto_informativa
+  - crear_algo
+  - preguntar_paginas_propias
 
 entities:
   - page_name
@@ -52,11 +57,11 @@ entities:
   - imagen
   - mail
   - ubicacion
+  - nombre_informativa
 
 actions:
   - action_animo
-  - action_crear_documento_pagina
-  - action_crear_documento_usuario
+  - action_capturar_creacion
   - action_crear_encabezado
   - action_crear_pagina
   - action_despedida_telegram
@@ -65,7 +70,6 @@ actions:
   - action_guardar_color
   - action_guardar_tipo
   - action_hora
-  - action_preguntar_titulo
   - action_recibir_imagen
   - action_saludo_telegram
   - action_triste
@@ -74,13 +78,34 @@ actions:
   - action_modificar_pagina
   - action_ejecutar_dev
   - action_guardar_seccion
-  - action_preguntar_tipo_seccion
+  - action_capturar_tipo_seccion
   - action_capturar_edicion
   - action_preguntar_color_encabezado
   - action_preguntar_mail_footer
   - action_guardar_mail_footer
   - action_guardar_ubicacion_footer
   - action_crear_footer
+  - action_capturar_tutorial
+  - action_pregunta_1
+  - action_pregunta_1_repetir
+  - action_pregunta_2
+  - action_pregunta_2_repetir
+  - action_pregunta_3
+  - action_pregunta_3_repetir
+  - action_pregunta_4
+  - action_pregunta_4_repetir
+  - action_terminar_tutorial
+  - action_crear_ecommerce
+  - action_crear_informativa_1
+  - action_crear_informativa_2
+  - action_crear_informativa_3
+  - action_crear_informativa_4
+  - action_modificar_informativa_1
+  - action_modificar_informativa_2
+  - action_modificar_informativa_3
+  - action_modificar_informativa_4
+  - action_crear_abm
+  - action_responder_paginas_propias
 
 slots:
   page_name:
@@ -130,6 +155,17 @@ slots:
     - type: from_entity
       entity: seccion
 
+  nombre_informativa:
+    type: text
+    mappings:
+    - type: from_entity
+      entity: nombre_informativa
+
+  nombre_seccion_editando:
+    type: text
+    mappings:
+      - type: custom
+
   creando_pagina:
     type: bool
     influence_conversation: true
@@ -144,7 +180,91 @@ slots:
     mappings:
       - type: custom
 
+  inicia_tutorial:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: custom
+
+  pregunta_tutorial:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: custom
+
+  pregunta_1_confirmacion:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: custom
+
+  pregunta_1_repetir_confirmacion:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: custom
+
+  pregunta_2_confirmacion:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: custom
+
+  pregunta_2_repetir_confirmacion:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: custom
+
+  pregunta_3_confirmacion:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: custom
+
+  pregunta_3_repetir_confirmacion:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: custom
+
+  pregunta_4_confirmacion:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: custom
+
+  pregunta_4_repetir_confirmacion:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: custom
+
   pregunta_componente:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: custom
+
+  pregunta_color:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: custom
+
+  pregunta_seccion:
     type: bool
     influence_conversation: true
     initial_value: false
@@ -186,7 +306,42 @@ slots:
     mappings:
       - type: custom
 
+  editando_seccion_informativa:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: custom
+
   creando_seccion:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: custom
+
+  creando_seccion_informativa:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: custom
+
+  pide_text_informativa:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: custom
+
+  pide_img_informativa:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: custom
+
+  pregunta_otra_imagen_seccion_informativa:
     type: bool
     influence_conversation: true
     initial_value: false
@@ -224,6 +379,11 @@ slots:
     mappings:
     - type: from_entity
       entity: usuario
+
+  nombre_usuario:
+    type: text
+    mappings:
+      - type: custom
 
   horario:
     type: text
@@ -305,6 +465,10 @@ responses:
   - text: de nada!
   - text: no hay problemaa
 
+  utter_tutorial_1:
+  - text: "indicacion tutorial 1. entendiste?"
+
 session_config:
   session_expiration_time: 60
   carry_over_slots_to_new_session: true
+

@@ -1,17 +1,21 @@
 import os
 import random
 import shutil
-import socket
 import subprocess
 import threading
 from typing import Tuple, Dict, List
 
 import requests
-from telegram import Bot
+from telegram import Bot, File
 import CONSTANTS
 import psutil
-from generator.Front import Front
+
+from database.DBManager import DBManager
+from generator.objects.pages.Front import Front
 import socket
+
+from generator.objects.sections.InformativeSection import InformativeSection
+from generator.objects.sections.Section import Section
 
 
 class PageManager(object):
@@ -43,6 +47,7 @@ class PageManager(object):
 
     _instance = None
     _running_pages: Dict[Tuple[str, str], Entry]= {}
+    _tunnel_pwd:str = None
 
     @staticmethod
     def _is_port_in_use(port) -> bool:
@@ -66,19 +71,21 @@ class PageManager(object):
             return PageManager.get_port()
 
     @staticmethod
-    def get_tunnel_password():
-        try:
-            # Realizar la solicitud HTTP GET
-            response = requests.get(CONSTANTS.LOCAL_TUNNEL_PASSWORD_URL)
-            # Verificar si la solicitud fue exitosa (código de estado 200)
-            if response.status_code == 200:
-                # Extraer la dirección IP del cuerpo de la respuesta
-                ip = response.text.strip()
-                return ip
-            else:
-                print(f"Error: Código de estado {response.status_code}")
-        except requests.exceptions.RequestException as e:
-            print(f"Error al realizar la solicitud: {e}")
+    def get_tunnel_password() -> str:
+        if not PageManager._tunnel_pwd:
+            try:
+                # Realizar la solicitud HTTP GET
+                response = requests.get(CONSTANTS.LOCAL_TUNNEL_PASSWORD_URL)
+                # Verificar si la solicitud fue exitosa (código de estado 200)
+                if response.status_code == 200:
+                    # Extraer la dirección IP del cuerpo de la respuesta
+                    ip = response.text.strip()
+                    PageManager._tunnel_pwd = ip
+                else:
+                    print("(" + threading.current_thread().getName() + ") " + f"Error: Código de estado {response.status_code}")
+            except requests.exceptions.RequestException as e:
+                print("(" + threading.current_thread().getName() + ") " + f"Error al realizar la solicitud: {e}")
+        return str(PageManager._tunnel_pwd)
 
     @classmethod
     def get_instance(cls):
@@ -340,6 +347,15 @@ class PageManager(object):
         #Crear la pagina
         page = Front(user, page_name, PageManager.get_port())
 
+        #Recuperar sus componentes
+        sections = DBManager.get_page_sections(DBManager.get_instance(), user, page_name)
+        for section in sections:
+            print(section.title)
+            if section.type == "informativa":
+                s = InformativeSection(section.title)
+                s.set_texts(section.texts)
+                page.add_section(s)
+
         #Crea sus directorios
         PageManager.go_to_main_dir()
         PageManager.go_to_dir(CONSTANTS.USER_PAGES_DIR)
@@ -463,14 +479,15 @@ class PageManager(object):
         process.terminate()
         process.wait()
 
-    async def download_telegram_image(self, user, page_name, image_id, short_id):
-        page_path = PageManager.get_page_path(user, page_name)
-        file = await self._bot.get_file(image_id)
-        PageManager.go_to_dir("components")
-        path = os.getcwd() + "\\" + page_path + '\\components\\' + str(short_id) + '.png'
-        print("path to save: ", os.getcwd() + '\\' + str(short_id) + '.png')
-        print("current path: ", os.getcwd())
-        await file.download_to_drive(custom_path=os.getcwd()+ '\\' + str(short_id) + '.png')
+    async def download_telegram_image(self, user, page_name, subdir, image_id, image_name=None):
+        file:File
+        file = self._bot.get_file(image_id)
+        PageManager.go_to_main_dir()
+        PageManager.go_to_dir(CONSTANTS.USER_PAGES_DIR)
+        PageManager.go_to_dir(user)
+        PageManager.go_to_dir(page_name)
+        PageManager.go_to_dir(subdir)
+        file.download(custom_path=os.getcwd()+ '\\' + str(image_name) + '.png')
         PageManager.go_to_main_dir()
 
 

@@ -4,7 +4,7 @@ nlu:
   examples: |
     - /start
 
-- intent: crear_pagina
+- intent: crear_algo
   examples: |
     - quiero crear una pagina
     - quiero una pagina
@@ -12,6 +12,13 @@ nlu:
     - quiero crear
     - perfecto, quiero una pagina web
     - quiero otra pagina
+    - quiero crear una [seccion](componente) [abm](seccion)
+    - quiero una [seccion](componente) [e-commerce](seccion)
+    - quiero una nueva [seccion](componente)
+    - perfecto, quiero una nueva [seccion](componente)
+    - quiero otra [seccion](componente) [informativa](seccion)
+    - quiero crear una [seccion](componente) en [design-lucas](page_name)
+    - quiero agregar una [seccion](componente) en [test](page_name)
 
 - intent: modificar_pagina
   examples: |
@@ -26,16 +33,29 @@ nlu:
     - terminemos el [footer](componente)
     - quiero modificar el [footer](componente)
     - quiero editar el [encabezado](componente)
+    - quiero modificar la [seccion](componente) [informativa](seccion) de [instagram](page_name)
+    - cambia la [seccion](componente) [e-commerce](seccion)
+    - hagamos la [seccion](componente) [ABM](seccion)
+    - quiero modificar la [seccion](componente) [nosotros](nombre_informativa) en [google](page_name)
 
 - intent: tipo_seccion
   examples: |
     - que sea [e-commerce](seccion)
     - el tipo de la seccion es [informativa](seccion)
-    - mi pagina es [foro](seccion)
-    - una [red social](seccion)
-    - quiero un [Blog](seccion)
     - me gustaria una [ABM](seccion)
     - e-commerce(seccion)
+
+- intent: decir_nombre_informativa
+  examples: |
+    - el nombre es [nosotros](nombre_informativa)
+    - ponele [quienes somos](nombre_informativa)
+    - el titulo es [sobre nosotros](nombre_informativa)
+    - que se llame [productos](nombre_informativa)
+
+- intent: decir_texto_informativa
+  examples: |
+    - ###Desde nuestra fundación en 2010, hemos trabajado incansablemente para ofrecer productos de la más alta calidad a nuestros clientes. Nuestra pasión por la innovación y el compromiso con la excelencia nos han convertido en un referente en la industria###
+    - ###¿Cómo puedo realizar un pedido?##Para realizar un pedido, simplemente visita nuestra tienda en línea, elige los productos que deseas y sigue las instrucciones para completar la compra. Si necesitas ayuda, nuestro equipo de soporte está disponible para asistirte.##¿Cuáles son las opciones de envío?##Ofrecemos varias opciones de envío para adaptarnos a tus necesidades, incluyendo envío estándar y express. Consulta nuestra página de Envío y Entrega para más detalles.## ###
 
 - intent: despues_te_digo
   examples: |
@@ -57,14 +77,12 @@ nlu:
     - www. [test](page_name) .com
     - www. [super_mega_pagina_piola](page_name) .com
 
-- intent: crear_seccion
+- intent: preguntar_paginas_propias
   examples: |
-    - quiero crear una seccion
-    - quiero una seccion
-    - quiero una nueva seccion
-    - seccion
-    - perfecto, quiero una nueva seccion
-    - quiero otra seccion
+    - que paginas tengo?
+    - cuales son mis paginas?
+    - me decis el nombre de mis paginas
+    - cuales son mis paginas
 
 - intent: ejecutar_pagina
   examples: |
@@ -80,6 +98,7 @@ nlu:
     - ejecuta [test](page_name)
     - pagina terminada
     - dame la version final
+    - guardala
 
 - intent: detener_pagina
   examples: |
@@ -111,17 +130,6 @@ nlu:
 - intent: enviar_imagen
   examples: |
     - img.jpg
-
-- intent: agregaciones
-  examples: |
-    - Puedo agregar un [boton](componente)?
-    - puedo agregar un [titulo](componente) [#b01a5e](color)
-    - quiero agregar un [boton](componente) [#b4db9e](color)
-    - quiero agregar un [titulo](componente)
-    - quiero agregar una [imagen](componente)
-    - quiero agregar un [filtro](componente)
-    - puedo agregar una [imagen](componente)
-    - quiero agregar un [boton](componente) [#2a2475](color)
 
 - intent: decir_color
   examples: |
@@ -262,6 +270,7 @@ nlu:
     - normal
     - ahi vamos
     - tranquiloo
+
 - intent: estado_de_animo_triste
   examples: |
     - estoy triste
@@ -273,6 +282,7 @@ nlu:
     - muy triste la verdad
     - bajoneado
     - medio bajon
+
 - intent: me_alegro
   examples: |
     - Me alegro!
@@ -280,6 +290,7 @@ nlu:
     - Me alegra escuchar eso!
     - Exitos
     - exitos con eso
+
 - intent: triste_facu
   examples: |
     - Me fue mal en la facultad
@@ -288,6 +299,7 @@ nlu:
     - estoy complicada con la facultad
     - me va mal en la universidad
     - no entiendo nada en la uni
+
 - intent: triste_pelea
   examples: |
     - Me pelee con mi familia
@@ -297,6 +309,7 @@ nlu:
     - me pelee con mi mama
     - discuti con un amigo
     - discuti con un amiga
+
 - intent: afirmar
   examples: |
     - Si
@@ -304,6 +317,7 @@ nlu:
     - okey
     - ok
     - bueno
+
 - intent: denegar
   examples: |
     - no
@@ -313,6 +327,7 @@ nlu:
     - no me sirve
     - nao
     - no quiero
+
 - intent: hora
   examples: |
     - Que hora es?
@@ -324,6 +339,14 @@ nlu:
     - q horario es
     - q dia es
     - me das hora?
+
+- intent: pedir_tutorial
+  examples: |
+    - quiero hacer el tutorial
+    - bueno hagamos el tutorial
+    - terminemos el tutorial
+    - matemos el tuto
+
 - intent: gracias
   examples: |
     - Graciasss

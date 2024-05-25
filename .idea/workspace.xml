@@ -5,11 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="121f2593-11ee-405e-a8d8-1c2f43d81e54" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/Web-Generator.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Web-Generator.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/chatbot/actions/actions.py" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/actions/actions.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/generator/Front.py" beforeDir="false" afterPath="$PROJECT_DIR$/generator/Front.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/generator/PageManager.py" beforeDir="false" afterPath="$PROJECT_DIR$/generator/PageManager.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/generator/PageRunner.py" beforeDir="false" afterPath="$PROJECT_DIR$/generator/PageRunner.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chatbot/credentials.yml" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/credentials.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chatbot/endpoints.yml" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/endpoints.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -77,13 +77,14 @@
     &quot;Python.actions.executor&quot;: &quot;Run&quot;,
     &quot;Python.generator.executor&quot;: &quot;Run&quot;,
     &quot;Python.router.executor&quot;: &quot;Run&quot;,
+    &quot;Python.text_extractor.executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
     &quot;deletionFromPopupRequiresConfirmation&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;lucas&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/Desarrollo/Ingenieria-de-Software-2024/Web-Generator&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/Desarrollo/Web-Generator/generator/Front.py&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
@@ -99,6 +100,9 @@
       <recent name="D:\Desarrollo\Web-Generator\database\colections" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\Desarrollo\Ingenieria-de-Software-2024\Web-Generator\generator\objects\pages" />
+      <recent name="D:\Desarrollo\Ingenieria-de-Software-2024\Web-Generator\generator\objects\sections" />
+      <recent name="D:\Desarrollo\Ingenieria-de-Software-2024\Web-Generator\generator\Objects" />
       <recent name="D:\Desarrollo\Web-Generator" />
     </key>
   </component>
@@ -172,8 +176,14 @@
       <workItem from="1716135262405" duration="11937000" />
       <workItem from="1716149240818" duration="4343000" />
       <workItem from="1716225980514" duration="4308000" />
-      <workItem from="1716309402553" duration="62000" />
-      <workItem from="1716309817899" duration="170000" />
+      <workItem from="1716309994656" duration="3354000" />
+      <workItem from="1716313648501" duration="9690000" />
+      <workItem from="1716323977184" duration="297000" />
+      <workItem from="1716382768954" duration="3649000" />
+      <workItem from="1716404888488" duration="15397000" />
+      <workItem from="1716478026609" duration="23050000" />
+      <workItem from="1716559709517" duration="8682000" />
+      <workItem from="1716599564423" duration="2420000" />
     </task>
     <servers />
   </component>
@@ -197,11 +207,12 @@
     </option>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/Web_Generator$actions.coverage" NAME="actions Coverage Results" MODIFIED="1714769797888" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/chatbot/actions" />
-    <SUITE FILE_PATH="coverage/Web_Generator$router.coverage" NAME="router Coverage Results" MODIFIED="1713813104376" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/generator" />
+    <SUITE FILE_PATH="coverage/Web_Generator$text_extractor.coverage" NAME="text_extractor Coverage Results" MODIFIED="1716415065027" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/test_scripts" />
     <SUITE FILE_PATH="coverage/Web_Generator$Generator.coverage" NAME="Generator Coverage Results" MODIFIED="1713714682935" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/Web_Generator$Router.coverage" NAME="Router Coverage Results" MODIFIED="1713712734889" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/Web_Generator$DBManager.coverage" NAME="DBManager Coverage Results" MODIFIED="1714405399334" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/generator" />
+    <SUITE FILE_PATH="coverage/Web_Generator$actions.coverage" NAME="actions Coverage Results" MODIFIED="1714769797888" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/chatbot/actions" />
+    <SUITE FILE_PATH="coverage/Web_Generator$router.coverage" NAME="router Coverage Results" MODIFIED="1713813104376" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/generator" />
     <SUITE FILE_PATH="coverage/Web_Generator$generator.coverage" NAME="generator Coverage Results" MODIFIED="1713816696702" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/generator" />
   </component>
 </project>

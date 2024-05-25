@@ -37,10 +37,7 @@ class PageRunner():
     def append_output(self, output) -> bool:
         with self._output_ready:
             self._output_buffer.append(output)
-            if "Ready"  in output:
-                self._output_ready.notify_all()
-                return False
-            elif "Error" in output:
+            if ("Ready" in output) or ("Error" in output):
                 self._output_ready.notify_all()
                 return False
             else:
@@ -49,9 +46,8 @@ class PageRunner():
     def wait_for_ready(self):
         print("(" + threading.current_thread().getName() + ") " + "----PageRunner.wait_for_ready----")
         with self._output_ready:
-            print("(" + threading.current_thread().getName() + ") " + "------------Salida lista, esperando")
+            print("(" + threading.current_thread().getName() + ") " + "--------Salida lista, esperando")
             while not (any("Ready" in line for line in self._output_buffer) or any("Error" in line for line in self._output_buffer)):
                 self._output_ready.wait()
-            print("(" + threading.current_thread().getName() + ") " + "------------Espera finalizada")
-        print("(" + threading.current_thread().getName() + ") " + "--------Fuera de with self._output_ready")
+            print("(" + threading.current_thread().getName() + ") " + "--------Espera finalizada")
 

@@ -2,26 +2,14 @@ version: "3.1"
 
 rules:
 
-- rule: Siempre preguntar nombre despues de crear pagina
-  steps:
-  - intent: crear_pagina
-  - action: action_preguntar_nombre_pagina
+  - rule: Siempre saludar al inicio de la sesión
+    steps:
+    - intent: start
+    - action: action_saludo_telegram
 
-#
-#- rule: Siempre preguntar tipo después del nombre
-#  steps:
-#  - intent: nombre_pagina
-#  - action: utter_tipo_pagina
-#  - action: action_listen
-#
-#- rule: Siempre guardar el tipo de pagina
-#  steps:
-#  - intent: tipo_pagina
-#  - action: action_guardar_tipo
-#
-#- rule: Siempre guardar el color
-#  steps:
-#  - intent: decir_color
-#  - action: action_guardar_color
+  - rule: Siempre despedirse
+    steps:
+    - intent: despedidasc
+    - action: action_despedida_telegram
 
 
