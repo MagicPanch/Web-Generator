@@ -12,13 +12,13 @@ nlu:
     - quiero crear
     - perfecto, quiero una pagina web
     - quiero otra pagina
-    - quiero crear una [seccion](componente) [abm](seccion)
+    - quiero crear una [seccion](componente) [informativa](seccion)
     - quiero una [seccion](componente) [e-commerce](seccion)
     - quiero una nueva [seccion](componente)
     - perfecto, quiero una nueva [seccion](componente)
     - quiero otra [seccion](componente) [informativa](seccion)
-    - quiero crear una [seccion](componente) en [design-lucas](page_name)
-    - quiero agregar una [seccion](componente) en [test](page_name)
+    - quiero crear una [seccion](componente) [e-commerce](seccion) en [design-lucas](page_name)
+    - quiero una nueva [seccion](componente) en [test](page_name)
 
 - intent: modificar_pagina
   examples: |
@@ -34,16 +34,17 @@ nlu:
     - quiero modificar el [footer](componente)
     - quiero editar el [encabezado](componente)
     - quiero modificar la [seccion](componente) [informativa](seccion) de [instagram](page_name)
-    - cambia la [seccion](componente) [e-commerce](seccion)
-    - hagamos la [seccion](componente) [ABM](seccion)
+    - cambia la [seccion](componente) [informativa](seccion)
+    - cambiemos la [seccion](componente) [informativa](seccion)
     - quiero modificar la [seccion](componente) [nosotros](nombre_informativa) en [google](page_name)
 
 - intent: tipo_seccion
   examples: |
     - que sea [e-commerce](seccion)
     - el tipo de la seccion es [informativa](seccion)
-    - me gustaria una [ABM](seccion)
+    - me gustaria una [e-commerce](seccion)
     - e-commerce(seccion)
+    - una [informativa](seccion)
 
 - intent: decir_nombre_informativa
   examples: |
@@ -56,6 +57,31 @@ nlu:
   examples: |
     - ###Desde nuestra fundación en 2010, hemos trabajado incansablemente para ofrecer productos de la más alta calidad a nuestros clientes. Nuestra pasión por la innovación y el compromiso con la excelencia nos han convertido en un referente en la industria###
     - ###¿Cómo puedo realizar un pedido?##Para realizar un pedido, simplemente visita nuestra tienda en línea, elige los productos que deseas y sigue las instrucciones para completar la compra. Si necesitas ayuda, nuestro equipo de soporte está disponible para asistirte.##¿Cuáles son las opciones de envío?##Ofrecemos varias opciones de envío para adaptarnos a tus necesidades, incluyendo envío estándar y express. Consulta nuestra página de Envío y Entrega para más detalles.## ###
+
+- intent: agregar_producto
+  examples: |
+    - quiero agregar un producto a mi tienda
+    - quiero cargar productos
+    - quiero agregar productos
+    - quiero agregar productos a [design-label](page_name)
+
+- intent: cargar_X_cantidad_Y_producto
+  examples: |
+    - Cantidad: [100](cant_prod) Titulo: [titulo_1](tit_prod) Descripción: [desc_1](desc_prod) Precio: [5499,99](precio_prod)
+    - Cantidad: [15](cant_prod) Titulo: [titulo_2](tit_prod) Descripción: [desc_2](desc_prod) Precio: [123,09](precio_prod)
+    - Cantidad: [2](cant_prod) Titulo: [titulo_3](tit_prod) Descripción: [desc_3](desc_prod) Precio: [654](precio_prod)
+    - Cantidad: [6090](cant_prod) Titulo: [titulo_4](tit_prod) Descripción: [desc_4](desc_prod) Precio: [65,82](precio_prod)
+    - Cantidad: [546364](cant_prod) Titulo: [titulo_5](tit_prod) Descripción: [desc_5](desc_prod) Precio: [42342](precio_prod)
+    - Cantidad: [432](cant_prod) Titulo: [titulo_6](tit_prod) Descripción: [desc_6](desc_prod) Precio: [159999,99](precio_prod)
+    - Cantidad: [745](cant_prod) Titulo: [titulo_7](tit_prod) Descripción: [desc_7](desc_prod) Precio: [1500](precio_prod)
+
+- intent: cargar_productos_archivo
+  examples: |
+    - archivo.csv
+    - te mando un archivo
+    - cargo con archivo
+    - te mando el archivo
+    
 
 - intent: despues_te_digo
   examples: |
@@ -176,15 +202,6 @@ nlu:
     - idolo de chico?
     - que relacion tiene?
 
-- intent: bot_challenge
-  examples: |
-    - Sos un bot?
-    - Sos humano?
-    - Estoy hablando con un bot?
-    - Estoy hablando con un humano?
-    - am I talking to a bot?
-    - am I talking to a human?
-
 - intent: decir_nombre
   examples: |
     - Como te llamas?
@@ -291,25 +308,6 @@ nlu:
     - Exitos
     - exitos con eso
 
-- intent: triste_facu
-  examples: |
-    - Me fue mal en la facultad
-    - me esta yendo mal en la facu
-    - estoy complicado con la facu
-    - estoy complicada con la facultad
-    - me va mal en la universidad
-    - no entiendo nada en la uni
-
-- intent: triste_pelea
-  examples: |
-    - Me pelee con mi familia
-    - tuve una discusion con mi novio
-    - tuve una discusion con mi novia
-    - me pelee con mi viejo
-    - me pelee con mi mama
-    - discuti con un amigo
-    - discuti con un amiga
-
 - intent: afirmar
   examples: |
     - Si
@@ -328,33 +326,12 @@ nlu:
     - nao
     - no quiero
 
-- intent: hora
-  examples: |
-    - Que hora es?
-    - me decis la hora?
-    - no se que hora es
-    - cual es la hora?
-    - me podes decir la hora? q tengo mal configurado el cel
-    - tengo mal la hora
-    - q horario es
-    - q dia es
-    - me das hora?
-
 - intent: pedir_tutorial
   examples: |
     - quiero hacer el tutorial
     - bueno hagamos el tutorial
     - terminemos el tutorial
     - matemos el tuto
-
-- intent: gracias
-  examples: |
-    - Graciasss
-    - muchas gracias
-    - aw graciass
-    - Gracias
-    - graciela
-    - thanks
 
 - regex: pregunta
   examples: |
@@ -737,7 +714,6 @@ nlu:
     - Red Social
     - Portal de noticias
     - Encuesta
-    - ABM
 
 - lookup: page_name
   examples: |

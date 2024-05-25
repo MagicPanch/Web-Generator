@@ -1,7 +1,7 @@
 import threading
 from flask import Flask
 
-import CONSTANTS
+from resources import CONSTANTS
 from generator.objects.pages.PageRunner import PageRunner
 
 class Back(PageRunner):

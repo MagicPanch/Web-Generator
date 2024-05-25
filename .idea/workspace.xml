@@ -5,11 +5,21 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="121f2593-11ee-405e-a8d8-1c2f43d81e54" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/Web-Generator.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Web-Generator.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CONSTANTS.PY" beforeDir="false" afterPath="$PROJECT_DIR$/resources/CONSTANTS.PY" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/chatbot/actions/actions.py" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/actions/actions.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/chatbot/credentials.yml" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/credentials.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chatbot/endpoints.yml" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/endpoints.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chatbot/data/nlu.yml" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/data/nlu.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chatbot/data/stories.yml" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/data/stories.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chatbot/domain.yml" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/domain.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/DBManager.py" beforeDir="false" afterPath="$PROJECT_DIR$/database/DBManager.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/collections/Page.py" beforeDir="false" afterPath="$PROJECT_DIR$/database/collections/Page.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/generator/PageManager.py" beforeDir="false" afterPath="$PROJECT_DIR$/generator/PageManager.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/generator/objects/pages/Back.py" beforeDir="false" afterPath="$PROJECT_DIR$/generator/objects/pages/Back.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/generator/objects/pages/Front.py" beforeDir="false" afterPath="$PROJECT_DIR$/generator/objects/pages/Front.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/generator/objects/sections/InformativeSection.py" beforeDir="false" afterPath="$PROJECT_DIR$/generator/objects/sections/InformativeSection.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/generator/objects/sections/Section.py" beforeDir="false" afterPath="$PROJECT_DIR$/generator/objects/sections/Section.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -57,6 +67,9 @@
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 1
 }</component>
@@ -100,6 +113,7 @@
       <recent name="D:\Desarrollo\Web-Generator\database\colections" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\Desarrollo\Ingenieria-de-Software-2024\Web-Generator\resources" />
       <recent name="D:\Desarrollo\Ingenieria-de-Software-2024\Web-Generator\generator\objects\pages" />
       <recent name="D:\Desarrollo\Ingenieria-de-Software-2024\Web-Generator\generator\objects\sections" />
       <recent name="D:\Desarrollo\Ingenieria-de-Software-2024\Web-Generator\generator\Objects" />
@@ -184,6 +198,8 @@
       <workItem from="1716478026609" duration="23050000" />
       <workItem from="1716559709517" duration="8682000" />
       <workItem from="1716599564423" duration="2420000" />
+      <workItem from="1716645360435" duration="12815000" />
+      <workItem from="1716659353297" duration="4512000" />
     </task>
     <servers />
   </component>

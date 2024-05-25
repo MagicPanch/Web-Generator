@@ -3,14 +3,8 @@ version: '3.1'
 intents:
   - start
   - afirmar
-  - agregaciones
-  - bot_challenge
   - como_estas
-  - editar_encabezado
-  - crear_pagina
   - modificar_pagina
-  - editar_componente
-  - crear_seccion
   - decir_color
   - decir_mail
   - decir_ubicacion
@@ -24,23 +18,21 @@ intents:
   - estado_de_animo_feliz
   - estado_de_animo_triste
   - funcionalidad
-  - gracias
-  - hora
   - me_alegro
   - nlu_fallback
   - nombre_pagina
   - out_of_scope
-  - pregunta
   - reirse
   - saludo
   - tipo_seccion
-  - triste_facu
-  - triste_pelea
   - pedir_tutorial
   - decir_nombre_informativa
   - decir_texto_informativa
   - crear_algo
   - preguntar_paginas_propias
+  - agregar_producto
+  - cargar_productos_archivo
+  - cargar_X_cantidad_Y_producto
 
 entities:
   - page_name
@@ -58,6 +50,10 @@ entities:
   - mail
   - ubicacion
   - nombre_informativa
+  - cant_prod
+  - tit_prod
+  - desc_prod
+  - precio_prod
 
 actions:
   - action_animo
@@ -74,8 +70,6 @@ actions:
   - action_saludo_telegram
   - action_triste
   - action_preguntar_nombre_pagina
-  - action_copiar_template
-  - action_modificar_pagina
   - action_ejecutar_dev
   - action_guardar_seccion
   - action_capturar_tipo_seccion
@@ -104,8 +98,10 @@ actions:
   - action_modificar_informativa_2
   - action_modificar_informativa_3
   - action_modificar_informativa_4
-  - action_crear_abm
   - action_responder_paginas_propias
+  - action_pedir_productos
+  - action_capturar_producto_cargado
+  - action_guardar_producto
 
 slots:
   page_name:
@@ -119,6 +115,30 @@ slots:
     mappings:
     - type: from_entity
       entity: id_user
+
+  cant_prod:
+    type: float
+    mappings:
+    - type: from_entity
+      entity: cant_prod
+
+  tit_prod:
+    type: text
+    mappings:
+    - type: from_entity
+      entity: tit_prod
+
+  desc_prod:
+    type: text
+    mappings:
+    - type: from_entity
+      entity: desc_prod
+
+  precio_prod:
+    type: float
+    mappings:
+    - type: from_entity
+      entity: precio_prod
 
   mail:
     type: text
@@ -174,6 +194,34 @@ slots:
       - type: custom
 
   running_dev:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: custom
+
+  agregando_productos:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: custom
+
+  pregunta_carga:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: custom
+
+  pide_img_prod:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: custom
+
+  pregunta_otra_imagen_prod:
     type: bool
     influence_conversation: true
     initial_value: false
@@ -408,26 +456,8 @@ responses:
   utter_funcionalidad:
   - text: Por el momento puedo crear una pagina y permitirte correrla o detenerla.
 
-  utter_saludo:
-  - text: buenas {usuario}! tanto tiempoooo
-
   utter_me_alegro:
   - text: Muchas gracias!
-
-  utter_despedida_horario_nombre:
-  - text: Chau nos vemos! Que tengas una buena {horario} {usuario}
-
-  utter_despedida_nombre:
-  - text: Chau! nos vemos {usuario}
-
-  utter_despedidasc:
-  - text: Chau nos vemos!
-  - text: Hasta luego, que sigas bien!
-
-  utter_out_of_scope:
-  - text: Mejor hablemos de otra cosa
-  - text: Preguntame otra cosa
-  - text: hablemos de la facu mejor
 
   utter_reirse:
   - text: jajajajaj
@@ -440,33 +470,8 @@ responses:
   - text: Re bien!, vos como estas?
   - text: Todo bien!, vos?
 
-  utter_estado_de_animo_feliz:
-  - text: Que bueno!, me alegro
-  - text: Bien ahi! me alegro
-
-  utter_estado_de_animo_triste:
-  - text: Uh que mal, ¿que te paso?
-  - text: Que bajon, ¿que te paso?
-
-  utter_triste_pelea:
-  - text: Que lastima, espero que se puedan arreglar
-  - text: Que lastima, culaquier cosa que necesites decime
-
-  utter_triste_facu:
-  - text: Bueno no pasa nada, no te estreses, intenta organizate mejor y vas a ver que van a salir los resultados
-
-  utter_iamabot:
-  - text: Si, soy un bot generador por el grupo de desarrollo Design Label
-
   utter_decir_nombre:
   - text: Mi nombre es WebGenerator
-
-  utter_gracias:
-  - text: de nada!
-  - text: no hay problemaa
-
-  utter_tutorial_1:
-  - text: "indicacion tutorial 1. entendiste?"
 
 session_config:
   session_expiration_time: 60

@@ -3,7 +3,8 @@ from typing import List
 
 from pymongo.mongo_client import MongoClient
 from mongoengine import connect, Document
-import CONSTANTS
+from resources import CONSTANTS
+from database.collections.EcommerceSection import EcommerceSection
 from database.collections.User import User
 from database.collections.Page import Page
 from database.collections.InformativeSection import InformativeSection
@@ -159,6 +160,20 @@ class DBManager(object):
             section = InformativeSection(id=section_id, type="informativa", title=inf_section.get_title(), texts=inf_section.get_texts())
             section.save()
             page.sections.append(section)
+            page.lastModificationDate = datetime.datetime.now()
+            page.save()
+        else:
+            raise Exception("La pagina " + str(page_name) + " no existe o no te pertenece")
+
+    def add_ecomm_section(self, user_id, page_name):
+        page_id = user_id + '-' + page_name
+        page = Page.objects(id=page_id).first()
+        if page:
+            section_id = page_id + '-' + "ecommerce"
+            section = EcommerceSection(id=section_id, type="ecommerce")
+            section.save()
+            page.sections.append(section)
+            page.has_ecomm_section = True
             page.lastModificationDate = datetime.datetime.now()
             page.save()
         else:

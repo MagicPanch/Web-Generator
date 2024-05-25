@@ -1,4 +1,4 @@
-from mongoengine import Document, StringField, DateTimeField, ListField, GenericReferenceField
+from mongoengine import Document, StringField, DateTimeField, ListField, GenericReferenceField, BooleanField
 
 
 class Page(Document):
@@ -12,3 +12,4 @@ class Page(Document):
     mail = StringField(required=False)
     location = StringField(required=False)
     sections = ListField(GenericReferenceField())
+    has_ecomm_section = BooleanField(default=False)

@@ -7,15 +7,15 @@ from typing import Tuple, Dict, List
 
 import requests
 from telegram import Bot, File
-import CONSTANTS
+from resources import CONSTANTS
 import psutil
 
 from database.DBManager import DBManager
 from generator.objects.pages.Front import Front
 import socket
 
+from generator.objects.sections.EcommerceSection import EcommerceSection
 from generator.objects.sections.InformativeSection import InformativeSection
-from generator.objects.sections.Section import Section
 
 
 class PageManager(object):
@@ -106,13 +106,11 @@ class PageManager(object):
         #Nos posiciona en el subdirectorio indicado. Si no existe, lo crea
         os.makedirs(dir_name, exist_ok=True)
         os.chdir(dir_name)
-        #print("(" + threading.current_thread().getName() + ") " + "nuevo dir: " + os.getcwd())
 
     @staticmethod
     def go_to_main_dir():
         while os.path.basename(os.getcwd()) != CONSTANTS.MAIN_DIR:
             os.chdir("..")
-        #print("(" + threading.current_thread().getName() + ") " + "nuevo dir: " + os.getcwd())
 
     @staticmethod
     def _get_tunnel_address(page, dev=False):
@@ -350,10 +348,12 @@ class PageManager(object):
         #Recuperar sus componentes
         sections = DBManager.get_page_sections(DBManager.get_instance(), user, page_name)
         for section in sections:
-            print(section.title)
             if section.type == "informativa":
                 s = InformativeSection(section.title)
                 s.set_texts(section.texts)
+                page.add_section(s)
+            elif section.type == "ecommerce":
+                s = EcommerceSection()
                 page.add_section(s)
 
         #Crea sus directorios
@@ -362,7 +362,6 @@ class PageManager(object):
         PageManager.go_to_dir(user)
         PageManager.go_to_dir(page_name)
         PageManager.go_to_main_dir()
-
         #Agregarla a la coleccion
         PageManager._running_pages[(user, page_name)] = PageManager.Entry(page, None, None)
         return page

@@ -59,3 +59,10 @@ class Front(PageRunner):
                 return section
         else:
             return None
+
+    def has_ecomm_section(self) -> bool:
+        for section in self._sections:
+            if section.get_title() == "ecommerce":
+                return True
+        else:
+            return False
