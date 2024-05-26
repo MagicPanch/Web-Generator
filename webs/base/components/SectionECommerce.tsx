@@ -5,16 +5,19 @@ import ProductTile from "./ProductTile";
 import { CARDS_DATA } from "../constants/body";
 import { AddToCartMessage, ItemInterface, useCart } from "./cartContext";
 
+let messageTimer: NodeJS.Timeout;
+
 const SectionECommerce = () => {
   const { addToCart } = useCart();
-  const [showAddMessage, setShowAddMessage] = useState(false);
+  const [showMessage, setShowMessage] = useState(false);
 
   const handleAddToCart = (item: ItemInterface) => {
     addToCart(item);
-    setShowAddMessage(true);
-    setTimeout(() => {
-      setShowAddMessage(false);
-    }, 3000); // Mostrar el mensaje por 3 segundos
+    setShowMessage(true);
+    clearTimeout(messageTimer);
+    messageTimer = setTimeout(() => {
+      setShowMessage(false);
+    }, 1500);
   };
 
   return (
@@ -38,7 +41,7 @@ const SectionECommerce = () => {
             ))}
         </div>
       </div>
-      {showAddMessage && <AddToCartMessage />}
+      {showMessage && <AddToCartMessage />}
     </section>
   );
 };

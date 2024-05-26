@@ -1,11 +1,28 @@
 "use client";
-import React from "react";
-import { CartItemInterface, useCart } from "../../../components/cartContext";
+import React, { useState } from "react";
+import {
+  CartItemInterface,
+  ItemInterface,
+  RemoveFromCartMessage,
+  useCart,
+} from "../../../components/cartContext";
 import ProductShoppingTile from "./ProductShoppingTile";
 import Link from "next/link";
 
+let messageTimer: NodeJS.Timeout;
+
 const ShoppingCart: React.FC = () => {
   const { cart, removeFromCart } = useCart();
+  const [showMessage, setShowMessage] = useState(false);
+
+  const handleRemoveFromCart = (item: ItemInterface) => {
+    removeFromCart(item);
+    setShowMessage(true);
+    clearTimeout(messageTimer);
+    messageTimer = setTimeout(() => {
+      setShowMessage(false);
+    }, 1500);
+  };
 
   const totalToPay = cart.reduce((acc, cartItem) => {
     return acc + parseFloat(cartItem.item.price) * cartItem.quantity;
@@ -25,7 +42,7 @@ const ShoppingCart: React.FC = () => {
             description={cartItem.item.description}
             price={cartItem.item.price}
             quantity={cartItem.quantity}
-            removeFromCart={() => removeFromCart(cartItem.item)}
+            removeFromCart={() => handleRemoveFromCart(cartItem.item)}
           />
         ))}
       </div>
@@ -49,6 +66,7 @@ const ShoppingCart: React.FC = () => {
           </button>
         </Link>
       )}
+      {showMessage && <RemoveFromCartMessage />}
     </div>
   );
 };
