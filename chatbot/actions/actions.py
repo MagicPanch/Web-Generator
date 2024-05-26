@@ -730,6 +730,7 @@ class ActionCrearEcommerce(Action):
             #ReactGenerator.generarEcommerce()
             PageManager.run_dev(page.get_user(), page.get_name())
             page.wait_for_ready()
+            print(tracker.slots)
             message = "Tu pagina se encuentra en modo edición. Podrás visualizar la nueva sección en: " + page.get_page_address()
             dispatcher.utter_message(text=message)
             message = "Si la pagina te solicita una contraseña ingresa: " + PageManager.get_tunnel_password()
@@ -760,7 +761,7 @@ class ActionCapturarProductoCargado(Action):
     def name(self) -> Text:
         return "action_capturar_producto_cargado"
 
-    async def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         print("(" + threading.current_thread().getName() + ") " + "----ACTION CAPTURAR PRODUCTO CARGADO----")
         # Verifica si el último mensaje contiene una imagen
         latest_message = tracker.latest_message

@@ -325,7 +325,8 @@ class PageManager(object):
         # print("(" + threading.current_thread().getName() + ") " + "--------destino: " + destino)
 
         # Copiar template al nuevo proyecto
-        #PageManager._copy_dir(CONSTANTS.TEMPLATE_ECOMMERCE_DIR, destino)
+        PageManager.go_to_main_dir()
+        PageManager._copy_dir(CONSTANTS.TEMPLATE_ECOMMERCE_DIR, destino)
 
     @staticmethod
     def add_ecommerce(user, page_name):

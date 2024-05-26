@@ -16,6 +16,7 @@ class DBManager(object):
 
     _instance = None
     _client = None
+    _db = None
     _product_id: Dict[Tuple[str, str], int] = {}
 
     @classmethod
@@ -29,6 +30,7 @@ class DBManager(object):
             DBManager._instance = self
             self._product_id = {}
             self._client = MongoClient(CONSTANTS.DB_URI)
+            self._db = self._client['web_generator']
             connect(
                 db='web_generator',  # Nombre de la base de datos
                 host=CONSTANTS.DB_URI,
@@ -241,21 +243,25 @@ class DBManager(object):
         page = Page.objects(id=page_id).first()
         if page:
             p_id = page.product_counter
-            product_id = user_id + '-' + page_name + '-' + str(p_id)
-            producto = Product(id=product_id, stock=cant, name=title, desc=desc, prize=precio)
-            producto.save()
-            page.product_counter += 1
-            page.save()
+            collection = self._db[page_id]
+            if collection:
+                product = {
+                    "key": p_id,
+                    "stock": cant,
+                    "name": title,
+                    "desc": desc,
+                    "price": precio,
+                }
+                collection.insert_one(product)
+                page.product_counter += 1
+                page.save()
             return p_id
         else:
             raise Exception("La pagina " + str(page) + " no existe o no te pertenece")
 
     def set_product_multimedia(self, user_id, page_name, product, media_url):
-        product_id = user_id + '-' + page_name + '-' + str(product)
-        product = Product.objects(id=product_id).first()
-        if product:
-            product.multimedia = media_url
-            product.save()
-        else:
-            raise Exception("El producto " + str(product) + " no existe en la página " + str(page_name))
+        page_id = user_id + '-' + page_name
+        collection = self._db[page_id]
+        if collection:
+            collection.update_one({"key": product}, {"$set": {"multimedia": media_url}})
 
