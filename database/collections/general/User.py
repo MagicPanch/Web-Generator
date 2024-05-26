@@ -1,4 +1,4 @@
-from database.collections.Page import Page
+from database.collections.general.Page import Page
 from mongoengine import Document, StringField, ListField, ReferenceField, IntField, BooleanField
 
 

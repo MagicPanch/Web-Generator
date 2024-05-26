@@ -5,6 +5,7 @@ import pandas as pd
 import tempfile
 import os
 
+from generator.objects.sections.EcommerceSection import EcommerceSection
 from generator.objects.sections.InformativeSection import InformativeSection
 from generator.PageManager import PageManager
 from generator.TelegramBotManager import TelegramBotManager
@@ -15,6 +16,7 @@ from rasa_sdk.executor import CollectingDispatcher
 from rasa_sdk.events import SlotSet, FollowupAction
 import datetime
 from database.DBManager import DBManager
+from resources import CONSTANTS
 
 
 #Actions Pagina
@@ -25,7 +27,8 @@ class ActionCapturarCreacion(Action):
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         print("(" + threading.current_thread().getName() + ") " + "----ACTION CAPTURAR CREACION----")
-        tuto = DBManager.get_user_tutorial(DBManager.get_instance(), tracker.sender_id)
+        dbm = DBManager.get_instance()
+        tuto = dbm.get_user_tutorial(tracker.sender_id)
         if tuto:
             seccion = tracker.get_slot('componente')
             if seccion:
@@ -43,7 +46,8 @@ class ActionPreguntarNombrePagina(Action):
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         print("(" + threading.current_thread().getName() + ") " + "----ACTION PREGUNTAR NOMBRE PAGINA----")
-        tuto = DBManager.get_user_tutorial(DBManager.get_instance(), tracker.sender_id)
+        dbm = DBManager.get_instance()
+        tuto = dbm.get_user_tutorial(tracker.sender_id)
         if tuto:
             dispatcher.utter_message(text="¿Como queres que se llame tu pagina? Por favor indica su nombre en el siguiente formato: www. nombre-pagina .com")
             return [SlotSet("creando_pagina", True)]
@@ -80,11 +84,12 @@ class ActionCrearPagina(Action):
                     text="Repetime como queres que se llame tu página. Te recuerdo que el formato es: www. nombre-pagina .com")
                 return [SlotSet("creando_pagina", True), SlotSet("pregunta_nombre", True)]
             else:
-                if DBManager.get_page_by_name(DBManager.get_instance(), tracker.get_slot('page_name')) is None:
+                dbm = DBManager.get_instance()
+                if dbm.get_page_by_name(tracker.get_slot('page_name')) is None:
                     #La pagina no existe
 
                     #Se guarda su entrada en la base de datos
-                    DBManager.add_page(DBManager.get_instance(), tracker.sender_id, tracker.get_slot('page_name'), tracker.get_slot('usuario'))
+                    dbm.add_page(tracker.sender_id, tracker.get_slot('page_name'), tracker.get_slot('usuario'))
 
                     #Se crea la entrada para la pagina en PageManager
                     PageManager.add_page(tracker.sender_id, tracker.get_slot('page_name'))
@@ -136,22 +141,23 @@ class ActionEjecutarPagina(Action):
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         print("(" + threading.current_thread().getName() + ") " + "----ACTION EJECUTAR PAGINA----")
-        tuto = DBManager.get_user_tutorial(DBManager.get_instance(), tracker.sender_id)
+        dbm = DBManager.get_instance()
+        tuto = dbm.get_user_tutorial(tracker.sender_id)
         if tuto:
             if tracker.get_slot('page_name') is None:
                 message = "Indicame el nombre de la pagina que deseas ejecutar. Te recuerdo que tus paginas son: "
-                pags = DBManager.get_user_pages(DBManager.get_instance(), tracker.sender_id)
+                pags = dbm.get_user_pages(tracker.sender_id)
                 for pag in pags:
                     message += str(pag['name']) + "\n"
                 return [SlotSet("pregunta_ejecucion", True)]
             else:
                 # Se estuvo hablando de una pagina en particular
-                page_doc = DBManager.get_page(DBManager.get_instance(), tracker.sender_id, tracker.get_slot('page_name'))
+                page_doc = dbm.get_page(tracker.sender_id, tracker.get_slot('page_name'))
                 print("(" + threading.current_thread().getName() + ") " + "--------page_doc: ", page_doc)
                 if not page_doc:
                     # Esa pagina no pertenece al usuario
                     message = "No se encuentra la pagina que deseas ejecutar. Te recuerdo que tus paginas son: "
-                    pags = DBManager.get_user_pages(DBManager.get_instance(), tracker.sender_id)
+                    pags = dbm.get_user_pages(tracker.sender_id)
                     for pag in pags:
                         message += str(pag['name']) + "\n"
                     dispatcher.utter_message(text=message)
@@ -177,10 +183,10 @@ class ActionEjecutarPagina(Action):
                         page_obj = PageManager.add_page(tracker.sender_id, page_doc.name)
 
                     #Verificar si esta compilada
-                    if not DBManager.was_compiled(DBManager.get_instance(), tracker.sender_id, page_doc.name):
+                    if not dbm.was_compiled(tracker.sender_id, page_doc.name):
                         print("(" + threading.current_thread().getName() + ") " + "----------------pagina no compilada")
                         PageManager.build_project(tracker.sender_id, page_doc.name)
-                        DBManager.set_compilation_date(DBManager.get_instance(), tracker.sender_id, page_doc.name)
+                        dbm.set_compilation_date(tracker.sender_id, page_doc.name)
                         PageManager.join_thread(tracker.sender_id, page_doc.name)
                         print("(" + threading.current_thread().getName() + ") " + "------------PAGINA COMPILADA")
                     else:
@@ -209,7 +215,8 @@ class ActionEjecutarPagina(Action):
             last_message_entities = tracker.get_latest_entity_values("text")
             print("(" + threading.current_thread().getName() + ") " + "--------last_message_entities: ", last_message_entities)
 
-            tuto = DBManager.get_user_tutorial(DBManager.get_instance(), tracker.sender_id)
+            dbm = DBManager.get_instance()
+            tuto = dbm.get_user_tutorial(tracker.sender_id)
             if tuto:
                 if "page_name" in last_message_entities:
                     # Se especifico una pagina en el ultimo mensaje
@@ -255,7 +262,8 @@ class ActionCapturarEdicion(Action):
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         print("(" + threading.current_thread().getName() + ") " + "----ACTION CAPTURAR EDICION----")
-        tuto = DBManager.get_user_tutorial(DBManager.get_instance(), tracker.sender_id)
+        dbm = DBManager.get_instance()
+        tuto = dbm.get_user_tutorial(tracker.sender_id)
         if tuto:
             last_message_intent = tracker.latest_message.get('intent').get('name')
             print("(" + threading.current_thread().getName() + ") " + "--------last message intent: ", last_message_intent)
@@ -267,12 +275,12 @@ class ActionCapturarEdicion(Action):
                     print("(" + threading.current_thread().getName() + ") " + "--------componente: ", componente)
                     print("(" + threading.current_thread().getName() + ") " + "--------pagina: ", page_name)
 
-                    page_doc = DBManager.get_page(DBManager.get_instance(), tracker.sender_id, tracker.get_slot('page_name'))
+                    page_doc = dbm.get_page(tracker.sender_id, tracker.get_slot('page_name'))
                     print("(" + threading.current_thread().getName() + ") " + "--------page_doc: ", page_doc)
                     if not page_doc:
                         # Esa pagina no pertenece al usuario
                         message = "La pagina que estas intentando modificar no te pertenece. Te recuerdo que tus paginas son: "
-                        pags = DBManager.get_user_pages(DBManager.get_instance(), tracker.sender_id)
+                        pags = dbm.get_user_pages(tracker.sender_id)
                         for pag in pags:
                             message += str(pag.name) + "\n"
                         dispatcher.utter_message(text=message)
@@ -304,7 +312,7 @@ class ActionCapturarEdicion(Action):
                             print("(" + threading.current_thread().getName() + ") " + "--------tipo_seccion: ", tipo_seccion)
                             nombre_seccion = tracker.get_slot('nombre_informativa')
                             print("(" + threading.current_thread().getName() + ") " + "--------nombre_informativa: ", nombre_seccion)
-                            secciones = DBManager.get_page_sections(DBManager.get_instance(), tracker.sender_id, tracker.get_slot('page_name'))
+                            secciones = dbm.get_page_sections(tracker.sender_id, tracker.get_slot('page_name'))
                             if len(secciones) > 0:
                             # La pagina tiene secciones
                                 if nombre_seccion:
@@ -357,7 +365,7 @@ class ActionCapturarEdicion(Action):
                 # No hay pagina y hay componente a editar
                     print("(" + threading.current_thread().getName() + ") " + "--------componente: ", componente)
                     message = "Indicame el nombre de la pagina que deseas modificar. Te recuerdo que tus paginas son: \n"
-                    pags = DBManager.get_user_pages(DBManager.get_instance(), tracker.sender_id)
+                    pags = dbm.get_user_pages(tracker.sender_id)
                     for pag in pags:
                         message += str(pag.name) + "\n"
                     dispatcher.utter_message(text=message)
@@ -365,7 +373,7 @@ class ActionCapturarEdicion(Action):
                 else:
                 # No hay pagina ni componente
                     message = "Indicame el nombre de la pagina que deseas modificar. Te recuerdo que tus paginas son: \n"
-                    pags = DBManager.get_user_pages(DBManager.get_instance(), tracker.sender_id)
+                    pags = dbm.get_user_pages(tracker.sender_id)
                     for pag in pags:
                         message += str(pag.name) + "\n"
                     dispatcher.utter_message(text=message)
@@ -378,12 +386,12 @@ class ActionCapturarEdicion(Action):
             elif "agregar_producto" in last_message_intent or tracker.get_slot("agregando_productos"):
                 page_name = tracker.get_slot('page_name')
                 if page_name:
-                    page_doc = DBManager.get_page(DBManager.get_instance(), tracker.sender_id, tracker.get_slot('page_name'))
+                    page_doc = dbm.get_page(tracker.sender_id, tracker.get_slot('page_name'))
                     print("(" + threading.current_thread().getName() + ") " + "--------page_doc: ", page_doc)
                     if not page_doc:
                         # Esa pagina no pertenece al usuario
                         message = "La pagina en la que estas intentando agregar productos no te pertenece. Te recuerdo que tus paginas son: "
-                        pags = DBManager.get_user_pages(DBManager.get_instance(), tracker.sender_id)
+                        pags = dbm.get_user_pages(tracker.sender_id)
                         for pag in pags:
                             message += str(pag.name) + "\n"
                         dispatcher.utter_message(text=message)
@@ -398,14 +406,15 @@ class ActionCapturarEdicion(Action):
                             return [SlotSet("agregando_productos", True), FollowupAction("action_pedir_productos")]
                         else:
                             message = "La pagina " + str(page_name) + " no cuenta con una sección e-commerce. Te recuerdo que tus paginas con sección e-commerce son: \n"
-                            pags = DBManager.get_user_pages(DBManager.get_instance(), tracker.sender_id)
+                            pags = dbm.get_user_pages(tracker.sender_id)
                             for pag in pags:
+                                print(pag)
                                 if pag.has_ecomm_section:
                                     message += str(pag.name) + "\n"
                             dispatcher.utter_message(text=message)
                             return [SlotSet("pregunta_nombre", True)]
                 else:
-                    pags = DBManager.get_user_pages(DBManager.get_instance(), tracker.sender_id)
+                    pags = dbm.get_user_pages(tracker.sender_id)
                     if pags:
                         message = "Indicame el nombre de la pagina en la que deseas agregar productos. Te recuerdo que tus paginas con sección e-commerce son: \n"
                         for pag in pags:
@@ -529,7 +538,8 @@ class ActionCrearEncabezado(Action):
         PageManager.go_to_main_dir()
         ReactGenerator.generarHeader(dataHeader)
         print("-------------ENCABEZADO MODIFICADO-------------")
-        DBManager.updt_modification_date(DBManager.get_instance(), tracker.sender_id, tracker.get_slot('page_name'))
+        dbm = DBManager.get_instance()
+        dbm.updt_modification_date(tracker.sender_id, tracker.get_slot('page_name'))
         dispatcher.utter_message(text="Podes ver los cambios que realizamos en el encabezado")
         return [SlotSet("creando_encabezado", False), SlotSet("componente", None)]
 
@@ -558,7 +568,8 @@ class ActionGuardarMailFooter(Action):
             mail = tracker.get_slot('mail')
             print("(" + threading.current_thread().getName() + ") " + "------------mail: ", mail)
             #Guardar el mail en la pagina
-            DBManager.set_page_mail(DBManager.get_instance(), tracker.sender_id, tracker.get_slot('page_name'), mail)
+            dbm = DBManager.get_instance()
+            dbm.set_page_mail(tracker.sender_id, tracker.get_slot('page_name'), mail)
             dispatcher.utter_message(text="E-mail guardado.")
             return [SlotSet("mail_footer", mail), FollowupAction("utter_preguntar_ubicacion")]
         elif 'denegar' in last_message_intent:
@@ -584,7 +595,8 @@ class ActionGuardarUbicacionFooter(Action):
             ubicacion = tracker.get_slot("ubicacion")
             print("(" + threading.current_thread().getName() + ") " + "------------ubicacion: ", ubicacion)
             #Guardar la ubicacion en la pagina
-            DBManager.set_page_location(DBManager.get_instance(), tracker.sender_id, tracker.get_slot('page_name'), ubicacion)
+            dbm = DBManager.get_instance()
+            dbm.set_page_location(tracker.sender_id, tracker.get_slot('page_name'), ubicacion)
             dispatcher.utter_message(text="Ubicacion guardada.")
             return [SlotSet("ubicacion_footer", ubicacion), FollowupAction("action_crear_footer")]
         elif 'denegar' in last_message_intent:
@@ -632,13 +644,14 @@ class ActionCapturarTipoSeccion(Action):
         print("(" + threading.current_thread().getName() + ") " + "----ACTION CAPTURAR TIPO SECCION----")
         page_name = tracker.get_slot("page_name")
         print("(" + threading.current_thread().getName() + ") " + "--------page_name: ", page_name)
+        dbm = DBManager.get_instance()
         if page_name:
-            page_doc = DBManager.get_page(DBManager.get_instance(), tracker.sender_id, page_name)
+            page_doc = dbm.get_page(tracker.sender_id, page_name)
             if not page_doc:
                 print("(" + threading.current_thread().getName() + ") " + "--------page_doc: ", page_doc)
                 # Esa pagina no pertenece al usuario
                 message = "No se encuentra la pagina a la que deseas crearle una sección. Te recuerdo que tus paginas son: \n"
-                pags = DBManager.get_user_pages(DBManager.get_instance(), tracker.sender_id)
+                pags = dbm.get_user_pages(tracker.sender_id)
                 for pag in pags:
                     message += pag.name + "\n"
                 dispatcher.utter_message(text=message)
@@ -683,7 +696,7 @@ class ActionCapturarTipoSeccion(Action):
             return [SlotSet("creando_seccion", True), SlotSet("pregunta_nombre", True), SlotSet("componente", "seccion")]
         else:
             message = "Indicame el nombre de la pagina en la que deseas crear la sección. Te recuerdo que tus paginas son: \n"
-            pags = DBManager.get_user_pages(DBManager.get_instance(), tracker.sender_id)
+            pags = dbm.get_user_pages(tracker.sender_id)
             for pag in pags:
                 message += str(pag.name) + "\n"
             dispatcher.utter_message(text=message)
@@ -703,7 +716,9 @@ class ActionCrearEcommerce(Action):
         if seccion:
             dispatcher.utter_message(text="Tu página ya tiene una sección de e-commerce.")
         else:
-            DBManager.add_ecomm_section(DBManager.get_instance(), tracker.sender_id, tracker.get_slot("page_name"))
+            dbm = DBManager.get_instance()
+            dbm.add_ecomm_section(tracker.sender_id, tracker.get_slot("page_name"))
+            page.add_section(EcommerceSection())
             #ReactGenerator.generarEcommerce()
             dispatcher.utter_message(text="Podrás visualizar la nueva sección en tu página.")
         return [SlotSet("pregunta_seccion", False), SlotSet("creando_seccion", False), SlotSet("componente", None)]
@@ -717,10 +732,11 @@ class ActionPedirProductos(Action):
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         print("(" + threading.current_thread().getName() + ") " + "----ACTION PEDIR PRODUCTOS----")
-        message = "Podes agregar los productos de a uno o cargar múltiples productos en un archivo de datos y enviármelo. Si optas por la carga mediante archivo, completa la siguiente planilla agregando los datos en una nueva fila y avisame antes de enviarlo."
+        telegram_bot = TelegramBotManager.get_instance()
+        message = "Podes agregar los productos de a uno o cargar múltiples productos en un archivo de datos y enviármelo. Si optas por la carga mediante archivo, completa la siguiente planilla agregando los datos en una nueva fila. En los campos \"multimedia\" coloca el link a las imágenes o videos del producto"
         dispatcher.utter_message(text=message)
-        #product_template = ""
-        #dispatcher.utter_message(attachment=product_template)
+        PageManager.go_to_main_dir()
+        telegram_bot.send_file_to_user(tracker.sender_id, CONSTANTS.TEMPLATE_PRODUCTOS_DIR)
         dispatcher.utter_message(text="Si vas a cargar los productos de a uno voy a necesitar los siguientes datos:\nCantidad:\nTitulo:\nDescripción:\nPrecio:")
         return [SlotSet("pregunta_carga", True)]
 
@@ -733,11 +749,11 @@ class ActionCapturarProductoCargado(Action):
         print("(" + threading.current_thread().getName() + ") " + "----ACTION CAPTURAR PRODUCTO CARGADO----")
         # Verifica si el último mensaje contiene una imagen
         latest_message = tracker.latest_message
+        dbm = DBManager.get_instance()
         if 'document' in latest_message['metadata']['message']:
             error = False
             documento = latest_message['metadata']['message']['document']
             telegram_bot = TelegramBotManager.get_instance()
-            print("documento: ", documento)
             file_id = documento['file_id']
             if not documento:
                 error = True
@@ -748,11 +764,12 @@ class ActionCapturarProductoCargado(Action):
                 file_bytes.seek(0)
                 df = pd.read_excel(file_bytes, engine='openpyxl')
                 for producto in df.itertuples(index=True, name='Pandas'):
-                    DBManager.add_product(DBManager.get_instance(), user=tracker.sender_id, page=tracker.get_slot("page_name"), cant=producto.Cantidad, title=producto.Titulo, desc=producto.Descripcion, precio=producto.Precio)
-            if not error:
-                dispatcher.utter_message(text="Productos recibidos con éxito.")
-            else:
+                    id = dbm.add_product(user_id=tracker.sender_id, page_name=tracker.get_slot("page_name"), cant=producto.Cantidad, title=producto.Titulo, desc=producto.Descripcion, precio=float(producto.Precio))
+                    message = "El producto " + producto.Titulo + " se guardó correctamente con el identificador: " + str(id)
+                    dispatcher.utter_message(text=message)
+            if error:
                 dispatcher.utter_message(text="No se pudo recibir el archivo. Por favor envíalo nuevamente.")
+            return []
         else:
             last_message = str(tracker.latest_message.get('text'))
             print("(" + threading.current_thread().getName() + ") " + "--------last_message: \n", last_message)
@@ -763,8 +780,13 @@ class ActionCapturarProductoCargado(Action):
             desc = tracker.get_slot("desc_prod")
             print("(" + threading.current_thread().getName() + ") " + "--------desc: \n", desc)
             precio = tracker.get_slot("precio_prod")
+            if precio:
+                precio = precio.replace(",", ".")
             print("(" + threading.current_thread().getName() + ") " + "--------precio: \n", precio)
-            dispatcher.utter_message(text="Producto recibido correctamente. Si lo deseas podes enviarme alguna imagen sobre él. Si vas a enviar imagenes, por favor envialas de a una.")
+            id = dbm.add_product(user_id=tracker.sender_id, page_name=tracker.get_slot("page_name"), cant=cant, title=titulo, desc=desc, precio=float(precio))
+            message = "El producto " + titulo + " se guardó correctamente con el identificador: " + str(id)
+            dispatcher.utter_message(text=message)
+            dispatcher.utter_message(text="Si lo deseas podes enviarme alguna imagen sobre él. Si vas a enviar imagenes, por favor envialas de a una.")
             return [SlotSet("pide_img_prod", True)]
 
 
@@ -851,7 +873,8 @@ class ActionCrearInformativa4(Action):
         else:
             nombre_informativa = "Informacion"
         inf_section = page.get_section(nombre_informativa)
-        DBManager.add_inf_section(DBManager.get_instance(), tracker.sender_id, tracker.get_slot("page_name"), inf_section)
+        dbm = DBManager.get_instance()
+        dbm.add_inf_section(tracker.sender_id, tracker.get_slot("page_name"), inf_section)
         #ReactGenerator.generarSeccionInformativa()
         dispatcher.utter_message(text="Podrás ver la nueva sección en tu página")
         return [SlotSet("creando_seccion_informativa", False), SlotSet("pregunta_otra_imagen_seccion_informativa", False), SlotSet("pide_img_informativa", False), SlotSet("pide_text_informativa", False), SlotSet("pregunta_seccion", False), SlotSet("creando_seccion", False), SlotSet("componente", None)]
@@ -943,8 +966,8 @@ class ActionModificarInformativa4(Action):
         else:
             nombre_informativa = tracker.get_slot("nombre_seccion_editando")
         inf_section = page.get_section(nombre_informativa)
-
-        DBManager.updt_inf_section(DBManager.get_instance(), tracker.sender_id, tracker.get_slot("page_name"), tracker.get_slot("nombre_seccion_editando"),  inf_section)
+        dbm = DBManager.get_instance()
+        dbm.updt_inf_section(tracker.sender_id, tracker.get_slot("page_name"), tracker.get_slot("nombre_seccion_editando"),  inf_section)
         #ReactGenerator.generarSeccionInformativa()
         dispatcher.utter_message(text="Podrás ver la nueva sección en tu página")
         return [SlotSet("editando_seccion_informativa", False)]
@@ -969,7 +992,8 @@ class ActionSaludoTelegram(Action):
         nombre = variable["from"]["first_name"]
         user_name = variable["from"].get("user_name", None)
         ide = tracker.sender_id
-        user_doc = DBManager.get_user(DBManager.get_instance(), ide)
+        dbm = DBManager.get_instance()
+        user_doc = dbm.get_user(ide)
         if user_doc:
         #El usuario ya existe
             dispatcher.utter_message(text="Bienvenido nuevamente " + nombre + ", ¿como puedo ayudarte?")
@@ -982,7 +1006,7 @@ class ActionSaludoTelegram(Action):
             message = "Hola " + nombre + ", como va tu " + horario + "? Soy el Chatbot WebGenerator, encargado de ayudarte a crear tu pagina web! Si queres preguntame y te explico un poco en que cosas puedo contribuir."
             dispatcher.utter_message(text="Hola " + nombre + ", ¿como va tu " + horario + "? Soy el chatbot WebGenerator, tu asistente para crear páginas web.")
             dispatcher.utter_message(text="¿Queres realizar el tutorial?")
-            DBManager.add_user(DBManager.get_instance(), ide, tracker.get_slot("usuario"), nombre)
+            dbm.add_user(ide, tracker.get_slot("usuario"), nombre)
             return [SlotSet("pregunta_tutorial", True), SlotSet("usuario", user_name), SlotSet("nombre_usuario", nombre), SlotSet("horario", horario), SlotSet("id_user", ide)]
 
         return [SlotSet("pregunta_tutorial", False), SlotSet("usuario", user_name), SlotSet("nombre_usuario", nombre), SlotSet("horario", horario), SlotSet("id_user", ide)]
@@ -1018,7 +1042,8 @@ class ActionResponderPaginasPropias(Action):
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        pages = DBManager.get_user_pages(DBManager.get_instance(), tracker.sender_id)
+        dbm = DBManager.get_instance()
+        pages = dbm.get_user_pages(tracker.sender_id)
         if pages:
             message = "Tus paginas son: \n"
             for page in pages:
@@ -1222,5 +1247,6 @@ class ActionTerminarTutorial(Action):
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         print("(" + threading.current_thread().getName() + ") " + "----ACTION TERMINAR TUTORIAL----")
         dispatcher.utter_message(text="¡Felicitaciones " + str(tracker.get_slot("nombre_usuario")) + ", terminaste el tutorial! Ya estas listo para crear tu primera página web")
-        DBManager.set_user_tutorial(DBManager.get_instance(), tracker.sender_id)
+        dbm = DBManager.get_instance()
+        dbm.set_user_tutorial(tracker.sender_id)
         return [SlotSet("pregunta_4_confirmacion", False), SlotSet("pregunta_4_repetir_confirmacion", False)]

@@ -6,12 +6,16 @@
   <component name="ChangeListManager">
     <list default="true" id="121f2593-11ee-405e-a8d8-1c2f43d81e54" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chatbot/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/chatbot/actions/actions.py" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/actions/actions.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/chatbot/credentials.yml" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/credentials.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chatbot/data/nlu.yml" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/data/nlu.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/database/DBManager.py" beforeDir="false" afterPath="$PROJECT_DIR$/database/DBManager.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/collections/EcommerceSection.py" beforeDir="false" afterPath="$PROJECT_DIR$/database/collections/general/EcommerceSection.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/collections/InformativeSection.py" beforeDir="false" afterPath="$PROJECT_DIR$/database/collections/general/InformativeSection.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/collections/Page.py" beforeDir="false" afterPath="$PROJECT_DIR$/database/collections/general/Page.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/collections/User.py" beforeDir="false" afterPath="$PROJECT_DIR$/database/collections/general/User.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/generator/PageManager.py" beforeDir="false" afterPath="$PROJECT_DIR$/generator/PageManager.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/generator/TelegramBotManager.py" beforeDir="false" afterPath="$PROJECT_DIR$/generator/TelegramBotManager.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/CONSTANTS.PY" beforeDir="false" afterPath="$PROJECT_DIR$/resources/CONSTANTS.PY" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -105,11 +109,11 @@
       <recent name="D:\Desarrollo\Web-Generator\database\colections" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\Desarrollo\Ingenieria-de-Software-2024\Web-Generator\database\collections\general" />
       <recent name="D:\Desarrollo\Ingenieria-de-Software-2024\Web-Generator\resources" />
       <recent name="D:\Desarrollo\Ingenieria-de-Software-2024\Web-Generator\generator\objects\pages" />
       <recent name="D:\Desarrollo\Ingenieria-de-Software-2024\Web-Generator\generator\objects\sections" />
       <recent name="D:\Desarrollo\Ingenieria-de-Software-2024\Web-Generator\generator\Objects" />
-      <recent name="D:\Desarrollo\Web-Generator" />
     </key>
   </component>
   <component name="SharedIndexes">
@@ -192,7 +196,8 @@
       <workItem from="1716599564423" duration="2420000" />
       <workItem from="1716645360435" duration="12815000" />
       <workItem from="1716659353297" duration="5468000" />
-      <workItem from="1716673752162" duration="4667000" />
+      <workItem from="1716673752162" duration="5016000" />
+      <workItem from="1716728489623" duration="12500000" />
     </task>
     <servers />
   </component>

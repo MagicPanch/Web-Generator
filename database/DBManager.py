@@ -1,19 +1,22 @@
 import datetime
-from typing import List
+from typing import List, Dict, Tuple
 
 from pymongo.mongo_client import MongoClient
-from mongoengine import connect, Document
+from mongoengine import connect, Document, ObjectIdField
+
+from database.collections.particular.Product import Product
 from resources import CONSTANTS
-from database.collections.EcommerceSection import EcommerceSection
-from database.collections.User import User
-from database.collections.Page import Page
-from database.collections.InformativeSection import InformativeSection
+from database.collections.general.EcommerceSection import EcommerceSection
+from database.collections.general.User import User
+from database.collections.general.Page import Page
+from database.collections.general.InformativeSection import InformativeSection
 
 
 class DBManager(object):
 
     _instance = None
     _client = None
+    _product_id: Dict[Tuple[str, str], int] = {}
 
     @classmethod
     def get_instance(cls):
@@ -24,6 +27,7 @@ class DBManager(object):
     def __init__(self) -> None:
         if DBManager._instance is None:
             DBManager._instance = self
+            self._product_id = {}
             self._client = MongoClient(CONSTANTS.DB_URI)
             connect(
                 db='web_generator',  # Nombre de la base de datos
@@ -32,11 +36,27 @@ class DBManager(object):
         else:
             raise Exception("No se puede crear otra instancia de DB Manager")
 
+
+    def _get_product_id(self, user, page) -> int:
+        print("--------en _GET_PRODUCT_ID--------")
+        if (user, page) in self._product_id.keys():
+            print("------------usuario y pagina existen en la coleccion--------")
+            self._product_id[(user, page)] += 1
+            print("------------p_id incrementado:", self._product_id[(user, page)])
+            return self._product_id[(user, page)] - 1
+        else:
+            print("------------usuario y pagina no existen en la coleccion--------")
+            self._product_id[(user, page)] = 1
+            print("------------p_id a retornar:", self._product_id[(user, page)])
+            return self._product_id[(user, page)]
+
+
     def add_user(self, user_id, username, nombre):
         user = User.objects(id=user_id).first()
         if not user:
             user = User(id=user_id, username=username, name=nombre, paginas=[], hizo_tutorial=False)
             user.save()
+
 
     def get_user(self, user_id) -> User:
         user = User.objects(id=user_id).first()
@@ -44,6 +64,7 @@ class DBManager(object):
             return user
         else:
             return None
+
 
     def set_user_tutorial(self, user_id):
         user = User.objects(id=user_id).first()
@@ -53,12 +74,14 @@ class DBManager(object):
         else:
             raise Exception("El usuario " + str(user_id) + " no existe")
 
+
     def get_user_tutorial(self, user_id) -> bool:
         user = User.objects(id=user_id).first()
         if user:
             return user.hizo_tutorial
         else:
             return False
+
 
     def add_page(self, user_id, page_name, contact):
         user = User.objects(id=user_id).first()
@@ -71,6 +94,7 @@ class DBManager(object):
         else:
             raise Exception("El usuario " + str(user_id) + " no existe")
 
+
     def get_page(self, user_id, page_name) -> Page:
         page_id = user_id + '-' + page_name
         page = Page.objects(id=page_id).first()
@@ -78,6 +102,7 @@ class DBManager(object):
             return page
         else:
             return None
+
 
     def get_page_by_name(self, page_name) -> Page:
         pages = Page.objects(id__icontains=page_name)
@@ -88,20 +113,17 @@ class DBManager(object):
         if not found:
             return None
 
+
     def get_user_pages(self, user_id) -> List[Page]:
-        print("----DB.GET_USER_PAGES----")
         user = User.objects(id=user_id).first()
-        print("----" + str(user))
         if user:
-            print("--------hay user")
-            expanded_pages = []
-            for page in user.paginas:
-                print("------------" + str(page))
-                expanded_pages.append(page)
-            print("--------extendes_pages: ", expanded_pages)
-            return expanded_pages
+            if len(user.paginas) > 0:
+                return user.paginas
+            else:
+                return None
         else:
             return None
+
 
     def was_compiled(self, user_id, page_name) -> bool:
         page_id = user_id + '-' + page_name
@@ -114,6 +136,7 @@ class DBManager(object):
         else:
             raise Exception("La pagina " + str(page_name) + " no existe o no te pertenece")
 
+
     def set_page_mail(self, user_id, page_name, page_mail):
         page_id = user_id + '-' + page_name
         page = Page.objects(id=page_id).first()
@@ -123,6 +146,7 @@ class DBManager(object):
             page.save()
         else:
             raise Exception("La pagina " + str(page_name) + " no existe o no te pertenece")
+
 
     def set_page_location(self, user_id, page_name, page_location):
         page_id = user_id + '-' + page_name
@@ -134,6 +158,7 @@ class DBManager(object):
         else:
             raise Exception("La pagina " + str(page_name) + " no existe o no te pertenece")
 
+
     def updt_modification_date(self, user_id, page_name):
         page_id = user_id + '-' + page_name
         page = Page.objects(id=page_id).first()
@@ -143,6 +168,7 @@ class DBManager(object):
         else:
             raise Exception("La pagina " + str(page_name) + " no existe o no te pertenece")
 
+
     def set_compilation_date(self, user_id, page_name):
         page_id = user_id + '-' + page_name
         page = Page.objects(id=page_id).first()
@@ -151,6 +177,7 @@ class DBManager(object):
             page.save()
         else:
             raise Exception("La pagina " + str(page_name) + " no existe o no te pertenece")
+
 
     def add_inf_section(self, user_id, page_name, inf_section):
         page_id = user_id + '-' + page_name
@@ -175,9 +202,11 @@ class DBManager(object):
             page.sections.append(section)
             page.has_ecomm_section = True
             page.lastModificationDate = datetime.datetime.now()
+            page.product_counter = 0
             page.save()
         else:
             raise Exception("La pagina " + str(page_name) + " no existe o no te pertenece")
+
 
     def updt_inf_section(self, user_id, page_name, section_title, inf_section):
         page_id = user_id + '-' + page_name
@@ -194,6 +223,7 @@ class DBManager(object):
         else:
             raise Exception("La pagina " + str(page_name) + " no existe o no te pertenece")
 
+
     def get_page_sections(self, user_id, page_name) -> List[Document]:
         page_id = user_id + '-' + page_name
         page = Page.objects(id=page_id).first()
@@ -205,5 +235,18 @@ class DBManager(object):
         else:
             raise Exception("La pagina " + str(page_name) + " no existe o no te pertenece")
 
-    def add_product(self, user, page, cant, title, desc, precio):
-        pass
+
+    def add_product(self, user_id, page_name, cant, title, desc, precio) -> int:
+        print("----en ADD_PRODUCT----")
+        page_id = user_id + '-' + page_name
+        page = Page.objects(id=page_id).first()
+        if page:
+            p_id = page.product_counter
+            product_id = user_id + '-' + page_name + '-' + str(p_id)
+            producto = Product(id=product_id, stock=cant, name=title, desc=desc, prize=precio)
+            producto.save()
+            page.product_counter += 1
+            page.save()
+            return p_id
+        else:
+            raise Exception("La pagina " + str(page) + " no existe o no te pertenece")

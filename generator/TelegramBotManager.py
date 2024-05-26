@@ -1,5 +1,5 @@
 from anyio import Path
-from telegram import Bot, File
+from telegram import Bot, File, InputFile
 
 from resources import CONSTANTS
 
@@ -19,6 +19,7 @@ class TelegramBotManager:
         if TelegramBotManager._instance is None:
             TelegramBotManager._instance = self
             TelegramBotManager._bot = Bot(token=CONSTANTS.TELEGRAM_BOT_TOKEN)
+
         else:
             raise Exception("No se puede crear otra instancia de TelegranBotManager")
 
@@ -33,3 +34,8 @@ class TelegramBotManager:
     def get_csv_file(file_id) -> File:
         file = TelegramBotManager._bot.get_file(file_id)
         return file
+
+    @staticmethod
+    def send_file_to_user(user_id, file_path):
+        with open(file_path, "rb") as file:
+            TelegramBotManager._bot.send_document(chat_id= user_id, document=file)

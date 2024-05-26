@@ -342,8 +342,10 @@ class PageManager(object):
         page = Front(user, page_name, PageManager.get_port())
 
         #Recuperar sus componentes
-        sections = DBManager.get_page_sections(DBManager.get_instance(), user, page_name)
+        dbm = DBManager.get_instance()
+        sections = dbm.get_page_sections(user, page_name)
         for section in sections:
+            print(section)
             if section.type == "informativa":
                 s = InformativeSection(section.title)
                 s.set_texts(section.texts)

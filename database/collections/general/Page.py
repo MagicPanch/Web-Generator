@@ -1,4 +1,4 @@
-from mongoengine import Document, StringField, DateTimeField, ListField, GenericReferenceField, BooleanField
+from mongoengine import Document, StringField, DateTimeField, ListField, GenericReferenceField, BooleanField, IntField
 
 
 class Page(Document):
@@ -13,3 +13,4 @@ class Page(Document):
     location = StringField(required=False)
     sections = ListField(GenericReferenceField())
     has_ecomm_section = BooleanField(default=False)
+    product_counter = IntField(required=False, default=0)
