@@ -1,4 +1,4 @@
-from mongoengine import Document, StringField, FloatField, ListField, IntField, ObjectIdField
+from mongoengine import Document, StringField, FloatField, IntField
 
 
 class Product(Document):
@@ -7,5 +7,5 @@ class Product(Document):
     stock = IntField(required=True)
     name = StringField(required=True)
     desc = StringField(required=False)
-    prize = FloatField(default=True)
-    multimedia = ListField(StringField())
+    price = FloatField(default=True)
+    multimedia = StringField()

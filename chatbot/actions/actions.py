@@ -1,9 +1,12 @@
+import re
 import threading
 from io import BytesIO
 
 import pandas as pd
 import tempfile
 import os
+
+from numpy import nan
 
 from generator.objects.sections.EcommerceSection import EcommerceSection
 from generator.objects.sections.InformativeSection import InformativeSection
@@ -113,7 +116,6 @@ class ActionEjecutarDev(Action):
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         print("(" + threading.current_thread().getName() + ") " + "----ACTION EJECUTAR DEV----")
         page = PageManager.get_page(tracker.sender_id, tracker.get_slot('page_name'))
-        #dispatcher.utter_message(text="Tu pagina se encuentra en modo edición. Podrás visualizar los cambios que realices en: " + page.get_page_address())
 
         #Se espera a que el hilo finalice
         PageManager.join_thread(page.get_user(), page.get_name())
@@ -467,6 +469,7 @@ class ActionRecibirImagen(Action):
         print("(" + threading.current_thread().getName() + ") " + "--------pregunta_otra_imagen_seccion_informativa ", tracker.get_slot("pregunta_otra_imagen_seccion_informativa"))
         print("(" + threading.current_thread().getName() + ") " + "--------last_message_intent: ", tracker.latest_message.get('intent').get('name'))
         telegram_bot = TelegramBotManager.get_instance()
+        dbm = DBManager.get_instance()
 
         # Verifica si el último mensaje contiene una imagen
         latest_message = tracker.latest_message
@@ -484,15 +487,15 @@ class ActionRecibirImagen(Action):
                     telegram_bot.download_image(page_path=page_path, subdir="sect_inf_images", image_id=image_id, image_name=(photo["file_unique_id"] + ".png"))
                 elif tracker.get_slot("agregando_productos"):
                     #Descargar imagen
-                    print("descargar imagen")
+                    image_url = telegram_bot.get_image_url(image_id=image_id)
+                    dbm.set_product_multimedia(tracker.sender_id, tracker.get_slot("page_name"), tracker.get_slot("id_producto"), image_url)
             if not error:
                 dispatcher.utter_message(text="Imagen recibida con éxito.")
                 if tracker.get_slot("creando_seccion_informativa"):
                     dispatcher.utter_message(text="¿Queres agregar otra imagen?")
                     return [SlotSet("pregunta_otra_imagen_seccion_informativa", True)]
                 elif tracker.get_slot("agregando_productos"):
-                    dispatcher.utter_message(text="¿Queres agregar otra imagen?")
-                    return [SlotSet("pregunta_otra_imagen_prod", True)]
+                    dispatcher.utter_message(text="¿Queres cargar otro producto?")
             else:
                 dispatcher.utter_message(text="No se pudo procesar la imagen.")
         else:
@@ -505,7 +508,7 @@ class ActionRecibirImagen(Action):
                 elif tracker.get_slot("editando_seccion_informativa"):
                     return [SlotSet("pregunta_otra_imagen_seccion_informativa", False)]
                 elif tracker.get_slot("agregando_productos"):
-                    return [SlotSet("pregunta_otra_imagen_prod", False), FollowupAction("action_guardar_producto")]
+                    return [SlotSet("agregando_productos", False), SlotSet("pregunta_carga", False)]
         return []
 
 class ActionPreguntarColorEncabezado(Action):
@@ -662,19 +665,20 @@ class ActionCapturarTipoSeccion(Action):
                 if not page_obj:
                     page_obj = PageManager.add_page(tracker.sender_id, page_doc.name)
                 print("(" + threading.current_thread().getName() + ") " + "--------page_obj.name: ", page_obj.get_name())
-                if not page_obj.is_running_dev():
-                    PageManager.run_dev(tracker.sender_id, page_doc.name)
-                    page_obj.wait_for_ready()
-                    message = "Tu pagina se encuentra en modo edición. Podrás visualizar los cambios que realices en: " + page_obj.get_page_address()
-                    dispatcher.utter_message(text=message)
-                    message = "Si la pagina te solicita una contraseña ingresa: " + PageManager.get_tunnel_password()
-                    dispatcher.utter_message(text=message)
-                elif page_obj.is_running():
-                    PageManager.switch_dev(tracker.sender_id, page_doc.name)
-                    message = "Tu pagina se encuentra en modo edición. Podrás visualizar los cambios que realices en: " + page_obj.get_page_address()
-                    dispatcher.utter_message(text=message)
-                    message = "Si la pagina te solicita una contraseña ingresa: " + PageManager.get_tunnel_password()
-                    dispatcher.utter_message(text=message)
+                if not tracker.get_slot('tipo_seccion') == "e-commerce":
+                    if not page_obj.is_running_dev():
+                        PageManager.run_dev(tracker.sender_id, page_doc.name)
+                        page_obj.wait_for_ready()
+                        message = "Tu pagina se encuentra en modo edición. Podrás visualizar los cambios que realices en: " + page_obj.get_page_address()
+                        dispatcher.utter_message(text=message)
+                        message = "Si la pagina te solicita una contraseña ingresa: " + PageManager.get_tunnel_password()
+                        dispatcher.utter_message(text=message)
+                    elif page_obj.is_running():
+                        PageManager.switch_dev(tracker.sender_id, page_doc.name)
+                        message = "Tu pagina se encuentra en modo edición. Podrás visualizar los cambios que realices en: " + page_obj.get_page_address()
+                        dispatcher.utter_message(text=message)
+                        message = "Si la pagina te solicita una contraseña ingresa: " + PageManager.get_tunnel_password()
+                        dispatcher.utter_message(text=message)
             seccion = tracker.get_slot('componente')
             if seccion.lower() == "seccion":
             # Va a editar una seccion
@@ -683,6 +687,7 @@ class ActionCapturarTipoSeccion(Action):
                 if tipo_seccion:
                     # Hay tipo seccion
                     if "e-commerce" in tipo_seccion.lower():
+                        dispatcher.utter_message(text="Aguarda un momento mientras se crea la sección e-commerce en tu página.")
                         return [FollowupAction("action_crear_ecommerce")]
                     elif "informativa" in tipo_seccion.lower():
                         return [FollowupAction("action_crear_informativa_1"), SlotSet("pregunta_edicion", False)]
@@ -719,8 +724,17 @@ class ActionCrearEcommerce(Action):
             dbm = DBManager.get_instance()
             dbm.add_ecomm_section(tracker.sender_id, tracker.get_slot("page_name"))
             page.add_section(EcommerceSection())
+
+            PageManager.add_ecommerce(tracker.sender_id, tracker.get_slot("page_name"))
+            PageManager.join_thread(page.get_user(), page.get_name())
             #ReactGenerator.generarEcommerce()
-            dispatcher.utter_message(text="Podrás visualizar la nueva sección en tu página.")
+            PageManager.run_dev(page.get_user(), page.get_name())
+            page.wait_for_ready()
+            message = "Tu pagina se encuentra en modo edición. Podrás visualizar la nueva sección en: " + page.get_page_address()
+            dispatcher.utter_message(text=message)
+            message = "Si la pagina te solicita una contraseña ingresa: " + PageManager.get_tunnel_password()
+            dispatcher.utter_message(text=message)
+            #ReactGenerator.generarEcommerce()
         return [SlotSet("pregunta_seccion", False), SlotSet("creando_seccion", False), SlotSet("componente", None)]
 
 #### AGREGAR PRODUCTOS
@@ -737,7 +751,8 @@ class ActionPedirProductos(Action):
         dispatcher.utter_message(text=message)
         PageManager.go_to_main_dir()
         telegram_bot.send_file_to_user(tracker.sender_id, CONSTANTS.TEMPLATE_PRODUCTOS_DIR)
-        dispatcher.utter_message(text="Si vas a cargar los productos de a uno voy a necesitar los siguientes datos:\nCantidad:\nTitulo:\nDescripción:\nPrecio:")
+        dispatcher.utter_message(text="Si vas a cargar los productos de a uno voy a necesitar los siguientes datos:")
+        dispatcher.utter_message(text="Cantidad:\nTitulo:\nDescripción:\nPrecio:")
         return [SlotSet("pregunta_carga", True)]
 
 class ActionCapturarProductoCargado(Action):
@@ -765,6 +780,8 @@ class ActionCapturarProductoCargado(Action):
                 df = pd.read_excel(file_bytes, engine='openpyxl')
                 for producto in df.itertuples(index=True, name='Pandas'):
                     id = dbm.add_product(user_id=tracker.sender_id, page_name=tracker.get_slot("page_name"), cant=producto.Cantidad, title=producto.Titulo, desc=producto.Descripcion, precio=float(producto.Precio))
+                    if producto.Imagen_principal is not nan:
+                        dbm.set_product_multimedia(tracker.sender_id, tracker.get_slot("page_name"), id, str(producto.Imagen_principal))
                     message = "El producto " + producto.Titulo + " se guardó correctamente con el identificador: " + str(id)
                     dispatcher.utter_message(text=message)
             if error:
@@ -776,8 +793,14 @@ class ActionCapturarProductoCargado(Action):
             cant = tracker.get_slot("cant_prod")
             print("(" + threading.current_thread().getName() + ") " + "--------cant: \n", cant)
             titulo = tracker.get_slot("tit_prod")
+            if not titulo:
+                patron_titulo = r"Titulo: (.+?)\nDescripción:"
+                titulo = re.search(patron_titulo, last_message, re.DOTALL).group(1)
             print("(" + threading.current_thread().getName() + ") " + "--------titulo: \n", titulo)
             desc = tracker.get_slot("desc_prod")
+            if not desc:
+                patron_descripcion = r"Descripción: (.+?)\nPrecio:"
+                desc = re.search(patron_descripcion, last_message, re.DOTALL).group(1)
             print("(" + threading.current_thread().getName() + ") " + "--------desc: \n", desc)
             precio = tracker.get_slot("precio_prod")
             if precio:
@@ -787,7 +810,7 @@ class ActionCapturarProductoCargado(Action):
             message = "El producto " + titulo + " se guardó correctamente con el identificador: " + str(id)
             dispatcher.utter_message(text=message)
             dispatcher.utter_message(text="Si lo deseas podes enviarme alguna imagen sobre él. Si vas a enviar imagenes, por favor envialas de a una.")
-            return [SlotSet("pide_img_prod", True)]
+            return [SlotSet("pide_img_prod", True), SlotSet("id_producto", id)]
 
 
 ### INFORMATIVA

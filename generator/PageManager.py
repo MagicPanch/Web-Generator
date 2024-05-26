@@ -30,16 +30,16 @@ class PageManager(object):
             return self._page
 
         def set_thread_exec(self, thread):
-            self._thread = thread
+            self._thread_exec = thread
 
         def get_thread_exec(self):
-            return self._thread
+            return self._thread_exec
 
         def set_thread_tunnel(self, thread):
-            self._thread = thread
+            self._thread_tunnel = thread
 
         def get_thread_tunnel(self):
-            return self._thread
+            return self._thread_tunnel
 
 
     _instance = None
@@ -178,7 +178,6 @@ class PageManager(object):
         process.wait()
         process.terminate()
 
-        PageManager._running_pages[(user, page_name)].get_page().set_exec_process(process)
         PageManager._running_pages[(user, page_name)].get_page().set_exec_process(None)
 
         #Copiar los templates al proyecto creado
@@ -244,6 +243,89 @@ class PageManager(object):
         PageManager._running_pages[(user, page_name)].set_thread_tunnel(thread_tunnel)
         thread_exec.start()
         thread_tunnel.start()
+
+    @staticmethod
+    def _add_ecommerce(user, page_name):
+        print("(" + threading.current_thread().getName() + ") " + "----PageManager._add_ecommerce----")
+
+        #Posicionarse en el path donde se creara el proyecto
+        PageManager.go_to_main_dir()
+        path = PageManager.get_page_path(user, page_name)
+        os.chdir(path)
+
+        #Instalar dependencias
+        command = 'npm install mongodb'
+        process = PageManager._run_process(command)
+        page = PageManager._running_pages[(user, page_name)].get_page()
+        page.set_exec_process(process)
+        process.wait()
+        process.terminate()
+        page.set_exec_process(None)
+
+        it = True
+        while it:
+            output = process.stdout.readline()
+            if output == '' and process.poll() is not None:
+                break
+            if output:
+                decoded_output = output.decode().strip()
+                if "" in decoded_output:
+                    it = False
+                print("(" + threading.current_thread().getName() + ") " + decoded_output)
+
+        command = 'npm install --save-dev @types/mongodb'
+        process = PageManager._run_process(command)
+        page = PageManager._running_pages[(user, page_name)].get_page()
+        page.set_exec_process(process)
+        process.wait()
+        process.terminate()
+        page.set_exec_process(None)
+
+        it = True
+        while it:
+            output = process.stdout.readline()
+            if output == '' and process.poll() is not None:
+                break
+            if output:
+                decoded_output = output.decode().strip()
+                if "" in decoded_output:
+                    it = False
+                print("(" + threading.current_thread().getName() + ") " + decoded_output)
+
+
+        command = 'npm install mongoose dotenv'
+        process = PageManager._run_process(command)
+        page = PageManager._running_pages[(user, page_name)].get_page()
+        page.set_exec_process(process)
+        process.wait()
+        process.terminate()
+        page.set_exec_process(None)
+
+        it = True
+        while it:
+            output = process.stdout.readline()
+            if output == '' and process.poll() is not None:
+                break
+            if output:
+                decoded_output = output.decode().strip()
+                if "" in decoded_output:
+                    it = False
+                print("(" + threading.current_thread().getName() + ") " + decoded_output)
+
+        # Obtener directorio destino
+        destino = PageManager.get_page_path(user, page_name)
+        # print("(" + threading.current_thread().getName() + ") " + "--------destino: " + destino)
+
+        # Copiar template al nuevo proyecto
+        #PageManager._copy_dir(CONSTANTS.TEMPLATE_ECOMMERCE_DIR, destino)
+
+    @staticmethod
+    def add_ecommerce(user, page_name):
+        print("(" + threading.current_thread().getName() + ") " + "----PageManager.add_ecommerce----")
+        PageManager.join_thread(user, page_name)
+        thread = threading.Thread(target= PageManager._add_ecommerce, args=(user, page_name))
+        PageManager._running_pages[(user, page_name)].set_thread_exec(thread)
+        thread.start()
 
     @staticmethod
     def _build_project(user, page_name):

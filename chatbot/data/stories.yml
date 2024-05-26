@@ -603,30 +603,7 @@ stories:
         - pide_img_prod: true
     - intent: enviar_imagen
     - action: action_recibir_imagen
-    - slot_was_set:
-        - pregunta_otra_imagen_prod: true
-    - checkpoint: pide_img_prod
-
-- story: dar otra imagen para producto
-  steps:
-    - checkpoint: pide_img_prod
-    - slot_was_set:
-      - agregando_productos: true
-      - pregunta_otra_imagen_prod: true
-    - intent: enviar_imagen
-    - action: action_recibir_imagen
-    - slot_was_set:
-      - pregunta_otra_imagen_prod: true
-    - checkpoint: pide_img_prod
-
-- story: no dar otra imagen para producto
-  steps:
-    - checkpoint: pide_img_prod
-    - slot_was_set:
-      - agregando_productos: true
-      - pregunta_otra_imagen_prod: true
-    - intent: denegar
-    - action: action_recibir_imagen
+    - checkpoint: pregunta_otro_producto
 
 - story: no dar imagen para producto
   steps:
@@ -636,6 +613,16 @@ stories:
       - pide_img_prod: true
     - intent: denegar
     - action: action_recibir_imagen
+    - checkpoint: pregunta_otro_producto
+
+- story: terminar carga productos
+  steps:
+    - checkpoint: pregunta_otro_producto
+    - slot_was_set:
+      - agregando_productos: false
+      - pregunta_carga: false
+    - action: utter_avisame
+
 
 # ADMINISTRAR PAGINAS
 

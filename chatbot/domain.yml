@@ -140,6 +140,11 @@ slots:
     - type: from_entity
       entity: precio_prod
 
+  id_producto:
+    type: float
+    mappings:
+      - type: custom
+
   mail:
     type: text
     mappings:
@@ -455,6 +460,9 @@ responses:
 
   utter_funcionalidad:
   - text: Por el momento puedo crear una pagina y permitirte correrla o detenerla.
+
+  utter_avisame:
+    - text: Perfecto, cualquier cosa que necesites no dudes en pedirmelo.
 
   utter_me_alegro:
   - text: Muchas gracias!

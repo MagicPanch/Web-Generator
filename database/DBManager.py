@@ -237,7 +237,6 @@ class DBManager(object):
 
 
     def add_product(self, user_id, page_name, cant, title, desc, precio) -> int:
-        print("----en ADD_PRODUCT----")
         page_id = user_id + '-' + page_name
         page = Page.objects(id=page_id).first()
         if page:
@@ -250,3 +249,13 @@ class DBManager(object):
             return p_id
         else:
             raise Exception("La pagina " + str(page) + " no existe o no te pertenece")
+
+    def set_product_multimedia(self, user_id, page_name, product, media_url):
+        product_id = user_id + '-' + page_name + '-' + str(product)
+        product = Product.objects(id=product_id).first()
+        if product:
+            product.multimedia = media_url
+            product.save()
+        else:
+            raise Exception("El producto " + str(product) + " no existe en la página " + str(page_name))
+

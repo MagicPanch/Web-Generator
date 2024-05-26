@@ -1,3 +1,4 @@
+import requests
 from anyio import Path
 from telegram import Bot, File, InputFile
 
@@ -39,3 +40,14 @@ class TelegramBotManager:
     def send_file_to_user(user_id, file_path):
         with open(file_path, "rb") as file:
             TelegramBotManager._bot.send_document(chat_id= user_id, document=file)
+
+    @staticmethod
+    def get_image_url(image_id) -> str:
+        url = f'https://api.telegram.org/bot{CONSTANTS.TELEGRAM_BOT_TOKEN}/getFile?file_id={image_id}'
+        response = requests.get(url)
+        data = response.json()
+        file_path = data['result']['file_path']
+        # Construye la URL completa de la imagen
+        image_url = f'https://api.telegram.org/file/bot{CONSTANTS.TELEGRAM_BOT_TOKEN}/{file_path}'
+        print(image_url)
+        return image_url
