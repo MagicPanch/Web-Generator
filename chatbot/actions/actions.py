@@ -3,9 +3,6 @@ import threading
 from io import BytesIO
 
 import pandas as pd
-import tempfile
-import os
-
 from numpy import nan
 
 from generator.objects.sections.EcommerceSection import EcommerceSection
@@ -53,7 +50,7 @@ class ActionPreguntarNombrePagina(Action):
         tuto = dbm.get_user_tutorial(tracker.sender_id)
         if tuto:
             dispatcher.utter_message(text="¿Como queres que se llame tu pagina? Por favor indica su nombre en el siguiente formato: www. nombre-pagina .com")
-            return [SlotSet("creando_pagina", True)]
+            return [SlotSet("creando_pagina", True), SlotSet("pregunta_nombre", True)]
         else:
             dispatcher.utter_message(text="Para crear una pagina primero debes completar el tutorial. ¿Deseas hacerlo ahora?")
             return [SlotSet("pregunta_tutorial", True)]
@@ -85,7 +82,7 @@ class ActionCrearPagina(Action):
             if tracker.get_slot('page_name') is None:
                 dispatcher.utter_message(
                     text="Repetime como queres que se llame tu página. Te recuerdo que el formato es: www. nombre-pagina .com")
-                return [SlotSet("creando_pagina", True), SlotSet("pregunta_nombre", True)]
+                return [SlotSet("creando_pagina", False), SlotSet("pregunta_nombre", True)]
             else:
                 dbm = DBManager.get_instance()
                 if dbm.get_page_by_name(tracker.get_slot('page_name')) is None:
@@ -105,7 +102,7 @@ class ActionCrearPagina(Action):
                 else:
                     #La pagina ya existe
                     dispatcher.utter_message(text="Ya existe una pagina con ese nombre. Por favor elige otro.")
-                    return [SlotSet("creando_pagina", True), SlotSet("pregunta_nombre", True)]
+                    return [SlotSet("creando_pagina", False), SlotSet("pregunta_nombre", True)]
         else:
             return []
 class ActionEjecutarDev(Action):
@@ -158,7 +155,7 @@ class ActionEjecutarPagina(Action):
                 print("(" + threading.current_thread().getName() + ") " + "--------page_doc: ", page_doc)
                 if not page_doc:
                     # Esa pagina no pertenece al usuario
-                    message = "No se encuentra la pagina que deseas ejecutar. Te recuerdo que tus paginas son: "
+                    message = "No se encuentra la pagina que deseas ejecutar. Te recuerdo que tus paginas son:\n"
                     pags = dbm.get_user_pages(tracker.sender_id)
                     for pag in pags:
                         message += str(pag['name']) + "\n"
@@ -496,6 +493,7 @@ class ActionRecibirImagen(Action):
                     return [SlotSet("pregunta_otra_imagen_seccion_informativa", True)]
                 elif tracker.get_slot("agregando_productos"):
                     dispatcher.utter_message(text="¿Queres cargar otro producto?")
+                    return [SlotSet("pregunta_carga", True)]
             else:
                 dispatcher.utter_message(text="No se pudo procesar la imagen.")
         else:
@@ -721,21 +719,23 @@ class ActionCrearEcommerce(Action):
         if seccion:
             dispatcher.utter_message(text="Tu página ya tiene una sección de e-commerce.")
         else:
-            dbm = DBManager.get_instance()
-            dbm.add_ecomm_section(tracker.sender_id, tracker.get_slot("page_name"))
             page.add_section(EcommerceSection())
 
+            if page.is_running() or page.is_running_dev():
+                PageManager.stop_page(tracker.sender_id, page.get_name())
+                PageManager.stop_tunnel(tracker.sender_id, page.get_name())
             PageManager.add_ecommerce(tracker.sender_id, tracker.get_slot("page_name"))
-            PageManager.join_thread(page.get_user(), page.get_name())
+            PageManager.join_thread(tracker.sender_id, tracker.get_slot("page_name"))
             #ReactGenerator.generarEcommerce()
             PageManager.run_dev(page.get_user(), page.get_name())
             page.wait_for_ready()
-            print(tracker.slots)
             message = "Tu pagina se encuentra en modo edición. Podrás visualizar la nueva sección en: " + page.get_page_address()
             dispatcher.utter_message(text=message)
             message = "Si la pagina te solicita una contraseña ingresa: " + PageManager.get_tunnel_password()
             dispatcher.utter_message(text=message)
             #ReactGenerator.generarEcommerce()
+            dbm = DBManager.get_instance()
+            dbm.add_ecomm_section(tracker.sender_id, tracker.get_slot("page_name"))
         return [SlotSet("pregunta_seccion", False), SlotSet("creando_seccion", False), SlotSet("componente", None)]
 
 #### AGREGAR PRODUCTOS
@@ -810,7 +810,7 @@ class ActionCapturarProductoCargado(Action):
             id = dbm.add_product(user_id=tracker.sender_id, page_name=tracker.get_slot("page_name"), cant=cant, title=titulo, desc=desc, precio=float(precio))
             message = "El producto " + titulo + " se guardó correctamente con el identificador: " + str(id)
             dispatcher.utter_message(text=message)
-            dispatcher.utter_message(text="Si lo deseas podes enviarme alguna imagen sobre él. Si vas a enviar imagenes, por favor envialas de a una.")
+            dispatcher.utter_message(text="Si lo deseas podes enviarme alguna imagen sobre él.")
             return [SlotSet("pide_img_prod", True), SlotSet("id_producto", id)]
 
 
@@ -1274,3 +1274,23 @@ class ActionTerminarTutorial(Action):
         dbm = DBManager.get_instance()
         dbm.set_user_tutorial(tracker.sender_id)
         return [SlotSet("pregunta_4_confirmacion", False), SlotSet("pregunta_4_repetir_confirmacion", False)]
+
+
+class ActionAvisame(Action):
+
+    def name(self) -> Text:
+        return "action_avisame"
+
+    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        dispatcher.utter_message(text="Perfecto, cualquier cosa que necesites no dudes en pedirmelo.")
+        slots = tracker.slots
+        # Lista para almacenar los eventos de SlotSet
+        events = []
+
+        for slot, value in slots.items():
+            if value is True:
+                # Si el valor del slot es True, añadir un evento para ponerlo en False
+                events.append(SlotSet(slot, False))
+
+        # Devolver los eventos de SlotSet
+        return events

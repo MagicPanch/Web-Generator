@@ -194,7 +194,7 @@ stories:
 - story: crear pagina correcto
   steps:
     - slot_was_set:
-        - creando_pagina: true
+        - pregunta_nombre: true
     - intent: nombre_pagina
     - action: action_crear_pagina  #Aca se crea el proyecto y se guarda la pagina en la DB. Posteriormente se ejecuta en modo DEV
     - slot_was_set:
@@ -204,7 +204,7 @@ stories:
 - story: crear pagina conflicto nombre
   steps:
     - slot_was_set:
-        - creando_pagina: true
+        - pregunta_nombre: true
     - intent: nombre_pagina
     - action: action_crear_pagina  #Aca se detecta el conflicto con el nombre y se le repregunta al usuario
     - slot_was_set:
@@ -603,7 +603,9 @@ stories:
         - pide_img_prod: true
     - intent: enviar_imagen
     - action: action_recibir_imagen
-    - checkpoint: pregunta_otro_producto
+    - slot_was_set:
+      - agregando_productos: true
+      - pregunta_carga: true
 
 - story: no dar imagen para producto
   steps:
@@ -613,16 +615,17 @@ stories:
       - pide_img_prod: true
     - intent: denegar
     - action: action_recibir_imagen
-    - checkpoint: pregunta_otro_producto
-
-- story: terminar carga productos
-  steps:
-    - checkpoint: pregunta_otro_producto
     - slot_was_set:
-      - agregando_productos: false
-      - pregunta_carga: false
-    - action: utter_avisame
+      - agregando_productos: true
+      - pregunta_carga: true
 
+- story: no cargar mas productos
+  steps:
+    - slot_was_set:
+      - agregando_productos: true
+      - pregunta_carga: true
+    - intent: denegar
+    - action: action_avisame
 
 # ADMINISTRAR PAGINAS
 

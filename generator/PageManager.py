@@ -218,9 +218,16 @@ class PageManager(object):
         # Ejecuta la página en modo Dev para que el usuario visualice las modificaciones
         print("(" + threading.current_thread().getName() + ") " + "----PageManager._run_dev----")
 
-        #Posicionarse en el path donde se creara el proyecto
         path = PageManager.get_page_path(user, page_name)
+
+        page = PageManager._running_pages[(user, page_name)].get_page()
+        if page.has_ecomm_section():
+            ReactGenerator.set_address(page_path=path, address=PageManager.get_page(user, page_name).get_page_address())
+
+        # Posicionarse en el path donde se creara el proyecto
+        PageManager.go_to_main_dir()
         os.chdir(path)
+
 
         #Ejecutar el proceso
         command = 'npm run dev -- --port=' + str(page_port)
@@ -245,12 +252,12 @@ class PageManager(object):
         PageManager.go_to_main_dir()
         page = PageManager._running_pages[(user, page_name)].get_page()
         page.set_running_dev(True)
-        thread_exec = threading.Thread(target=PageManager._run_dev, args=(user, page_name, page.get_port()))
         thread_tunnel = threading.Thread(target=PageManager._get_tunnel_address, args=(page, True))
-        PageManager._running_pages[(user, page_name)].set_thread_exec(thread_exec)
         PageManager._running_pages[(user, page_name)].set_thread_tunnel(thread_tunnel)
-        thread_exec.start()
         thread_tunnel.start()
+        thread_exec = threading.Thread(target=PageManager._run_dev, args=(user, page_name, page.get_port()))
+        PageManager._running_pages[(user, page_name)].set_thread_exec(thread_exec)
+        thread_exec.start()
 
     @staticmethod
     def _add_ecommerce(user, page_name):
@@ -327,12 +334,13 @@ class PageManager(object):
         # Copiar template al nuevo proyecto
         PageManager.go_to_main_dir()
         PageManager._copy_dir(CONSTANTS.TEMPLATE_ECOMMERCE_DIR, destino)
+        ReactGenerator.set_collection(page_path=destino, collection=(user + "-" + page_name))
 
     @staticmethod
     def add_ecommerce(user, page_name):
         print("(" + threading.current_thread().getName() + ") " + "----PageManager.add_ecommerce----")
         PageManager.join_thread(user, page_name)
-        thread = threading.Thread(target= PageManager._add_ecommerce, args=(user, page_name))
+        thread = threading.Thread(target=PageManager._add_ecommerce, args=(user, page_name))
         PageManager._running_pages[(user, page_name)].set_thread_exec(thread)
         thread.start()
 
@@ -342,6 +350,12 @@ class PageManager(object):
 
         #Posicionarse en el path donde se creara el proyecto
         path = PageManager.get_page_path(user, page_name)
+
+        page = PageManager._running_pages[(user, page_name)].get_page()
+        if page.has_ecomm_section():
+            ReactGenerator.set_address(page_path=path, address=PageManager.get_page(user, page_name).get_page_address())
+
+
         PageManager.go_to_main_dir()
         os.chdir(path)
 
@@ -368,8 +382,12 @@ class PageManager(object):
     @staticmethod
     def build_project(user, page_name):
         print("(" + threading.current_thread().getName() + ") " + "----PageManager.build_project----")
+        page = PageManager._running_pages[(user, page_name)].get_page()
         thread = threading.Thread(target=PageManager._build_project, args=(user, page_name))
+        thread_tunnel = threading.Thread(target=PageManager._get_tunnel_address, args=(page, False))
         PageManager._running_pages[(user, page_name)].set_thread_exec(thread)
+        PageManager._running_pages[(user, page_name)].set_thread_tunnel(thread_tunnel)
+        thread_tunnel.start()
         thread.start()
 
     @staticmethod
@@ -404,11 +422,8 @@ class PageManager(object):
         print("(" + threading.current_thread().getName() + ") " + "----PageManager.run_project----")
         page = PageManager._running_pages[(user, page_name)].get_page()
         thread_exec = threading.Thread(target=PageManager._run_project, args=(user, page_name, page.get_port()))
-        thread_tunnel = threading.Thread(target=PageManager._get_tunnel_address, args=(page, False))
         PageManager._running_pages[(user, page_name)].set_thread_exec(thread_exec)
-        PageManager._running_pages[(user, page_name)].set_thread_tunnel(thread_tunnel)
         thread_exec.start()
-        thread_tunnel.start()
         page.set_running(True)
 
     @staticmethod
@@ -508,7 +523,8 @@ class PageManager(object):
 
         #Detener el hilo
         thread_tunnel = PageManager._running_pages[(user, page_name)].get_thread_tunnel()
-        thread_tunnel.join()
+        if thread_tunnel:
+            thread_tunnel.join()
 
 
     @staticmethod
@@ -525,7 +541,8 @@ class PageManager(object):
 
         #Esperar por la finalizacion del hilo
         thread_exec = PageManager._running_pages[(user, page_name)].get_thread_exec()
-        thread_exec.join()
+        if thread_exec:
+            thread_exec.join()
 
     @staticmethod
     def pop_page(user, page_name):

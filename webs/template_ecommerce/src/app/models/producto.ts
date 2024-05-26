@@ -1,4 +1,5 @@
 import mongoose, { Document,Schema } from 'mongoose';
+import {Nombre_Esquema} from "../../../constants/collection"
 
 export interface producto extends Document {
     name: string;
@@ -17,5 +18,5 @@ const productoSchema: Schema = new mongoose.Schema({
 });
 
 
-const producto =mongoose.models.producto|| mongoose.model<producto>('producto', productoSchema);
+const producto =mongoose.models.producto|| mongoose.model<producto>(Nombre_Esquema, productoSchema);
 export default producto;
