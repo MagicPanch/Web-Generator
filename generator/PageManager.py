@@ -6,6 +6,8 @@ import threading
 from typing import Tuple, Dict, List
 
 import requests
+
+from generator.ReactGenerator import ReactGenerator
 from resources import CONSTANTS
 import psutil
 from database.DBManager import DBManager
@@ -182,6 +184,12 @@ class PageManager(object):
 
         #Copiar los templates al proyecto creado
         PageManager._copy_template(user, page_name)
+        dataHeader = {"titulo": page_name,
+            "address": path,
+            "addressLogo": "./logo.png",
+            "colorTitulo": "#12D7BF"
+        }
+        ReactGenerator.generarHeader(dataHeader)
         print("(" + threading.current_thread().getName() + ") " + "----Ejecucion finalizada----")
 
     @staticmethod
