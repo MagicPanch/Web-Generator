@@ -8,9 +8,9 @@ import React, {
 } from "react";
 
 export interface ItemInterface {
-  image: string;
-  title: string;
-  description: string;
+  multimedia: string;
+  name: string;
+  desc: string;
   price: string;
   key: number;
 }
@@ -24,6 +24,7 @@ interface CartContextInterface {
   cart: CartItemInterface[];
   addToCart: (item: ItemInterface) => void;
   removeFromCart: (item: ItemInterface) => void;
+  removeFromCartAll: (item: ItemInterface) => void;
 }
 
 const CartContext = createContext<CartContextInterface | undefined>(undefined);
@@ -81,6 +82,17 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({
       return prevCart;
     });
   };
+  const removeFromCartAll = (item: ItemInterface) => {
+    setCart((prevCart) => {
+      const existingCartItem = prevCart.find(
+        (cartItem) => cartItem.item.key === item.key
+      );
+      if (existingCartItem) {
+          return prevCart.filter((cartItem) => cartItem.item.key !== item.key);
+      }
+      return prevCart;
+    });
+  };
 
   useEffect(() => {
     // Guardar el carrito en el almacenamiento local cada vez que cambie
@@ -88,7 +100,7 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({
   }, [cart]);
 
   return (
-    <CartContext.Provider value={{ cart, addToCart, removeFromCart }}>
+    <CartContext.Provider value={{ cart, addToCart, removeFromCart,removeFromCartAll }}>
       {children}
     </CartContext.Provider>
   );
