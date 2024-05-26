@@ -1,9 +1,41 @@
-import React from "react";
+"use client";
+
+import React, { useState, useEffect } from "react";
 import SearchBar from "./SearchBar";
 import ProductTile from "./ProductTile";
 import { CARDS_DATA } from "../constants/body";
+import { AddToCartMessage, ItemInterface, useCart } from "./cartContext";
+import{LINK} from "../constants/links"
+let messageTimer: NodeJS.Timeout;
 
 const SectionECommerce = () => {
+  const { addToCart } = useCart();
+  const [showMessage, setShowMessage] = useState(false);
+  const [products, setProducts] = useState<ItemInterface[]>([]);
+  
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const res = await fetch(LINK+"/api");
+        const productsData = await res.json();
+        setProducts(productsData);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    };
+    
+    fetchProducts();
+  }, []);
+
+  const handleAddToCart = (item: ItemInterface) => {
+    addToCart(item);
+    setShowMessage(true);
+    clearTimeout(messageTimer);
+    messageTimer = setTimeout(() => {
+      setShowMessage(false);
+    }, 1500);
+  };
+
   return (
     <section>
       <div className="max-w-screen bg-blue-300 p-4 h-full px-4">
@@ -12,18 +44,20 @@ const SectionECommerce = () => {
         </h1>
         <SearchBar />
         <div className="grid gap-y-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 py-8 justify-center items-center">
-          {CARDS_DATA &&
-            CARDS_DATA.map((item, i) => (
+          {products &&
+            products.map((item: ItemInterface) => (
               <ProductTile
-                key={i}
-                image={item.image}
-                title={item.title}
-                description={item.description}
+                key={item.key}
+                image={item.multimedia}
+                title={item.name}
+                description={item.desc}
                 price={item.price}
+                onAddToCart={() => handleAddToCart(item)}
               />
             ))}
         </div>
       </div>
+      {showMessage && <AddToCartMessage />}
     </section>
   );
 };

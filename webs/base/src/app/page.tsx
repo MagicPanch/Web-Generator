@@ -32,7 +32,6 @@ export default function Home() {
   return (
     <main className="h-full items-center justify-between p-24 w-full">
       <NavBar nombre={nombre} addMensaje={addMensaje} />
-      {mensaje}
       <div>
         {SelectedComponent ? <SelectedComponent /> : <div>Componente no encontrado</div>}
       </div>
