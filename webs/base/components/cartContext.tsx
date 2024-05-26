@@ -39,7 +39,11 @@ export const useCart = () => {
 export const CartProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [cart, setCart] = useState<CartItemInterface[]>([]);
+  const [cart, setCart] = useState<CartItemInterface[]>(() => {
+    // Intenta obtener el carrito desde el almacenamiento local al inicio
+    const storedCart = localStorage.getItem("cart");
+    return storedCart ? JSON.parse(storedCart) : [];
+  });
 
   const addToCart = (item: ItemInterface) => {
     setCart((prevCart) => {
@@ -77,6 +81,11 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({
       return prevCart;
     });
   };
+
+  useEffect(() => {
+    // Guardar el carrito en el almacenamiento local cada vez que cambie
+    localStorage.setItem("cart", JSON.stringify(cart));
+  }, [cart]);
 
   return (
     <CartContext.Provider value={{ cart, addToCart, removeFromCart }}>
