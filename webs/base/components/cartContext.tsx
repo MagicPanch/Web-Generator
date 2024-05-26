@@ -1,5 +1,11 @@
 "use client";
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+  useEffect,
+} from "react";
 
 export interface ItemInterface {
   image: string;
@@ -76,5 +82,41 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({
     <CartContext.Provider value={{ cart, addToCart, removeFromCart }}>
       {children}
     </CartContext.Provider>
+  );
+};
+
+export const AddToCartMessage: React.FC = () => {
+  const [show, setShow] = useState(false);
+
+  useEffect(() => {
+    setShow(true);
+  }, []);
+
+  return (
+    <div
+      className={`fixed bottom-0 left-0 right-0 bg-green-500 text-white text-center p-3 z-50 transition-opacity duration-1000 ${
+        show ? "opacity-100" : "opacity-0"
+      }`}
+    >
+      ¡Producto agregado al carrito!
+    </div>
+  );
+};
+
+export const RemoveFromCartMessage: React.FC = () => {
+  const [show, setShow] = useState(false);
+
+  useEffect(() => {
+    setShow(true);
+  }, []);
+
+  return (
+    <div
+      className={`fixed bottom-0 left-0 right-0 bg-red-500 text-white text-center p-3 z-50 transition-opacity duration-1000 ${
+        show ? "opacity-100" : "opacity-0"
+      }`}
+    >
+      Producto eliminado del carrito.
+    </div>
   );
 };

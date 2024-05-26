@@ -1,11 +1,21 @@
-import React from "react";
+"use client";
+import React, { useState } from "react";
 import SearchBar from "./SearchBar";
 import ProductTile from "./ProductTile";
 import { CARDS_DATA } from "../constants/body";
-import { ItemInterface, useCart } from "./cartContext";
+import { AddToCartMessage, ItemInterface, useCart } from "./cartContext";
 
 const SectionECommerce = () => {
   const { addToCart } = useCart();
+  const [showAddMessage, setShowAddMessage] = useState(false);
+
+  const handleAddToCart = (item: ItemInterface) => {
+    addToCart(item);
+    setShowAddMessage(true);
+    setTimeout(() => {
+      setShowAddMessage(false);
+    }, 3000); // Mostrar el mensaje por 3 segundos
+  };
 
   return (
     <section>
@@ -23,11 +33,12 @@ const SectionECommerce = () => {
                 title={item.title}
                 description={item.description}
                 price={item.price}
-                onAddToCart={() => addToCart(item)}
+                onAddToCart={() => handleAddToCart(item)}
               />
             ))}
         </div>
       </div>
+      {showAddMessage && <AddToCartMessage />}
     </section>
   );
 };
