@@ -23,27 +23,20 @@ class ReactGenerator:
 
     @staticmethod
     def set_collection(page_path, collection):
-        utils.go_to_main_dir()
-        os.chdir(page_path)
-        os.chdir("constants")
+        utils.go_to_dir_from_main(page_path)
+        utils.go_to_dir("constants")
         text = f"""export const Nombre_Esquema = "{collection}";"""
-
-        with open(os.getcwd()+ "\\collection.ts", "w") as file:
-            file.write(text)
-            file.close()
+        filename = os.getcwd()+ "\\collection.ts"
+        utils.write_file(filename=filename, content=text)
         utils.go_to_main_dir()
 
     @staticmethod
     def set_address(page_path, address):
-        print("(" + threading.current_thread().getName() + ") " + "---en set address: ", address)
-        utils.go_to_main_dir()
-        os.chdir(page_path)
-        os.chdir("constants")
+        utils.go_to_dir_from_main(page_path)
+        utils.go_to_dir("constants")
         text = f"""export const LINK = "{address}";"""
-
-        with open(os.getcwd() + "\\link.ts", "w") as file:
-            file.write(text)
-            file.close()
+        filename = os.getcwd() + "\\link.ts"
+        utils.write_file(filename=filename, content=text)
         utils.go_to_main_dir()
 
 
