@@ -1,3 +1,4 @@
+import json
 import os
 import threading
 
@@ -190,3 +191,136 @@ class ReactGenerator:
         with open(dataBody["address"] + "\\constants\\body.ts", "w") as file:
             file.write(text)
             file.close()
+
+    @staticmethod
+    def agregarSectionInformativa(nombre,address,texto):
+        #data nombre  y Folder address
+        #abrir json de secciones
+        #agregar la seccion actual al json
+        #y guaradar el json
+        #generar una sectionEcommerce pero que devuelva un component con el nombre la nueva section
+        #agregar la section a la lista de secciones del navBar
+        
+        #dataSections lista de secciones agrega el nuevo component
+        with open(address+'/dataSections.json') as file:
+                dataSections = json.load(file)
+        dataSections.append({"titulo":nombre})
+        
+        print(dataSections)
+        #guardo json 
+        with open(address+"\dataSections.json", "w") as file:
+            file.write(json.dumps(dataSections))
+        #genero component nuevo
+        textSectionNew = f"""import React from "react";
+        const {nombre} = () => {{        
+        return (
+        <section className="h-screen bg-blue-300 flex flex-col  items-center">
+        <div className="max-w-screen  p-4  px-40">
+            <h1 className="font-bold text-2xl mb-4">
+                {nombre}
+            </h1>
+            <p>
+                {texto}
+            </p>
+        </div>
+        </section>
+        );
+        }};
+
+        export default {nombre};
+        """
+        with open(address+"\components\\"+nombre+".tsx", "w", encoding="utf-8") as file:
+            file.write(textSectionNew)
+            
+        #genero page
+        textPageComponents = ""
+        for section in dataSections:
+            textPageComponents +=  section["titulo"]+":"+section["titulo"] + ","
+        textPageElegibles = ""
+        for section in dataSections:
+            textPageElegibles += "|" + "\"" + section["titulo"] +"\"" 
+        textPageImports = ""
+        for section in dataSections:
+            textPageImports += "import "+ section["titulo"]  + " from \"../../components/"+section["titulo"]+"\";"
+        textPage = f""""use client"
+        import Image from "next/image";
+        import {{ SearchBar, }} from "../../components";
+        import {{ useState }} from "react";
+        import {{ NavBar }} from "../../components";
+        {textPageImports}
+
+            // Define los posibles valores de mensaje
+            type ComponentName = {textPageElegibles};
+
+            // Mapea los nombres de los componentes a los componentes reales
+            const componentMap: Record<ComponentName, () => JSX.Element> = {{
+            {textPageComponents}
+            // Agrega más componentes aquí según sea necesario
+            }};
+
+            export default function Home() {{
+            const [nombre, setNombre] = useState("Mario");
+            const [mensaje, setMensaje] = useState<ComponentName>("SectionECommerce");
+
+            // Cambia la definición de addMensaje para aceptar un argumento de tipo string
+            const addMensaje = (mensaje: string) => {{
+                console.log(mensaje);
+                setMensaje(mensaje as ComponentName); // Convierte el string a ComponentName
+            }};
+
+            // Selecciona el componente basado en el valor de `mensaje`
+            const SelectedComponent = componentMap[mensaje] || SectionECommerce;
+
+            return (
+                <main className="h-full items-center justify-between p-24 w-full">
+                <NavBar nombre={{nombre}} addMensaje={{addMensaje}} />
+                {{mensaje}}
+                <div>
+                    {{SelectedComponent ? <SelectedComponent /> : <div>Componente no encontrado</div>}}
+                </div>
+                </main>
+            );
+            }}
+        """
+        with open(address+"\src\\app\\page.tsx", "w", encoding="utf-8") as file:
+            file.write(textPage)
+            
+        #genero navBar
+        textNavBarSections = ""
+        for section in dataSections:
+            textNavBarSections += "\"" + section["titulo"] + "\","
+        textNavBar = f"""import React from "react";
+        import Link from "next/link";
+        import {{ NAVIGATION_LINKS }} from "../constants/navbar";
+
+            // Define un tipo para los props de NavBar
+            type NavBarProps = {{
+            nombre: string;
+            addMensaje: (mensaje: string) => void;
+            }};
+
+            const NavBar = ({{ nombre, addMensaje }}: NavBarProps) => {{
+            const enviarMensaje = () => {{
+                addMensaje("childMensaje");
+            }};
+            const secciones = [
+                {textNavBarSections}
+            ]
+            return (
+                <div className="bg-neutral-600 flex items-center justify-between h-10 px-4">
+                <nav className="flex flex-grow justify-evenly">
+                    {{secciones.map(seccion => (
+                    <button key={{seccion}} onClick={{() => addMensaje(seccion)}}>
+                        {{seccion}}
+                    </button>
+                    ))}}
+                </nav>
+                </div>
+            );
+            }};
+
+            export default NavBar;
+
+        """
+        with open(address+"\components\\NavBar.tsx", "w", encoding="utf-8") as file:
+            file.write(textNavBar)       
