@@ -391,6 +391,7 @@ class PageManager(object):
         PageManager._running_pages[(user, page_name)].set_thread_exec(thread_exec)
         thread_exec.start()
         page.set_running(True)
+        page.wait_for_ready()
 
     @staticmethod
     def join_thread_exec(user, page_name):
@@ -411,22 +412,6 @@ class PageManager(object):
             thread_tunnel.join()
             PageManager._running_pages[(user, page_name)].set_thread_tunnel(None)
         print("(" + threading.current_thread().getName() + ") " + "----finalizo la espera de ", thread_tunnel.getName())
-
-    @staticmethod
-    def join_thread(user, page_name):
-        print("(" + threading.current_thread().getName() + ") " + "----PageManager.join_thread----")
-        thread_exec = PageManager._running_pages[(user, page_name)].get_thread_exec()
-        if thread_exec:
-            print("(" + threading.current_thread().getName() + ") " + "--------hilo a esperar: ", thread_exec.getName())
-            thread_exec.join()
-            print("(" + threading.current_thread().getName() + ") " + "--------finalizo la espera de ", thread_exec.getName())
-            PageManager._running_pages[(user, page_name)].set_thread_exec(None)
-        thread_tunnel = PageManager._running_pages[(user, page_name)].get_thread_tunnel()
-        if thread_tunnel:
-            print("(" + threading.current_thread().getName() + ") " + "--------hilo a esperar: ", thread_tunnel.getName())
-            thread_tunnel.join()
-            print("(" + threading.current_thread().getName() + ") " + "--------finalizo la espera de ", thread_tunnel.getName())
-            PageManager._running_pages[(user, page_name)].set_thread_tunnel(None)
 
     @staticmethod
     def add_page(user, page_name) -> Front:
