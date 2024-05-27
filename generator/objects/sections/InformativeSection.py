@@ -6,11 +6,11 @@ class InformativeSection(Section):
     def __init__(self, title):
         super().__init__("informativa", title)
         self._title = title
-        self._texts = {}
+        self._texts = None
 
-    def get_texts(self):
+    def get_text(self):
         return self._texts
 
-    def set_texts(self, texts):
-        self._texts = texts
+    def set_text(self, text):
+        self._texts = text
 

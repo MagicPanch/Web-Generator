@@ -858,8 +858,6 @@ class ActionCrearInformativa2(Action):
         page.add_section(inf_section)
         dispatcher.utter_message(text="Proporcioname el texto informativo. Por favor, respeta el siguiente formato:")
         dispatcher.utter_message(text="###\nTexto\n###")
-        dispatcher.utter_message(text="Si deseas agregar múltiples bloques de texto, envíalos en el mismo mensaje respetando el siguiente formato:")
-        dispatcher.utter_message(text="###\nTitulo texto1\n##\nTexto1\n##\nTitulo texto2\n##\nTexto2\n##\n###")
         return [SlotSet("creando_seccion_informativa", True), SlotSet("pide_text_informativa", True)]
 
 
@@ -872,26 +870,13 @@ class ActionCrearInformativa3(Action):
         print("(" + threading.current_thread().getName() + ") " + "----ACTION CREAR SECCION INFORMATIVA 3----")
         last_user_message = str(tracker.latest_message.get('text'))
         text = last_user_message[3:len(last_user_message) - 3].strip()
-        textos = {}
         if tracker.get_slot("nombre_informativa"):
             nombre_informativa = tracker.get_slot("nombre_informativa")
         else:
             nombre_informativa = "Informacion"
-        last_user_message = str(tracker.latest_message.get('text'))
-        text = last_user_message[3:len(last_user_message) - 3].strip()
-        textos = {}
-        if "##" in text:
-            # El texto tiene subtitulos
-            texts = text.split("##").strip()
-            i = 0;
-            while i < len(texts) / 2:
-                textos[texts[i]] = texts[i + 1]
-                i += 2
-        else:
-            textos[nombre_informativa] = text
         page = PageManager.get_page(tracker.sender_id, tracker.get_slot('page_name'))
         inf_section = page.get_section(nombre_informativa)
-        inf_section.set_texts(textos)
+        inf_section.set_text(text)
         dispatcher.utter_message(text="Texto informativo guardado.")
         dispatcher.utter_message(text="Si lo deseas podes enviarme alguna imagen para mostrar en tu sección. Si vas a enviar imagenes, por favor envialas de a una.")
         return [SlotSet("creando_seccion_informativa", True), SlotSet("pide_img_informativa", True)]
@@ -912,7 +897,8 @@ class ActionCrearInformativa4(Action):
         inf_section = page.get_section(nombre_informativa)
         dbm = DBManager.get_instance()
         dbm.add_inf_section(tracker.sender_id, tracker.get_slot("page_name"), inf_section)
-        #ReactGenerator.generarSeccionInformativa()
+        PageManager.go_to_main_dir()
+        ReactGenerator.agregarSeccionInformativa(nombre_informativa, PageManager.get_page_path(tracker.sender_id, tracker.get_slot('page_name')), inf_section.get_text())
         dispatcher.utter_message(text="Podrás ver la nueva sección en tu página")
         return [SlotSet("creando_seccion_informativa", False), SlotSet("pregunta_otra_imagen_seccion_informativa", False), SlotSet("pide_img_informativa", False), SlotSet("pide_text_informativa", False), SlotSet("pregunta_seccion", False), SlotSet("creando_seccion", False), SlotSet("componente", None)]
 
@@ -953,8 +939,6 @@ class ActionModificarInformativa2(Action):
             dispatcher.utter_message(text="Nombre de sección guardado.")
         dispatcher.utter_message(text="¿Queres remplazar el texto informativo? De hacerlo, por favor respeta el siguiente formato:")
         dispatcher.utter_message(text="###\nTexto\n###")
-        dispatcher.utter_message(text="Si deseas agregar múltiples bloques de texto, envíalos en el mismo mensaje respetando el siguiente formato:")
-        dispatcher.utter_message(text="###\nTitulo texto1\n##\nTexto1\n##\nTitulo texto2\n##\nTexto2\n##\n###")
         return [SlotSet("editando_seccion_informativa", True), SlotSet("pide_text_informativa", True)]
 
 
@@ -973,19 +957,9 @@ class ActionModificarInformativa3(Action):
                 nombre_informativa = tracker.get_slot("nombre_seccion_editando")
             last_user_message = str(tracker.latest_message.get('text'))
             text = last_user_message[3:len(last_user_message) - 3].strip()
-            textos = {}
-            if "##" in text:
-            # El texto tiene subtitulos
-                texts = text.split("##").strip()
-                i = 0;
-                while i < len(texts) / 2:
-                    textos[texts[i]] = texts[i + 1]
-                    i += 2
-            else:
-                textos[nombre_informativa] = text
             page = PageManager.get_page(tracker.sender_id, tracker.get_slot('page_name'))
             inf_section = page.get_section(nombre_informativa)
-            inf_section.set_texts(textos)
+            inf_section.set_text(text)
             dispatcher.utter_message(text="Texto informativo guardado.")
         dispatcher.utter_message(text="Si lo deseas podes agregar más imagenes. Si vas a enviar varias, por favor envialas de a una.")
         return [SlotSet("editando_seccion_informativa", True)]

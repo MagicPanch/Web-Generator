@@ -186,7 +186,7 @@ class DBManager(object):
         page = Page.objects(id=page_id).first()
         if page:
             section_id = page_id + '-' + inf_section.get_title()
-            section = InformativeSection(id=section_id, type="informativa", title=inf_section.get_title(), texts=inf_section.get_texts())
+            section = InformativeSection(id=section_id, type="informativa", title=inf_section.get_title(), text=inf_section.get_text())
             section.save()
             page.sections.append(section)
             page.lastModificationDate = datetime.datetime.now()
@@ -216,7 +216,7 @@ class DBManager(object):
         if page:
             old_section_id = page_id + '-' + section_title
             old_section = InformativeSection.objects(id=old_section_id).first()
-            new_section = InformativeSection(id=page_id + '-' + inf_section.get_title(), type="informativa", title=inf_section.get_title(), texts=inf_section.get_texts())
+            new_section = InformativeSection(id=page_id + '-' + inf_section.get_title(), type="informativa", title=inf_section.get_title(), text=inf_section.get_text())
             new_section.save()
             page.sections = [new_section if section.id == old_section_id else section for section in page.sections]
             page.lastModificationDate = datetime.datetime.now()

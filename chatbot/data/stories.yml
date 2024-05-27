@@ -255,6 +255,7 @@ stories:
     - slot_was_set:
       - componente: seccion
       - creando_seccion_informativa: true
+      -
     - or:
       - intent: decir_nombre_informativa
       - intent: despues_te_digo

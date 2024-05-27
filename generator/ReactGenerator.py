@@ -41,7 +41,7 @@ class ReactGenerator:
         os.chdir("constants")
         text = f"""export const LINK = "{address}"/;"""
 
-        with open(os.getcwd()+ "\\link.ts", "w") as file:
+        with open(os.getcwd() + "\\link.ts", "w") as file:
             file.write(text)
             file.close()
         PageManager.PageManager.go_to_main_dir()
@@ -202,13 +202,11 @@ class ReactGenerator:
         #agregar la section a la lista de secciones del navBar
         
         #dataSections lista de secciones agrega el nuevo component
-        with open(address+'/dataSections.json') as file:
-                dataSections = json.load(file)
+        with open(os.getcwd() + '\\' + address + '\\dataSections.json') as file:
+            dataSections = json.load(file)
         dataSections.append({"titulo":nombre})
-        
-        print(dataSections)
         #guardo json 
-        with open(address+"\dataSections.json", "w") as file:
+        with open(os.getcwd() + '\\' + address+"\\dataSections.json", "w") as file:
             file.write(json.dumps(dataSections))
         #genero component nuevo
         textSectionNew = f"""import React from "react";

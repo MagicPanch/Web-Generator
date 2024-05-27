@@ -454,7 +454,7 @@ class PageManager(object):
             print(section)
             if section.type == "informativa":
                 s = InformativeSection(section.title)
-                s.set_texts(section.texts)
+                s.set_text(section.text)
                 page.add_section(s)
             elif section.type == "ecommerce":
                 s = EcommerceSection()
