@@ -9,11 +9,7 @@
       <change beforePath="$PROJECT_DIR$/chatbot/actions/actions.py" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/actions/actions.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/generator/PageManager.py" beforeDir="false" afterPath="$PROJECT_DIR$/generator/PageManager.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/generator/ReactGenerator.py" beforeDir="false" afterPath="$PROJECT_DIR$/generator/ReactGenerator.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/generator/objects/pages/Front.py" beforeDir="false" afterPath="$PROJECT_DIR$/generator/objects/pages/Front.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/base/components/EcommercePrueba.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/base/components/SectionECommerce.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/webs/base/components/SectionECommerce.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/base/components/cartContext.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/webs/base/components/cartContext.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/template_ecommerce/src/app/models/producto.ts" beforeDir="false" afterPath="$PROJECT_DIR$/webs/template_ecommerce/src/app/models/producto.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/prueba.py" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -204,6 +200,9 @@
       <workItem from="1716728489623" duration="52278000" />
       <workItem from="1716814343904" duration="4261000" />
       <workItem from="1716819555476" duration="4700000" />
+      <workItem from="1716825881478" duration="106000" />
+      <workItem from="1716826294997" duration="1189000" />
+      <workItem from="1716845829902" duration="848000" />
     </task>
     <servers />
   </component>

@@ -16,8 +16,7 @@ from rasa_sdk.executor import CollectingDispatcher
 from rasa_sdk.events import SlotSet, FollowupAction
 import datetime
 from database.DBManager import DBManager
-from resources import CONSTANTS
-
+from resources import CONSTANTS, utils
 
 slots_crear_pagina = ['creando_pagina', 'pregunta_nombre']
 slots_crear_seccion = ['creando_seccion']
@@ -504,10 +503,10 @@ class ActionRecibirImagen(Action):
                 error = True
             else:
                 if tracker.get_slot("creando_encabezado"):
-                    PageManager.go_to_main_dir()
+                    utils.go_to_main_dir()
                     telegram_bot.download_image(page_path=page_path, subdir="components", image_id=image_id, image_name="logo.png")
                 elif tracker.get_slot("creando_seccion_informativa"):
-                    PageManager.go_to_main_dir()
+                    utils.go_to_main_dir()
                     telegram_bot.download_image(page_path=page_path, subdir="sect_inf_images", image_id=image_id, image_name=(photo["file_unique_id"] + ".png"))
                 elif tracker.get_slot("agregando_productos"):
                     #Descargar imagen
@@ -565,7 +564,7 @@ class ActionCrearEncabezado(Action):
             "addressLogo": "./logo.png",
             "colorTitulo": color
         }
-        PageManager.go_to_main_dir()
+        utils.go_to_main_dir()
         ReactGenerator.generarHeader(dataHeader)
         print("-------------ENCABEZADO MODIFICADO-------------")
         dbm = DBManager.get_instance()
@@ -657,7 +656,7 @@ class ActionCrearFooter(Action):
             "email": mail,
             "ubicacion": ubicacion
         }
-        PageManager.go_to_main_dir()
+        utils.go_to_main_dir()
         ReactGenerator.generarFooter(dataFooter)
         print("-------------FOOTER MODIFICADO-------------")
         dispatcher.utter_message(text="Podes ver los cambios que realizamos en el footer")
@@ -779,7 +778,7 @@ class ActionPedirProductos(Action):
         telegram_bot = TelegramBotManager.get_instance()
         message = "Podes agregar los productos de a uno o cargar múltiples productos en un archivo de datos y enviármelo. Si optas por la carga mediante archivo, completa la siguiente planilla agregando los datos en una nueva fila. En los campos \"multimedia\" coloca el link a las imágenes o videos del producto"
         dispatcher.utter_message(text=message)
-        PageManager.go_to_main_dir()
+        utils.go_to_main_dir()
         telegram_bot.send_file_to_user(tracker.sender_id, CONSTANTS.TEMPLATE_PRODUCTOS_DIR)
         dispatcher.utter_message(text="Si vas a cargar los productos de a uno voy a necesitar los siguientes datos:")
         dispatcher.utter_message(text="Cantidad:\nTitulo:\nDescripción:\nPrecio:")
@@ -898,7 +897,7 @@ class ActionCrearInformativa3(Action):
         dispatcher.utter_message(text="Texto informativo guardado.")
         dbm = DBManager.get_instance()
         dbm.add_inf_section(user_id, page_name, inf_section)
-        PageManager.go_to_main_dir()
+        utils.go_to_main_dir()
         ReactGenerator.agregarSectionInformativa(nombre_informativa, PageManager.get_page_path(user_id, page_name), inf_section.get_text())
         dispatcher.utter_message(text="Podrás ver la nueva sección en tu página")
         return [SlotSet("creando_seccion_informativa", False), SlotSet("pide_text_informativa", False), SlotSet("pregunta_seccion", False),
@@ -941,7 +940,7 @@ class ActionModificarInformativa2(Action):
         dispatcher.utter_message(text="Texto informativo guardado.")
         dbm = DBManager.get_instance()
         dbm.updt_inf_section(user_id, page_name, nombre_informativa, text)
-        PageManager.go_to_main_dir()
+        utils.go_to_main_dir()
         ReactGenerator.modificarSectionInformativa(nombre_informativa, PageManager.get_page_path(), text)
         dispatcher.utter_message(text="Podrás ver la nueva sección en tu página")
         return [SlotSet("editando_seccion_informativa", False), SlotSet("pide_text_informativa", False)]

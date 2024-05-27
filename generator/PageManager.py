@@ -7,7 +7,7 @@ from typing import Tuple, Dict, List
 
 import requests
 
-from resources import CONSTANTS
+from resources import CONSTANTS, utils
 import psutil
 from database.DBManager import DBManager
 from generator.objects.pages.Front import Front
@@ -100,17 +100,6 @@ class PageManager(object):
             raise Exception("No se puede crear otra instancia de PageManager")
 
     @staticmethod
-    def go_to_dir(dir_name):
-        #Nos posiciona en el subdirectorio indicado. Si no existe, lo crea
-        os.makedirs(dir_name, exist_ok=True)
-        os.chdir(dir_name)
-
-    @staticmethod
-    def go_to_main_dir():
-        while os.path.basename(os.getcwd()) != CONSTANTS.MAIN_DIR:
-            os.chdir("..")
-
-    @staticmethod
     def _get_tunnel_address(page, dev=False):
         print("(" + threading.current_thread().getName() + ") " + "----EN GET TUNNEL ADDRESS----")
         page.clear_address_event()
@@ -151,11 +140,6 @@ class PageManager(object):
                 # Agregar la pagina al resultado
                 pages.append(PageManager._running_pages[key].get_page())
         return pages
-
-    @staticmethod
-    def _copy_dir(origen, destino):
-        # Copiar el contenido del directorio origen al directorio destino
-        shutil.copytree(origen, destino, dirs_exist_ok=True)
 
     @staticmethod
     def _create_project(user, page_name):
@@ -206,14 +190,14 @@ class PageManager(object):
         #Se copian los templates en el nuevo proyecto
         #print("(" + threading.current_thread().getName() + ") " + "----PageManager._copy_template----")
         #print("(" + threading.current_thread().getName() + ") " + "--------origen: " + CONSTANTS.TEMPLATE_DIR)
-        PageManager.go_to_main_dir()
+        utils.go_to_main_dir()
 
         #Obtener directorio destino
         destino = PageManager.get_page_path(user, page_name)
         #print("(" + threading.current_thread().getName() + ") " + "--------destino: " + destino)
 
         #Copiar template al nuevo proyecto
-        PageManager._copy_dir(CONSTANTS.TEMPLATE_DIR, destino)
+        utils.copy_dir(CONSTANTS.TEMPLATE_DIR, destino)
 
     @staticmethod
     def _run_dev(user, page_name, page_port):
@@ -227,7 +211,7 @@ class PageManager(object):
             ReactGenerator.set_address(page_path=path, address=PageManager.get_page(user, page_name).get_page_address())
 
         # Posicionarse en el path donde se creara el proyecto
-        PageManager.go_to_main_dir()
+        utils.go_to_main_dir()
         os.chdir(path)
 
 
@@ -251,7 +235,7 @@ class PageManager(object):
     @staticmethod
     def run_dev(user, page_name):
         print("(" + threading.current_thread().getName() + ") " + "----PageManager.run_dev----")
-        PageManager.go_to_main_dir()
+        utils.go_to_main_dir()
         page = PageManager._running_pages[(user, page_name)].get_page()
         page.set_running_dev(True)
         thread_tunnel = threading.Thread(target=PageManager._get_tunnel_address, args=(page, True))
@@ -266,7 +250,7 @@ class PageManager(object):
         print("(" + threading.current_thread().getName() + ") " + "----PageManager._add_ecommerce----")
 
         #Posicionarse en el path donde se creara el proyecto
-        PageManager.go_to_main_dir()
+        utils.go_to_main_dir()
         path = PageManager.get_page_path(user, page_name)
         os.chdir(path)
 
@@ -334,8 +318,8 @@ class PageManager(object):
         # print("(" + threading.current_thread().getName() + ") " + "--------destino: " + destino)
 
         # Copiar template al nuevo proyecto
-        PageManager.go_to_main_dir()
-        PageManager._copy_dir(CONSTANTS.TEMPLATE_ECOMMERCE_DIR, destino)
+        utils.go_to_main_dir()
+        utils.copy_dir(CONSTANTS.TEMPLATE_ECOMMERCE_DIR, destino)
         ReactGenerator.set_collection(page_path=destino, collection=(user + "-" + page_name))
 
     @staticmethod
@@ -358,7 +342,7 @@ class PageManager(object):
             ReactGenerator.set_address(page_path=path, address=PageManager.get_page(user, page_name).get_page_address())
 
 
-        PageManager.go_to_main_dir()
+        utils.go_to_main_dir()
         os.chdir(path)
 
         command = 'npx next build '
@@ -399,7 +383,7 @@ class PageManager(object):
         #Posicionarse en el path donde se creara el proyecto
         # Posicionarse en el path donde se creara el proyecto
         path = PageManager.get_page_path(user, page_name)
-        PageManager.go_to_main_dir()
+        utils.go_to_main_dir()
         os.chdir(path)
 
 
@@ -463,11 +447,11 @@ class PageManager(object):
                 page.add_section(s)
 
         #Crea sus directorios
-        PageManager.go_to_main_dir()
-        PageManager.go_to_dir(CONSTANTS.USER_PAGES_DIR)
-        PageManager.go_to_dir(user)
-        PageManager.go_to_dir(page_name)
-        PageManager.go_to_main_dir()
+        utils.go_to_main_dir()
+        utils.go_to_dir(CONSTANTS.USER_PAGES_DIR)
+        utils.go_to_dir(user)
+        utils.go_to_dir(page_name)
+        utils.go_to_main_dir()
         #Agregarla a la coleccion
         PageManager._running_pages[(user, page_name)] = PageManager.Entry(page, None, None)
         return page

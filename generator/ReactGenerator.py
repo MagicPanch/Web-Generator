@@ -2,7 +2,7 @@ import json
 import os
 import threading
 
-from generator import PageManager
+from resources import utils
 
 
 class ReactGenerator:
@@ -23,7 +23,7 @@ class ReactGenerator:
 
     @staticmethod
     def set_collection(page_path, collection):
-        PageManager.PageManager.go_to_main_dir()
+        utils.go_to_main_dir()
         os.chdir(page_path)
         os.chdir("constants")
         text = f"""export const Nombre_Esquema = "{collection}";"""
@@ -31,12 +31,12 @@ class ReactGenerator:
         with open(os.getcwd()+ "\\collection.ts", "w") as file:
             file.write(text)
             file.close()
-        PageManager.PageManager.go_to_main_dir()
+        utils.go_to_main_dir()
 
     @staticmethod
     def set_address(page_path, address):
         print("(" + threading.current_thread().getName() + ") " + "---en set address: ", address)
-        PageManager.PageManager.go_to_main_dir()
+        utils.go_to_main_dir()
         os.chdir(page_path)
         os.chdir("constants")
         text = f"""export const LINK = "{address}";"""
@@ -44,7 +44,7 @@ class ReactGenerator:
         with open(os.getcwd() + "\\link.ts", "w") as file:
             file.write(text)
             file.close()
-        PageManager.PageManager.go_to_main_dir()
+        utils.go_to_main_dir()
 
 
     @staticmethod
