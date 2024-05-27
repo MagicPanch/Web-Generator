@@ -39,7 +39,7 @@ class ReactGenerator:
         PageManager.PageManager.go_to_main_dir()
         os.chdir(page_path)
         os.chdir("constants")
-        text = f"""export const LINK = "{address}"/;"""
+        text = f"""export const LINK = "{address}";"""
 
         with open(os.getcwd() + "\\link.ts", "w") as file:
             file.write(text)

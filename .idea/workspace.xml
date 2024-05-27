@@ -7,19 +7,12 @@
     <list default="true" id="121f2593-11ee-405e-a8d8-1c2f43d81e54" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/chatbot/actions/actions.py" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/actions/actions.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chatbot/data/nlu.yml" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/data/nlu.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chatbot/data/stories.yml" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/data/stories.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chatbot/domain.yml" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/domain.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/DBManager.py" beforeDir="false" afterPath="$PROJECT_DIR$/database/DBManager.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/collections/general/InformativeSection.py" beforeDir="false" afterPath="$PROJECT_DIR$/database/collections/general/InformativeSection.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/generator/PageManager.py" beforeDir="false" afterPath="$PROJECT_DIR$/generator/PageManager.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/generator/ReactGenerator.py" beforeDir="false" afterPath="$PROJECT_DIR$/generator/ReactGenerator.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/generator/TelegramBotManager.py" beforeDir="false" afterPath="$PROJECT_DIR$/generator/TelegramBotManager.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/generator/objects/pages/Front.py" beforeDir="false" afterPath="$PROJECT_DIR$/generator/objects/pages/Front.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/base/components/ProductTile.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/webs/base/components/ProductTile.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/webs/base/components/EcommercePrueba.tsx" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/webs/base/components/SectionECommerce.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/webs/base/components/SectionECommerce.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/webs/base/components/cartContext.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/webs/base/components/cartContext.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/base/src/app/shopping-cart/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/webs/base/src/app/shopping-cart/page.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/webs/template_ecommerce/src/app/models/producto.ts" beforeDir="false" afterPath="$PROJECT_DIR$/webs/template_ecommerce/src/app/models/producto.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -100,7 +93,7 @@
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
     &quot;deletionFromPopupRequiresConfirmation&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;lucas__chatbot&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
     &quot;last_opened_file_path&quot;: &quot;D:/Desarrollo/Ingenieria-de-Software-2024/Web-Generator/user-pages/2086036019/test1&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
@@ -109,7 +102,7 @@
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;D:\\Desarrollo\\Ingenieria-de-Software-2024\\Web-Generator\\user-pages\\2086036019\\test-lucas-1\\node_modules\\typescript\\lib&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;D:\\Desarrollo\\Ingenieria-de-Software-2024\\Web-Generator\\user-pages\\2086036019\\design-label\\node_modules\\typescript\\lib&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
@@ -209,6 +202,8 @@
       <workItem from="1716659353297" duration="5468000" />
       <workItem from="1716673752162" duration="5016000" />
       <workItem from="1716728489623" duration="52278000" />
+      <workItem from="1716814343904" duration="4261000" />
+      <workItem from="1716819555476" duration="4700000" />
     </task>
     <servers />
   </component>

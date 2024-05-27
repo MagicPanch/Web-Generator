@@ -113,7 +113,7 @@ class PageManager(object):
     @staticmethod
     def _get_tunnel_address(page, dev=False):
         print("(" + threading.current_thread().getName() + ") " + "----EN GET TUNNEL ADDRESS----")
-        page.set_page_address(None)
+        page.clear_address_event()
         #Ejecutar el proceso
         if dev:
             command = 'lt --port ' + str(page.get_port())
@@ -136,6 +136,7 @@ class PageManager(object):
                     it = False
                     address = decoded_output[decoded_output.index("https")::]
         page.set_page_address(address)
+        page.set_addres_event()
 
     @staticmethod
     def _run_process(command):

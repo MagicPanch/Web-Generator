@@ -1101,8 +1101,6 @@ class ActionTriste(Action):
         return []
 
 # TUTORIAL
-slots_tutorial = ['pregunta_tutorial', 'inicia_tutorial', 'pregunta_1_confirmacion', 'pregunta_1_repetir_confirmacion', 'pregunta_2_confirmacion', 'pregunta_2_repetir_confirmacion', 'pregunta_3_confirmacion', 'pregunta_3_repetir_confirmacion', 'pregunta_4_confirmacion', 'pregunta_4_repetir_confirmacion']
-
 
 class ActionCapturarTutorial(Action):
 
@@ -1192,7 +1190,7 @@ class ActionPregunta3(Action):
         dispatcher.utter_message(text="Finalmente llegamos al footer, que es el componente de la página encontrado al final de la misma.")
         dispatcher.utter_message(text="Este se compone por el informacion del contacto, licencias y más.")
         dispatcher.utter_message(text="¿Entendido?")
-        return [SlotSet("pregunta_3_confirmacion", True)]
+        return [SlotSet("pregunta_2_confirmacion", False), SlotSet("pregunta_2_repetir_confirmacion", False), SlotSet("pregunta_3_confirmacion", True)]
 
 
 class ActionPregunta3Repetir(Action):
@@ -1218,7 +1216,7 @@ class ActionPregunta4(Action):
         dispatcher.utter_message(text="Al crear una página, los componentes encabezado y footer ya estarán incluídos pero las secciones no. Para agregar una nueva sección a tu página deberás pedirmelo.")
         dispatcher.utter_message(text="Esto no quita el hecho de que puedan modificarse. En cualquier momento podes pedirme que modifique el encabezado, el footer o una sección.")
         dispatcher.utter_message(text="¿Entendido?")
-        return [SlotSet("pregunta_4_confirmacion", True)]
+        return [SlotSet("pregunta_3_confirmacion", False), SlotSet("pregunta_3_repetir_confirmacion", False), SlotSet("pregunta_4_confirmacion", True)]
 
 
 class ActionPregunta4Repetir(Action):
@@ -1245,12 +1243,7 @@ class ActionTerminarTutorial(Action):
         dispatcher.utter_message(text="¡Felicitaciones " + str(tracker.get_slot("nombre_usuario")) + ", terminaste el tutorial! Ya estas listo para crear tu primera página web")
         dbm = DBManager.get_instance()
         dbm.set_user_tutorial(tracker.sender_id)
-
-        slots = slots_tutorial
-        events = []
-        for slot in slots:
-            events.append(SlotSet(slot, False))
-        return events
+        return [SlotSet("pregunta_4_confirmacion", False), SlotSet("pregunta_4_repetir_confirmacion", False), SlotSet("pregunta_tutorial", False), SlotSet("inicia_tutorial", False)]
 
 
 class ActionAvisame(Action):

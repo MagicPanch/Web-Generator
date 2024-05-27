@@ -19,8 +19,12 @@ class Front(PageRunner):
         self._sections = []
 
     def set_page_address(self, address):
-        self._address_event.clear()  # Reinicia el evento para futuras esperas
         self._page_address = address
+
+    def clear_address_event(self):
+        self._address_event.clear()
+
+    def set_addres_event(self):
         self._address_event.set()
 
     def get_page_address(self) -> str:

@@ -5,7 +5,7 @@ import SearchBar from "./SearchBar";
 import ProductTile from "./ProductTile";
 import { CARDS_DATA } from "../constants/body";
 import { AddToCartMessage, ItemInterface, useCart } from "./cartContext";
-import{LINK} from "../constants/links"
+import{LINK} from "../constants/link"
 let messageTimer: NodeJS.Timeout;
 
 const SectionECommerce = () => {
