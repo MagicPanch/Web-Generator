@@ -289,6 +289,7 @@ class ActionCapturarEdicion(Action):
                         print("(" + threading.current_thread().getName() + ") " + "------------la pagina es del usuario")
                         page_obj = PageManager.get_page(tracker.sender_id, page_doc.name)
                         if not page_obj:
+                            print("(" + threading.current_thread().getName() + ") " + "------------no hay page_obj")
                             page_obj = PageManager.add_page(tracker.sender_id, page_doc.name)
                             PageManager.run_dev(tracker.sender_id, page_doc.name)
                             page_obj.wait_for_ready()
@@ -296,11 +297,21 @@ class ActionCapturarEdicion(Action):
                             dispatcher.utter_message(text="Tu pagina se encuentra en modo edición. Podrás visualizar los cambios que realices en: " + page_address)
                             dispatcher.utter_message(text="Si la pagina te solicita una contraseña ingresa: " + PageManager.get_tunnel_password())
                         else:
+                            print("(" + threading.current_thread().getName() + ") " + "------------hay page_obj")
                             if page_obj.is_running():
+                                print("(" + threading.current_thread().getName() + ") " + "------------la pagina esta corriendo")
                                 PageManager.switch_dev(tracker.sender_id, page_doc.name)
                                 page_address = page_obj.get_page_address()
                                 dispatcher.utter_message(text="Tu pagina se encuentra en modo edición. Podrás visualizar los cambios que realices en: " + page_address)
                                 dispatcher.utter_message(text="Si la pagina te solicita una contraseña ingresa: " + PageManager.get_tunnel_password())
+                            elif not page_obj.is_running_dev():
+                                PageManager.run_dev(tracker.sender_id, page_doc.name)
+                                page_obj.wait_for_ready()
+                                page_address = page_obj.get_page_address()
+                                dispatcher.utter_message(
+                                    text="Tu pagina se encuentra en modo edición. Podrás visualizar los cambios que realices en: " + page_address)
+                                dispatcher.utter_message(
+                                    text="Si la pagina te solicita una contraseña ingresa: " + PageManager.get_tunnel_password())
                         if componente.lower() == "encabezado":
                             return[FollowupAction("action_preguntar_color_encabezado"), SlotSet("pregunta_componente", False), SlotSet("pregunta_nombre", False), SlotSet("pregunta_edicion", False)]
                         elif componente.lower() == "footer":
@@ -479,8 +490,10 @@ class ActionRecibirImagen(Action):
                 error = True
             else:
                 if tracker.get_slot("creando_encabezado"):
+                    PageManager.go_to_main_dir()
                     telegram_bot.download_image(page_path=page_path, subdir="components", image_id=image_id, image_name="logo.png")
                 elif tracker.get_slot("creando_seccion_informativa"):
+                    PageManager.go_to_main_dir()
                     telegram_bot.download_image(page_path=page_path, subdir="sect_inf_images", image_id=image_id, image_name=(photo["file_unique_id"] + ".png"))
                 elif tracker.get_slot("agregando_productos"):
                     #Descargar imagen

@@ -7,11 +7,11 @@ from typing import Tuple, Dict, List
 
 import requests
 
-from generator.ReactGenerator import ReactGenerator
 from resources import CONSTANTS
 import psutil
 from database.DBManager import DBManager
 from generator.objects.pages.Front import Front
+from generator.ReactGenerator import ReactGenerator
 import socket
 from generator.objects.sections.EcommerceSection import EcommerceSection
 from generator.objects.sections.InformativeSection import InformativeSection

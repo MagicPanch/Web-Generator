@@ -1,7 +1,20 @@
-# RASA to Telegram
-Tutorial para hacer la conexión de un chatbot desarrollado en RASA con Telegram
+# WebGenerator
+Guía de instalación y ejecución del proyecto desarrollado por el grupo Design Label para la cursada 2024 de la materia Ingeniería de Software
 
 ## Instalación
+
+### Python
+#### Instrucciones
+
+- Es necesario instalar la versión 3.8 de Python
+- Verificar que la variable de entorno del sistema "PATH" tenga una entrada apuntando al directorio donde esté instalado Python. De no estar, agregarla y reiniciar la PC para guardar los cambios.
+- Con python instalado, posicionarse en el directorio del proyecto, abrir una terminal y ejecutar el comando
+``` python -m venv venv ``` para crear un entorno virtual el el que ejecutar el proyecto.
+- Dentro de esa terminal, ejecutar los comandos ``` cd venv/Scripts ``` ``` ./Activate ``` para activar el venv y regresar al directorio original del proyecto.
+- Ejecutar el comando ``` python -m pip install --upgrade pip ``` para actualizar pip y una vez que termine ejecutar ``` pip install -r requirements.txt ``` para instalar las dependencias del proyecto.
+- Cuando finalice la instalación, actualizar la variable de entorno del sistema "PATH" agregando una entrada que apunte al directorio "venv/Scripts" ubicado dentro del proyecto.
+- Además, en las variables de usuario del sistema crear la entrada "PythonPath" que apunte al directorio donde se encuentra el proyecto.
+
 ### Rasa 3.1.0
 #### Instrucciones
 

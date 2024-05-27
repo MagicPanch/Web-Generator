@@ -102,6 +102,7 @@ actions:
   - action_pedir_productos
   - action_capturar_producto_cargado
   - action_guardar_producto
+  - action_avisame
 
 slots:
   page_name:
