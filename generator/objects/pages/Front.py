@@ -29,8 +29,6 @@ class Front(PageRunner):
 
     def get_page_address(self) -> str:
         self._address_event.wait()  # Espera hasta que el evento esté listo
-        if self._page_address is None:
-            self._address_event.wait()
         return self._page_address
 
     def is_running(self) -> bool:

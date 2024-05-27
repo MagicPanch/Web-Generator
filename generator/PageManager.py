@@ -20,15 +20,15 @@ from generator.objects.sections.InformativeSection import InformativeSection
 class PageManager(object):
 
     class Entry():
-        def __init__(self, page, thread_exec, thread_tunnel):
+        def __init__(self, page:Front, thread_exec, thread_tunnel):
             self._page = page
             self._thread_exec = thread_exec
             self._thread_tunnel = thread_tunnel
 
-        def set_page(self, page):
+        def set_page(self, page:Front):
             self._page = page
 
-        def get_page(self):
+        def get_page(self) -> Front:
             return self._page
 
         def set_thread_exec(self, thread):
@@ -206,14 +206,8 @@ class PageManager(object):
 
         path = PageManager.get_page_path(user, page_name)
 
-        page = PageManager._running_pages[(user, page_name)].get_page()
-        if page.has_ecomm_section():
-            ReactGenerator.set_address(page_path=path, address=PageManager.get_page(user, page_name).get_page_address())
-
-        # Posicionarse en el path donde se creara el proyecto
-        utils.go_to_main_dir()
-        os.chdir(path)
-
+        # Posicionarse en el path donde se ejecutará el proyecto
+        utils.go_to_dir_from_main(path)
 
         #Ejecutar el proceso
         command = 'npm run dev -- --port=' + str(page_port)
@@ -235,24 +229,32 @@ class PageManager(object):
     @staticmethod
     def run_dev(user, page_name):
         print("(" + threading.current_thread().getName() + ") " + "----PageManager.run_dev----")
-        utils.go_to_main_dir()
         page = PageManager._running_pages[(user, page_name)].get_page()
-        page.set_running_dev(True)
+
+        #Iniciar tunel de la página
         thread_tunnel = threading.Thread(target=PageManager._get_tunnel_address, args=(page, True))
         PageManager._running_pages[(user, page_name)].set_thread_tunnel(thread_tunnel)
         thread_tunnel.start()
+
+        #Si la página tiene sección e-commerce, asignar la dirección
+        page_path = PageManager.get_page_path(user, page_name)
+        if page.has_ecomm_section():
+            ReactGenerator.set_address(page_path=page_path, address=PageManager.get_page(user, page_name).get_page_address())
+
+        #Iniciar la ejecución de la página
         thread_exec = threading.Thread(target=PageManager._run_dev, args=(user, page_name, page.get_port()))
         PageManager._running_pages[(user, page_name)].set_thread_exec(thread_exec)
         thread_exec.start()
+        page.wait_for_ready()
+        page.set_running_dev(True)
 
     @staticmethod
     def _add_ecommerce(user, page_name):
         print("(" + threading.current_thread().getName() + ") " + "----PageManager._add_ecommerce----")
 
-        #Posicionarse en el path donde se creara el proyecto
-        utils.go_to_main_dir()
-        path = PageManager.get_page_path(user, page_name)
-        os.chdir(path)
+        #Posicionarse en el directorio de la página
+        page_path = PageManager.get_page_path(user, page_name)
+        utils.go_to_dir_from_main(page_path)
 
         #Instalar dependencias
         command = 'npm install mongodb'
@@ -263,17 +265,6 @@ class PageManager(object):
         process.terminate()
         page.set_exec_process(None)
 
-        it = True
-        while it:
-            output = process.stdout.readline()
-            if output == '' and process.poll() is not None:
-                break
-            if output:
-                decoded_output = output.decode().strip()
-                if "" in decoded_output:
-                    it = False
-                print("(" + threading.current_thread().getName() + ") " + decoded_output)
-
         command = 'npm install --save-dev @types/mongodb'
         process = PageManager._run_process(command)
         page = PageManager._running_pages[(user, page_name)].get_page()
@@ -281,18 +272,6 @@ class PageManager(object):
         process.wait()
         process.terminate()
         page.set_exec_process(None)
-
-        it = True
-        while it:
-            output = process.stdout.readline()
-            if output == '' and process.poll() is not None:
-                break
-            if output:
-                decoded_output = output.decode().strip()
-                if "" in decoded_output:
-                    it = False
-                print("(" + threading.current_thread().getName() + ") " + decoded_output)
-
 
         command = 'npm install mongoose dotenv'
         process = PageManager._run_process(command)
@@ -302,33 +281,24 @@ class PageManager(object):
         process.terminate()
         page.set_exec_process(None)
 
-        it = True
-        while it:
-            output = process.stdout.readline()
-            if output == '' and process.poll() is not None:
-                break
-            if output:
-                decoded_output = output.decode().strip()
-                if "" in decoded_output:
-                    it = False
-                print("(" + threading.current_thread().getName() + ") " + decoded_output)
-
-        # Obtener directorio destino
-        destino = PageManager.get_page_path(user, page_name)
-        # print("(" + threading.current_thread().getName() + ") " + "--------destino: " + destino)
-
         # Copiar template al nuevo proyecto
+        destino = PageManager.get_page_path(user, page_name)
         utils.go_to_main_dir()
         utils.copy_dir(CONSTANTS.TEMPLATE_ECOMMERCE_DIR, destino)
+
+        # Asignar el nombre de su colección en la base de datos
         ReactGenerator.set_collection(page_path=destino, collection=(user + "-" + page_name))
 
     @staticmethod
     def add_ecommerce(user, page_name):
         print("(" + threading.current_thread().getName() + ") " + "----PageManager.add_ecommerce----")
-        PageManager.join_thread(user, page_name)
-        thread = threading.Thread(target=PageManager._add_ecommerce, args=(user, page_name))
-        PageManager._running_pages[(user, page_name)].set_thread_exec(thread)
-        thread.start()
+        page = PageManager._running_pages[(user, page_name)].get_page()
+
+        if page.is_running():
+            PageManager.switch_dev(user, page_name)
+
+        # Instalar sus dependencias y copiar template
+        PageManager._add_ecommerce(user, page_name)
 
     @staticmethod
     def _build_project(user, page_name):
@@ -337,13 +307,7 @@ class PageManager(object):
         #Posicionarse en el path donde se creara el proyecto
         path = PageManager.get_page_path(user, page_name)
 
-        page = PageManager._running_pages[(user, page_name)].get_page()
-        if page.has_ecomm_section():
-            ReactGenerator.set_address(page_path=path, address=PageManager.get_page(user, page_name).get_page_address())
-
-
-        utils.go_to_main_dir()
-        os.chdir(path)
+        utils.go_to_dir_from_main(path)
 
         command = 'npx next build '
         process = PageManager._run_process(command)
@@ -369,23 +333,29 @@ class PageManager(object):
     def build_project(user, page_name):
         print("(" + threading.current_thread().getName() + ") " + "----PageManager.build_project----")
         page = PageManager._running_pages[(user, page_name)].get_page()
-        thread = threading.Thread(target=PageManager._build_project, args=(user, page_name))
+
+        # Iniciar tunel de la página
         thread_tunnel = threading.Thread(target=PageManager._get_tunnel_address, args=(page, False))
-        PageManager._running_pages[(user, page_name)].set_thread_exec(thread)
         PageManager._running_pages[(user, page_name)].set_thread_tunnel(thread_tunnel)
         thread_tunnel.start()
-        thread.start()
+
+        # Si la página tiene sección e-commerce, asignar la dirección
+        page_path = PageManager.get_page_path(user, page_name)
+        if page.has_ecomm_section():
+            ReactGenerator.set_address(page_path=page_path, address=PageManager.get_page(user, page_name).get_page_address())
+
+        # Iniciar la compilación de la página
+        thread_exec = threading.Thread(target=PageManager._build_project, args=(user, page_name))
+        PageManager._running_pages[(user, page_name)].set_thread_exec(thread_exec)
+        thread_exec.start()
 
     @staticmethod
     def _run_project(user, page_name, page_port):
         print("(" + threading.current_thread().getName() + ") " + "----PageManager._run_project----")
 
-        #Posicionarse en el path donde se creara el proyecto
-        # Posicionarse en el path donde se creara el proyecto
+        #Posicionarse en el path de la página
         path = PageManager.get_page_path(user, page_name)
-        utils.go_to_main_dir()
-        os.chdir(path)
-
+        utils.go_to_dir_from_main(path)
 
         command = 'npm start -- --port ' + str(page_port)
         process = PageManager._run_process(command)
@@ -407,10 +377,40 @@ class PageManager(object):
     def run_project(user, page_name):
         print("(" + threading.current_thread().getName() + ") " + "----PageManager.run_project----")
         page = PageManager._running_pages[(user, page_name)].get_page()
+
+        # Verificar si la página tiene un tunel activo
+        thread_tunnel = PageManager._running_pages[(user, page_name)].get_thread_tunnel()
+        if thread_tunnel is None:
+            # Iniciar el tunel de la página
+            thread_tunnel = threading.Thread(target=PageManager._get_tunnel_address, args=(page, False))
+            PageManager._running_pages[(user, page_name)].set_thread_tunnel(thread_tunnel)
+            thread_tunnel.start()
+
+        # Iniciar la ejecución de la página
         thread_exec = threading.Thread(target=PageManager._run_project, args=(user, page_name, page.get_port()))
         PageManager._running_pages[(user, page_name)].set_thread_exec(thread_exec)
         thread_exec.start()
         page.set_running(True)
+
+    @staticmethod
+    def join_thread_exec(user, page_name):
+        print("(" + threading.current_thread().getName() + ") " + "----PageManager.join_thread_exec----")
+        thread_exec = PageManager._running_pages[(user, page_name)].get_thread_exec()
+        if thread_exec is not None:
+            print("(" + threading.current_thread().getName() + ") " + "--------hilo a esperar: ", thread_exec.getName())
+            thread_exec.join()
+            PageManager._running_pages[(user, page_name)].set_thread_exec(None)
+        print("(" + threading.current_thread().getName() + ") " + "----finalizo la espera de ", thread_exec.getName())
+
+    @staticmethod
+    def join_thread_tunnel(user, page_name):
+        print("(" + threading.current_thread().getName() + ") " + "----PageManager.join_thread_tunnel----")
+        thread_tunnel = PageManager._running_pages[(user, page_name)].get_thread_tunnel()
+        if thread_tunnel is not None:
+            print("(" + threading.current_thread().getName() + ") " + "--------hilo a esperar: ", thread_tunnel.getName())
+            thread_tunnel.join()
+            PageManager._running_pages[(user, page_name)].set_thread_tunnel(None)
+        print("(" + threading.current_thread().getName() + ") " + "----finalizo la espera de ", thread_tunnel.getName())
 
     @staticmethod
     def join_thread(user, page_name):
@@ -478,7 +478,7 @@ class PageManager(object):
         return path
 
     @staticmethod
-    def is_running(user, page_name) -> bool:
+    def is_alive(user, page_name) -> bool:
         entry = PageManager._running_pages.get((user, page_name))
         if entry:
             return entry.get_page().is_running()
@@ -488,15 +488,11 @@ class PageManager(object):
     @staticmethod
     def switch_dev(user, page_name):
         #Detener la ejecucion de la pagina
-        page = PageManager._running_pages[(user, page_name)].get_page()
-        page.set_running(False)
-        PageManager.kill_project(page.get_port())
-        thread_exec = PageManager._running_pages[(user, page_name)].get_thread_exec()
-        thread_exec.join()
+        PageManager.stop_page(user, page_name)
+        PageManager.stop_tunnel(user, page_name)
 
         #Iniciar la ejecucion en modo dev
         PageManager.run_dev(user, page_name)
-        page.wait_for_ready()
 
     @staticmethod
     def stop_tunnel(user, page_name):
@@ -508,10 +504,7 @@ class PageManager(object):
         tunnel_process.wait()
 
         #Detener el hilo
-        thread_tunnel = PageManager._running_pages[(user, page_name)].get_thread_tunnel()
-        if thread_tunnel:
-            thread_tunnel.join()
-
+        PageManager.join_thread_tunnel(user, page_name)
 
     @staticmethod
     def stop_page(user, page_name):
@@ -526,47 +519,15 @@ class PageManager(object):
         PageManager.kill_project(page.get_port())
 
         #Esperar por la finalizacion del hilo
-        thread_exec = PageManager._running_pages[(user, page_name)].get_thread_exec()
-        if thread_exec:
-            thread_exec.join()
+        PageManager.join_thread_exec(user, page_name)
 
     @staticmethod
     def pop_page(user, page_name):
         PageManager._running_pages.pop(user, page_name)
 
     @staticmethod
-    def get_pid(port):
-        """
-        Esta función toma un puerto como argumento y retorna el ID de proceso (PID)
-        del proceso que escucha en ese puerto, si se encuentra alguno.
-
-        :param port: El puerto a buscar.
-        :return: El ID de proceso (PID) del proceso que escucha en el puerto dado,
-                 o None si no se encuentra ningún proceso que escuche en ese puerto.
-        """
-        # Iterar sobre todos los procesos en ejecución
-        for process in psutil.process_iter(['pid']):
-            try:
-                # Obtener las conexiones de red del proceso
-                connections = process.connections()
-
-                # Iterar sobre las conexiones y verificar si alguna está en el puerto objetivo
-                for conn in connections:
-                    # Verificar si la conexión está en el puerto objetivo y en estado de escucha
-                    if conn.status == 'LISTEN' and conn.laddr.port == port:
-                        # Retornar el PID del proceso que escucha en el puerto
-                        return process.pid
-
-            except psutil.NoSuchProcess:
-                # El proceso puede haber terminado durante la iteración
-                pass
-
-        # Si no se encontró ningún proceso que escuche en el puerto
-        return None
-
-    @staticmethod
     def kill_project(port):
-        process = psutil.Process(PageManager.get_pid(port))
+        process = utils.get_process(port)
         process.terminate()
         process.wait()
 
