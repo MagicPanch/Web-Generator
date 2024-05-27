@@ -19,6 +19,10 @@ from database.DBManager import DBManager
 from resources import CONSTANTS
 
 
+slots_crear_pagina = ['creando_pagina', 'pregunta_nombre']
+slots_crear_seccion = ['creando_seccion']
+creando_pagina = False
+
 #Actions Pagina
 class ActionCapturarCreacion(Action):
 
@@ -61,41 +65,47 @@ class ActionCrearPagina(Action):
         return "action_crear_pagina"
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        global creando_pagina
         print("(" + threading.current_thread().getName() + ") " + "----ACTION CREAR PAGINA----")
         print("(" + threading.current_thread().getName() + ") " + "--------page_name_slot: ", tracker.get_slot('page_name'))
-        entities = tracker.latest_message.get("entities", [])
-        # Filtrar las entidades para obtener solo las de tipo "page_name"
-        page_name_entities = [entity["value"] for entity in entities if entity["entity"] == "page_name"]
-        # Obtener el último valor de la lista de entidades de tipo "page_name" (si existe)
-        if page_name_entities:
-            last_page_name = page_name_entities[-1]
-            print("(" + threading.current_thread().getName() + ") " + "--------page_name_entity: ", last_page_name)
-        print("(" + threading.current_thread().getName() + ") " + "--------creando_pagina: ", tracker.get_slot("creando_pagina"))
+        print("creando_pagina: ", creando_pagina)
+        user_id = tracker.sender_id
+        page_name = tracker.get_slot('page_name')
         last_message_intent = tracker.latest_message.get('intent').get('name')
-        if 'denegar' in last_message_intent:
+        if not 'nombre_pagina' in last_message_intent:
             dispatcher.utter_message(text="Entendido, si mas tarde deseas retomar la creacion de tu pagina puedes pedirmelo.")
             return [SlotSet("creando_pagina", False), SlotSet("pregunta_nombre", False)]
-        elif not "nombre_pagina" in last_message_intent:
-            return [FollowupAction("action_default_fallback"), SlotSet("creando_pagina", False)]
 
         if tracker.get_slot("creando_pagina"):
-            if tracker.get_slot('page_name') is None:
+            if not page_name:
                 dispatcher.utter_message(
                     text="Repetime como queres que se llame tu página. Te recuerdo que el formato es: www. nombre-pagina .com")
-                return [SlotSet("creando_pagina", False), SlotSet("pregunta_nombre", True)]
+                return [SlotSet("creando_pagina", True), SlotSet("pregunta_nombre", True)]
             else:
                 dbm = DBManager.get_instance()
-                if dbm.get_page_by_name(tracker.get_slot('page_name')) is None:
+                if creando_pagina:
+                    page = PageManager.get_page(user_id, page_name)
+                    message = "Tu pagina se encuentra en modo edición. Podrás visualizar los cambios que realices en: " + page.get_page_address()
+                    dispatcher.utter_message(text=message)
+                    message = "Si la pagina te solicita una contraseña ingresa: " + PageManager.get_tunnel_password()
+                    dispatcher.utter_message(text=message)
+                    creando_pagina = False
+                    events = []
+                    for slot in slots_crear_pagina:
+                        events.append(SlotSet(slot, False))
+                    return events
+                elif dbm.get_page_by_name(page_name) is None:
                     #La pagina no existe
 
                     #Se guarda su entrada en la base de datos
-                    dbm.add_page(tracker.sender_id, tracker.get_slot('page_name'), tracker.get_slot('usuario'))
+                    dbm.add_page(user_id, page_name, tracker.get_slot('usuario'))
 
                     #Se crea la entrada para la pagina en PageManager
-                    PageManager.add_page(tracker.sender_id, tracker.get_slot('page_name'))
+                    PageManager.add_page(user_id, page_name)
 
                     #Se crea en un nuevo hilo el proyecto de la pagina
-                    PageManager.create_project(tracker.sender_id, tracker.get_slot('page_name'))
+                    PageManager.create_project(user_id, page_name)
+                    creando_pagina = True
 
                     dispatcher.utter_message(text="Aguarda un momento mientras se crea tu página. Este proceso puede demorar unos minutos.")
                     return [SlotSet("creando_pagina", False), FollowupAction("action_ejecutar_dev")]
@@ -111,6 +121,7 @@ class ActionEjecutarDev(Action):
         return "action_ejecutar_dev"
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        global creando_pagina
         print("(" + threading.current_thread().getName() + ") " + "----ACTION EJECUTAR DEV----")
         page = PageManager.get_page(tracker.sender_id, tracker.get_slot('page_name'))
 
@@ -130,8 +141,10 @@ class ActionEjecutarDev(Action):
         print("(" + threading.current_thread().getName() + ") " + "--------message: ", message)
         dispatcher.utter_message(text=message)
         print("(" + threading.current_thread().getName() + ") " + "--------Despues de utter_message")
-        return [SlotSet("creando_pagina", False), SlotSet("running_dev", True)]
-
+        events = []
+        for slot in slots_crear_pagina:
+            events.append(SlotSet(slot, False))
+        return events
 
 class ActionEjecutarPagina(Action):
 
@@ -248,8 +261,8 @@ class ActionEjecutarPagina(Action):
                         for pag in pags:
                             message += str(pag.get_name()) + "\n"
                         dispatcher.utter_message(message)
-                        return [SlotSet("pregunta_ejecucion", True)]
-                return []
+                        return [SlotSet("pregunta_detencion", True)]
+                return [SlotSet("pregunta_detencion", False)]
             else:
                 dispatcher.utter_message(text="Para detener una pagina primero debes completar el tutorial. ¿Deseas hacerlo ahora?")
                 return [SlotSet("pregunta_tutorial", True)]
@@ -451,6 +464,7 @@ class ActionGuardarColor(Action):
         print("(" + threading.current_thread().getName() + ") " + "--------color: ", color)
         #text - yellow - 600
 
+
         if not color or tracker.get_intent_of_latest_message() == "despues_te_digo":
             message = "Bueno, podemos ver el tipo mas tarde"
         else:
@@ -501,12 +515,14 @@ class ActionRecibirImagen(Action):
                     dbm.set_product_multimedia(tracker.sender_id, tracker.get_slot("page_name"), tracker.get_slot("id_producto"), image_url)
             if not error:
                 dispatcher.utter_message(text="Imagen recibida con éxito.")
-                if tracker.get_slot("creando_seccion_informativa"):
+                if tracker.get_slot("creando_encabezado"):
+                    return [FollowupAction("action_crear_encabezado")]
+                elif tracker.get_slot("creando_seccion_informativa"):
                     dispatcher.utter_message(text="¿Queres agregar otra imagen?")
                     return [SlotSet("pregunta_otra_imagen_seccion_informativa", True)]
                 elif tracker.get_slot("agregando_productos"):
                     dispatcher.utter_message(text="¿Queres cargar otro producto?")
-                    return [SlotSet("pregunta_carga", True)]
+                    return [SlotSet("pregunta_carga", True), SlotSet("pide_img_prod", False)]
             else:
                 dispatcher.utter_message(text="No se pudo procesar la imagen.")
         else:
@@ -837,7 +853,7 @@ class ActionCrearInformativa1(Action):
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         print("(" + threading.current_thread().getName() + ") " + "----ACTION CREAR SECCION INFORMATIVA 1----")
         dispatcher.utter_message(text="¿Que nombre llevará la sección?")
-        return [SlotSet("creando_seccion_informativa", True)]
+        return [SlotSet("creando_seccion_informativa", True), SlotSet("pregunta_nombre_informativa", True)]
 
 
 class ActionCrearInformativa2(Action):
@@ -858,7 +874,7 @@ class ActionCrearInformativa2(Action):
         page.add_section(inf_section)
         dispatcher.utter_message(text="Proporcioname el texto informativo. Por favor, respeta el siguiente formato:")
         dispatcher.utter_message(text="###\nTexto\n###")
-        return [SlotSet("creando_seccion_informativa", True), SlotSet("pide_text_informativa", True)]
+        return [SlotSet("creando_seccion_informativa", True), SlotSet("pide_text_informativa", True), SlotSet("pregunta_nombre_informativa", False)]
 
 
 class ActionCrearInformativa3(Action):
@@ -868,39 +884,25 @@ class ActionCrearInformativa3(Action):
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         print("(" + threading.current_thread().getName() + ") " + "----ACTION CREAR SECCION INFORMATIVA 3----")
+        user_id = tracker.sender_id
+        page_name = tracker.get_slot('page_name')
         last_user_message = str(tracker.latest_message.get('text'))
         text = last_user_message[3:len(last_user_message) - 3].strip()
         if tracker.get_slot("nombre_informativa"):
             nombre_informativa = tracker.get_slot("nombre_informativa")
         else:
             nombre_informativa = "Informacion"
-        page = PageManager.get_page(tracker.sender_id, tracker.get_slot('page_name'))
+        page = PageManager.get_page(user_id, page_name)
         inf_section = page.get_section(nombre_informativa)
         inf_section.set_text(text)
         dispatcher.utter_message(text="Texto informativo guardado.")
-        dispatcher.utter_message(text="Si lo deseas podes enviarme alguna imagen para mostrar en tu sección. Si vas a enviar imagenes, por favor envialas de a una.")
-        return [SlotSet("creando_seccion_informativa", True), SlotSet("pide_img_informativa", True)]
-
-
-class ActionCrearInformativa4(Action):
-
-    def name(self) -> Text:
-        return "action_crear_informativa_4"
-
-    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        print("(" + threading.current_thread().getName() + ") " + "----ACTION CREAR SECCION INFORMATIVA 4----")
-        page = PageManager.get_page(tracker.sender_id, tracker.get_slot('page_name'))
-        if tracker.get_slot("nombre_informativa"):
-            nombre_informativa = tracker.get_slot("nombre_informativa")
-        else:
-            nombre_informativa = "Informacion"
-        inf_section = page.get_section(nombre_informativa)
         dbm = DBManager.get_instance()
-        dbm.add_inf_section(tracker.sender_id, tracker.get_slot("page_name"), inf_section)
+        dbm.add_inf_section(user_id, page_name, inf_section)
         PageManager.go_to_main_dir()
-        ReactGenerator.agregarSeccionInformativa(nombre_informativa, PageManager.get_page_path(tracker.sender_id, tracker.get_slot('page_name')), inf_section.get_text())
+        ReactGenerator.agregarSectionInformativa(nombre_informativa, PageManager.get_page_path(user_id, page_name), inf_section.get_text())
         dispatcher.utter_message(text="Podrás ver la nueva sección en tu página")
-        return [SlotSet("creando_seccion_informativa", False), SlotSet("pregunta_otra_imagen_seccion_informativa", False), SlotSet("pide_img_informativa", False), SlotSet("pide_text_informativa", False), SlotSet("pregunta_seccion", False), SlotSet("creando_seccion", False), SlotSet("componente", None)]
+        return [SlotSet("creando_seccion_informativa", False), SlotSet("pide_text_informativa", False), SlotSet("pregunta_seccion", False),
+                SlotSet("creando_seccion", False), SlotSet("componente", None)]
 
 ## EDITAR
 
@@ -915,8 +917,8 @@ class ActionModificarInformativa1(Action):
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         print("(" + threading.current_thread().getName() + ") " + "----ACTION MODIFICAR SECCION INFORMATIVA 1----")
-        dispatcher.utter_message(text="¿Deseas modificar el nombre de la sección?")
-        return [SlotSet("editando_seccion_informativa", True)]
+        dispatcher.utter_message(text="¿Cuál es el nuevo contenido de la sección?")
+        return [SlotSet("creando_seccion_informativa", True), SlotSet("pide_text_informativa", True)]
 
 
 class ActionModificarInformativa2(Action):
@@ -928,41 +930,22 @@ class ActionModificarInformativa2(Action):
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         print("(" + threading.current_thread().getName() + ") " + "----ACTION MODIFICAR SECCION INFORMATIVA 2----")
-        last_message_intent = tracker.latest_message.get('intent').get('name')
+        user_id = tracker.sender_id
+        page_name = tracker.get_slot('page_name')
+        last_user_message = str(tracker.latest_message.get('text'))
+        text = last_user_message[3:len(last_user_message) - 3].strip()
         page = PageManager.get_page(tracker.sender_id, tracker.get_slot('page_name'))
-        print("(" + threading.current_thread().getName() + ") " + "--------seccion editando: ", tracker.get_slot("nombre_seccion_editando"))
-        inf_section = page.get_section(tracker.get_slot("nombre_seccion_editando"))
-        if "decir_nombre_informativa" in last_message_intent:
-            nombre_informativa = tracker.get_slot("nombre_informativa")
-            print("(" + threading.current_thread().getName() + ") " + "--------nuevo nombre seccion: ", nombre_informativa)
-            inf_section.set_title(nombre_informativa)
-            dispatcher.utter_message(text="Nombre de sección guardado.")
-        dispatcher.utter_message(text="¿Queres remplazar el texto informativo? De hacerlo, por favor respeta el siguiente formato:")
-        dispatcher.utter_message(text="###\nTexto\n###")
-        return [SlotSet("editando_seccion_informativa", True), SlotSet("pide_text_informativa", True)]
+        nombre_informativa = tracker.get_slot("nombre_informativa")
+        inf_section = page.get_section(nombre_informativa)
+        inf_section.set_text(text)
+        dispatcher.utter_message(text="Texto informativo guardado.")
+        dbm = DBManager.get_instance()
+        dbm.updt_inf_section(user_id, page_name, nombre_informativa, text)
+        PageManager.go_to_main_dir()
+        ReactGenerator.modificarSectionInformativa(nombre_informativa, PageManager.get_page_path(), text)
+        dispatcher.utter_message(text="Podrás ver la nueva sección en tu página")
+        return [SlotSet("editando_seccion_informativa", False), SlotSet("pide_text_informativa", False)]
 
-
-class ActionModificarInformativa3(Action):
-
-    def name(self) -> Text:
-        return "action_modificar_informativa_3"
-
-    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        print("(" + threading.current_thread().getName() + ") " + "----ACTION MODIFICAR SECCION INFORMATIVA 3----")
-        last_message_intent = tracker.latest_message.get('intent').get('name')
-        if "denegar" not in last_message_intent:
-            if tracker.get_slot("nombre_informativa"):
-                nombre_informativa = tracker.get_slot("nombre_informativa")
-            else:
-                nombre_informativa = tracker.get_slot("nombre_seccion_editando")
-            last_user_message = str(tracker.latest_message.get('text'))
-            text = last_user_message[3:len(last_user_message) - 3].strip()
-            page = PageManager.get_page(tracker.sender_id, tracker.get_slot('page_name'))
-            inf_section = page.get_section(nombre_informativa)
-            inf_section.set_text(text)
-            dispatcher.utter_message(text="Texto informativo guardado.")
-        dispatcher.utter_message(text="Si lo deseas podes agregar más imagenes. Si vas a enviar varias, por favor envialas de a una.")
-        return [SlotSet("editando_seccion_informativa", True)]
 
 class ActionModificarInformativa4(Action):
 
@@ -1118,6 +1101,8 @@ class ActionTriste(Action):
         return []
 
 # TUTORIAL
+slots_tutorial = ['pregunta_tutorial', 'inicia_tutorial', 'pregunta_1_confirmacion', 'pregunta_1_repetir_confirmacion', 'pregunta_2_confirmacion', 'pregunta_2_repetir_confirmacion', 'pregunta_3_confirmacion', 'pregunta_3_repetir_confirmacion', 'pregunta_4_confirmacion', 'pregunta_4_repetir_confirmacion']
+
 
 class ActionCapturarTutorial(Action):
 
@@ -1175,7 +1160,7 @@ class ActionPregunta2(Action):
         dispatcher.utter_message(text="Seccion e-commerce: \nEsta sección te permite montar una tienda en tu página, cargar productos y que los usuarios puedan comprarlos.")
         dispatcher.utter_message(text="Seccion informativa: \nEsta sección te permite incluir información sobre tu página o empresa, incluyendo un texto informativo e imágenes.")
         dispatcher.utter_message(text="¿Entendido?")
-        return [SlotSet("pregunta_2_confirmacion", False), SlotSet("pregunta_2_repetir_confirmacion", False)]
+        return [SlotSet("pregunta_2_confirmacion", True), SlotSet("pregunta_2_repetir_confirmacion", False)]
 
 
 class ActionPregunta2Repetir(Action):
@@ -1248,7 +1233,7 @@ class ActionPregunta4Repetir(Action):
         dispatcher.utter_message(text="Sección informativa: Podes modificar su título y contenido, modificando el texto o agregando imágenes.")
         dispatcher.utter_message(text="Footer: Podes modificar tus datos de contacto (e-mail y ubicación)")
         dispatcher.utter_message(text="¿Entendido?")
-        return [SlotSet("pregunta_4_confirmacion", False), SlotSet("pregunta_4_repetir_confirmacion", True),SlotSet("pregunta_4_confirmacion", True)]
+        return [SlotSet("pregunta_4_confirmacion", False), SlotSet("pregunta_4_repetir_confirmacion", True)]
 
 class ActionTerminarTutorial(Action):
 
@@ -1260,7 +1245,12 @@ class ActionTerminarTutorial(Action):
         dispatcher.utter_message(text="¡Felicitaciones " + str(tracker.get_slot("nombre_usuario")) + ", terminaste el tutorial! Ya estas listo para crear tu primera página web")
         dbm = DBManager.get_instance()
         dbm.set_user_tutorial(tracker.sender_id)
-        return [SlotSet("pregunta_4_confirmacion", False), SlotSet("pregunta_4_repetir_confirmacion", False)]
+
+        slots = slots_tutorial
+        events = []
+        for slot in slots:
+            events.append(SlotSet(slot, False))
+        return events
 
 
 class ActionAvisame(Action):

@@ -1,3 +1,5 @@
+import os
+
 import requests
 from anyio import Path
 from telegram import Bot, File, InputFile
@@ -27,8 +29,9 @@ class TelegramBotManager:
     @staticmethod
     def download_image(page_path, subdir, image_id, image_name):
         file = TelegramBotManager._bot.get_file(image_id)
-        download_path = Path(page_path)
-        download_path.joinpath(subdir).joinpath(image_name)
+        download_path = Path(os.getcwd())
+        download_path = download_path.joinpath(page_path).joinpath(subdir).joinpath(image_name)
+
         file.download(custom_path=download_path)
 
     @staticmethod

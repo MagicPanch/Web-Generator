@@ -7,6 +7,7 @@ export interface producto extends Document {
     price: Number;
     multimedia: string;
     stock: Number;
+    key: Number;
 }
 
 const productoSchema: Schema = new mongoose.Schema({
@@ -14,7 +15,8 @@ const productoSchema: Schema = new mongoose.Schema({
     stock: { type: Number, required: true },
     price: { type: Number, required: true },
     multimedia: { type: String, required: true },
-    desc: { type: String, required: true }
+    desc: { type: String, required: true },
+    key:{type:Number, required: false}
 });
 
 

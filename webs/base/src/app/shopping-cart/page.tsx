@@ -8,6 +8,8 @@ import {
 } from "../../../components/cartContext";
 import ProductShoppingTile from "./ProductShoppingTile";
 import Link from "next/link";
+import{LINK} from "../../../constants/links"
+import { Console } from "console";
 
 let messageTimer: NodeJS.Timeout;
 
@@ -18,7 +20,7 @@ const ShoppingCart: React.FC = () => {
   const [modalTop, setModalTop] = useState<number | null>(null);
   const [modalLeft, setModalLeft] = useState<number | null>(null);
   const [blurBackground, setBlurBackground] = useState(false); // State para controlar el efecto de desenfoque
-  
+
 
   useEffect(() => {
     if (showConfirmation) {
@@ -43,8 +45,10 @@ const ShoppingCart: React.FC = () => {
     setShowConfirmation(true);
   };
 
-  const handleCloseConfirmation = () => {
+  const handleCloseConfirmation = async () => {
     setShowConfirmation(false);
+
+    await updateProductQuantities(cart);
     // Eliminar todos los elementos del carrito al cerrar la confirmación de compra
     cart.forEach((cartItem) => {
       removeFromCartAll(cartItem.item);
@@ -134,3 +138,22 @@ const ShoppingCart: React.FC = () => {
 };
 
 export default ShoppingCart;
+
+const updateProductQuantities = async (cart: CartItemInterface[]) => {
+  try {
+    console.log(JSON.stringify({ cart }));
+    const response = await fetch(LINK+"/api/updateQuantity", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ cart }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to update product quantities");
+    }
+  } catch (error) {
+    console.error("Error updating product quantities:", error);
+  }
+};

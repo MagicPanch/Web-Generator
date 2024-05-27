@@ -6,6 +6,7 @@ interface CardProps {
   description: string;
   price: string;
   key: number;
+  stock: number;
   onAddToCart: () => void;
 }
 
@@ -14,6 +15,7 @@ const ProductTile = ({
   title,
   description,
   price,
+  stock,
   onAddToCart,
 }: CardProps) => {
   return (
@@ -22,6 +24,7 @@ const ProductTile = ({
       <div className="p-4">
         <h2 className="text-xl font-semibold mb-2 text-black">{title}</h2>
         <p className="text-gray-600">{description}</p>
+        <p className= "text-gray-600">Stock: {stock}</p>
         <div className="mt-4 flex items-center justify-between">
           <button
             onClick={onAddToCart}

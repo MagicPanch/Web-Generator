@@ -1,8 +1,8 @@
-from mongoengine import Document, StringField, DictField
+from mongoengine import Document, StringField
 
 
 class InformativeSection(Document):
     id = StringField(primary_key=True)
     type = StringField(required=True)
     title = StringField(required=True)
-    text = DictField(required=False)
+    text = StringField(required=False)

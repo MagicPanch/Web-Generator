@@ -13,6 +13,7 @@ export interface ItemInterface {
   desc: string;
   price: string;
   key: number;
+  stock: number;
 }
 
 export interface CartItemInterface {
@@ -46,22 +47,42 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({
     return storedCart ? JSON.parse(storedCart) : [];
   });
 
-  const addToCart = (item: ItemInterface) => {
-    setCart((prevCart) => {
-      const existingCartItem = prevCart.find(
-        (cartItem) => cartItem.item.key === item.key
-      );
-      if (existingCartItem) {
+
+
+const addToCart = (item: ItemInterface) => {
+  setCart((prevCart) => {
+    const existingCartItem = prevCart.find(
+      (cartItem) => cartItem.item.key === item.key
+    );
+
+    if (existingCartItem) {
+      if (existingCartItem.quantity < existingCartItem.item.stock) {
+        // Si el artículo ya está en el carrito y hay suficiente stock, aumenta la cantidad
         return prevCart.map((cartItem) =>
           cartItem.item.key === item.key
             ? { ...cartItem, quantity: cartItem.quantity + 1 }
             : cartItem
         );
       } else {
-        return [...prevCart, { item, quantity: 1 }];
+        // Si no hay suficiente stock, muestra una alerta y retorna el carrito sin cambios
+        alert('No hay suficiente stock disponible');
+        return prevCart;
       }
-    });
-  };
+    } else {
+      if (item.stock > 0) {
+        // Si el artículo no está en el carrito y hay stock, añádelo con cantidad 1
+        return [...prevCart, { item, quantity: 1 }];
+      } else {
+        // Si no hay stock disponible, muestra una alerta y retorna el carrito sin cambios
+        alert('No hay suficiente stock disponible');
+        return prevCart;
+      }
+    }
+  });
+};
+
+// Ejemplo de uso de la función
+// addToCart({ key: 'product-key', name: 'Product Name', stock: 5 });
 
   const removeFromCart = (item: ItemInterface) => {
     setCart((prevCart) => {

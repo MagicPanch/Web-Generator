@@ -193,6 +193,30 @@ class ReactGenerator:
             file.close()
 
     @staticmethod
+    def modificarSectionInformativa(nombre, address, texto):
+        # genero component nuevo
+        textSectionNew = f"""import React from "react";
+                const {nombre} = () => {{        
+                return (
+                <section className="h-screen bg-blue-300 flex flex-col  items-center">
+                <div className="max-w-screen  p-4  px-40">
+                    <h1 className="font-bold text-2xl mb-4">
+                        {nombre}
+                    </h1>
+                    <p>
+                        {texto}
+                    </p>
+                </div>
+                </section>
+                );
+                }};
+
+                export default {nombre};
+                """
+        with open(address + "\components\\" + nombre + ".tsx", "w", encoding="utf-8") as file:
+            file.write(textSectionNew)
+
+    @staticmethod
     def agregarSectionInformativa(nombre,address,texto):
         #data nombre  y Folder address
         #abrir json de secciones

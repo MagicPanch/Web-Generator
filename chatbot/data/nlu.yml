@@ -56,7 +56,7 @@ nlu:
 - intent: decir_texto_informativa
   examples: |
     - ###Desde nuestra fundación en 2010, hemos trabajado incansablemente para ofrecer productos de la más alta calidad a nuestros clientes. Nuestra pasión por la innovación y el compromiso con la excelencia nos han convertido en un referente en la industria###
-    - ###¿Cómo puedo realizar un pedido?##Para realizar un pedido, simplemente visita nuestra tienda en línea, elige los productos que deseas y sigue las instrucciones para completar la compra. Si necesitas ayuda, nuestro equipo de soporte está disponible para asistirte.##¿Cuáles son las opciones de envío?##Ofrecemos varias opciones de envío para adaptarnos a tus necesidades, incluyendo envío estándar y express. Consulta nuestra página de Envío y Entrega para más detalles.## ###
+    - ### Texto super interesante e informativo sobre esta maravillosa página creada por el chatbot WebGenerator del grupo Design Label ###
 
 - intent: agregar_producto
   examples: |
@@ -160,6 +160,13 @@ nlu:
     - que sea [#275c29](color)
     - lo quiero [#ffffff](color)
     - que sea [#000000](color)
+    - [#071d40](color)
+    - [#1f437d](color)
+    - [#91bd8a](color)
+    - [#a6149c](color)
+    - [#120e12](color)
+    - [#bfbebd](color)
+    - #fa2100](color)
 
 - intent: decir_mail
   examples: |

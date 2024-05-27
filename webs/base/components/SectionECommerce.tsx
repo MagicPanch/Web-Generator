@@ -12,7 +12,7 @@ const SectionECommerce = () => {
   const { addToCart } = useCart();
   const [showMessage, setShowMessage] = useState(false);
   const [products, setProducts] = useState<ItemInterface[]>([]);
-  
+
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -23,7 +23,7 @@ const SectionECommerce = () => {
         console.error("Error fetching products:", error);
       }
     };
-    
+
     fetchProducts();
   }, []);
 
@@ -52,6 +52,7 @@ const SectionECommerce = () => {
                 title={item.name}
                 description={item.desc}
                 price={item.price}
+                stock={item.stock}
                 onAddToCart={() => handleAddToCart(item)}
               />
             ))}

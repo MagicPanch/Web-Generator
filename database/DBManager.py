@@ -210,13 +210,13 @@ class DBManager(object):
             raise Exception("La pagina " + str(page_name) + " no existe o no te pertenece")
 
 
-    def updt_inf_section(self, user_id, page_name, section_title, inf_section):
+    def updt_inf_section(self, user_id, page_name, section_title, section_text):
         page_id = user_id + '-' + page_name
         page = Page.objects(id=page_id).first()
         if page:
             old_section_id = page_id + '-' + section_title
             old_section = InformativeSection.objects(id=old_section_id).first()
-            new_section = InformativeSection(id=page_id + '-' + inf_section.get_title(), type="informativa", title=inf_section.get_title(), text=inf_section.get_text())
+            new_section = InformativeSection(id=page_id + '-' + section_title, type="informativa", title=section_title, text=section_text)
             new_section.save()
             page.sections = [new_section if section.id == old_section_id else section for section in page.sections]
             page.lastModificationDate = datetime.datetime.now()
@@ -247,7 +247,7 @@ class DBManager(object):
             if collection:
                 product = {
                     "key": p_id,
-                    "stock": cant,
+                    "stock": int(cant),
                     "name": title,
                     "desc": desc,
                     "price": precio,

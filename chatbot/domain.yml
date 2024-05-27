@@ -161,7 +161,7 @@ slots:
     type: text
     mappings:
       - type: from_entity
-        entity: mail
+        entity: ubicacion
 
   ubicacion_footer:
     type: text
@@ -193,13 +193,6 @@ slots:
       - type: custom
 
   creando_pagina:
-    type: bool
-    influence_conversation: true
-    initial_value: false
-    mappings:
-      - type: custom
-
-  running_dev:
     type: bool
     influence_conversation: true
     initial_value: false
@@ -381,6 +374,13 @@ slots:
     mappings:
       - type: custom
 
+  pregunta_nombre_informativa:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: custom
+
   pide_text_informativa:
     type: bool
     influence_conversation: true
@@ -461,9 +461,6 @@ responses:
 
   utter_funcionalidad:
   - text: Por el momento puedo crear una pagina y permitirte correrla o detenerla.
-
-  utter_avisame:
-    - text: Perfecto, cualquier cosa que necesites no dudes en pedirmelo.
 
   utter_me_alegro:
   - text: Muchas gracias!

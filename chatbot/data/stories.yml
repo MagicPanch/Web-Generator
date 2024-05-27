@@ -199,7 +199,6 @@ stories:
     - action: action_crear_pagina  #Aca se crea el proyecto y se guarda la pagina en la DB. Posteriormente se ejecuta en modo DEV
     - slot_was_set:
         - creando_pagina: false
-        - running_dev: true
 
 - story: crear pagina conflicto nombre
   steps:
@@ -214,7 +213,6 @@ stories:
     - action: action_crear_pagina  #Aca se crea el proyecto y se guarda la pagina en la DB. Posteriormente se ejecuta en modo DEV
     - slot_was_set:
         - creando_pagina: false
-        - running_dev: true
 
 ## SECCION
 
@@ -255,7 +253,7 @@ stories:
     - slot_was_set:
       - componente: seccion
       - creando_seccion_informativa: true
-      -
+      - pregunta_nombre_informativa: true
     - or:
       - intent: decir_nombre_informativa
       - intent: despues_te_digo
@@ -268,75 +266,14 @@ stories:
     - slot_was_set:
       - componente: seccion
       - creando_seccion_informativa: true
+      - pregunta_nombre_informativa: false
       - pide_text_informativa: true
     - intent: decir_texto_informativa
     - action: action_crear_informativa_3
-    - checkpoint: crear_informativa_2
-
-- story: crear seccion informativa 3 (envia imagen)
-  steps:
-    - checkpoint: crear_informativa_2
     - slot_was_set:
-      - componente: seccion
-      - creando_seccion_informativa: true
-      - pide_img_informativa: true
-    - intent: enviar_imagen
-    - action: action_recibir_imagen
-    - slot_was_set:
-      - componente: seccion
-      - creando_seccion_informativa: true
-      - pregunta_otra_imagen_seccion_informativa: true
-    - checkpoint: crear_informativa_3.1
-
-- story: crear seccion informativa 3 (envia otra imagen)
-  steps:
-    - checkpoint: crear_informativa_3.1
-    - slot_was_set:
-      - componente: seccion
-      - creando_seccion_informativa: true
-      - pregunta_otra_imagen_seccion_informativa: true
-    - intent: enviar_imagen
-    - action: action_recibir_imagen
-    - slot_was_set:
-      - componente: seccion
-      - creando_seccion_informativa: true
-      - pregunta_otra_imagen_seccion_informativa: true
-    - checkpoint: crear_informativa_3.1
-
-- story: crear seccion informativa 3 (no envia otra imagen)
-  steps:
-    - checkpoint: crear_informativa_3.1
-    - slot_was_set:
-      - componente: seccion
-    - slot_was_set:
-      - creando_seccion_informativa: true
-      - pregunta_otra_imagen_seccion_informativa: true
-    - intent: denegar
-    - action: action_recibir_imagen
-    - slot_was_set:
-      - componente: seccion
-      - creando_seccion_informativa: true
-      - pregunta_otra_imagen_seccion_informativa: false
-    - action: action_crear_informativa_4
-    - slot_was_set:
+      - creando_seccion: false
       - creando_seccion_informativa: false
-
-- story: crear seccion informativa 3 (no envia imagen)
-  steps:
-    - checkpoint: crear_informativa_2
-    - slot_was_set:
-      - componente: seccion
-      - creando_seccion_informativa: true
-      - pide_img_informativa: true
-    - intent: denegar
-    - action: action_recibir_imagen
-    - slot_was_set:
-      - componente: seccion
-      - creando_seccion_informativa: true
-      - pregunta_otra_imagen_seccion_informativa: false
-    - action: action_crear_informativa_4
-    - slot_was_set:
-      - creando_seccion_informativa: false
+      - pide_text_informativa: false
 
 # EDICION
 
@@ -490,88 +427,14 @@ stories:
     - slot_was_set:
       - componente: seccion
       - editando_seccion_informativa: true
-    - or:
-      - intent: decir_nombre_informativa
-      - intent: denegar
-    - action: action_modificar_informativa_2
-    - checkpoint: editar_informativa_1
-
-- story: modificar seccion informativa 2
-  steps:
-    - checkpoint: editar_informativa_1
-    - slot_was_set:
-      - componente: seccion
-      - editando_seccion_informativa: true
       - pide_text_informativa: true
     - or:
       - intent: decir_texto_informativa
       - intent: denegar
-    - action: action_modificar_informativa_3
-    - checkpoint: editar_informativa_2
-
-- story: modificar seccion informativa 3 (envia imagen)
-  steps:
-    - checkpoint: editar_informativa_2
-    - slot_was_set:
-      - componente: seccion
-      - editando_seccion_informativa: true
-    - intent: enviar_imagen
-    - action: action_recibir_imagen
-    - slot_was_set:
-      - componente: seccion
-      - editando_seccion_informativa: true
-      - pregunta_otra_imagen_seccion_informativa: true
-    - checkpoint: editar_informativa_3.1
-
-- story: modificar seccion informativa 3 (envia otra imagen)
-  steps:
-    - checkpoint: editar_informativa_3.1
-    - slot_was_set:
-      - componente: seccion
-      - editando_seccion_informativa: true
-      - pregunta_otra_imagen_seccion_informativa: true
-    - intent: enviar_imagen
-    - action: action_recibir_imagen
-    - slot_was_set:
-      - componente: seccion
-      - editando_seccion_informativa: true
-      - pregunta_otra_imagen_seccion_informativa: true
-    - checkpoint: editar_informativa_3.1
-
-- story: modificar seccion informativa 3 (no envia otra imagen)
-  steps:
-    - checkpoint: editar_informativa_3.1
-    - slot_was_set:
-      - componente: seccion
-    - slot_was_set:
-      - editando_seccion_informativa: true
-      - pregunta_otra_imagen_seccion_informativa: true
-    - intent: denegar
-    - action: action_recibir_imagen
-    - slot_was_set:
-      - componente: seccion
-      - editando_seccion_informativa: true
-      - pregunta_otra_imagen_seccion_informativa: false
-    - action: action_modificar_informativa_4
+    - action: action_modificar_informativa_2
     - slot_was_set:
       - editando_seccion_informativa: false
-
-- story: modificar seccion informativa 3 (no envia imagen)
-  steps:
-    - checkpoint: editar_informativa_2
-    - slot_was_set:
-      - componente: seccion
-    - slot_was_set:
-      - editando_seccion_informativa: true
-    - intent: denegar
-    - action: action_recibir_imagen
-    - slot_was_set:
-      - componente: seccion
-      - editando_seccion_informativa: true
-      - pregunta_otra_imagen_seccion_informativa: false
-    - action: action_modificar_informativa_4
-    - slot_was_set:
-      - editando_seccion_informativa: false
+      - pide_text_informativa: false
 
 ### E-COMMERCE
 
@@ -605,6 +468,7 @@ stories:
     - intent: enviar_imagen
     - action: action_recibir_imagen
     - slot_was_set:
+      - pide_img_prod: false
       - agregando_productos: true
       - pregunta_carga: true
 
@@ -617,6 +481,7 @@ stories:
     - intent: denegar
     - action: action_recibir_imagen
     - slot_was_set:
+      - pide_img_prod: false
       - agregando_productos: true
       - pregunta_carga: true
 
