@@ -36,11 +36,16 @@ class ActionCapturarCreacion(Action):
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         global dbm
         print("(" + threading.current_thread().getName() + ") " + "----ACTION CAPTURAR CREACION----")
-        tuto = dbm.get_user_tutorial(tracker.sender_id)
+        user_id = tracker.sender_id
+        tuto = dbm.get_user_tutorial(user_id)
         if tuto:
             seccion = tracker.get_slot('componente')
             if seccion:
-                return [FollowupAction("action_capturar_tipo_seccion"), SlotSet("creando_seccion", True)]
+                pages = dbm.get_user_pages(user_id)
+                if len(pages) > 0:
+                    return [FollowupAction("action_capturar_tipo_seccion"), SlotSet("creando_seccion", True)]
+                else:
+                    dispatcher.utter_message(text="Antes de crear secciones debes crear una página")
             else:
                 return [FollowupAction("action_preguntar_nombre_pagina"), SlotSet("creando_pagina", True)]
         else:
@@ -265,78 +270,93 @@ class ActionCapturarEdicion(Action):
         user_id = tracker.sender_id
         tuto = dbm.get_user_tutorial(user_id)
         if tuto:
-            page_name = tracker.get_slot('page_name')
-            print("(" + threading.current_thread().getName() + ") " + "--------pagina: ", page_name)
-            if page_name:
-            # Hay pagina
-                page_doc = dbm.get_page(user_id, page_name)
-                print("(" + threading.current_thread().getName() + ") " + "--------page_doc: ", page_doc)
-                if not page_doc:
-                # Esa pagina no pertenece al usuario
-                    message = "La pagina que estas intentando modificar no te pertenece. Te recuerdo que tus paginas son: "
-                    pags = dbm.get_user_pages(user_id)
-                    for pag in pags:
-                        message += str(pag.name) + "\n"
-                    dispatcher.utter_message(text=message)
-                    return [SlotSet("pregunta_nombre", True)]
-                else:
-                # La pagina es del usuario
-                    if pgm.is_alive(user_id, page_name):
-                    # La pagina esta viva
-                        page_obj = pgm.get_page(user_id, page_name)
-                        if page_obj.is_running():
-                            pgm.switch_dev(user_id, page_name)
-                        dispatcher.utter_message(text="Tu pagina se encuentra en modo edición. Podrás visualizar los cambios que realices en: " + page_obj.get_page_address())
-                        dispatcher.utter_message(text="Si la pagina te solicita una contraseña ingresa: " + pgm.get_tunnel_password())
-                        if not page_obj.is_running_dev():
-                            pgm.run_dev(user_id, page_name)
+            pages = dbm.get_user_pages(user_id)
+            if len(pages) > 0:
+                page_name = tracker.get_slot('page_name')
+                print("(" + threading.current_thread().getName() + ") " + "--------pagina: ", page_name)
+                if page_name:
+                # Hay pagina
+                    page_doc = dbm.get_page(user_id, page_name)
+                    print("(" + threading.current_thread().getName() + ") " + "--------page_doc: ", page_doc)
+                    if not page_doc:
+                    # Esa pagina no pertenece al usuario
+                        message = "La pagina que estas intentando modificar no te pertenece. Te recuerdo que tus paginas son: "
+                        pags = dbm.get_user_pages(user_id)
+                        for pag in pags:
+                            message += str(pag.name) + "\n"
+                        dispatcher.utter_message(text=message)
+                        return [SlotSet("pregunta_nombre", True)]
+                    else:
+                    # La pagina es del usuario
+                        if pgm.is_alive(user_id, page_name):
+                        # La pagina esta viva
+                            page_obj = pgm.get_page(user_id, page_name)
+                            if page_obj.is_running():
+                                pgm.switch_dev(user_id, page_name)
                             dispatcher.utter_message(text="Tu pagina se encuentra en modo edición. Podrás visualizar los cambios que realices en: " + page_obj.get_page_address())
                             dispatcher.utter_message(text="Si la pagina te solicita una contraseña ingresa: " + pgm.get_tunnel_password())
-                    else:
-                    # La pagina no está viva, hay que recuperar sus datos de la db
-                        page_obj = pgm.add_page(user_id, page_name)
-                        pgm.run_dev(user_id, page_name)
-                componente = tracker.get_slot('componente')
-                print("(" + threading.current_thread().getName() + ") " + "--------componente: ", componente)
-                if componente:
-                    if componente.lower() == "encabezado":
-                        return [FollowupAction("action_preguntar_color_encabezado"), SlotSet("pregunta_componente", False),
-                                SlotSet("pregunta_nombre", False), SlotSet("pregunta_edicion", False)]
-                    elif componente.lower() == "footer":
-                        return [FollowupAction("action_preguntar_mail_footer"), SlotSet("pregunta_componente", False),
-                                SlotSet("pregunta_nombre", False), SlotSet("pregunta_edicion", False)]
-                    elif componente.lower() == "seccion":
-                    # Va a editar una seccion
-                        tipo_seccion = tracker.get_slot('tipo_seccion')
-                        print("(" + threading.current_thread().getName() + ") " + "--------tipo_seccion: ", tipo_seccion)
-                        nombre_seccion = tracker.get_slot('nombre_informativa')
-                        print("(" + threading.current_thread().getName() + ") " + "--------nombre_informativa: ", nombre_seccion)
-                        secciones = page_obj.get_sections_name()
-                        if len(secciones) > 0:
-                        # La pagina tiene secciones
-                            if tipo_seccion.lower() == "e-commerce":
-                                if page_obj.has_ecomm_section():
-                                    return [SlotSet("agregando_productos", True), FollowupAction("action_pedir_productos"), SlotSet("pregunta_componente", False), SlotSet("pregunta_nombre", False), SlotSet("pregunta_edicion", False)]
-                                else:
-                                    dispatcher.utter_message(text="La página " + str(page_name) + " no cuenta con una sección e-commerce")
-                                    return [SlotSet("pregunta_componente", False), SlotSet("pregunta_nombre", False), SlotSet("pregunta_edicion", False)]
-                            else:
-                                if nombre_seccion:
-                                    if nombre_seccion.lower() in secciones:
-                                        return [SlotSet("nombre_seccion_editando", nombre_seccion), FollowupAction("action_modificar_informativa_1"), SlotSet("pregunta_componente", False),  SlotSet("pregunta_nombre", False), SlotSet("pregunta_edicion", False)]
-                                    else:
-                                        dispatcher.utter_message(text=str(nombre_seccion) + " no es un tipo de seccion válido. Te recuerdo que las secciones a crear son: \n E-Commerce \n Informativa")
-                                        return [SlotSet("pregunta_componente", True), SlotSet("pregunta_seccion", True)]
-                                else:
-                                    message = str(tipo_seccion) + " no es un tipo de seccion válido. Te recuerdo que las secciones de tu página son:\n"
-                                    for seccion in secciones:
-                                        message += seccion + "\n"
-                                    dispatcher.utter_message(text=message)
-                                    return [SlotSet("pregunta_componente", True), SlotSet("pregunta_seccion", True)]
+                            if not page_obj.is_running_dev():
+                                pgm.run_dev(user_id, page_name)
+                                dispatcher.utter_message(text="Tu pagina se encuentra en modo edición. Podrás visualizar los cambios que realices en: " + page_obj.get_page_address())
+                                dispatcher.utter_message(text="Si la pagina te solicita una contraseña ingresa: " + pgm.get_tunnel_password())
                         else:
-                        # La pagina no tiene secciones
-                            dispatcher.utter_message(text="La pagina " + page_doc.name + " no cuenta con ninguna sección, por lo que antes deberás crear una.")
-                            return [FollowupAction("action_capturar_tipo_seccion")]
+                        # La pagina no está viva, hay que recuperar sus datos de la db
+                            page_obj = pgm.add_page(user_id, page_name)
+                            pgm.run_dev(user_id, page_name)
+                    componente = tracker.get_slot('componente')
+                    print("(" + threading.current_thread().getName() + ") " + "--------componente: ", componente)
+                    if componente:
+                        if componente.lower() == "encabezado":
+                            return [FollowupAction("action_preguntar_color_encabezado"), SlotSet("pregunta_componente", False),
+                                    SlotSet("pregunta_nombre", False), SlotSet("pregunta_edicion", False)]
+                        elif componente.lower() == "footer":
+                            return [FollowupAction("action_preguntar_mail_footer"), SlotSet("pregunta_componente", False),
+                                    SlotSet("pregunta_nombre", False), SlotSet("pregunta_edicion", False)]
+                        elif componente.lower() == "seccion":
+                        # Va a editar una seccion
+                            tipo_seccion = tracker.get_slot('tipo_seccion')
+                            print("(" + threading.current_thread().getName() + ") " + "--------tipo_seccion: ", tipo_seccion)
+                            nombre_seccion = tracker.get_slot('nombre_informativa')
+                            print("(" + threading.current_thread().getName() + ") " + "--------nombre_informativa: ", nombre_seccion)
+                            secciones = page_obj.get_sections_name()
+                            if len(secciones) > 0:
+                            # La pagina tiene secciones
+                                if tipo_seccion.lower() == "e-commerce":
+                                    if page_obj.has_ecomm_section():
+                                        return [SlotSet("agregando_productos", True), FollowupAction("action_pedir_productos"), SlotSet("pregunta_componente", False), SlotSet("pregunta_nombre", False), SlotSet("pregunta_edicion", False)]
+                                    else:
+                                        dispatcher.utter_message(text="La página " + str(page_name) + " no cuenta con una sección e-commerce")
+                                        return [SlotSet("pregunta_componente", False), SlotSet("pregunta_nombre", False), SlotSet("pregunta_edicion", False)]
+                                else:
+                                    if nombre_seccion:
+                                        if nombre_seccion.lower() in secciones:
+                                            return [SlotSet("nombre_seccion_editando", nombre_seccion), FollowupAction("action_modificar_informativa_1"), SlotSet("pregunta_componente", False),  SlotSet("pregunta_nombre", False), SlotSet("pregunta_edicion", False)]
+                                        else:
+                                            dispatcher.utter_message(text=str(nombre_seccion) + " no es un tipo de seccion válido. Te recuerdo que las secciones a crear son: \n E-Commerce \n Informativa")
+                                            return [SlotSet("pregunta_componente", True), SlotSet("pregunta_seccion", True)]
+                                    else:
+                                        message = str(tipo_seccion) + " no es un tipo de seccion válido. Te recuerdo que las secciones de tu página son:\n"
+                                        for seccion in secciones:
+                                            message += seccion + "\n"
+                                        dispatcher.utter_message(text=message)
+                                        return [SlotSet("pregunta_componente", True), SlotSet("pregunta_seccion", True)]
+                            else:
+                            # La pagina no tiene secciones
+                                dispatcher.utter_message(text="La pagina " + page_doc.name + " no cuenta con ninguna sección, por lo que antes deberás crear una.")
+                                return [FollowupAction("action_capturar_tipo_seccion")]
+                else:
+                # No hay página
+                    if len(pages) > 0:
+                        message = "¿Qué página te gustaría modificar? Te recuerdo que tus páginas son:\n"
+                        for page in pages:
+                            message += str(page.name) + "\n"
+                    else:
+                        message = "Antes de realizar modificaciones debes crear una página"
+                    dispatcher.utter_message(text=message)
+                    return [SlotSet("pregunta_nombre", True)]
+            else:
+            # Tiene páginas
+                dispatcher.utter_message(text="Antes de realizar modificaciones debes crear una página")
         else:
             dispatcher.utter_message(text="Para modificar una pagina primero debes completar el tutorial. ¿Deseas hacerlo ahora?")
             return [SlotSet("pregunta_tutorial", True)]
@@ -662,50 +682,63 @@ class ActionPedirProductos(Action):
         global dbm, tbm
         user_id = tracker.sender_id
         page_name = tracker.get_slot("page_name")
-        if page_name:
-        # Hay página
-            page_doc = dbm.get_page(user_id, page_name)
-            if page_doc:
-            # Es del usuario
-                if page_doc.has_ecomm_section:
-                # Tiene sección ecommerce
-                    print("(" + threading.current_thread().getName() + ") " + "----ACTION PEDIR PRODUCTOS----")
-                    message = "Podes agregar los productos de a uno o cargar múltiples productos en un archivo de datos y enviármelo. Si optas por la carga mediante archivo, completa la siguiente planilla agregando los datos en una nueva fila. En los campos \"multimedia\" coloca el link a las imágenes o videos del producto"
-                    dispatcher.utter_message(text=message)
-                    utils.go_to_main_dir()
-                    tbm.send_file_to_user(user_id, CONSTANTS.TEMPLATE_PRODUCTOS_DIR)
-                    dispatcher.utter_message(text="Si vas a cargar los productos de a uno voy a necesitar los siguientes datos:")
-                    dispatcher.utter_message(text="Cantidad:\nTitulo:\nDescripción:\nPrecio:")
-                    return [SlotSet("agregando_productos", True), SlotSet("pregunta_carga", True), SlotSet("pregunta_nombre", False)]
+        tuto = dbm.get_user_tutorial(user_id)
+        if tuto:
+            pages = dbm.get_user_pages(user_id)
+            if len(pages) > 0:
+                if page_name:
+                # Hay página
+                    page_doc = dbm.get_page(user_id, page_name)
+                    if page_doc:
+                    # Es del usuario
+                        if page_doc.has_ecomm_section:
+                        # Tiene sección ecommerce
+                            print("(" + threading.current_thread().getName() + ") " + "----ACTION PEDIR PRODUCTOS----")
+                            message = "Podes agregar los productos de a uno o cargar múltiples productos en un archivo de datos y enviármelo. Si optas por la carga mediante archivo, completa la siguiente planilla agregando los datos en una nueva fila. En los campos \"multimedia\" coloca el link a las imágenes o videos del producto"
+                            dispatcher.utter_message(text=message)
+                            utils.go_to_main_dir()
+                            tbm.send_file_to_user(user_id, CONSTANTS.TEMPLATE_PRODUCTOS_DIR)
+                            dispatcher.utter_message(text="Si vas a cargar los productos de a uno voy a necesitar los siguientes datos:")
+                            dispatcher.utter_message(text="Cantidad:\nTitulo:\nDescripción:\nPrecio:")
+                            return [SlotSet("agregando_productos", True), SlotSet("pregunta_carga", True), SlotSet("pregunta_nombre", False)]
+                        else:
+                        # No tiene sección ecommerce
+                            message = "La página " + str(page_name) + " no tiene sección e-commerce."
+                            pages = dbm.get_user_pages(user_id, "ecommerce")
+                            if len(pages) > 0:
+                                message += " Tus páginas con dicha sección son:\n"
+                                for page in pages:
+                                    if page.has_ecomm_section:
+                                        message += str(page.name) + "\n"
+                            dispatcher.utter_message(text=message)
+                            return [SlotSet("agregando_productos", True), SlotSet("pregunta_nombre", True)]
+                    else:
+                    # No es del usuario
+                        message = "La página " + str(page_name) + " no te pertenece."
+                        if len(pages) > 0:
+                            message += " Te recuerdo que tus páginas con sección e-commerce son:\n"
+                            for page in pages:
+                                if page.has_ecomm_section:
+                                    message += str(page.name) + "\n"
+                        dispatcher.utter_message(text=message)
+                        return [SlotSet("agregando_productos", True), SlotSet("pregunta_nombre", True)]
                 else:
-                # No tiene sección ecommerce
-                    message = "La página " + str(page_name) + " no tiene sección e-commerce."
-                    pages = dbm.get_user_pages(user_id)
+                # No hay página
+                    pages = dbm.get_user_pages(user_id, "ecommerce")
                     if len(pages) > 0:
-                        message += " Tus páginas con dicha sección son:\n"
+                        message = "¿A qué página te gustaría agregar productos? Te recuerdo que tus páginas con sección e-commerce son:\n"
                         for page in pages:
                             if page.has_ecomm_section:
                                 message += str(page.name) + "\n"
+                    else:
+                        message = "No tienes ninguna página con una sección e-commerce."
                     dispatcher.utter_message(text=message)
                     return [SlotSet("agregando_productos", True), SlotSet("pregunta_nombre", True)]
             else:
-            # No es del usuario
-                pages = dbm.get_user_pages(user_id)
-                message = "La página " + str(page_name) + " no te pertenece. Te recuerdo que tus páginas con sección e-commerce son:\n"
-                for page in pages:
-                    if page.has_ecomm_section:
-                        message += str(page.name) + "\n"
-                dispatcher.utter_message(text=message)
-                return [SlotSet("agregando_productos", True), SlotSet("pregunta_nombre", True)]
+                dispatcher.utter_message(text="Para cargar productos primero debes crear una página")
         else:
-        # No hay página
-            pages = dbm.get_user_pages(user_id)
-            message = "¿A qué página te gustaría agregar productos? Te recuerdo que tus páginas con sección e-commerce son:\n"
-            for page in pages:
-                if page.has_ecomm_section:
-                    message += str(page.name) + "\n"
-            dispatcher.utter_message(text=message)
-            return [SlotSet("agregando_productos", True), SlotSet("pregunta_nombre", True)]
+            dispatcher.utter_message(text="Para cargar productos primero debes completar el tutorial. ¿Deseas hacerlo ahora?")
+            return [SlotSet("pregunta_tutorial", True)]
 
 class ActionCapturarProductoCargado(Action):
 
@@ -894,7 +927,7 @@ class ActionSaludoTelegram(Action):
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         global dbm
-        dispatcher.utter_message(text="DISCLAIMER: Por el momento me encuentro en desarrollo, por lo que si la conversación no fluye como se espera, enviar un mensaje con el comando \"/restart\" para reiniciar mis slots de contexto.")
+        dispatcher.utter_message(text="#### AVISO #### \nPor el momento me encuentro en desarrollo, por lo que si la conversación no fluye como se espera, envia un mensaje con el comando \"/restart\" para reiniciar mis slots de contexto.")
         now = datetime.datetime.now()
         hora = int(now.strftime("%H"))
         if (hora > 0) and (hora <= 12):

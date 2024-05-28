@@ -103,15 +103,24 @@ class DBManager:
             return None
 
     @staticmethod
-    def get_user_pages(user_id) -> List[Page]:
+    def get_user_pages(user_id, section=None) -> List[Page]:
         user = User.objects(id=user_id).first()
         if user:
             if len(user.paginas) > 0:
-                return user.paginas
+                if section is not None:
+                    output = []
+                    for page in user.paginas:
+                        sections = page.sections
+                        for section in sections:
+                            if section.name == section:
+                                output.append(page)
+                    return output
+                else:
+                    return user.paginas
             else:
-                return None
+                return []
         else:
-            return None
+            return []
 
     @staticmethod
     def was_compiled(user_id, page_name) -> bool:
