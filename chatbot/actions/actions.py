@@ -1,26 +1,31 @@
 import re
 import threading
-from io import BytesIO
-
+import datetime
 import pandas as pd
+from io import BytesIO
 from numpy import nan
 
+from resources import CONSTANTS, utils
+from database.DBManager import DBManager
+from generator.PageManager import PageManager
+from generator.ReactGenerator import ReactGenerator
+from generator.TelegramBotManager import TelegramBotManager
+from generator.objects.pages.Front import Front
 from generator.objects.sections.EcommerceSection import EcommerceSection
 from generator.objects.sections.InformativeSection import InformativeSection
-from generator.PageManager import PageManager
-from generator.TelegramBotManager import TelegramBotManager
-from generator.ReactGenerator import ReactGenerator
+
 from typing import Any, Text, Dict, List
 from rasa_sdk import Action, Tracker
 from rasa_sdk.executor import CollectingDispatcher
 from rasa_sdk.events import SlotSet, FollowupAction
-import datetime
-from database.DBManager import DBManager
-from resources import CONSTANTS, utils
 
 slots_crear_pagina = ['creando_pagina', 'pregunta_nombre']
 slots_crear_seccion = ['creando_seccion']
 creando_pagina = False
+dbm = DBManager()
+pgm = PageManager()
+rg = ReactGenerator()
+tbm = TelegramBotManager()
 
 #Actions Pagina
 class ActionCapturarCreacion(Action):
@@ -29,8 +34,8 @@ class ActionCapturarCreacion(Action):
         return "action_capturar_creacion"
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        global dbm
         print("(" + threading.current_thread().getName() + ") " + "----ACTION CAPTURAR CREACION----")
-        dbm = DBManager.get_instance()
         tuto = dbm.get_user_tutorial(tracker.sender_id)
         if tuto:
             seccion = tracker.get_slot('componente')
@@ -48,8 +53,8 @@ class ActionPreguntarNombrePagina(Action):
         return "action_preguntar_nombre_pagina"
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        global dbm
         print("(" + threading.current_thread().getName() + ") " + "----ACTION PREGUNTAR NOMBRE PAGINA----")
-        dbm = DBManager.get_instance()
         tuto = dbm.get_user_tutorial(tracker.sender_id)
         if tuto:
             dispatcher.utter_message(text="¿Como queres que se llame tu pagina? Por favor indica su nombre en el siguiente formato: www. nombre-pagina .com")
@@ -64,7 +69,7 @@ class ActionCrearPagina(Action):
         return "action_crear_pagina"
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        global creando_pagina
+        global creando_pagina, dbm, pgm
         print("(" + threading.current_thread().getName() + ") " + "----ACTION CREAR PAGINA----")
         print("(" + threading.current_thread().getName() + ") " + "--------page_name_slot: ", tracker.get_slot('page_name'))
         print("creando_pagina: ", creando_pagina)
@@ -81,8 +86,6 @@ class ActionCrearPagina(Action):
                     text="Repetime como queres que se llame tu página. Te recuerdo que el formato es: www. nombre-pagina .com")
                 return [SlotSet("creando_pagina", True), SlotSet("pregunta_nombre", True)]
             else:
-                dbm = DBManager.get_instance()
-                pgm = PageManager.get_instance()
                 if creando_pagina:
                     page = pgm.get_page(user_id, page_name)
                     message = "Tu pagina se encuentra en modo edición. Podrás visualizar los cambios que realices en: " + page.get_page_address()
@@ -121,11 +124,10 @@ class ActionEjecutarDev(Action):
         return "action_ejecutar_dev"
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        global creando_pagina
+        global creando_pagina, pgm
         print("(" + threading.current_thread().getName() + ") " + "----ACTION EJECUTAR DEV----")
         user_id = tracker.sender_id
         page_name = tracker.get_slot('page_name')
-        pgm = PageManager.get_instance()
 
         #Se espera a que el hilo finalice
         pgm.join_thread_exec(user_id, page_name)
@@ -150,9 +152,8 @@ class ActionEjecutarPagina(Action):
         return "action_ejecutar_pagina"
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        global dbm, pgm
         print("(" + threading.current_thread().getName() + ") " + "----ACTION EJECUTAR PAGINA----")
-        dbm = DBManager.get_instance()
-        pgm = PageManager.get_instance
         user_id = tracker.sender_id
         tuto = dbm.get_user_tutorial(user_id)
         if tuto:
@@ -220,11 +221,10 @@ class ActionEjecutarPagina(Action):
             return "action_detener_pagina"
 
         def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+            global dbm, pgm
             print("(" + threading.current_thread().getName() + ") " + "----ACTION DETENER PAGINA----")
             last_message_entities = tracker.get_latest_entity_values("text")
             print("(" + threading.current_thread().getName() + ") " + "--------last_message_entities: ", last_message_entities)
-            dbm = DBManager.get_instance()
-            pgm = PageManager.get_instance()
             user_id = tracker.sender_id
             tuto = dbm.get_user_tutorial(user_id)
             if tuto:
@@ -263,8 +263,8 @@ class ActionCapturarEdicion(Action):
         return "action_capturar_edicion"
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        global dbm
         print("(" + threading.current_thread().getName() + ") " + "----ACTION CAPTURAR EDICION----")
-        dbm = DBManager.get_instance()
         user_id = tracker.sender_id
         tuto = dbm.get_user_tutorial(user_id)
         if tuto:
@@ -376,14 +376,12 @@ class ActionRecibirImagen(Action):
         return "action_recibir_imagen"
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        global dbm, pgm, tbm
         print("(" + threading.current_thread().getName() + ") " + "----EN ACTION RECIBIR IMAGEN----")
         print("(" + threading.current_thread().getName() + ") " + "--------creando_encabezado ", tracker.get_slot("creando_encabezado"))
         print("(" + threading.current_thread().getName() + ") " + "--------creando_seccion_informativa ", tracker.get_slot("creando_seccion_informativa"))
         print("(" + threading.current_thread().getName() + ") " + "--------pregunta_otra_imagen_seccion_informativa ", tracker.get_slot("pregunta_otra_imagen_seccion_informativa"))
         print("(" + threading.current_thread().getName() + ") " + "--------last_message_intent: ", tracker.latest_message.get('intent').get('name'))
-        telegram_bot = TelegramBotManager.get_instance()
-        dbm = DBManager.get_instance()
-        pgm = PageManager.get_instance()
 
         # Verifica si el último mensaje contiene una imagen
         latest_message = tracker.latest_message
@@ -397,10 +395,10 @@ class ActionRecibirImagen(Action):
             else:
                 if tracker.get_slot("creando_encabezado"):
                     utils.go_to_main_dir()
-                    telegram_bot.download_image(page_path=page_path, subdir="components", image_id=image_id, image_name="logo.png")
+                    tbm.download_image(page_path=page_path, subdir="components", image_id=image_id, image_name="logo.png")
                 elif tracker.get_slot("creando_seccion_informativa"):
                     utils.go_to_main_dir()
-                    telegram_bot.download_image(page_path=page_path, subdir="sect_inf_images", image_id=image_id, image_name=(photo["file_unique_id"] + ".png"))
+                    tbm.download_image(page_path=page_path, subdir="sect_inf_images", image_id=image_id, image_name=(photo["file_unique_id"] + ".png"))
                 elif tracker.get_slot("agregando_productos"):
                     #Descargar imagen
                     image_url = telegram_bot.get_image_url(image_id=image_id)
@@ -443,11 +441,10 @@ class ActionCrearEncabezado(Action):
     def name(self) -> Text:
         return "action_crear_encabezado"
 
-    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker,
-            domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        global dbm, pgm, rg
         print("(" + threading.current_thread().getName() + ")" + "----EN ACTION CREAR ENCABEZADO----")
         print("(" + threading.current_thread().getName() + ") ", tracker.slots.items())
-        pgm = PageManager.get_instance()
         page_path = pgm.get_page_path(tracker.sender_id, tracker.get_slot('page_name'))
         print("(" + threading.current_thread().getName() + ")" + "--------page_path: ", page_path)
         color = tracker.get_slot('color_encabezado')
@@ -459,9 +456,8 @@ class ActionCrearEncabezado(Action):
             "colorTitulo": color
         }
         utils.go_to_main_dir()
-        ReactGenerator.generarHeader(dataHeader)
+        rg.generarHeader(dataHeader)
         print("-------------ENCABEZADO MODIFICADO-------------")
-        dbm = DBManager.get_instance()
         dbm.updt_modification_date(tracker.sender_id, tracker.get_slot('page_name'))
         dispatcher.utter_message(text="Podes ver los cambios que realizamos en el encabezado")
         return [SlotSet("creando_encabezado", False), SlotSet("componente", None)]
@@ -482,6 +478,7 @@ class ActionGuardarMailFooter(Action):
         return "action_guardar_mail_footer"
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        global dbm
         print("(" + threading.current_thread().getName() + ") " + "----ACTION GUARDAR MAIL FOOTER----")
         print("(" + threading.current_thread().getName() + ") ", tracker.slots.items())
         last_message_intent = tracker.latest_message.get('intent').get('name')
@@ -491,7 +488,6 @@ class ActionGuardarMailFooter(Action):
             mail = tracker.get_slot('mail')
             print("(" + threading.current_thread().getName() + ") " + "------------mail: ", mail)
             #Guardar el mail en la pagina
-            dbm = DBManager.get_instance()
             dbm.set_page_mail(tracker.sender_id, tracker.get_slot('page_name'), mail)
             dispatcher.utter_message(text="E-mail guardado.")
             return [SlotSet("mail_footer", mail), FollowupAction("utter_preguntar_ubicacion")]
@@ -509,6 +505,7 @@ class ActionGuardarUbicacionFooter(Action):
         return "action_guardar_ubicacion_footer"
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        global dbm
         print("(" + threading.current_thread().getName() + ") " + "----ACTION GUARDAR UBICACION FOOTER----")
         print("(" + threading.current_thread().getName() + ") ", tracker.slots.items())
         last_message_intent = tracker.latest_message.get('intent').get('name')
@@ -518,7 +515,6 @@ class ActionGuardarUbicacionFooter(Action):
             ubicacion = tracker.get_slot("ubicacion")
             print("(" + threading.current_thread().getName() + ") " + "------------ubicacion: ", ubicacion)
             #Guardar la ubicacion en la pagina
-            dbm = DBManager.get_instance()
             dbm.set_page_location(tracker.sender_id, tracker.get_slot('page_name'), ubicacion)
             dispatcher.utter_message(text="Ubicacion guardada.")
             return [SlotSet("ubicacion_footer", ubicacion), FollowupAction("action_crear_footer")]
@@ -536,9 +532,9 @@ class ActionCrearFooter(Action):
         return "action_crear_footer"
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        global pgm, rg
         print("(" + threading.current_thread().getName() + ") " + "----ACTION CREAR FOOTER----")
         print("(" + threading.current_thread().getName() + ") ", tracker.slots.items())
-        pgm = PageManager.get_instance()
         page_path = pgm.get_page_path(tracker.sender_id, tracker.get_slot('page_name'))
         mail = str(tracker.get_slot("mail_footer"))
         if not mail:
@@ -552,7 +548,7 @@ class ActionCrearFooter(Action):
             "ubicacion": ubicacion
         }
         utils.go_to_main_dir()
-        ReactGenerator.generarFooter(dataFooter)
+        rg.generarFooter(dataFooter)
         print("-------------FOOTER MODIFICADO-------------")
         dispatcher.utter_message(text="Podes ver los cambios que realizamos en el footer")
         return [SlotSet("creando_footer", False), SlotSet("componente", None)]
@@ -565,11 +561,10 @@ class ActionCapturarTipoSeccion(Action):
         return "action_capturar_tipo_seccion"
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        global dbm, pgm
         print("(" + threading.current_thread().getName() + ") " + "----ACTION CAPTURAR TIPO SECCION----")
         page_name = tracker.get_slot("page_name")
         print("(" + threading.current_thread().getName() + ") " + "--------page_name: ", page_name)
-        dbm = DBManager.get_instance()
-        pgm = PageManager.get_instance()
         if page_name:
             page_doc = dbm.get_page(tracker.sender_id, page_name)
             if not page_doc:
@@ -637,10 +632,10 @@ class ActionCrearEcommerce(Action):
         return "action_crear_ecommerce"
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        global dbm, pgm
         print("(" + threading.current_thread().getName() + ") " + "----ACTION CREAR SECCION E-COMMERCE----")
         user_id = tracker.sender_id
         page_name = tracker.get_slot("page_name")
-        pgm = PageManager.get_instance()
         page = pgm.get_page(user_id, page_name)
         seccion = page.get_section("ecommerce")
         if seccion:
@@ -656,8 +651,6 @@ class ActionCrearEcommerce(Action):
             dispatcher.utter_message(text=message)
             message = "Si la pagina te solicita una contraseña ingresa: " + pgm.get_tunnel_password()
             dispatcher.utter_message(text=message)
-            #ReactGenerator.generarEcommerce()
-            dbm = DBManager.get_instance()
             dbm.add_ecomm_section(user_id, page_name)
         return [SlotSet("pregunta_seccion", False), SlotSet("creando_seccion", False), SlotSet("componente", None)]
 
@@ -669,12 +662,12 @@ class ActionPedirProductos(Action):
         return "action_pedir_productos"
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        global tbm
         print("(" + threading.current_thread().getName() + ") " + "----ACTION PEDIR PRODUCTOS----")
-        telegram_bot = TelegramBotManager.get_instance()
         message = "Podes agregar los productos de a uno o cargar múltiples productos en un archivo de datos y enviármelo. Si optas por la carga mediante archivo, completa la siguiente planilla agregando los datos en una nueva fila. En los campos \"multimedia\" coloca el link a las imágenes o videos del producto"
         dispatcher.utter_message(text=message)
         utils.go_to_main_dir()
-        telegram_bot.send_file_to_user(tracker.sender_id, CONSTANTS.TEMPLATE_PRODUCTOS_DIR)
+        tbm.send_file_to_user(tracker.sender_id, CONSTANTS.TEMPLATE_PRODUCTOS_DIR)
         dispatcher.utter_message(text="Si vas a cargar los productos de a uno voy a necesitar los siguientes datos:")
         dispatcher.utter_message(text="Cantidad:\nTitulo:\nDescripción:\nPrecio:")
         return [SlotSet("pregunta_carga", True)]
@@ -685,19 +678,18 @@ class ActionCapturarProductoCargado(Action):
         return "action_capturar_producto_cargado"
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        global dbm, tbm
         print("(" + threading.current_thread().getName() + ") " + "----ACTION CAPTURAR PRODUCTO CARGADO----")
         # Verifica si el último mensaje contiene una imagen
         latest_message = tracker.latest_message
-        dbm = DBManager.get_instance()
         if 'document' in latest_message['metadata']['message']:
             error = False
             documento = latest_message['metadata']['message']['document']
-            telegram_bot = TelegramBotManager.get_instance()
             file_id = documento['file_id']
             if not documento:
                 error = True
             else:
-                file = telegram_bot.get_csv_file(file_id)
+                file = tbm.get_csv_file(file_id)
                 file_bytes = BytesIO()
                 file.download(out=file_bytes)
                 file_bytes.seek(0)
@@ -756,9 +748,9 @@ class ActionCrearInformativa2(Action):
         return "action_crear_informativa_2"
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        global pgm
         print("(" + threading.current_thread().getName() + ") " + "----ACTION CREAR SECCION INFORMATIVA 2----")
         print("(" + threading.current_thread().getName() + ") " + "--------page_name: ", tracker.get_slot('page_name'))
-        pgm = PageManager.get_instance()
         page = pgm.get_page(tracker.sender_id, tracker.get_slot('page_name'))
         nombre_informativa = "Informacion"
         last_message_intent = tracker.latest_message.get('intent').get('name')
@@ -778,10 +770,10 @@ class ActionCrearInformativa3(Action):
         return "action_crear_informativa_3"
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        global dbm, pgm, rg
         print("(" + threading.current_thread().getName() + ") " + "----ACTION CREAR SECCION INFORMATIVA 3----")
         user_id = tracker.sender_id
         page_name = tracker.get_slot('page_name')
-        pgm = PageManager.get_instance()
         last_user_message = str(tracker.latest_message.get('text'))
         text = last_user_message[3:len(last_user_message) - 3].strip()
         if tracker.get_slot("nombre_informativa"):
@@ -792,10 +784,9 @@ class ActionCrearInformativa3(Action):
         inf_section = page.get_section(nombre_informativa)
         inf_section.set_text(text)
         dispatcher.utter_message(text="Texto informativo guardado.")
-        dbm = DBManager.get_instance()
         dbm.add_inf_section(user_id, page_name, inf_section)
         utils.go_to_main_dir()
-        ReactGenerator.agregarSectionInformativa(nombre_informativa, pgm.get_page_path(user_id, page_name), inf_section.get_text())
+        rg.agregarSectionInformativa(nombre_informativa, pgm.get_page_path(user_id, page_name), inf_section.get_text())
         dispatcher.utter_message(text="Podrás ver la nueva sección en tu página")
         return [SlotSet("creando_seccion_informativa", False), SlotSet("pide_text_informativa", False), SlotSet("pregunta_seccion", False),
                 SlotSet("creando_seccion", False), SlotSet("componente", None)]
@@ -823,23 +814,21 @@ class ActionModificarInformativa2(Action):
         return "action_modificar_informativa_2"
 
 
-    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker,
-            domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        global dbm, pgm, rg
         print("(" + threading.current_thread().getName() + ") " + "----ACTION MODIFICAR SECCION INFORMATIVA 2----")
         user_id = tracker.sender_id
         page_name = tracker.get_slot('page_name')
         last_user_message = str(tracker.latest_message.get('text'))
         text = last_user_message[3:len(last_user_message) - 3].strip()
-        pgm = PageManager.get_instance()
         page = pgm.get_page(tracker.sender_id, tracker.get_slot('page_name'))
         nombre_informativa = tracker.get_slot("nombre_informativa")
         inf_section = page.get_section(nombre_informativa)
         inf_section.set_text(text)
         dispatcher.utter_message(text="Texto informativo guardado.")
-        dbm = DBManager.get_instance()
         dbm.updt_inf_section(user_id, page_name, nombre_informativa, text)
         utils.go_to_main_dir()
-        ReactGenerator.modificarSectionInformativa(nombre_informativa, pgm.get_page_path(), text)
+        rg.modificarSectionInformativa(nombre_informativa, pgm.get_page_path(), text)
         dispatcher.utter_message(text="Podrás ver la nueva sección en tu página")
         return [SlotSet("editando_seccion_informativa", False), SlotSet("pide_text_informativa", False)]
 
@@ -850,17 +839,15 @@ class ActionModificarInformativa4(Action):
         return "action_modificar_informativa_4"
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        global dbm, pgm
         print("(" + threading.current_thread().getName() + ") " + "----ACTION MODIFICAR SECCION INFORMATIVA 4----")
-        pgm = PageManager.get_instance()
         page = pgm.get_page(tracker.sender_id, tracker.get_slot('page_name'))
         if tracker.get_slot("nombre_informativa"):
             nombre_informativa = tracker.get_slot("nombre_informativa")
         else:
             nombre_informativa = tracker.get_slot("nombre_seccion_editando")
         inf_section = page.get_section(nombre_informativa)
-        dbm = DBManager.get_instance()
         dbm.updt_inf_section(tracker.sender_id, tracker.get_slot("page_name"), tracker.get_slot("nombre_seccion_editando"),  inf_section)
-        #ReactGenerator.generarSeccionInformativa()
         dispatcher.utter_message(text="Podrás ver la nueva sección en tu página")
         return [SlotSet("editando_seccion_informativa", False)]
 
@@ -870,8 +857,8 @@ class ActionSaludoTelegram(Action):
     def name(self) -> Text:
         return "action_saludo_telegram"
 
-    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker,
-            domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        global dbm
         now = datetime.datetime.now()
         hora = int(now.strftime("%H"))
         if (hora > 0) and (hora <= 12):
@@ -884,7 +871,6 @@ class ActionSaludoTelegram(Action):
         nombre = variable["from"]["first_name"]
         user_name = variable["from"].get("user_name", None)
         ide = tracker.sender_id
-        dbm = DBManager.get_instance()
         user_doc = dbm.get_user(ide)
         if user_doc:
         #El usuario ya existe
@@ -932,9 +918,8 @@ class ActionResponderPaginasPropias(Action):
         return "action_responder_paginas_propias"
 
 
-    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker,
-            domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        dbm = DBManager.get_instance()
+    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        global dbm
         pages = dbm.get_user_pages(tracker.sender_id)
         if pages:
             message = "Tus paginas son: \n"
@@ -1137,9 +1122,9 @@ class ActionTerminarTutorial(Action):
         return "action_terminar_tutorial"
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        global dbm
         print("(" + threading.current_thread().getName() + ") " + "----ACTION TERMINAR TUTORIAL----")
         dispatcher.utter_message(text="¡Felicitaciones " + str(tracker.get_slot("nombre_usuario")) + ", terminaste el tutorial! Ya estas listo para crear tu primera página web")
-        dbm = DBManager.get_instance()
         dbm.set_user_tutorial(tracker.sender_id)
         return [SlotSet("pregunta_4_confirmacion", False), SlotSet("pregunta_4_repetir_confirmacion", False), SlotSet("pregunta_tutorial", False), SlotSet("inicia_tutorial", False)]
 

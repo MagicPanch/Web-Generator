@@ -15,11 +15,14 @@ class ReactGenerator:
             cls._instance = ReactGenerator()
         return cls._instance
 
-    def __init__(self) -> None:
-        if ReactGenerator._instance is None:
-            ReactGenerator._instance = self
-        else:
-            raise Exception("No se puede crear otra instancia de ReactGenerator")
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super(ReactGenerator, cls).__new__(cls)
+        return cls._instance
+
+    def __init__(self):
+        if not hasattr(self, '_initialized'):  # Comprobar si ya está inicializado
+            self._initialized = True  # Marcar como inicializado
 
     @staticmethod
     def set_collection(page_path, collection):
@@ -206,7 +209,7 @@ class ReactGenerator:
 
                 export default {nombre};
                 """
-        with open(address + "\components\\" + nombre + ".tsx", "w", encoding="utf-8") as file:
+        with open(address + "\\components\\" + nombre + ".tsx", "w", encoding="utf-8") as file:
             file.write(textSectionNew)
 
     @staticmethod
@@ -244,7 +247,7 @@ class ReactGenerator:
 
         export default {nombre};
         """
-        with open(address+"\components\\"+nombre+".tsx", "w", encoding="utf-8") as file:
+        with open(address+"\\components\\"+nombre+".tsx", "w", encoding="utf-8") as file:
             file.write(textSectionNew)
             
         #genero page
@@ -297,7 +300,7 @@ class ReactGenerator:
             );
             }}
         """
-        with open(address+"\src\\app\\page.tsx", "w", encoding="utf-8") as file:
+        with open(address+"\\src\\app\\page.tsx", "w", encoding="utf-8") as file:
             file.write(textPage)
             
         #genero navBar
@@ -337,5 +340,5 @@ class ReactGenerator:
             export default NavBar;
 
         """
-        with open(address+"\components\\NavBar.tsx", "w", encoding="utf-8") as file:
+        with open(address+"\\components\\NavBar.tsx", "w", encoding="utf-8") as file:
             file.write(textNavBar)       

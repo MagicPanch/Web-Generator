@@ -18,31 +18,33 @@ class TelegramBotManager:
             cls._instance = TelegramBotManager()
         return cls._instance
 
-    def __init__(self) -> None:
-        if TelegramBotManager._instance is None:
-            TelegramBotManager._instance = self
-            TelegramBotManager._bot = Bot(token=CONSTANTS.TELEGRAM_BOT_TOKEN)
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super(TelegramBotManager, cls).__new__(cls)
+        return cls._instance
 
-        else:
-            raise Exception("No se puede crear otra instancia de TelegranBotManager")
+    def __init__(self):
+        if not hasattr(self, '_initialized'):  # Comprobar si ya está inicializado
+            self._instance = self
+            self._bot = Bot(token=CONSTANTS.TELEGRAM_BOT_TOKEN)
+            self._initialized = True  # Marcar como inicializado
 
-    @staticmethod
-    def download_image(page_path, subdir, image_id, image_name):
-        file = TelegramBotManager._bot.get_file(image_id)
+    @classmethod
+    def download_image(cls, page_path, subdir, image_id, image_name):
+        file = cls._bot.get_file(image_id)
         download_path = Path(os.getcwd())
         download_path = download_path.joinpath(page_path).joinpath(subdir).joinpath(image_name)
-
         file.download(custom_path=download_path)
 
-    @staticmethod
-    def get_csv_file(file_id) -> File:
-        file = TelegramBotManager._bot.get_file(file_id)
+    @classmethod
+    def get_csv_file(cls, file_id) -> File:
+        file = cls._bot.get_file(file_id)
         return file
 
-    @staticmethod
-    def send_file_to_user(user_id, file_path):
+    @classmethod
+    def send_file_to_user(cls, user_id, file_path):
         with open(file_path, "rb") as file:
-            TelegramBotManager._bot.send_document(chat_id= user_id, document=file)
+            cls._bot.send_document(chat_id=user_id, document=file)
 
     @staticmethod
     def get_image_url(image_id) -> str:

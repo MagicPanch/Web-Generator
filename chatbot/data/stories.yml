@@ -238,7 +238,6 @@ stories:
 
 - story: crear seccion informativa 1
   steps:
-    - checkpoint: crear_seccion
     - slot_was_set:
       - componente: seccion
       - creando_seccion_informativa: true
@@ -274,7 +273,7 @@ stories:
 
 - story: editar con pagina y sin componente
   steps:
-    - intent: agregar_producto
+    - intent: modificar_pagina
     - action: action_capturar_edicion
     - slot_was_set:
       - pregunta_componente: true
@@ -314,9 +313,7 @@ stories:
 
 - story: editar pagina sin tutorial (si)
   steps:
-    - or:
-      - intent: modificar_pagina
-      - intent: agregar_producto
+    - intent: modificar_pagina
     - action: action_capturar_edicion
     - slot_was_set:
         - pregunta_tutorial: true
@@ -328,9 +325,7 @@ stories:
 
 - story: editar pagina sin tutorial (no)
   steps:
-    - or:
-      - intent: modificar_pagina
-      - intent: agregar_producto
+    - intent: modificar_pagina
     - action: action_capturar_edicion
     - slot_was_set:
         - pregunta_tutorial: true
@@ -425,7 +420,7 @@ stories:
 
 - story: agregar productos
   steps:
-    - intent: agregar_productos
+    - intent: agregar_producto
     - action: action_pedir_productos
     - checkpoint: productos_pedidos
 
