@@ -115,7 +115,6 @@ class DBManager(object):
         if not found:
             return None
 
-
     def get_user_pages(self, user_id) -> List[Page]:
         user = User.objects(id=user_id).first()
         if user:

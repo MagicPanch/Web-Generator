@@ -58,14 +58,17 @@ class Front(PageRunner):
         self._sections.append(section)
 
     def get_section(self, section_title) -> Section:
-        print("en get section")
-        print("section_title", section_title)
         for section in self._sections:
-            print(section.get_title())
             if section.get_title() == section_title:
                 return section
         else:
             return None
+
+    def get_sections_name(self) -> List[str]:
+        output = []
+        for section in self._sections:
+            output.extend(section.get_title())
+        return output
 
     def has_ecomm_section(self) -> bool:
         for section in self._sections:

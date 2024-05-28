@@ -37,6 +37,7 @@ nlu:
     - cambia la [seccion](componente) [informativa](seccion)
     - cambiemos la [seccion](componente) [informativa](seccion)
     - quiero modificar la [seccion](componente) [nosotros](nombre_informativa) en [google](page_name)
+    - quiero modificar la [seccion](componente) [e-commerce](seccion)
 
 - intent: tipo_seccion
   examples: |

@@ -219,27 +219,16 @@ stories:
 - story: crear seccion sin pagina
   steps:
     - slot_was_set:
-      - creando_seccion: true
-    - action: action_capturar_tipo_seccion
-    - slot_was_set:
       - componente: seccion
+      - creando_seccion: true
       - pregunta_nombre: true
     - intent: nombre_pagina
     - action: action_capturar_tipo_seccion
-
-- story: crear seccion con tipo y pagina
-  steps:
-    - slot_was_set:
-      - creando_seccion: true
-    - action: action_capturar_tipo_seccion
-    - checkpoint: crear_seccion
 
 - story: crear seccion sin tipo y pagina
   steps:
     - slot_was_set:
       - creando_seccion: true
-    - action: action_capturar_tipo_seccion
-    - slot_was_set:
       - componente: seccion
       - pregunta_seccion: true
     - intent: tipo_seccion
@@ -279,17 +268,13 @@ stories:
 
 - story: editar con pagina y componente
   steps:
-    - or:
-      - intent: modificar_pagina
-      - intent: agregar_producto
+    - intent: modificar_pagina
     - action: action_capturar_edicion
     - checkpoint: componente_capturado
 
 - story: editar con pagina y sin componente
   steps:
-    - or:
-      - intent: modificar_pagina
-      - intent: agregar_producto
+    - intent: agregar_producto
     - action: action_capturar_edicion
     - slot_was_set:
       - pregunta_componente: true
@@ -299,9 +284,7 @@ stories:
 
 - story: editar sin pagina y con componente
   steps:
-    - or:
-      - intent: modificar_pagina
-      - intent: agregar_producto
+    - intent: modificar_pagina
     - slot_was_set:
       - pregunta_nombre: true
     - intent: nombre_pagina
@@ -440,9 +423,15 @@ stories:
 
 #### AGREGAR PRODUCTOS
 
+- story: agregar productos
+  steps:
+    - intent: agregar_productos
+    - action: action_pedir_productos
+    - checkpoint: productos_pedidos
+
 - story: agregar productos con archivo
   steps:
-    - checkpoint: componente_capturado
+    - checkpoint: productos_pedidos
     - slot_was_set:
       - agregando_productos: true
       - pregunta_carga: true
@@ -451,7 +440,7 @@ stories:
 
 - story: agregar productos de a uno
   steps:
-    - checkpoint: componente_capturado
+    - checkpoint: productos_pedidos
     - slot_was_set:
       - agregando_productos: true
       - pregunta_carga: true
