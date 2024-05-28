@@ -8,7 +8,7 @@ import {
 } from "../../../components/cartContext";
 import ProductShoppingTile from "./ProductShoppingTile";
 import Link from "next/link";
-import{LINK} from "../../../constants/links"
+import{LINK} from "../../../constants/link"
 import { Console } from "console";
 
 let messageTimer: NodeJS.Timeout;

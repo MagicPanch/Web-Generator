@@ -4,6 +4,10 @@ nlu:
   examples: |
     - /start
 
+- intent: restart
+  examples: |
+    - /restart
+
 - intent: crear_algo
   examples: |
     - quiero crear una pagina

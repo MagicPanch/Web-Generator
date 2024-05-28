@@ -15,36 +15,30 @@ class TelegramBotManager:
     @classmethod
     def get_instance(cls):
         if not cls._instance:
-            cls._instance = TelegramBotManager()
-        return cls._instance
-
-    def __new__(cls):
-        if cls._instance is None:
-            cls._instance = super(TelegramBotManager, cls).__new__(cls)
+            cls._instance = cls()
         return cls._instance
 
     def __init__(self):
         if not hasattr(self, '_initialized'):  # Comprobar si ya está inicializado
-            self._instance = self
             self._bot = Bot(token=CONSTANTS.TELEGRAM_BOT_TOKEN)
             self._initialized = True  # Marcar como inicializado
 
     @classmethod
     def download_image(cls, page_path, subdir, image_id, image_name):
-        file = cls._bot.get_file(image_id)
+        file = cls.get_instance()._bot.get_file(image_id)
         download_path = Path(os.getcwd())
         download_path = download_path.joinpath(page_path).joinpath(subdir).joinpath(image_name)
         file.download(custom_path=download_path)
 
     @classmethod
     def get_csv_file(cls, file_id) -> File:
-        file = cls._bot.get_file(file_id)
+        file = cls.get_instance()._bot.get_file(file_id)
         return file
 
     @classmethod
     def send_file_to_user(cls, user_id, file_path):
         with open(file_path, "rb") as file:
-            cls._bot.send_document(chat_id=user_id, document=file)
+            cls.get_instance()._bot.send_document(chat_id=user_id, document=file)
 
     @staticmethod
     def get_image_url(image_id) -> str:

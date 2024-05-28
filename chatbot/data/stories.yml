@@ -2,6 +2,13 @@ version: "3.1"
 
 stories:
 
+# RESTART
+
+- story: reiniciar bot
+  steps:
+    - intent: restart
+    - action: action_restart
+
 # INICIO
 
 ## HACE TUTORIAL
@@ -418,9 +425,20 @@ stories:
 
 #### AGREGAR PRODUCTOS
 
-- story: agregar productos
+- story: agregar productos sin conflicto de nombre
   steps:
     - intent: agregar_producto
+    - action: action_pedir_productos
+    - checkpoint: productos_pedidos
+
+- story: agregar productos con conflicto de nombre
+  steps:
+    - intent: agregar_producto
+    - action: action_pedir_productos
+    - slot_was_set:
+      - agregando_productos: true
+      - pregunta_nombre: true
+    - intent: nombre_pagina
     - action: action_pedir_productos
     - checkpoint: productos_pedidos
 
@@ -430,6 +448,7 @@ stories:
     - slot_was_set:
       - agregando_productos: true
       - pregunta_carga: true
+      - pregunta_nombre: false
     - intent: cargar_productos_archivo
     - action: action_capturar_producto_cargado
 
@@ -439,6 +458,7 @@ stories:
     - slot_was_set:
       - agregando_productos: true
       - pregunta_carga: true
+      - pregunta_nombre: false
     - intent: cargar_X_cantidad_Y_producto
     - action: action_capturar_producto_cargado
     - checkpoint: pide_img_prod

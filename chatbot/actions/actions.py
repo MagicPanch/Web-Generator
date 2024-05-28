@@ -104,7 +104,7 @@ class ActionCrearPagina(Action):
                     dbm.add_page(user_id, page_name, tracker.get_slot('usuario'))
 
                     #Se crea la entrada para la pagina en PageManager
-                    pgm.add_page(user_id, page_name)
+                    pgm.add_page(user_id, page_name, True)
 
                     #Se crea en un nuevo hilo el proyecto de la pagina
                     pgm.create_project(user_id, page_name)
@@ -128,9 +128,6 @@ class ActionEjecutarDev(Action):
         print("(" + threading.current_thread().getName() + ") " + "----ACTION EJECUTAR DEV----")
         user_id = tracker.sender_id
         page_name = tracker.get_slot('page_name')
-
-        #Se espera a que el hilo finalice
-        pgm.join_thread_exec(user_id, page_name)
 
         #Inicia la ejecución del proyecto en modo desarrollo en un nuevo hilo
         pgm.run_dev(user_id, page_name)
@@ -662,15 +659,53 @@ class ActionPedirProductos(Action):
         return "action_pedir_productos"
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        global tbm
-        print("(" + threading.current_thread().getName() + ") " + "----ACTION PEDIR PRODUCTOS----")
-        message = "Podes agregar los productos de a uno o cargar múltiples productos en un archivo de datos y enviármelo. Si optas por la carga mediante archivo, completa la siguiente planilla agregando los datos en una nueva fila. En los campos \"multimedia\" coloca el link a las imágenes o videos del producto"
-        dispatcher.utter_message(text=message)
-        utils.go_to_main_dir()
-        tbm.send_file_to_user(tracker.sender_id, CONSTANTS.TEMPLATE_PRODUCTOS_DIR)
-        dispatcher.utter_message(text="Si vas a cargar los productos de a uno voy a necesitar los siguientes datos:")
-        dispatcher.utter_message(text="Cantidad:\nTitulo:\nDescripción:\nPrecio:")
-        return [SlotSet("pregunta_carga", True)]
+        global dbm, tbm
+        user_id = tracker.sender_id
+        page_name = tracker.get_slot("page_name")
+        if page_name:
+        # Hay página
+            page_doc = dbm.get_page(user_id, page_name)
+            if page_doc:
+            # Es del usuario
+                if page_doc.has_ecomm_section:
+                # Tiene sección ecommerce
+                    print("(" + threading.current_thread().getName() + ") " + "----ACTION PEDIR PRODUCTOS----")
+                    message = "Podes agregar los productos de a uno o cargar múltiples productos en un archivo de datos y enviármelo. Si optas por la carga mediante archivo, completa la siguiente planilla agregando los datos en una nueva fila. En los campos \"multimedia\" coloca el link a las imágenes o videos del producto"
+                    dispatcher.utter_message(text=message)
+                    utils.go_to_main_dir()
+                    tbm.send_file_to_user(user_id, CONSTANTS.TEMPLATE_PRODUCTOS_DIR)
+                    dispatcher.utter_message(text="Si vas a cargar los productos de a uno voy a necesitar los siguientes datos:")
+                    dispatcher.utter_message(text="Cantidad:\nTitulo:\nDescripción:\nPrecio:")
+                    return [SlotSet("agregando_productos", True), SlotSet("pregunta_carga", True), SlotSet("pregunta_nombre", False)]
+                else:
+                # No tiene sección ecommerce
+                    message = "La página " + str(page_name) + " no tiene sección e-commerce."
+                    pages = dbm.get_user_pages(user_id)
+                    if len(pages) > 0:
+                        message += " Tus páginas con dicha sección son:\n"
+                        for page in pages:
+                            if page.has_ecomm_section:
+                                message += str(page.name) + "\n"
+                    dispatcher.utter_message(text=message)
+                    return [SlotSet("agregando_productos", True), SlotSet("pregunta_nombre", True)]
+            else:
+            # No es del usuario
+                pages = dbm.get_user_pages(user_id)
+                message = "La página " + str(page_name) + " no te pertenece. Te recuerdo que tus páginas con sección e-commerce son:\n"
+                for page in pages:
+                    if page.has_ecomm_section:
+                        message += str(page.name) + "\n"
+                dispatcher.utter_message(text=message)
+                return [SlotSet("agregando_productos", True), SlotSet("pregunta_nombre", True)]
+        else:
+        # No hay página
+            pages = dbm.get_user_pages(user_id)
+            message = "¿A qué página te gustaría agregar productos? Te recuerdo que tus páginas con sección e-commerce son:\n"
+            for page in pages:
+                if page.has_ecomm_section:
+                    message += str(page.name) + "\n"
+            dispatcher.utter_message(text=message)
+            return [SlotSet("agregando_productos", True), SlotSet("pregunta_nombre", True)]
 
 class ActionCapturarProductoCargado(Action):
 
@@ -859,6 +894,7 @@ class ActionSaludoTelegram(Action):
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         global dbm
+        dispatcher.utter_message(text="DISCLAIMER: Por el momento me encuentro en desarrollo, por lo que si la conversación no fluye como se espera, enviar un mensaje con el comando \"/restart\" para reiniciar mis slots de contexto.")
         now = datetime.datetime.now()
         hora = int(now.strftime("%H"))
         if (hora > 0) and (hora <= 12):

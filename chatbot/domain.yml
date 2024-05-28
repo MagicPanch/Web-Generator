@@ -2,6 +2,7 @@ version: '3.1'
 
 intents:
   - start
+  - restart
   - afirmar
   - como_estas
   - modificar_pagina

@@ -11,7 +11,7 @@ from database.collections.general.Page import Page
 from database.collections.general.InformativeSection import InformativeSection
 
 
-class DBManager(object):
+class DBManager:
 
     _instance = None
     _client = None

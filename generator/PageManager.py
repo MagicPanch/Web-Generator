@@ -6,6 +6,7 @@ from typing import Tuple, Dict, List
 
 import requests
 
+from generator.ReactGenerator import ReactGenerator
 from resources import CONSTANTS, utils
 from database.DBManager import DBManager
 from generator.objects.pages.Front import Front
@@ -244,6 +245,8 @@ class PageManager():
 
         #Iniciar la ejecución de la página
         thread_exec = threading.Thread(target=cls._run_dev, args=(user, page_name, page.get_port()))
+        if cls._running_pages[(user, page_name)].get_thread_exec() is not None:
+            cls._join_thread_exec(user, page_name)
         cls._running_pages[(user, page_name)].set_thread_exec(thread_exec)
         thread_exec.start()
         page.wait_for_ready()
@@ -417,29 +420,30 @@ class PageManager():
         print("(" + threading.current_thread().getName() + ") " + "----finalizo la espera de ", thread_tunnel.getName())
 
     @classmethod
-    def add_page(cls, user, page_name) -> Front:
+    def add_page(cls, user, page_name, new=False) -> Front:
         #Crear la pagina
         page = Front(user, page_name, cls._get_port())
 
-        #Recuperar sus componentes
-        dbm = DBManager.get_instance()
-        sections = dbm.get_page_sections(user, page_name)
-        for section in sections:
-            print(section)
-            if section.type == "informativa":
-                s = InformativeSection(section.title)
-                s.set_text(section.text)
-                page.add_section(s)
-            elif section.type == "ecommerce":
-                s = EcommerceSection()
-                page.add_section(s)
-
+        if new:
         #Crea sus directorios
-        utils.go_to_main_dir()
-        utils.go_to_dir(CONSTANTS.USER_PAGES_DIR)
-        utils.go_to_dir(user)
-        utils.go_to_dir(page_name)
-        utils.go_to_main_dir()
+            utils.go_to_main_dir()
+            utils.go_to_dir(CONSTANTS.USER_PAGES_DIR)
+            utils.go_to_dir(user)
+            utils.go_to_dir(page_name)
+            utils.go_to_main_dir()
+        else:
+            #Recuperar sus componentes
+            dbm = DBManager.get_instance()
+            sections = dbm.get_page_sections(user, page_name)
+            for section in sections:
+                print(section)
+                if section.type == "informativa":
+                    s = InformativeSection(section.title)
+                    s.set_text(section.text)
+                    page.add_section(s)
+                elif section.type == "ecommerce":
+                    s = EcommerceSection()
+                    page.add_section(s)
         #Agregarla a la coleccion
         cls._running_pages[(user, page_name)] = cls.Entry(page, None, None)
         return page
