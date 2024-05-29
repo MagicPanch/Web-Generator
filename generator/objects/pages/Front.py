@@ -67,12 +67,12 @@ class Front(PageRunner):
     def get_sections_name(self) -> List[str]:
         output = []
         for section in self._sections:
-            output.extend(section.get_title())
+            output.append(section.get_title())
         return output
 
     def has_ecomm_section(self) -> bool:
         for section in self._sections:
-            if section.get_title() == "ecommerce":
+            if section.get_title() == "e-commerce":
                 return True
         else:
             return False

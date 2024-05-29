@@ -24,11 +24,6 @@ class DBManager:
             cls._instance = DBManager()
         return cls._instance
 
-    def __new__(cls):
-        if cls._instance is None:
-            cls._instance = super(DBManager, cls).__new__(cls)
-        return cls._instance
-
     def __init__(self):
         if not hasattr(self, '_initialized'):  # Comprobar si ya está inicializado
             self._client = MongoClient(CONSTANTS.DB_URI)
@@ -196,7 +191,7 @@ class DBManager:
         page = Page.objects(id=page_id).first()
         if page:
             section_id = page_id + '-' + "ecommerce"
-            section = EcommerceSection(id=section_id, type="ecommerce")
+            section = EcommerceSection(id=section_id, type="e-commerce")
             section.save()
             page.sections.append(section)
             page.has_ecomm_section = True
@@ -240,7 +235,7 @@ class DBManager:
         page = Page.objects(id=page_id).first()
         if page:
             p_id = page.product_counter
-            collection = cls._db[page_id]
+            collection = cls.get_instance()._db[page_id]
             if collection:
                 product = {
                     "key": p_id,
@@ -259,7 +254,7 @@ class DBManager:
     @classmethod
     def set_product_multimedia(cls, user_id, page_name, product, media_url):
         page_id = user_id + '-' + page_name
-        collection = cls._db[page_id]
+        collection = cls.get_instance()._db[page_id]
         if collection:
             collection.update_one({"key": product}, {"$set": {"multimedia": media_url}})
 

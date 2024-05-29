@@ -306,6 +306,7 @@ class ActionCapturarEdicion(Action):
                     componente = tracker.get_slot('componente')
                     print("(" + threading.current_thread().getName() + ") " + "--------componente: ", componente)
                     if componente:
+                    # Hay componente a modificar
                         if componente.lower() == "encabezado":
                             return [FollowupAction("action_preguntar_color_encabezado"), SlotSet("pregunta_componente", False),
                                     SlotSet("pregunta_nombre", False), SlotSet("pregunta_edicion", False)]
@@ -321,29 +322,36 @@ class ActionCapturarEdicion(Action):
                             secciones = page_obj.get_sections_name()
                             if len(secciones) > 0:
                             # La pagina tiene secciones
-                                if tipo_seccion.lower() == "e-commerce":
-                                    if page_obj.has_ecomm_section():
-                                        return [SlotSet("agregando_productos", True), FollowupAction("action_pedir_productos"), SlotSet("pregunta_componente", False), SlotSet("pregunta_nombre", False), SlotSet("pregunta_edicion", False)]
-                                    else:
-                                        dispatcher.utter_message(text="La página " + str(page_name) + " no cuenta con una sección e-commerce")
-                                        return [SlotSet("pregunta_componente", False), SlotSet("pregunta_nombre", False), SlotSet("pregunta_edicion", False)]
-                                else:
-                                    if nombre_seccion:
-                                        if nombre_seccion.lower() in secciones:
-                                            return [SlotSet("nombre_seccion_editando", nombre_seccion), FollowupAction("action_modificar_informativa_1"), SlotSet("pregunta_componente", False),  SlotSet("pregunta_nombre", False), SlotSet("pregunta_edicion", False)]
-                                        else:
-                                            dispatcher.utter_message(text=str(nombre_seccion) + " no es un tipo de seccion válido. Te recuerdo que las secciones a crear son: \n E-Commerce \n Informativa")
-                                            return [SlotSet("pregunta_componente", True), SlotSet("pregunta_seccion", True)]
-                                    else:
-                                        message = str(tipo_seccion) + " no es un tipo de seccion válido. Te recuerdo que las secciones de tu página son:\n"
-                                        for seccion in secciones:
-                                            message += seccion + "\n"
+                                if nombre_seccion:
+                                    if nombre_seccion.lower() == "e-commerce":
+                                        message = "No hay modificaciones que puedas realizar en la sección e-commerce de tu página. Si queres agregar productos debes pedirmelo como tal."
                                         dispatcher.utter_message(text=message)
+                                        return [SlotSet("componente", None), SlotSet("tipo_seccion", None), SlotSet("nombre_informativa", None), SlotSet("pregunta_edicion", False)]
+                                    if nombre_seccion in secciones:
+                                        return [SlotSet("nombre_seccion_editando", nombre_seccion), FollowupAction("action_modificar_informativa_1"), SlotSet("pregunta_componente", False),  SlotSet("pregunta_nombre", False), SlotSet("pregunta_edicion", False)]
+                                    else:
+                                        dispatcher.utter_message(text=str(nombre_seccion) + " no es un tipo de seccion válido. Te recuerdo que las secciones a crear son: \n E-Commerce \n Informativa")
                                         return [SlotSet("pregunta_componente", True), SlotSet("pregunta_seccion", True)]
+                                else:
+                                    message = str(tipo_seccion) + " no es un tipo de seccion válido. Te recuerdo que las secciones de tu página son:\n"
+                                    for seccion in secciones:
+                                        message += seccion + "\n"
+                                    dispatcher.utter_message(text=message)
+                                    return [SlotSet("pregunta_componente", True), SlotSet("pregunta_seccion", True)]
                             else:
                             # La pagina no tiene secciones
                                 dispatcher.utter_message(text="La pagina " + page_doc.name + " no cuenta con ninguna sección, por lo que antes deberás crear una.")
                                 return [FollowupAction("action_capturar_tipo_seccion")]
+                    else:
+                    # No hay componente a modificar
+                        message = "¿Qué componente de tu página te gustaría modificar? Te recuerdo que sus componentes son:\nEncabezado\n"
+                        secciones = page_obj.get_sections_name()
+                        if len(secciones) > 0:
+                            for seccion in secciones:
+                                message += "Seccion " + seccion + "\n"
+                        message += "Footer"
+                        dispatcher.utter_message(text=message)
+                        return [SlotSet("pregunta_componente", True)]
                 else:
                 # No hay página
                     if len(pages) > 0:
@@ -654,20 +662,20 @@ class ActionCrearEcommerce(Action):
         user_id = tracker.sender_id
         page_name = tracker.get_slot("page_name")
         page = pgm.get_page(user_id, page_name)
-        seccion = page.get_section("ecommerce")
+        seccion = page.get_section("e-commerce")
         if seccion:
             dispatcher.utter_message(text="Tu página ya tiene una sección de e-commerce.")
         else:
             page.add_section(EcommerceSection())
-            if page.is_running() or page.is_running_dev():
-                pgm.stop_page(user_id, page_name)
-                pgm.stop_tunnel(user_id, page_name)
             pgm.add_ecommerce(user_id, page_name)
-            pgm.run_dev(user_id, page_name)
-            message = "Tu pagina se encuentra en modo edición. Podrás visualizar la nueva sección en: " + page.get_page_address()
-            dispatcher.utter_message(text=message)
-            message = "Si la pagina te solicita una contraseña ingresa: " + pgm.get_tunnel_password()
-            dispatcher.utter_message(text=message)
+            if not page.is_running_dev():
+                pgm.run_dev(user_id, page_name)
+                message = "Tu pagina se encuentra en modo edición. Podrás visualizar la nueva sección en: " + page.get_page_address()
+                dispatcher.utter_message(text=message)
+                message = "Si la pagina te solicita una contraseña ingresa: " + pgm.get_tunnel_password()
+                dispatcher.utter_message(text=message)
+            else:
+                dispatcher.utter_message(text="Podes ver la nueva sección en tu página.")
             dbm.add_ecomm_section(user_id, page_name)
         return [SlotSet("pregunta_seccion", False), SlotSet("creando_seccion", False), SlotSet("componente", None)]
 
@@ -704,7 +712,7 @@ class ActionPedirProductos(Action):
                         else:
                         # No tiene sección ecommerce
                             message = "La página " + str(page_name) + " no tiene sección e-commerce."
-                            pages = dbm.get_user_pages(user_id, "ecommerce")
+                            pages = dbm.get_user_pages(user_id, "e-commerce")
                             if len(pages) > 0:
                                 message += " Tus páginas con dicha sección son:\n"
                                 for page in pages:
@@ -724,7 +732,7 @@ class ActionPedirProductos(Action):
                         return [SlotSet("agregando_productos", True), SlotSet("pregunta_nombre", True)]
                 else:
                 # No hay página
-                    pages = dbm.get_user_pages(user_id, "ecommerce")
+                    pages = dbm.get_user_pages(user_id, "e-commerce")
                     if len(pages) > 0:
                         message = "¿A qué página te gustaría agregar productos? Te recuerdo que tus páginas con sección e-commerce son:\n"
                         for page in pages:
@@ -768,9 +776,11 @@ class ActionCapturarProductoCargado(Action):
                         dbm.set_product_multimedia(tracker.sender_id, tracker.get_slot("page_name"), id, str(producto.Imagen_principal))
                     message = "El producto " + producto.Titulo + " se guardó correctamente con el identificador: " + str(id)
                     dispatcher.utter_message(text=message)
+                dispatcher.utter_message(text="Ha finalizado la carga de productos. ¿Puedo ayudarte con algo más?")
+                return [SlotSet("agregando_productos", False), SlotSet("pregunta_carga", False)]
             if error:
                 dispatcher.utter_message(text="No se pudo recibir el archivo. Por favor envíalo nuevamente.")
-            return []
+                return [SlotSet("agregando_productos", True), SlotSet("pregunta_carga", True)]
         else:
             last_message = str(tracker.latest_message.get('text'))
             print("(" + threading.current_thread().getName() + ") " + "--------last_message: \n", last_message)

@@ -84,7 +84,7 @@ class PageManager():
 
     @classmethod
     def get_tunnel_password(cls) -> str:
-        if not cls._tunnel_pwd:
+        if cls._tunnel_pwd is None:
             try:
                 # Realizar la solicitud HTTP GET
                 response = requests.get(CONSTANTS.LOCAL_TUNNEL_PASSWORD_URL)
@@ -479,8 +479,8 @@ class PageManager():
     @classmethod
     def is_alive(cls, user, page_name) -> bool:
         entry = cls._running_pages.get((user, page_name))
-        if entry:
-            return entry.get_page().is_running()
+        if entry is not None:
+            return entry.get_page().is_running() or entry.get_page().is_running_dev()
         else:
             return False
 
@@ -512,6 +512,9 @@ class PageManager():
         page = cls._running_pages[(user, page_name)].get_page()
         page.set_running(False)
         page.set_running_dev(False)
+        print(page.get_name())
+        print(page.get_page_address())
+        print(page.get_port())
 
 
         #Detener el proceso con la ejecucion de la pagina
@@ -527,7 +530,10 @@ class PageManager():
     @staticmethod
     def _kill_project(port):
         process = utils.get_process(port)
-        process.terminate()
-        process.wait()
+        print(process)
+        print(process.status())
+        if process:
+            process.terminate()
+            process.wait()
 
 

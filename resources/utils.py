@@ -58,4 +58,6 @@ def get_pid(port):
 
 
 def get_process(port):
-    psutil.Process(get_pid(port))
+    pid = get_pid(port)
+    print("pid:", pid)
+    return psutil.Process(pid)
