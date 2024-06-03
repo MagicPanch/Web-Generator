@@ -68,6 +68,8 @@ class ActionCrearPagina(BaseAction):
         if not 'nombre_pagina' in last_message_intent:
             dispatcher.utter_message(text="Entendido, si mas tarde deseas retomar la creacion de tu pagina puedes pedirmelo.")
             return [SlotSet("creando_pagina", False), SlotSet("pregunta_nombre", False)]
+        print("slot creando: ", tracker.get_slot("creando_pagina"))
+
         if tracker.get_slot("creando_pagina"):
             page_name = tracker.get_slot("page_name")
             if not page_name:
@@ -76,6 +78,7 @@ class ActionCrearPagina(BaseAction):
                 return [SlotSet("creando_pagina", True), SlotSet("pregunta_nombre", True)]
             else:
                 if creando_pagina:
+                    print("entro a creando pagina")
                     page = pgm.get_page(user_id, page_name)
                     message = "Tu pagina se encuentra en modo edición. Podrás visualizar los cambios que realices en: " + page.get_page_address()
                     dispatcher.utter_message(text=message)

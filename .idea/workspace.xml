@@ -6,14 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="121f2593-11ee-405e-a8d8-1c2f43d81e54" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chatbot/actions/BaseAction.py" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/actions/BaseAction.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chatbot/actions/Template Method/ControlPagina.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/chatbot/actions/Template Method/ControlTutorial.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/chatbot/actions/Template Method/__init__.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/chatbot/actions/actions.py" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/actions/actions.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/collections/general/User.py" beforeDir="false" afterPath="$PROJECT_DIR$/database/collections/general/User.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/generator/objects/pages/Back.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/generator/objects/sections/InformativeSection.py" beforeDir="false" afterPath="$PROJECT_DIR$/generator/objects/sections/InformativeSection.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/generator/PageManager.py" beforeDir="false" afterPath="$PROJECT_DIR$/generator/PageManager.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -211,7 +205,7 @@
       <workItem from="1716845829902" duration="848000" />
       <workItem from="1716920106938" duration="15106000" />
       <workItem from="1716988705935" duration="4016000" />
-      <workItem from="1717423669816" duration="11462000" />
+      <workItem from="1717423669816" duration="15201000" />
     </task>
     <servers />
   </component>

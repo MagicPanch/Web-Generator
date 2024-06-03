@@ -206,9 +206,12 @@ class PageManager():
         print("(" + threading.current_thread().getName() + ") " + "----PageManager._run_dev----")
 
         path = cls.get_page_path(user, page_name)
+        print("path: ", path)
 
+        print("dir actual: ", os.getcwd())
         # Posicionarse en el path donde se ejecutará el proyecto
         utils.go_to_dir_from_main(path)
+        print("dir nuevo: ", os.getcwd())
 
         #Ejecutar el proceso
         command = 'npm run dev -- --port=' + str(page_port)
@@ -299,11 +302,19 @@ class PageManager():
         print("(" + threading.current_thread().getName() + ") " + "----PageManager.add_ecommerce----")
         page = cls._running_pages[(user, page_name)].get_page()
 
-        if page.is_running():
-            cls.switch_dev(user, page_name)
+        was_running_dev = page.is_running_dev()
+        if was_running_dev:
+            cls.stop_page(user, page_name)
+            cls._add_ecommerce(user, page_name) # Instalar sus dependencias y copiar template
+            cls.run_dev(user, page_name)
 
-        # Instalar sus dependencias y copiar template
-        cls._add_ecommerce(user, page_name)
+        was_running = page.is_running()
+        if was_running:
+            cls.stop_page(user, page_name)
+            cls.stop_tunnel(user, page_name)
+            cls._add_ecommerce(user, page_name) # Instalar sus dependencias y copiar template
+            cls.build_project(user, page_name)
+            cls.run_project(user, page_name)
 
     @classmethod
     def _build_project(cls, user, page_name):
@@ -394,6 +405,8 @@ class PageManager():
 
         # Iniciar la ejecución de la página
         thread_exec = threading.Thread(target=cls._run_project, args=(user, page_name, page.get_port()))
+        if cls._running_pages[(user, page_name)].get_thread_exec() is not None:
+            cls._join_thread_exec(user, page_name)
         cls._running_pages[(user, page_name)].set_thread_exec(thread_exec)
         thread_exec.start()
         page.set_running(True)
@@ -512,9 +525,6 @@ class PageManager():
         page = cls._running_pages[(user, page_name)].get_page()
         page.set_running(False)
         page.set_running_dev(False)
-        print(page.get_name())
-        print(page.get_page_address())
-        print(page.get_port())
 
 
         #Detener el proceso con la ejecucion de la pagina
@@ -530,10 +540,6 @@ class PageManager():
     @staticmethod
     def _kill_project(port):
         process = utils.get_process(port)
-        print(process)
-        print(process.status())
         if process:
             process.terminate()
             process.wait()
-
-
