@@ -7,7 +7,6 @@ from rasa_sdk.events import SlotSet
 from rasa_sdk.executor import CollectingDispatcher
 
 from database.DBManager import DBManager
-from database.collections.general import Page
 from generator.PageManager import PageManager
 from generator.ReactGenerator import ReactGenerator
 from generator.TelegramBotManager import TelegramBotManager
@@ -28,6 +27,8 @@ class BaseAction(Action, ABC):
         global dbm
         print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
         user_id = tracker.sender_id
+        page_name = tracker.get_slot("page_name")
+        print(f"({threading.current_thread().getName()}) --------page_name: {page_name}----")
 
         # Lógica específica para acciones que no requieren verificación de tutorial
         if self.skip_tuto_verification():
@@ -48,14 +49,16 @@ class BaseAction(Action, ABC):
 
         # Verificación de la página
         pages = dbm.get_user_pages(user_id)
-        page_name = tracker.get_slot('page_name')
-        if not page_name:
+        page_name = tracker.get_slot("page_name")
+        print(f"({threading.current_thread().getName()}) --------page_name: {page_name}----")
+        if page_name is None:
             # No hay página
             return self.capture_page_error(dispatcher, pages)
         else:
             # Hay pagina
             page_doc = dbm.get_page(user_id, page_name)
-            if not page_doc:
+            print(f"({threading.current_thread().getName()}) --------page_doc.name: {page_doc.name}----")
+            if page_doc is None:
                 # Esa pagina no pertenece al usuario
                 return self.capture_page_error(dispatcher, pages)
 
@@ -73,7 +76,7 @@ class BaseAction(Action, ABC):
                 message += str(page.name) + "\n"
         else:
             message = "Antes de realizar operaciones sobre una página, debes crear una."
-            dispatcher.utter_message(text=message)
+        dispatcher.utter_message(text=message)
         return [SlotSet("pregunta_nombre", True)]
 
     def skip_tuto_verification(self) -> bool:

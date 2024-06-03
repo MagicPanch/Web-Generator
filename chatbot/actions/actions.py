@@ -62,7 +62,7 @@ class ActionCrearPagina(BaseAction):
 
     def handle_action(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any], user_id: Text,
                       page_name: Text = None, page_doc: Any = None, pages: Any = None) -> List[Dict[Text, Any]]:
-        global creando_pagina, dbm, pgm
+        global creando_pagina, slots_crear_pagina, dbm, pgm
         print("creando_pagina: ", creando_pagina)
         last_message_intent = tracker.latest_message.get('intent').get('name')
         if not 'nombre_pagina' in last_message_intent:
@@ -163,7 +163,6 @@ class ActionEjecutarPagina(BaseAction):
             print("(" + threading.current_thread().getName() + ") " + "----------------pagina no compilada")
             pgm.build_project(user_id, page_name)
             dbm.set_compilation_date(user_id, page_name)
-            pgm.join_thread_exec(user_id, page_name)
             print("(" + threading.current_thread().getName() + ") " + "------------PAGINA COMPILADA")
         else:
             print("(" + threading.current_thread().getName() + ") " + "----------------pagina ya compilada")
@@ -594,6 +593,9 @@ class ActionCrearEcommerce(BaseAction):
                 dispatcher.utter_message(text="Podes ver la nueva sección en tu página.")
             dbm.add_ecomm_section(user_id, page_name)
         return [SlotSet("pregunta_seccion", False), SlotSet("creando_seccion", False), SlotSet("componente", None)]
+
+    def skip_page_verification(self) -> bool:
+        return False
 
 #### AGREGAR PRODUCTOS
 

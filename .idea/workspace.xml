@@ -6,8 +6,55 @@
   <component name="ChangeListManager">
     <list default="true" id="121f2593-11ee-405e-a8d8-1c2f43d81e54" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chatbot/actions/BaseAction.py" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/actions/BaseAction.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/chatbot/actions/actions.py" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/actions/actions.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/generator/PageManager.py" beforeDir="false" afterPath="$PROJECT_DIR$/generator/PageManager.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/webs/base/.eslintrc.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/webs/base/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/webs/base/App.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/webs/base/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/webs/base/base/node_modules/.package-lock.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/webs/base/base/package-lock.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/webs/base/components/Footer.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/webs/base/components/Header.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/webs/base/components/NavBar.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/webs/base/components/ProductTile.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/webs/base/components/SearchBar.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/webs/base/components/SectionABM.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/webs/base/components/SectionECommerce.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/webs/base/components/SectionInformativa.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/webs/base/components/cartContext.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/webs/base/components/index.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/webs/base/components/logo.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/webs/base/constants/body.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/webs/base/constants/collection.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/webs/base/constants/footer.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/webs/base/constants/link.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/webs/base/constants/navBarSections.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/webs/base/constants/navbar.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/webs/base/dataSections.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/webs/base/next.config.mjs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/webs/base/package-lock.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/webs/base/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/webs/base/postcss.config.mjs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/webs/base/public/facebook.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/webs/base/public/favicon.ico" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/webs/base/public/instagram.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/webs/base/public/linkedin.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/webs/base/public/next.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/webs/base/public/vercel.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/webs/base/public/x.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/webs/base/src/app/globals.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/webs/base/src/app/layout.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/webs/base/src/app/page.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/webs/base/src/app/shopping-cart/ProductShoppingTile.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/webs/base/src/app/shopping-cart/page.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/webs/base/tailwind.config.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/webs/base/tsconfig.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/webs/template_ecommerce/.env.local" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/webs/template_ecommerce/src/app/api/route.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/webs/template_ecommerce/src/app/api/updateQuantity/route.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/webs/template_ecommerce/src/app/models/producto.ts" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -97,7 +144,7 @@
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
     "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
-    "ts.external.directory.path": "D:\\Desarrollo\\Ingenieria-de-Software-2024\\Web-Generator\\user-pages\\2086036019\\design-label\\node_modules\\typescript\\lib",
+    "ts.external.directory.path": "D:\\Desarrollo\\Ingenieria-de-Software-2024\\Web-Generator\\user-pages\\2086036019\\test\\node_modules\\typescript\\lib",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -109,11 +156,11 @@
       <recent name="D:\Desarrollo\Web-Generator\database\colections" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\Desarrollo\Ingenieria-de-Software-2024\Web-Generator" />
       <recent name="D:\Desarrollo\Ingenieria-de-Software-2024\Web-Generator\chatbot\actions" />
       <recent name="D:\Desarrollo\Ingenieria-de-Software-2024\Web-Generator\database\collections\general" />
       <recent name="D:\Desarrollo\Ingenieria-de-Software-2024\Web-Generator\resources" />
       <recent name="D:\Desarrollo\Ingenieria-de-Software-2024\Web-Generator\generator\objects\pages" />
-      <recent name="D:\Desarrollo\Ingenieria-de-Software-2024\Web-Generator\generator\objects\sections" />
     </key>
   </component>
   <component name="SharedIndexes">
