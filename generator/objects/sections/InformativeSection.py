@@ -5,12 +5,11 @@ class InformativeSection(Section):
 
     def __init__(self, title):
         super().__init__("informativa", title)
-        self._title = title
-        self._texts = None
+        self._text = None
 
     def get_text(self):
-        return self._texts
+        return self._text
 
     def set_text(self, text):
-        self._texts = text
+        self._text = text
 

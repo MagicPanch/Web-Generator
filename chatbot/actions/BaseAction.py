@@ -29,6 +29,10 @@ class BaseAction(Action, ABC):
         print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
         user_id = tracker.sender_id
 
+        # Lógica específica para acciones que no requieren verificación de tutorial
+        if self.skip_tuto_verification():
+            return self.handle_action(dispatcher, tracker, domain, user_id)
+
         # Verificación del tutorial
         if tracker.get_slot("hizo_tutorial") is not None:
             tuto = tracker.get_slot("hizo_tutorial")
@@ -71,6 +75,9 @@ class BaseAction(Action, ABC):
             message = "Antes de realizar operaciones sobre una página, debes crear una."
             dispatcher.utter_message(text=message)
         return [SlotSet("pregunta_nombre", True)]
+
+    def skip_tuto_verification(self) -> bool:
+        return True
 
     def skip_page_verification(self) -> bool:
         return True

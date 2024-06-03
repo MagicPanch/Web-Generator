@@ -42,6 +42,9 @@ class ActionCapturarCreacion(BaseAction):
         else:
             return [FollowupAction("action_preguntar_nombre_pagina"), SlotSet("creando_pagina", True)]
 
+    def skip_tuto_verification(self) -> bool:
+        return False
+
 class ActionPreguntarNombrePagina(BaseAction):
 
     def name(self):
@@ -111,7 +114,7 @@ class ActionEjecutarDev(Action):
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         global creando_pagina, pgm
-        print("(" + threading.current_thread().getName() + ") " + "----ACTION EJECUTAR DEV----")
+        print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
         user_id = tracker.sender_id
         page_name = tracker.get_slot('page_name')
 
@@ -129,236 +132,182 @@ class ActionEjecutarDev(Action):
             events.append(SlotSet(slot, False))
         return events
 
-class ActionEjecutarPagina(Action):
+class ActionEjecutarPagina(BaseAction):
 
     def name(self) -> Text:
         return "action_ejecutar_pagina"
 
-    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+    def handle_action(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any], user_id: Text,
+                      page_name: Text = None, page_doc: Any = None, pages: Any = None) -> List[Dict[Text, Any]]:
         global dbm, pgm
-        print("(" + threading.current_thread().getName() + ") " + "----ACTION EJECUTAR PAGINA----")
-        user_id = tracker.sender_id
-        tuto = dbm.get_user_tutorial(user_id)
-        if tuto:
-            page_name = tracker.get_slot('page_name')
-            if page_name is None:
-                message = "Indicame el nombre de la pagina que deseas ejecutar. Te recuerdo que tus paginas son: "
-                pags = dbm.get_user_pages(tracker.sender_id)
-                for pag in pags:
-                    message += str(pag['name']) + "\n"
-                return [SlotSet("pregunta_ejecucion", True)]
-            else:
-                # Se estuvo hablando de una pagina en particular
-                page_doc = dbm.get_page(user_id, page_name)
-                print("(" + threading.current_thread().getName() + ") " + "--------page_doc: ", page_doc)
-                if not page_doc:
-                    # Esa pagina no pertenece al usuario
-                    message = "No se encuentra la pagina que deseas ejecutar. Te recuerdo que tus paginas son:\n"
-                    pags = dbm.get_user_pages(user_id)
-                    for pag in pags:
-                        message += str(pag['name']) + "\n"
-                    dispatcher.utter_message(text=message)
-                    return [SlotSet("pregunta_ejecucion", True)]
-                else:
-                # La pagina pertenece al usuario
-                    if pgm.is_alive(user_id, page_name):
-                    # La pagina esta viva
-                        page_obj = pgm.get_page(user_id, page_name)
-                        if page_obj.is_running():
-                        # Verificar si la pagina está ejecutando
-                            dispatcher.utter_message(text="Tu pagina ya esta ejecutando. Puedes acceder a ella en el siguiente link: " + page_obj.get_page_address())
-                            dispatcher.utter_message(text="Si la pagina te solicita una contraseña ingresa: " + pgm.get_tunnel_password())
-                            return []
-                        elif page_obj.is_running_dev():
-                        # Se esta ejecutando en modo dev
-                            pgm.stop_page(user_id, page_name)
-                            pgm.stop_tunnel(user_id, page_name)
-                    else:
-                    # La pagina no vive en PageManager
-                        page_obj = pgm.add_page(user_id, page_name)
-                    #Verificar si esta compilada
-                    if not dbm.was_compiled(user_id, page_name):
-                        print("(" + threading.current_thread().getName() + ") " + "----------------pagina no compilada")
-                        pgm.build_project(user_id, page_name)
-                        dbm.set_compilation_date(user_id, page_name)
-                        pgm.join_thread_exec(user_id, page_name)
-                        print("(" + threading.current_thread().getName() + ") " + "------------PAGINA COMPILADA")
-                    else:
-                        print("(" + threading.current_thread().getName() + ") " + "----------------pagina ya compilada")
-
-                    # Inicia la ejecución del proyecto en modo desarrollo en un nuevo hilo
-                    pgm.run_project(user_id, page_name)
-
-                    page_address = page_obj.get_page_address()
-                    print("(" + threading.current_thread().getName() + ") " + "------------page_address: ", page_address)
-                    dispatcher.utter_message(text="Podes acceder a tu página en el siguiente link: " + page_address)
-                    dispatcher.utter_message(text="Si la pagina te solicita una contraseña ingresa: " + pgm.get_tunnel_password())
-                    return [SlotSet("pregunta_ejecucion", False)]
+        if pgm.is_alive(user_id, page_name):
+        # La pagina esta viva
+            page_obj = pgm.get_page(user_id, page_name)
+            if page_obj.is_running():
+            # Verificar si la pagina está ejecutando
+                dispatcher.utter_message(text="Tu pagina ya esta ejecutando. Puedes acceder a ella en el siguiente link: " + page_obj.get_page_address())
+                dispatcher.utter_message(text="Si la pagina te solicita una contraseña ingresa: " + pgm.get_tunnel_password())
+                return []
+            elif page_obj.is_running_dev():
+            # Se esta ejecutando en modo dev
+                pgm.stop_page(user_id, page_name)
+                pgm.stop_tunnel(user_id, page_name)
         else:
-            dispatcher.utter_message(text="Para ejecutar una pagina primero debes completar el tutorial. ¿Deseas hacerlo ahora?")
-            return [SlotSet("pregunta_tutorial", True)]
+        # La pagina no vive en PageManager
+            page_obj = pgm.add_page(user_id, page_name)
+        #Verificar si esta compilada
+        if not dbm.was_compiled(user_id, page_name):
+            print("(" + threading.current_thread().getName() + ") " + "----------------pagina no compilada")
+            pgm.build_project(user_id, page_name)
+            dbm.set_compilation_date(user_id, page_name)
+            pgm.join_thread_exec(user_id, page_name)
+            print("(" + threading.current_thread().getName() + ") " + "------------PAGINA COMPILADA")
+        else:
+            print("(" + threading.current_thread().getName() + ") " + "----------------pagina ya compilada")
 
-    class ActionDetenerPagina(Action):
+        # Inicia la ejecución del proyecto en modo desarrollo en un nuevo hilo
+        pgm.run_project(user_id, page_name)
+
+        page_address = page_obj.get_page_address()
+        print("(" + threading.current_thread().getName() + ") " + "------------page_address: ", page_address)
+        dispatcher.utter_message(text="Podes acceder a tu página en el siguiente link: " + page_address)
+        dispatcher.utter_message(text="Si la pagina te solicita una contraseña ingresa: " + pgm.get_tunnel_password())
+        return [SlotSet("pregunta_ejecucion", False)]
+
+    def skip_tuto_verification(self) -> bool:
+        return False
+
+    def skip_page_verification(self) -> bool:
+        return False
+
+    class ActionDetenerPagina(BaseAction):
 
         def name(self) -> Text:
             return "action_detener_pagina"
 
-        def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-            global dbm, pgm
-            print("(" + threading.current_thread().getName() + ") " + "----ACTION DETENER PAGINA----")
+        def handle_action(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any],
+                          user_id: Text,
+                          page_name: Text = None, page_doc: Any = None, pages: Any = None) -> List[Dict[Text, Any]]:
+            global pgm
             last_message_entities = tracker.get_latest_entity_values("text")
             print("(" + threading.current_thread().getName() + ") " + "--------last_message_entities: ", last_message_entities)
-            user_id = tracker.sender_id
-            tuto = dbm.get_user_tutorial(user_id)
-            if tuto:
-                if "todas" in tracker.latest_message.get("text"):
-                # Quiere detener todas
-                    for pag in pgm.get_user_running_pages(user_id):
-                        pgm.stop_page(user_id, pag.get_name())
-                        pgm.stop_tunnel(user_id, pag.get_name())
-                        pgmpgm.pop_page(user_id, pag.get_name())
-                        dispatcher.utter_message(text="La pagina " + pag.get_name() + " fue detenida con éxito.")
-                    print("(" + threading.current_thread().getName() + ") " + "------------PAGINAS DETENIDA CON EXITO------------")
-                else:
-                #No especifico cual quiere detener pero hay slot de contexto
-                    page_name = tracker.get_slot('page_name')
-                    if page_name:
-                        pgm.stop_page(user_id, page_name)
-                        pgm.stop_tunnel(user_id, page_name)
-                        pgm.pop_page(user_id, page_name)
-                        print("(" + threading.current_thread().getName() + ") " + "------------PAGINA DETENIDA CON EXITO------------")
-                        dispatcher.utter_message(text="Tu pagina fue apagada con exito.")
-                    else:
-                        message = "Indicame el nombre de la pagina que deseas detener. Te recuerdo que tus paginas en ejecución son: \n"
-                        pags = pgm.get_user_running_pages(user_id)
-                        for pag in pags:
-                            message += str(pag.get_name()) + "\n"
-                        dispatcher.utter_message(message)
-                        return [SlotSet("pregunta_detencion", True)]
-                return [SlotSet("pregunta_detencion", False)]
+            if "todas" in tracker.latest_message.get("text"):
+            # Quiere detener todas
+                for pag in pgm.get_user_running_pages(user_id):
+                    pgm.stop_page(user_id, pag.get_name())
+                    pgm.stop_tunnel(user_id, pag.get_name())
+                    pgmpgm.pop_page(user_id, pag.get_name())
+                    dispatcher.utter_message(text="La pagina " + pag.get_name() + " fue detenida con éxito.")
+                print("(" + threading.current_thread().getName() + ") " + "------------PAGINAS DETENIDA CON EXITO------------")
             else:
-                dispatcher.utter_message(text="Para detener una pagina primero debes completar el tutorial. ¿Deseas hacerlo ahora?")
-                return [SlotSet("pregunta_tutorial", True)]
+            #No especifico cual quiere detener pero hay slot de contexto
+                if page_name:
+                    pgm.stop_page(user_id, page_name)
+                    pgm.stop_tunnel(user_id, page_name)
+                    pgm.pop_page(user_id, page_name)
+                    print("(" + threading.current_thread().getName() + ") " + "------------PAGINA DETENIDA CON EXITO------------")
+                    dispatcher.utter_message(text="Tu pagina fue apagada con exito.")
+                else:
+                    message = "Indicame el nombre de la pagina que deseas detener. Te recuerdo que tus paginas en ejecución son: \n"
+                    pags = pgm.get_user_running_pages(user_id)
+                    for pag in pags:
+                        message += str(pag.get_name()) + "\n"
+                    dispatcher.utter_message(message)
+                    return [SlotSet("pregunta_detencion", True)]
+            return [SlotSet("pregunta_detencion", False)]
 
-class ActionCapturarEdicion(Action):
+        def skip_tuto_verification(self) -> bool:
+            return False
+
+        def skip_page_verification(self) -> bool:
+            return False
+
+class ActionCapturarEdicion(BaseAction):
 
     def name(self) -> Text:
         return "action_capturar_edicion"
 
-    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+    def handle_action(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any], user_id: Text,
+                      page_name: Text = None, page_doc: Any = None, pages: Any = None) -> List[Dict[Text, Any]]:
         global dbm
-        print("(" + threading.current_thread().getName() + ") " + "----ACTION CAPTURAR EDICION----")
-        user_id = tracker.sender_id
-        tuto = dbm.get_user_tutorial(user_id)
-        if tuto:
-            pages = dbm.get_user_pages(user_id)
-            if len(pages) > 0:
-                page_name = tracker.get_slot('page_name')
-                print("(" + threading.current_thread().getName() + ") " + "--------pagina: ", page_name)
-                if page_name:
-                # Hay pagina
-                    page_doc = dbm.get_page(user_id, page_name)
-                    print("(" + threading.current_thread().getName() + ") " + "--------page_doc: ", page_doc)
-                    if not page_doc:
-                    # Esa pagina no pertenece al usuario
-                        message = "La pagina que estas intentando modificar no te pertenece. Te recuerdo que tus paginas son: "
-                        pags = dbm.get_user_pages(user_id)
-                        for pag in pags:
-                            message += str(pag.name) + "\n"
-                        dispatcher.utter_message(text=message)
-                        return [SlotSet("pregunta_nombre", True)]
-                    else:
-                    # La pagina es del usuario
-                        if pgm.is_alive(user_id, page_name):
-                        # La pagina esta viva
-                            page_obj = pgm.get_page(user_id, page_name)
-                            if page_obj.is_running():
-                                pgm.switch_dev(user_id, page_name)
-                            dispatcher.utter_message(text="Tu pagina se encuentra en modo edición. Podrás visualizar los cambios que realices en: " + page_obj.get_page_address())
-                            dispatcher.utter_message(text="Si la pagina te solicita una contraseña ingresa: " + pgm.get_tunnel_password())
-                            if not page_obj.is_running_dev():
-                                pgm.run_dev(user_id, page_name)
-                                dispatcher.utter_message(text="Tu pagina se encuentra en modo edición. Podrás visualizar los cambios que realices en: " + page_obj.get_page_address())
-                                dispatcher.utter_message(text="Si la pagina te solicita una contraseña ingresa: " + pgm.get_tunnel_password())
-                        else:
-                        # La pagina no está viva, hay que recuperar sus datos de la db
-                            page_obj = pgm.add_page(user_id, page_name)
-                            pgm.run_dev(user_id, page_name)
-                    componente = tracker.get_slot('componente')
-                    print("(" + threading.current_thread().getName() + ") " + "--------componente: ", componente)
-                    if componente:
-                    # Hay componente a modificar
-                        if componente.lower() == "encabezado":
-                            return [FollowupAction("action_preguntar_color_encabezado"), SlotSet("pregunta_componente", False),
-                                    SlotSet("pregunta_nombre", False), SlotSet("pregunta_edicion", False)]
-                        elif componente.lower() == "footer":
-                            return [FollowupAction("action_preguntar_mail_footer"), SlotSet("pregunta_componente", False),
-                                    SlotSet("pregunta_nombre", False), SlotSet("pregunta_edicion", False)]
-                        elif componente.lower() == "seccion":
-                        # Va a editar una seccion
-                            tipo_seccion = tracker.get_slot('tipo_seccion')
-                            print("(" + threading.current_thread().getName() + ") " + "--------tipo_seccion: ", tipo_seccion)
-                            nombre_seccion = tracker.get_slot('nombre_informativa')
-                            print("(" + threading.current_thread().getName() + ") " + "--------nombre_informativa: ", nombre_seccion)
-                            secciones = page_obj.get_sections_name()
-                            if len(secciones) > 0:
-                            # La pagina tiene secciones
-                                if nombre_seccion:
-                                    if nombre_seccion.lower() == "e-commerce":
-                                        message = "No hay modificaciones que puedas realizar en la sección e-commerce de tu página. Si queres agregar productos debes pedirmelo como tal."
-                                        dispatcher.utter_message(text=message)
-                                        return [SlotSet("componente", None), SlotSet("tipo_seccion", None), SlotSet("nombre_informativa", None), SlotSet("pregunta_edicion", False)]
-                                    if nombre_seccion in secciones:
-                                        return [SlotSet("nombre_seccion_editando", nombre_seccion), FollowupAction("action_modificar_informativa_1"), SlotSet("pregunta_componente", False),  SlotSet("pregunta_nombre", False), SlotSet("pregunta_edicion", False)]
-                                    else:
-                                        dispatcher.utter_message(text=str(nombre_seccion) + " no es un tipo de seccion válido. Te recuerdo que las secciones a crear son: \n E-Commerce \n Informativa")
-                                        return [SlotSet("pregunta_componente", True), SlotSet("pregunta_seccion", True)]
-                                else:
-                                    message = str(tipo_seccion) + " no es un tipo de seccion válido. Te recuerdo que las secciones de tu página son:\n"
-                                    for seccion in secciones:
-                                        message += seccion + "\n"
-                                    dispatcher.utter_message(text=message)
-                                    return [SlotSet("pregunta_componente", True), SlotSet("pregunta_seccion", True)]
-                            else:
-                            # La pagina no tiene secciones
-                                dispatcher.utter_message(text="La pagina " + page_doc.name + " no cuenta con ninguna sección, por lo que antes deberás crear una.")
-                                return [FollowupAction("action_capturar_tipo_seccion")]
-                    else:
-                    # No hay componente a modificar
-                        message = "¿Qué componente de tu página te gustaría modificar? Te recuerdo que sus componentes son:\nEncabezado\n"
-                        secciones = page_obj.get_sections_name()
-                        if len(secciones) > 0:
-                            for seccion in secciones:
-                                message += "Seccion " + seccion + "\n"
-                        message += "Footer"
-                        dispatcher.utter_message(text=message)
-                        return [SlotSet("pregunta_componente", True)]
-                else:
-                # No hay página
-                    if len(pages) > 0:
-                        message = "¿Qué página te gustaría modificar? Te recuerdo que tus páginas son:\n"
-                        for page in pages:
-                            message += str(page.name) + "\n"
-                    else:
-                        message = "Antes de realizar modificaciones debes crear una página"
-                    dispatcher.utter_message(text=message)
-                    return [SlotSet("pregunta_nombre", True)]
-            else:
-            # Tiene páginas
-                dispatcher.utter_message(text="Antes de realizar modificaciones debes crear una página")
+        if pgm.is_alive(user_id, page_name):
+        # La pagina esta viva
+            page_obj = pgm.get_page(user_id, page_name)
+            if page_obj.is_running():
+                pgm.switch_dev(user_id, page_name)
+            dispatcher.utter_message(text="Tu pagina se encuentra en modo edición. Podrás visualizar los cambios que realices en: " + page_obj.get_page_address())
+            dispatcher.utter_message(text="Si la pagina te solicita una contraseña ingresa: " + pgm.get_tunnel_password())
+            if not page_obj.is_running_dev():
+                pgm.run_dev(user_id, page_name)
+                dispatcher.utter_message(text="Tu pagina se encuentra en modo edición. Podrás visualizar los cambios que realices en: " + page_obj.get_page_address())
+                dispatcher.utter_message(text="Si la pagina te solicita una contraseña ingresa: " + pgm.get_tunnel_password())
         else:
-            dispatcher.utter_message(text="Para modificar una pagina primero debes completar el tutorial. ¿Deseas hacerlo ahora?")
-            return [SlotSet("pregunta_tutorial", True)]
+        # La pagina no está viva, hay que recuperar sus datos de la db
+            page_obj = pgm.add_page(user_id, page_name)
+            pgm.run_dev(user_id, page_name)
+        componente = tracker.get_slot('componente')
+        print("(" + threading.current_thread().getName() + ") " + "--------componente: ", componente)
+        if componente:
+        # Hay componente a modificar
+            if componente.lower() == "encabezado":
+                return [FollowupAction("action_preguntar_color_encabezado"), SlotSet("pregunta_componente", False),
+                        SlotSet("pregunta_nombre", False), SlotSet("pregunta_edicion", False)]
+            elif componente.lower() == "footer":
+                return [FollowupAction("action_preguntar_mail_footer"), SlotSet("pregunta_componente", False),
+                        SlotSet("pregunta_nombre", False), SlotSet("pregunta_edicion", False)]
+            elif componente.lower() == "seccion":
+            # Va a editar una seccion
+                tipo_seccion = tracker.get_slot('tipo_seccion')
+                print("(" + threading.current_thread().getName() + ") " + "--------tipo_seccion: ", tipo_seccion)
+                nombre_seccion = tracker.get_slot('nombre_informativa')
+                print("(" + threading.current_thread().getName() + ") " + "--------nombre_informativa: ", nombre_seccion)
+                secciones = page_obj.get_sections_name()
+                if len(secciones) > 0:
+                # La pagina tiene secciones
+                    if nombre_seccion:
+                        if nombre_seccion.lower() == "e-commerce":
+                            message = "No hay modificaciones que puedas realizar en la sección e-commerce de tu página. Si queres agregar productos debes pedirmelo como tal."
+                            dispatcher.utter_message(text=message)
+                            return [SlotSet("componente", None), SlotSet("tipo_seccion", None), SlotSet("nombre_informativa", None), SlotSet("pregunta_edicion", False)]
+                        if nombre_seccion in secciones:
+                            return [SlotSet("nombre_seccion_editando", nombre_seccion), FollowupAction("action_modificar_informativa_1"), SlotSet("pregunta_componente", False),  SlotSet("pregunta_nombre", False), SlotSet("pregunta_edicion", False)]
+                        else:
+                            dispatcher.utter_message(text=str(nombre_seccion) + " no es un tipo de seccion válido. Te recuerdo que las secciones a crear son: \n E-Commerce \n Informativa")
+                            return [SlotSet("pregunta_componente", True), SlotSet("pregunta_seccion", True)]
+                    else:
+                        message = str(tipo_seccion) + " no es un tipo de seccion válido. Te recuerdo que las secciones de tu página son:\n"
+                        for seccion in secciones:
+                            message += seccion + "\n"
+                        dispatcher.utter_message(text=message)
+                        return [SlotSet("pregunta_componente", True), SlotSet("pregunta_seccion", True)]
+                else:
+                # La pagina no tiene secciones
+                    dispatcher.utter_message(text="La pagina " + page_doc.name + " no cuenta con ninguna sección, por lo que antes deberás crear una.")
+                    return [FollowupAction("action_capturar_tipo_seccion")]
+        else:
+        # No hay componente a modificar
+            message = "¿Qué componente de tu página te gustaría modificar? Te recuerdo que sus componentes son:\nEncabezado\n"
+            secciones = page_obj.get_sections_name()
+            if len(secciones) > 0:
+                for seccion in secciones:
+                    message += "Seccion " + seccion + "\n"
+            message += "Footer"
+            dispatcher.utter_message(text=message)
+            return [SlotSet("pregunta_componente", True)]
 
+
+    def skip_tuto_verification(self) -> bool:
+        return False
+
+    def skip_page_verification(self) -> bool:
+        return False
 
 class ActionGuardarColor(Action):
     def name(self) -> Text:
         return "action_guardar_color"
 
-    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker,
-            domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        print("(" + threading.current_thread().getName() + ") " + "----EN ACTION GUARDAR COLOR----")
-        print("(" + threading.current_thread().getName() + ") ", tracker.slots.items())
+    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
         color = next(tracker.get_latest_entity_values("color"), None)
         print("(" + threading.current_thread().getName() + ") " + "--------color: ", color)
         #text - yellow - 600
@@ -376,14 +325,13 @@ class ActionGuardarColor(Action):
         else:
             return []
 
-
 class ActionRecibirImagen(Action):
     def name(self) -> Text:
         return "action_recibir_imagen"
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         global dbm, pgm, tbm
-        print("(" + threading.current_thread().getName() + ") " + "----EN ACTION RECIBIR IMAGEN----")
+        print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
         print("(" + threading.current_thread().getName() + ") " + "--------creando_encabezado ", tracker.get_slot("creando_encabezado"))
         print("(" + threading.current_thread().getName() + ") " + "--------creando_seccion_informativa ", tracker.get_slot("creando_seccion_informativa"))
         print("(" + threading.current_thread().getName() + ") " + "--------pregunta_otra_imagen_seccion_informativa ", tracker.get_slot("pregunta_otra_imagen_seccion_informativa"))
@@ -438,7 +386,8 @@ class ActionPreguntarColorEncabezado(Action):
     def name(self) -> Text:
         return "action_preguntar_color_encabezado"
 
-    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+    def handle_action(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
         dispatcher.utter_message(text="De que color te gustaria que sea el encabezado? Para ello necesito que me proveas su codigo hexadecimal. Podes seleccionar tu color y copiar su codigo en el siguiente link: https://g.co/kgs/FMBcG8K")
         return [SlotSet("creando_encabezado", True), SlotSet("pregunta_color", True), FollowupAction("action_listen")]
 
@@ -449,9 +398,9 @@ class ActionCrearEncabezado(Action):
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         global dbm, pgm, rg
-        print("(" + threading.current_thread().getName() + ")" + "----EN ACTION CREAR ENCABEZADO----")
-        print("(" + threading.current_thread().getName() + ") ", tracker.slots.items())
-        page_path = pgm.get_page_path(tracker.sender_id, tracker.get_slot('page_name'))
+        print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
+        page_name = tracker.get_slot("page_name")
+        page_path = pgm.get_page_path(user_id, page_name)
         print("(" + threading.current_thread().getName() + ")" + "--------page_path: ", page_path)
         color = tracker.get_slot('color_encabezado')
         print("(" + threading.current_thread().getName() + ")" + "--------color: ", color)
@@ -464,7 +413,7 @@ class ActionCrearEncabezado(Action):
         utils.go_to_main_dir()
         rg.generarHeader(dataHeader)
         print("-------------ENCABEZADO MODIFICADO-------------")
-        dbm.updt_modification_date(tracker.sender_id, tracker.get_slot('page_name'))
+        dbm.updt_modification_date(user_id, page_name)
         dispatcher.utter_message(text="Podes ver los cambios que realizamos en el encabezado")
         return [SlotSet("creando_encabezado", False), SlotSet("componente", None)]
 
@@ -474,8 +423,7 @@ class ActionPreguntarMailFooter(Action):
         return "action_preguntar_mail_footer"
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        print("(" + threading.current_thread().getName() + ") " + "----ACTION PREGUNTAR MAIL FOOTER----")
-        print("(" + threading.current_thread().getName() + ") ", tracker.slots.items())
+        print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
         dispatcher.utter_message(text="Queres cambiar tu e-mail en el footer?")
         return [SlotSet("creando_footer", True), FollowupAction("action_listen")]
 
@@ -485,7 +433,7 @@ class ActionGuardarMailFooter(Action):
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         global dbm
-        print("(" + threading.current_thread().getName() + ") " + "----ACTION GUARDAR MAIL FOOTER----")
+        print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
         print("(" + threading.current_thread().getName() + ") ", tracker.slots.items())
         last_message_intent = tracker.latest_message.get('intent').get('name')
         print("(" + threading.current_thread().getName() + ") " + "--------last message intent: ", last_message_intent)
@@ -512,8 +460,7 @@ class ActionGuardarUbicacionFooter(Action):
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         global dbm
-        print("(" + threading.current_thread().getName() + ") " + "----ACTION GUARDAR UBICACION FOOTER----")
-        print("(" + threading.current_thread().getName() + ") ", tracker.slots.items())
+        print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
         last_message_intent = tracker.latest_message.get('intent').get('name')
         print("(" + threading.current_thread().getName() + ") " + "--------last message intent: ", last_message_intent)
         if 'decir_ubicacion' in last_message_intent:
@@ -539,9 +486,9 @@ class ActionCrearFooter(Action):
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         global pgm, rg
-        print("(" + threading.current_thread().getName() + ") " + "----ACTION CREAR FOOTER----")
-        print("(" + threading.current_thread().getName() + ") ", tracker.slots.items())
-        page_path = pgm.get_page_path(tracker.sender_id, tracker.get_slot('page_name'))
+        print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
+        page_name = tracker.get_slot("page_name")
+        page_path = pgm.get_page_path(user_id, page_name)
         mail = str(tracker.get_slot("mail_footer"))
         if not mail:
             mail = "contactDesignLabel@gmail.com"
@@ -562,85 +509,70 @@ class ActionCrearFooter(Action):
 # SECCIONES
 
 ## CREAR
-class ActionCapturarTipoSeccion(Action):
+class ActionCapturarTipoSeccion(BaseAction):
     def name(self) -> Text:
         return "action_capturar_tipo_seccion"
 
-    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+    def handle_action(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any], user_id: Text,
+                      page_name: Text = None, page_doc: Any = None, pages: Any = None) -> List[Dict[Text, Any]]:
         global dbm, pgm
-        print("(" + threading.current_thread().getName() + ") " + "----ACTION CAPTURAR TIPO SECCION----")
-        page_name = tracker.get_slot("page_name")
         print("(" + threading.current_thread().getName() + ") " + "--------page_name: ", page_name)
-        if page_name:
-            page_doc = dbm.get_page(tracker.sender_id, page_name)
-            if not page_doc:
-                print("(" + threading.current_thread().getName() + ") " + "--------page_doc: ", page_doc)
-                # Esa pagina no pertenece al usuario
-                message = "No se encuentra la pagina a la que deseas crearle una sección. Te recuerdo que tus paginas son: \n"
-                pags = dbm.get_user_pages(tracker.sender_id)
-                for pag in pags:
-                    message += pag.name + "\n"
-                dispatcher.utter_message(text=message)
-                return [SlotSet("pregunta_nombre", True), SlotSet("componente", "seccion")]
-            else:
-                print("(" + threading.current_thread().getName() + ") " + "--------page_doc.name: ", page_doc.name)
-                page_obj = pgm.get_page(tracker.sender_id, page_doc.name)
-                if not page_obj:
-                    page_obj = pgm.add_page(tracker.sender_id, page_doc.name)
-                print("(" + threading.current_thread().getName() + ") " + "--------page_obj.name: ", page_obj.get_name())
-                if not tracker.get_slot('tipo_seccion') == "e-commerce":
-                    if not page_obj.is_running_dev():
-                        pgm.run_dev(tracker.sender_id, page_doc.name)
-                        page_obj.wait_for_ready()
-                        message = "Tu pagina se encuentra en modo edición. Podrás visualizar los cambios que realices en: " + page_obj.get_page_address()
-                        dispatcher.utter_message(text=message)
-                        message = "Si la pagina te solicita una contraseña ingresa: " + pgm.get_tunnel_password()
-                        dispatcher.utter_message(text=message)
-                    elif page_obj.is_running():
-                        pgm.switch_dev(tracker.sender_id, page_doc.name)
-                        message = "Tu pagina se encuentra en modo edición. Podrás visualizar los cambios que realices en: " + page_obj.get_page_address()
-                        dispatcher.utter_message(text=message)
-                        message = "Si la pagina te solicita una contraseña ingresa: " + pgm.get_tunnel_password()
-                        dispatcher.utter_message(text=message)
-            seccion = tracker.get_slot('componente')
-            if seccion.lower() == "seccion":
-            # Va a editar una seccion
-                tipo_seccion = tracker.get_slot('tipo_seccion')
-                print("(" + threading.current_thread().getName() + ") " + "--------tipo_seccion: ", tipo_seccion)
-                if tipo_seccion:
-                    # Hay tipo seccion
-                    if "e-commerce" in tipo_seccion.lower():
-                        dispatcher.utter_message(text="Aguarda un momento mientras se crea la sección e-commerce en tu página.")
-                        return [FollowupAction("action_crear_ecommerce")]
-                    elif "informativa" in tipo_seccion.lower():
-                        return [FollowupAction("action_crear_informativa_1"), SlotSet("pregunta_edicion", False)]
-                    else:
-                        dispatcher.utter_message(text=str(tipo_seccion) + " no es un tipo de seccion válido. Te recuerdo que las secciones a crear son: \n E-Commerce \n Informativa")
-                        return [SlotSet("pregunta_seccion", True), SlotSet("pregunta_nombre", True), SlotSet("componente", "seccion")]
-                else:
-                    # No hay tipo seccion
-                    dispatcher.utter_message(text="¿Que tipo de sección te gustaría crear? Te recuerdo que las posibles secciones son: \n E-Commerce \n Informativa")
-                    return [SlotSet("pregunta_seccion", True), SlotSet("pregunta_nombre", True)]
-            return [SlotSet("creando_seccion", True), SlotSet("pregunta_nombre", True), SlotSet("componente", "seccion")]
+        print("(" + threading.current_thread().getName() + ") " + "--------page_doc.name: ", page_doc.name)
+        if pgm.is_alive(user_id, page_name):
+            page_obj = pgm.get_page(tracker.sender_id, page_doc.name)
         else:
-            message = "Indicame el nombre de la pagina en la que deseas crear la sección. Te recuerdo que tus paginas son: \n"
-            pags = dbm.get_user_pages(tracker.sender_id)
-            for pag in pags:
-                message += str(pag.name) + "\n"
-            dispatcher.utter_message(text=message)
-            return [SlotSet("pregunta_nombre", True), SlotSet("componente", "seccion")]
+            page_obj = pgm.add_page(tracker.sender_id, page_doc.name)
+        print("(" + threading.current_thread().getName() + ") " + "--------page_obj.name: ", page_obj.get_name())
+        if not tracker.get_slot('tipo_seccion') == "e-commerce":
+            if not page_obj.is_running_dev():
+                pgm.run_dev(user_id, page_name)
+                message = "Tu pagina se encuentra en modo edición. Podrás visualizar los cambios que realices en: " + page_obj.get_page_address()
+                dispatcher.utter_message(text=message)
+                message = "Si la pagina te solicita una contraseña ingresa: " + pgm.get_tunnel_password()
+                dispatcher.utter_message(text=message)
+            elif page_obj.is_running():
+                pgm.switch_dev(tracker.sender_id, page_doc.name)
+                message = "Tu pagina se encuentra en modo edición. Podrás visualizar los cambios que realices en: " + page_obj.get_page_address()
+                dispatcher.utter_message(text=message)
+                message = "Si la pagina te solicita una contraseña ingresa: " + pgm.get_tunnel_password()
+                dispatcher.utter_message(text=message)
+        seccion = tracker.get_slot('componente')
+        if seccion.lower() == "seccion":
+        # Va a editar una seccion
+            tipo_seccion = tracker.get_slot('tipo_seccion')
+            print("(" + threading.current_thread().getName() + ") " + "--------tipo_seccion: ", tipo_seccion)
+            if tipo_seccion:
+                # Hay tipo seccion
+                if "e-commerce" in tipo_seccion.lower():
+                    dispatcher.utter_message(text="Aguarda un momento mientras se crea la sección e-commerce en tu página.")
+                    return [FollowupAction("action_crear_ecommerce")]
+                elif "informativa" in tipo_seccion.lower():
+                    return [FollowupAction("action_crear_informativa_1"), SlotSet("pregunta_edicion", False)]
+                else:
+                    dispatcher.utter_message(text=str(tipo_seccion) + " no es un tipo de seccion válido. Te recuerdo que las secciones a crear son: \n E-Commerce \n Informativa")
+                    return [SlotSet("pregunta_seccion", True), SlotSet("pregunta_nombre", True), SlotSet("componente", "seccion")]
+            else:
+                # No hay tipo seccion
+                dispatcher.utter_message(text="¿Que tipo de sección te gustaría crear? Te recuerdo que las posibles secciones son: \n E-Commerce \n Informativa")
+                return [SlotSet("pregunta_seccion", True), SlotSet("pregunta_nombre", True)]
+        return [SlotSet("creando_seccion", True), SlotSet("pregunta_nombre", True), SlotSet("componente", "seccion")]
+
+    def skip_tuto_verification(self) -> bool:
+        return False
+
+    def skip_page_verification(self) -> bool:
+        return False
 
 ### E-COMMERCE
 
-class ActionCrearEcommerce(Action):
+class ActionCrearEcommerce(BaseAction):
 
     def name(self):
         return "action_crear_ecommerce"
 
-    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+    def handle_action(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any], user_id: Text,
+                      page_name: Text = None, page_doc: Any = None, pages: Any = None) -> List[Dict[Text, Any]]:
         global dbm, pgm
-        print("(" + threading.current_thread().getName() + ") " + "----ACTION CREAR SECCION E-COMMERCE----")
-        user_id = tracker.sender_id
         page_name = tracker.get_slot("page_name")
         page = pgm.get_page(user_id, page_name)
         seccion = page.get_section("e-commerce")
@@ -662,72 +594,41 @@ class ActionCrearEcommerce(Action):
 
 #### AGREGAR PRODUCTOS
 
-class ActionPedirProductos(Action):
+class ActionPedirProductos(BaseAction):
 
     def name(self) -> Text:
         return "action_pedir_productos"
 
-    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+    def handle_action(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any], user_id: Text,
+                      page_name: Text = None, page_doc: Any = None, pages: Any = None) -> List[Dict[Text, Any]]:
         global dbm, tbm
-        user_id = tracker.sender_id
-        page_name = tracker.get_slot("page_name")
-        tuto = dbm.get_user_tutorial(user_id)
-        if tuto:
-            pages = dbm.get_user_pages(user_id)
-            if len(pages) > 0:
-                if page_name:
-                # Hay página
-                    page_doc = dbm.get_page(user_id, page_name)
-                    if page_doc:
-                    # Es del usuario
-                        if page_doc.has_ecomm_section:
-                        # Tiene sección ecommerce
-                            print("(" + threading.current_thread().getName() + ") " + "----ACTION PEDIR PRODUCTOS----")
-                            message = "Podes agregar los productos de a uno o cargar múltiples productos en un archivo de datos y enviármelo. Si optas por la carga mediante archivo, completa la siguiente planilla agregando los datos en una nueva fila. En los campos \"multimedia\" coloca el link a las imágenes o videos del producto"
-                            dispatcher.utter_message(text=message)
-                            utils.go_to_main_dir()
-                            tbm.send_file_to_user(user_id, CONSTANTS.TEMPLATE_PRODUCTOS_DIR)
-                            dispatcher.utter_message(text="Si vas a cargar los productos de a uno voy a necesitar los siguientes datos:")
-                            dispatcher.utter_message(text="Cantidad:\nTitulo:\nDescripción:\nPrecio:")
-                            return [SlotSet("agregando_productos", True), SlotSet("pregunta_carga", True), SlotSet("pregunta_nombre", False)]
-                        else:
-                        # No tiene sección ecommerce
-                            message = "La página " + str(page_name) + " no tiene sección e-commerce."
-                            pages = dbm.get_user_pages(user_id, "e-commerce")
-                            if len(pages) > 0:
-                                message += " Tus páginas con dicha sección son:\n"
-                                for page in pages:
-                                    if page.has_ecomm_section:
-                                        message += str(page.name) + "\n"
-                            dispatcher.utter_message(text=message)
-                            return [SlotSet("agregando_productos", True), SlotSet("pregunta_nombre", True)]
-                    else:
-                    # No es del usuario
-                        message = "La página " + str(page_name) + " no te pertenece."
-                        if len(pages) > 0:
-                            message += " Te recuerdo que tus páginas con sección e-commerce son:\n"
-                            for page in pages:
-                                if page.has_ecomm_section:
-                                    message += str(page.name) + "\n"
-                        dispatcher.utter_message(text=message)
-                        return [SlotSet("agregando_productos", True), SlotSet("pregunta_nombre", True)]
-                else:
-                # No hay página
-                    pages = dbm.get_user_pages(user_id, "e-commerce")
-                    if len(pages) > 0:
-                        message = "¿A qué página te gustaría agregar productos? Te recuerdo que tus páginas con sección e-commerce son:\n"
-                        for page in pages:
-                            if page.has_ecomm_section:
-                                message += str(page.name) + "\n"
-                    else:
-                        message = "No tienes ninguna página con una sección e-commerce."
-                    dispatcher.utter_message(text=message)
-                    return [SlotSet("agregando_productos", True), SlotSet("pregunta_nombre", True)]
-            else:
-                dispatcher.utter_message(text="Para cargar productos primero debes crear una página")
+        if page_doc.has_ecomm_section:
+        # Tiene sección ecommerce
+            print("(" + threading.current_thread().getName() + ") " + "----ACTION PEDIR PRODUCTOS----")
+            message = "Podes agregar los productos de a uno o cargar múltiples productos en un archivo de datos y enviármelo. Si optas por la carga mediante archivo, completa la siguiente planilla agregando los datos en una nueva fila. En los campos \"multimedia\" coloca el link a las imágenes o videos del producto"
+            dispatcher.utter_message(text=message)
+            utils.go_to_main_dir()
+            tbm.send_file_to_user(user_id, CONSTANTS.TEMPLATE_PRODUCTOS_DIR)
+            dispatcher.utter_message(text="Si vas a cargar los productos de a uno voy a necesitar los siguientes datos:")
+            dispatcher.utter_message(text="Cantidad:\nTitulo:\nDescripción:\nPrecio:")
+            return [SlotSet("agregando_productos", True), SlotSet("pregunta_carga", True), SlotSet("pregunta_nombre", False)]
         else:
-            dispatcher.utter_message(text="Para cargar productos primero debes completar el tutorial. ¿Deseas hacerlo ahora?")
-            return [SlotSet("pregunta_tutorial", True)]
+        # No tiene sección ecommerce
+            message = "La página " + str(page_name) + " no tiene sección e-commerce."
+            pages = dbm.get_user_pages(user_id, "e-commerce")
+            if len(pages) > 0:
+                message += " Tus páginas con dicha sección son:\n"
+                for page in pages:
+                    if page.has_ecomm_section:
+                        message += str(page.name) + "\n"
+            dispatcher.utter_message(text=message)
+            return [SlotSet("agregando_productos", True), SlotSet("pregunta_nombre", True)]
+
+    def skip_tuto_verification(self) -> bool:
+        return False
+
+    def skip_page_verification(self) -> bool:
+        return False
 
 class ActionCapturarProductoCargado(Action):
 
@@ -736,7 +637,7 @@ class ActionCapturarProductoCargado(Action):
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         global dbm, tbm
-        print("(" + threading.current_thread().getName() + ") " + "----ACTION CAPTURAR PRODUCTO CARGADO----")
+        print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
         # Verifica si el último mensaje contiene una imagen
         latest_message = tracker.latest_message
         if 'document' in latest_message['metadata']['message']:
@@ -796,7 +697,7 @@ class ActionCrearInformativa1(Action):
         return "action_crear_informativa_1"
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        print("(" + threading.current_thread().getName() + ") " + "----ACTION CREAR SECCION INFORMATIVA 1----")
+        print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
         dispatcher.utter_message(text="¿Que nombre llevará la sección?")
         return [SlotSet("creando_seccion_informativa", True), SlotSet("pregunta_nombre_informativa", True)]
 
@@ -808,7 +709,7 @@ class ActionCrearInformativa2(Action):
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         global pgm
-        print("(" + threading.current_thread().getName() + ") " + "----ACTION CREAR SECCION INFORMATIVA 2----")
+        print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
         print("(" + threading.current_thread().getName() + ") " + "--------page_name: ", tracker.get_slot('page_name'))
         page = pgm.get_page(tracker.sender_id, tracker.get_slot('page_name'))
         nombre_informativa = "Informacion"
@@ -830,7 +731,7 @@ class ActionCrearInformativa3(Action):
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         global dbm, pgm, rg
-        print("(" + threading.current_thread().getName() + ") " + "----ACTION CREAR SECCION INFORMATIVA 3----")
+        print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
         user_id = tracker.sender_id
         page_name = tracker.get_slot('page_name')
         last_user_message = str(tracker.latest_message.get('text'))
@@ -862,7 +763,7 @@ class ActionModificarInformativa1(Action):
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        print("(" + threading.current_thread().getName() + ") " + "----ACTION MODIFICAR SECCION INFORMATIVA 1----")
+        print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
         dispatcher.utter_message(text="¿Cuál es el nuevo contenido de la sección?")
         return [SlotSet("creando_seccion_informativa", True), SlotSet("pide_text_informativa", True)]
 
@@ -875,7 +776,7 @@ class ActionModificarInformativa2(Action):
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         global dbm, pgm, rg
-        print("(" + threading.current_thread().getName() + ") " + "----ACTION MODIFICAR SECCION INFORMATIVA 2----")
+        print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
         user_id = tracker.sender_id
         page_name = tracker.get_slot('page_name')
         last_user_message = str(tracker.latest_message.get('text'))
@@ -899,7 +800,7 @@ class ActionModificarInformativa4(Action):
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         global dbm, pgm
-        print("(" + threading.current_thread().getName() + ") " + "----ACTION MODIFICAR SECCION INFORMATIVA 4----")
+        print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
         page = pgm.get_page(tracker.sender_id, tracker.get_slot('page_name'))
         if tracker.get_slot("nombre_informativa"):
             nombre_informativa = tracker.get_slot("nombre_informativa")
@@ -918,6 +819,7 @@ class ActionSaludoTelegram(Action):
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         global dbm
+        print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
         dispatcher.utter_message(text="#### AVISO #### \nPor el momento me encuentro en desarrollo, por lo que si la conversación no fluye como se espera, envia un mensaje con el comando \"/restart\" para reiniciar mis slots de contexto.")
         now = datetime.datetime.now()
         hora = int(now.strftime("%H"))
@@ -958,6 +860,7 @@ class ActionDespedidaTelegram(Action):
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
         now = datetime.datetime.now()
         hora = now.strftime("%H")
         if (hora > "0") and (hora <= "12"):
@@ -980,6 +883,7 @@ class ActionResponderPaginasPropias(Action):
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         global dbm
+        print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
         pages = dbm.get_user_pages(tracker.sender_id)
         if pages:
             message = "Tus paginas son: \n"
@@ -990,59 +894,6 @@ class ActionResponderPaginasPropias(Action):
             dispatcher.utter_message(text="Todavía no creaste ninguna página.")
         return []
 
-
-# Action Devolver Hora
-class ActionHora(Action):
-
-    def name(self) -> Text:
-        return "action_hora"
-
-    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker,
-            domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        now = datetime.datetime.now()
-        dispatcher.utter_message("Hoy es " + now.strftime("%d/%m de 20%y"))
-        hora = now.strftime("%H")
-        if (hora > "2") and (hora <= "13"):
-            dispatcher.utter_message("Y la hora es " + now.strftime("%H:%M") + " , tempranito ajaj")
-        elif (hora > "13") and (hora <= "19"):
-            dispatcher.utter_message("Y la hora es " + now.strftime("%H:%M") + " , hora de la siesta jajaj")
-        else:
-            dispatcher.utter_message("Y la hora es " + now.strftime("%H:%M") + " , medio tarde jaja")
-        return []
-
-
-# Estado de animo Action
-class ActionAnimo(Action):
-
-    def name(self) -> Text:
-        return "action_animo"
-
-    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker,
-            domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        intent = tracker.latest_message['intent'].get('name')
-        if intent == "estado_de_animo_feliz":
-            SlotSet("animo", "Feliz")
-            dispatcher.utter_message(template="utter_estado_de_animo_feliz")
-        else:
-            SlotSet("animo", "Triste")
-            dispatcher.utter_message(template="utter_estado_de_animo_triste")
-        return []
-
-
-class ActionTriste(Action):
-
-    def name(self) -> Text:
-        return "action_triste"
-
-    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker,
-            domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        triste = tracker.latest_message['intent'].get('name')
-        if str(triste) == 'triste_facu':
-            dispatcher.utter_message(template="utter_triste_facu")
-        else:
-            dispatcher.utter_message(template="utter_triste_pelea")
-        return []
-
 # TUTORIAL
 
 class ActionCapturarTutorial(Action):
@@ -1051,7 +902,7 @@ class ActionCapturarTutorial(Action):
         return "action_capturar_tutorial"
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        print("(" + threading.current_thread().getName() + ") " + "----ACTION CAPTURAR TUTORIAL----")
+        print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
         last_message_intent = tracker.latest_message.get('intent').get('name')
         if 'denegar' in last_message_intent:
             dispatcher.utter_message(text="No hay problema, solo ten en cuenta que necesitarás completar el tutorial antes de empezar a crear tus páginas")
@@ -1068,7 +919,7 @@ class ActionPregunta1(Action):
         return "action_pregunta_1"
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        print("(" + threading.current_thread().getName() + ") " + "----ACTION PREGUNTA 1----")
+        print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
         dispatcher.utter_message(text="Nuestras páginas se construyen mediante componentes. El primero de ellos es el encabezado, que se encuentra en la parte superior de la página web.")
         dispatcher.utter_message(text="Este encabezado se compone por el título de la página, el color del título y un logo.")
         dispatcher.utter_message(text="¿Entendido?")
@@ -1081,7 +932,7 @@ class ActionPregunta1Repetir(Action):
         return "action_pregunta_1_repetir"
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        print("(" + threading.current_thread().getName() + ") " + "----ACTION PREGUNTA 1 REPETIR----")
+        print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
         url_imagen = "https://ibb.co/dmsX1jY"
         dispatcher.utter_message(image=url_imagen)
         dispatcher.utter_message(text="En la imagen que esta arriba es un ejemplo de como esta formado el encabezado")
@@ -1096,7 +947,7 @@ class ActionPregunta2(Action):
         return "action_pregunta_2"
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        print("(" + threading.current_thread().getName() + ") " + "----ACTION PREGUNTA 2----")
+        print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
         dispatcher.utter_message(text="El siguiente componente de nuestras páginas es el cuerpo, el cual dividimos según 3 tipos de secciones: e-commerce e informativa.")
         dispatcher.utter_message(text="Seccion e-commerce: \nEsta sección te permite montar una tienda en tu página, cargar productos y que los usuarios puedan comprarlos.")
         dispatcher.utter_message(text="Seccion informativa: \nEsta sección te permite incluir información sobre tu página o empresa, incluyendo un texto informativo e imágenes.")
@@ -1110,7 +961,7 @@ class ActionPregunta2Repetir(Action):
         return "action_pregunta_2_repetir"
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        print("(" + threading.current_thread().getName() + ") " + "----ACTION PREGUNTA 2 REPETIR----")
+        print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
         url_imagen = "https://ibb.co/gTbpK4J"
         dispatcher.utter_message(text="Nuestras páginas cuentan con múltiples secciones.")
         dispatcher.utter_message(image=url_imagen)
@@ -1129,7 +980,7 @@ class ActionPregunta3(Action):
         return "action_pregunta_3"
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        print("(" + threading.current_thread().getName() + ") " + "----ACTION PREGUNTA 3----")
+        print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
         dispatcher.utter_message(text="Finalmente llegamos al footer, que es el componente de la página encontrado al final de la misma.")
         dispatcher.utter_message(text="Este se compone por el informacion del contacto, licencias y más.")
         dispatcher.utter_message(text="¿Entendido?")
@@ -1142,7 +993,7 @@ class ActionPregunta3Repetir(Action):
         return "action_pregunta_3_repetir"
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        print("(" + threading.current_thread().getName() + ") " + "----ACTION PREGUNTA 3 REPETIR----")
+        print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
         url_imagen = "https://ibb.co/QJ5dTX7"
         dispatcher.utter_message(text="El footer es el pie de página de tu web y en él podes modificar los datos de contacto de tu página o empresa.")
         dispatcher.utter_message(image=url_imagen)
@@ -1155,7 +1006,7 @@ class ActionPregunta4(Action):
         return "action_pregunta_4"
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        print("(" + threading.current_thread().getName() + ") " + "----ACTION PREGUNTA 4----")
+        print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
         dispatcher.utter_message(text="Al crear una página, los componentes encabezado y footer ya estarán incluídos pero las secciones no. Para agregar una nueva sección a tu página deberás pedirmelo.")
         dispatcher.utter_message(text="Esto no quita el hecho de que puedan modificarse. En cualquier momento podes pedirme que modifique el encabezado, el footer o una sección.")
         dispatcher.utter_message(text="¿Entendido?")
@@ -1168,7 +1019,7 @@ class ActionPregunta4Repetir(Action):
         return "action_pregunta_4_repetir"
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        print("(" + threading.current_thread().getName() + ") " + "----ACTION PREGUNTA 4 REPETIR----")
+        print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
         dispatcher.utter_message(text="Todos los componentes de una página pueden ser modificados una vez creados")
         dispatcher.utter_message(text="Encabezado: Puedes modificar su logotipo y el color del título.")
         dispatcher.utter_message(text="Sección informativa: Podes modificar su título y contenido, modificando el texto o agregando imágenes.")
@@ -1183,7 +1034,7 @@ class ActionTerminarTutorial(Action):
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         global dbm
-        print("(" + threading.current_thread().getName() + ") " + "----ACTION TERMINAR TUTORIAL----")
+        print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
         dispatcher.utter_message(text="¡Felicitaciones " + str(tracker.get_slot("nombre_usuario")) + ", terminaste el tutorial! Ya estas listo para crear tu primera página web")
         dbm.set_user_tutorial(tracker.sender_id)
         return [SlotSet("hizo_tutorial", True), SlotSet("pregunta_4_confirmacion", False), SlotSet("pregunta_4_repetir_confirmacion", False), SlotSet("pregunta_tutorial", False), SlotSet("inicia_tutorial", False)]
@@ -1195,6 +1046,7 @@ class ActionAvisame(Action):
         return "action_avisame"
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
         dispatcher.utter_message(text="Perfecto, cualquier cosa que necesites no dudes en pedirmelo.")
         slots = tracker.slots
         # Lista para almacenar los eventos de SlotSet

@@ -1,7 +1,6 @@
 from database.collections.general.Page import Page
 from mongoengine import Document, StringField, ListField, ReferenceField, IntField, BooleanField
 
-
 class User(Document):
 
     id = IntField(primary_key=True)
