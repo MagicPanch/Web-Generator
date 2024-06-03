@@ -5,8 +5,10 @@ import pandas as pd
 from io import BytesIO
 from numpy import nan
 
+from chatbot.actions.BaseAction import BaseAction
 from resources import CONSTANTS, utils
 from database.DBManager import DBManager
+from database.collections.general.Page import Page
 from generator.PageManager import PageManager
 from generator.ReactGenerator import ReactGenerator
 from generator.TelegramBotManager import TelegramBotManager
@@ -22,70 +24,49 @@ from rasa_sdk.events import SlotSet, FollowupAction
 slots_crear_pagina = ['creando_pagina', 'pregunta_nombre']
 slots_crear_seccion = ['creando_seccion']
 creando_pagina = False
-dbm = DBManager()
-pgm = PageManager()
-rg = ReactGenerator()
-tbm = TelegramBotManager()
+dbm = DBManager.get_instance()
+pgm = PageManager.get_instance()
+rg = ReactGenerator.get_instance()
+tbm = TelegramBotManager.get_instance()
 
-#Actions Pagina
-class ActionCapturarCreacion(Action):
+class ActionCapturarCreacion(BaseAction):
 
     def name(self) -> Text:
         return "action_capturar_creacion"
 
-    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        global dbm
-        print("(" + threading.current_thread().getName() + ") " + "----ACTION CAPTURAR CREACION----")
-        user_id = tracker.sender_id
-        tuto = dbm.get_user_tutorial(user_id)
-        if tuto:
-            seccion = tracker.get_slot('componente')
-            if seccion:
-                pages = dbm.get_user_pages(user_id)
-                if len(pages) > 0:
-                    return [FollowupAction("action_capturar_tipo_seccion"), SlotSet("creando_seccion", True)]
-                else:
-                    dispatcher.utter_message(text="Antes de crear secciones debes crear una página")
-            else:
-                return [FollowupAction("action_preguntar_nombre_pagina"), SlotSet("creando_pagina", True)]
+    def handle_action(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any], user_id: Text,
+                      page_name: Text = None, page_doc: Any = None, pages: Any = None) -> List[Dict[Text, Any]]:
+        seccion = tracker.get_slot('componente')
+        if seccion:
+            return [FollowupAction("action_capturar_tipo_seccion"), SlotSet("creando_seccion", True)]
         else:
-            dispatcher.utter_message(text="Para crear una pagina primero debes completar el tutorial. ¿Deseas hacerlo ahora?")
-            return [SlotSet("pregunta_tutorial", True)]
+            return [FollowupAction("action_preguntar_nombre_pagina"), SlotSet("creando_pagina", True)]
 
-class ActionPreguntarNombrePagina(Action):
+class ActionPreguntarNombrePagina(BaseAction):
 
     def name(self):
         return "action_preguntar_nombre_pagina"
 
-    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        global dbm
-        print("(" + threading.current_thread().getName() + ") " + "----ACTION PREGUNTAR NOMBRE PAGINA----")
-        tuto = dbm.get_user_tutorial(tracker.sender_id)
-        if tuto:
-            dispatcher.utter_message(text="¿Como queres que se llame tu pagina? Por favor indica su nombre en el siguiente formato: www. nombre-pagina .com")
-            return [SlotSet("creando_pagina", True), SlotSet("pregunta_nombre", True)]
-        else:
-            dispatcher.utter_message(text="Para crear una pagina primero debes completar el tutorial. ¿Deseas hacerlo ahora?")
-            return [SlotSet("pregunta_tutorial", True)]
+    def handle_action(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any], user_id: Text,
+                      page_name: Text = None, page_doc: Any = None, pages: Any = None) -> List[Dict[Text, Any]]:
+        dispatcher.utter_message(text="¿Como queres que se llame tu pagina? Por favor indica su nombre en el siguiente formato: www. nombre-pagina .com")
+        return [SlotSet("creando_pagina", True), SlotSet("pregunta_nombre", True)]
 
-class ActionCrearPagina(Action):
+class ActionCrearPagina(BaseAction):
 
     def name(self) -> Text:
         return "action_crear_pagina"
 
-    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+    def handle_action(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any], user_id: Text,
+                      page_name: Text = None, page_doc: Any = None, pages: Any = None) -> List[Dict[Text, Any]]:
         global creando_pagina, dbm, pgm
-        print("(" + threading.current_thread().getName() + ") " + "----ACTION CREAR PAGINA----")
-        print("(" + threading.current_thread().getName() + ") " + "--------page_name_slot: ", tracker.get_slot('page_name'))
         print("creando_pagina: ", creando_pagina)
-        user_id = tracker.sender_id
-        page_name = tracker.get_slot('page_name')
         last_message_intent = tracker.latest_message.get('intent').get('name')
         if not 'nombre_pagina' in last_message_intent:
             dispatcher.utter_message(text="Entendido, si mas tarde deseas retomar la creacion de tu pagina puedes pedirmelo.")
             return [SlotSet("creando_pagina", False), SlotSet("pregunta_nombre", False)]
-
         if tracker.get_slot("creando_pagina"):
+            page_name = tracker.get_slot("page_name")
             if not page_name:
                 dispatcher.utter_message(
                     text="Repetime como queres que se llame tu página. Te recuerdo que el formato es: www. nombre-pagina .com")
@@ -1205,7 +1186,7 @@ class ActionTerminarTutorial(Action):
         print("(" + threading.current_thread().getName() + ") " + "----ACTION TERMINAR TUTORIAL----")
         dispatcher.utter_message(text="¡Felicitaciones " + str(tracker.get_slot("nombre_usuario")) + ", terminaste el tutorial! Ya estas listo para crear tu primera página web")
         dbm.set_user_tutorial(tracker.sender_id)
-        return [SlotSet("pregunta_4_confirmacion", False), SlotSet("pregunta_4_repetir_confirmacion", False), SlotSet("pregunta_tutorial", False), SlotSet("inicia_tutorial", False)]
+        return [SlotSet("hizo_tutorial", True), SlotSet("pregunta_4_confirmacion", False), SlotSet("pregunta_4_repetir_confirmacion", False), SlotSet("pregunta_tutorial", False), SlotSet("inicia_tutorial", False)]
 
 
 class ActionAvisame(Action):
