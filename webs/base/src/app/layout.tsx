@@ -3,11 +3,12 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { Footer, Header, NavBar } from "../../components";
 import { CartProvider } from "../../components/cartContext";
+import { TAB_NAME } from "../../constants/tab_name"
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Ecommerce",
+  title: TAB_NAME,
   description: "web base para webGenerator",
 };
 

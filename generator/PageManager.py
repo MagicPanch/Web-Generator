@@ -45,6 +45,7 @@ class PageManager():
     _instance = None
     _running_pages: Dict[Tuple[str, str], Entry]= {}
     _tunnel_pwd:str = None
+
     @classmethod
     def get_instance(cls):
         if not cls._instance:

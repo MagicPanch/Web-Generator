@@ -1,9 +1,11 @@
 import json
 import os
 import threading
+import requests
+import json
+import cloudconvert
 
-from resources import utils
-
+from resources import utils, CONSTANTS
 
 class ReactGenerator:
 
@@ -23,6 +25,62 @@ class ReactGenerator:
     def __init__(self):
         if not hasattr(self, '_initialized'):  # Comprobar si ya está inicializado
             self._initialized = True  # Marcar como inicializado
+            cloudconvert.configure(api_key=CONSTANTS.FILE_CONVERTION_API_KEY, sandbox=False)
+
+    @staticmethod
+    def _convert_file(source, destination):
+        print("source: ", source)
+        print("destination: ", destination)
+        # Crear trabajo
+        job = cloudconvert.Job.create(payload={
+            "tasks": {
+                'upload':
+                {
+                    'operation': 'import/upload'
+                },
+                'convert':
+                {
+                    'operation': 'convert',
+                    'input': 'upload',
+                    'output_format': 'ico'
+                },
+                'export':
+                {
+                    'operation': 'export/url',
+                    'input': 'convert'
+                }
+            },
+            "redirect": True
+        })
+
+        #Subir archivo
+        upload_task_id = job['tasks'][0]['id']
+        upload_task = cloudconvert.Task.find(id=upload_task_id)
+        cloudconvert.Task.upload(file_name=source, task=upload_task)
+
+        #Esperar a que finalice el trabajo
+        cloudconvert.Job.wait(id=job['id'])
+        job = cloudconvert.Job.find(id=job['id'])
+        print(job['tasks'])
+        response = requests.get(job['tasks'][2]['result']['url'])
+        with open(destination, 'wb') as f:
+            f.write(response.content)
+        '''
+        export_task_id = job['tasks'][2]['id']
+        export_task = cloudconvert.Task.find(id=export_task_id)
+        cloudconvert.Task.wait(id=export_task_id)
+        '''
+
+
+    @staticmethod
+    def set_favicon(page_path):
+        utils.go_to_main_dir()
+        favicon_path = os.getcwd() + "\\" + page_path + "\\components\\Logo.png"
+        favicon_path = "D:\\Desarrollo\\Ingenieria-de-Software-2024\\Web-Generator\\user-pages\\2086036019\\test\\components\\Logo.png"
+        utils.go_to_dir_from_main(page_path)
+        utils.go_to_dir("public")
+        favicon = ReactGenerator._convert_file(favicon_path, os.getcwd() + "\\favicon.ico")
+        #utils.write_file(filename="favicon.ico", content=favicon)
 
     @staticmethod
     def set_collection(page_path, collection):
@@ -39,6 +97,15 @@ class ReactGenerator:
         utils.go_to_dir("constants")
         text = f"""export const LINK = "{address}";"""
         filename = os.getcwd() + "\\link.ts"
+        utils.write_file(filename=filename, content=text)
+        utils.go_to_main_dir()
+
+    @staticmethod
+    def set_tab_name(page_path, tab_name):
+        utils.go_to_dir_from_main(page_path)
+        utils.go_to_dir("constants")
+        text = f"""export const TAB_NAME = "{tab_name}";"""
+        filename = os.getcwd() + "\\tab_name.ts"
         utils.write_file(filename=filename, content=text)
         utils.go_to_main_dir()
 
