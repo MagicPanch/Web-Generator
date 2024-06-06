@@ -3,6 +3,7 @@
     import React from "react";
     import logo from './logo.png';
     import Image from "next/image";
+    import { HEADER_TITLE } from "../constants/header_title"
     import Link from "next/link";
     
     const Header = () =>  {
@@ -16,7 +17,7 @@
                     alt="Logo"/>
                 </div>
                 <h1 className="text-5xl text-colorTituloHeader  mb-5  font-semibold text-center flex-1">
-                    ecommerce
+                    {HEADER_TITLE}
                 </h1>
             </div>
         )

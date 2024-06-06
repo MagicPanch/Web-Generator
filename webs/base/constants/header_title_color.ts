@@ -1,0 +1,1 @@
+export const HEADER_TITLE_COLOR = "#12D7BF";

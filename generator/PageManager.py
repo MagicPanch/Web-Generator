@@ -171,14 +171,9 @@ class PageManager():
 
         #Copiar los templates al proyecto creado
         cls._copy_template(user, page_name)
-        dataHeader = {"titulo": page_name,
-            "address": path,
-            "addressLogo": "./logo.png",
-            "colorTitulo": "#12D7BF"
-        }
         rg = ReactGenerator.get_instance()
         rg.set_tab_name(path, page_name)
-        rg.generarHeader(dataHeader)
+        rg.generarHeader(page_path=path, title=page_name)
         print("(" + threading.current_thread().getName() + ") " + "----Ejecucion finalizada----")
 
     @classmethod

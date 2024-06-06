@@ -7,14 +7,11 @@
     <list default="true" id="121f2593-11ee-405e-a8d8-1c2f43d81e54" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/chatbot/actions/actions.py" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/actions/actions.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chatbot/domain.yml" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/domain.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/generator/PageManager.py" beforeDir="false" afterPath="$PROJECT_DIR$/generator/PageManager.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/generator/ReactGenerator.py" beforeDir="false" afterPath="$PROJECT_DIR$/generator/ReactGenerator.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/test.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/base/base/node_modules/.package-lock.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/base/base/package-lock.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/base/components/logo.png" beforeDir="false" afterPath="$PROJECT_DIR$/webs/base/components/logo.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/base/public/favicon.ico" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/base/src/app/layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/webs/base/src/app/layout.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/webs/base/components/Header.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/webs/base/components/Header.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/webs/base/tailwind.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/webs/base/tailwind.config.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -106,7 +103,7 @@
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
     "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
-    "ts.external.directory.path": "D:\\Desarrollo\\Ingenieria-de-Software-2024\\Web-Generator\\user-pages\\2086036019\\test\\node_modules\\typescript\\lib",
+    "ts.external.directory.path": "D:\\Desarrollo\\Ingenieria-de-Software-2024\\Web-Generator\\user-pages\\2086036019\\test-lucas\\node_modules\\typescript\\lib",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -217,7 +214,8 @@
       <workItem from="1716988705935" duration="4016000" />
       <workItem from="1717423669816" duration="15201000" />
       <workItem from="1717543029859" duration="14410000" />
-      <workItem from="1717635791077" duration="7225000" />
+      <workItem from="1717635791077" duration="7367000" />
+      <workItem from="1717683377338" duration="2643000" />
     </task>
     <servers />
   </component>

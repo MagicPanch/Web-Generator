@@ -422,6 +422,12 @@ slots:
     mappings:
       - type: custom
 
+  cambio_logo:
+    type: bool
+    initial_value: false
+    mappings:
+      - type: custom
+
   color_encabezado:
     type: text
     mappings:

@@ -1,3 +1,5 @@
+import { HEADER_TITLE_COLOR } from "./constants/header_title_color"
+
 /** @type {import('tailwindcss').Config} */
     module.exports = {
     content: [
@@ -18,7 +20,7 @@
         },
             bgGray: "#E2E2E2",
             bgBlack: "#1C1C1C",
-            colorTituloHeader : "#12D7BF",
+            colorTituloHeader : HEADER_TITLE_COLOR,
         },
         backgroundSize: {
             "16": "4rem",

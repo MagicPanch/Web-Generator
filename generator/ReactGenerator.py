@@ -109,83 +109,33 @@ class ReactGenerator:
 
 
     @staticmethod
-    def generarHeader(data):
-        print("genero header")
-        ReactGenerator.set_favicon(data["address"])
-
-        text = f""""use client";
-        
-        import React from "react";
-        import logo from '{data["addressLogo"]}';
-        import Image from "next/image";
-        import Link from "next/link";
-        
-        const Header = () =>  {{
-            return(
-            
-                <div className=" bg-blue-500 flex  items-center justify-between h-20 px-4">
-                    <div className="border-green-300 border-2  rounded h-30 w-30  bg-green-400 items-center">
-                        <Image src= {{logo}}  
-                        width={{100}}
-                        height={{100}}
-                        alt="Logo"/>
-                    </div>
-                    <h1 className="text-5xl text-colorTituloHeader  mb-5  font-semibold text-center flex-1">
-                        {data["titulo"]}
-                    </h1>
-                </div>
-            )
-        }}
-        export default Header;
-        """
-        configColor = f"""/** @type {{import('tailwindcss').Config}} */
-        module.exports = {{
-        content: [
-            "./pages/**/*.{{js,ts,jsx,tsx,mdx}}",
-            "./components/**/*.{{js,ts,jsx,tsx,mdx}}",
-            "./app/**/*.{{js,ts,jsx,tsx,mdx}}",
-        ],
-        theme: {{
-        extend: {{
-            fontFamily: {{
-                body: ["Korolev Medium"],
-            }},
-        colors: {{
-            primary: {{
-                400: "#CBEAF2",
-                500: "#66b7cb",
-                600: "#55a4b7",
-            }},
-                bgGray: "#E2E2E2",
-                bgBlack: "#1C1C1C",
-                colorTituloHeader : "{data["colorTitulo"]}",
-            }},
-            backgroundSize: {{
-                "16": "4rem",
-            }},
-            screens: {{
-                xs: "400px",
-                "3xl": "1680px",
-                "4xl": "2200px",
-            }},
-            maxWidth: {{
-                "10xl": "1512px",
-            }},
-            borderRadius: {{
-                "5xl": "40px",
-            }},
-            }},
-            }},
-            plugins: [],
-        }};"""
+    def _set_header_title(page_path, title):
+        utils.go_to_dir_from_main(page_path)
+        utils.go_to_dir("constants")
+        text = f"""export const HEADER_TITLE = "{title}";"""
+        filename = os.getcwd() + "\\header_title.ts"
+        utils.write_file(filename=filename, content=text)
         utils.go_to_main_dir()
-        with open(os.getcwd() + "\\" + data["address"]+"\\components\\Header.tsx", "w") as file:
-            file.write(text)
-            file.close()
 
-        with open(data["address"]+"\\tailwind.config.ts", "w") as file:
-            file.write(configColor)
-            file.close()
+    @staticmethod
+    def _set_header_title_color(page_path, color):
+        utils.go_to_dir_from_main(page_path)
+        utils.go_to_dir("constants")
+        text = f"""export const HEADER_TITLE_COLOR = "{color}";"""
+        filename = os.getcwd() + "\\header_title_color.ts"
+        utils.write_file(filename=filename, content=text)
+        utils.go_to_main_dir()
+
+    @staticmethod
+    def generarHeader(page_path, title = None, color = None, logo = False):
+        print("genero header")
+        if title is not None:
+            ReactGenerator._set_header_title(page_path, title)
+        if color is not None:
+            ReactGenerator._set_header_title_color(page_path, color)
+        if logo:
+            ReactGenerator.set_favicon(page_path)
+        utils.go_to_main_dir()
 
     @staticmethod
     def generarFooter(dataFooter):

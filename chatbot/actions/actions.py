@@ -357,7 +357,7 @@ class ActionRecibirImagen(Action):
             if not error:
                 dispatcher.utter_message(text="Imagen recibida con éxito.")
                 if tracker.get_slot("creando_encabezado"):
-                    return [FollowupAction("action_crear_encabezado")]
+                    return [SlotSet("cambio_logo", True), FollowupAction("action_crear_encabezado")]
                 elif tracker.get_slot("creando_seccion_informativa"):
                     dispatcher.utter_message(text="¿Queres agregar otra imagen?")
                     return [SlotSet("pregunta_otra_imagen_seccion_informativa", True)]
@@ -369,7 +369,7 @@ class ActionRecibirImagen(Action):
         else:
             if tracker.latest_message.get('intent').get('name') == "denegar":
                 if tracker.get_slot("creando_encabezado"):
-                    dispatcher.utter_message(text="Perfecto, el encabezado de tu página no contendrá ningún logo")
+                    dispatcher.utter_message(text="Perfecto, mantendremos el logo por defecto.")
                     return [FollowupAction("action_crear_encabezado")]
                 elif tracker.get_slot("creando_seccion_informativa"):
                     return [SlotSet("pregunta_otra_imagen_seccion_informativa", False)]
@@ -385,7 +385,7 @@ class ActionPreguntarColorEncabezado(Action):
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
-        dispatcher.utter_message(text="De que color te gustaria que sea el encabezado? Para ello necesito que me proveas su codigo hexadecimal. Podes seleccionar tu color y copiar su codigo en el siguiente link: https://g.co/kgs/FMBcG8K")
+        dispatcher.utter_message(text="¿Querés modificar el color del título? En ese caso necesito que me proveas su codigo hexadecimal. Podes seleccionar tu color y copiar su codigo en el siguiente link: https://g.co/kgs/FMBcG8K")
         return [SlotSet("creando_encabezado", True), SlotSet("pregunta_color", True), FollowupAction("action_listen")]
 
 
@@ -402,18 +402,12 @@ class ActionCrearEncabezado(Action):
         print("(" + threading.current_thread().getName() + ")" + "--------page_path: ", page_path)
         color = tracker.get_slot('color_encabezado')
         print("(" + threading.current_thread().getName() + ")" + "--------color: ", color)
-        dataHeader = {
-            "titulo": tracker.get_slot('page_name'),
-            "address": page_path,
-            "addressLogo": "./logo.png",
-            "colorTitulo": color
-        }
-        utils.go_to_main_dir()
-        rg.generarHeader(dataHeader)
+        cambio_logo = tracker.get_slot("cambio_logo")
+        rg.generarHeader(page_path=page_path, color=color, logo=cambio_logo)
         print("-------------ENCABEZADO MODIFICADO-------------")
         dbm.updt_modification_date(user_id, page_name)
         dispatcher.utter_message(text="Podes ver los cambios que realizamos en el encabezado")
-        return [SlotSet("creando_encabezado", False), SlotSet("componente", None)]
+        return [SlotSet("creando_encabezado", False), SlotSet("componente", None), SlotSet("cambio_logo", False)]
 
 
 class ActionPreguntarMailFooter(Action):
@@ -422,7 +416,7 @@ class ActionPreguntarMailFooter(Action):
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
-        dispatcher.utter_message(text="Queres cambiar tu e-mail en el footer?")
+        dispatcher.utter_message(text="¿Queres cambiar tu e-mail en el footer?")
         return [SlotSet("creando_footer", True), FollowupAction("action_listen")]
 
 class ActionGuardarMailFooter(Action):
