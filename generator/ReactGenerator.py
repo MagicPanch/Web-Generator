@@ -182,6 +182,7 @@ class ReactGenerator:
     def add_section(page_path, section_name):
         utils.go_to_dir_from_main(page_path)
         utils.go_to_dir("constants")
+        print(section_name)
         with open("sections.ts", 'r') as file:
             lines = file.readlines()
 
@@ -190,9 +191,10 @@ class ReactGenerator:
 
         # Nueva entrada en formato JSON
         new_entry = f'  {{ name: "{section_name}", component: "{section_name}" }},\n'
+        print(new_entry)
 
         # Insertar la nueva entrada en la lista SECTIONS
-        lines.insert(start_index + 1, new_entry)
+        lines.insert(len(lines) - 1, new_entry)
 
         # Escribir los cambios de vuelta al archivo
         with open("sections.ts", 'w') as file:

@@ -6,29 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="121f2593-11ee-405e-a8d8-1c2f43d81e54" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chatbot/actions/actions.py" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/actions/actions.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/generator/PageManager.py" beforeDir="false" afterPath="$PROJECT_DIR$/generator/PageManager.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/generator/ReactGenerator.py" beforeDir="false" afterPath="$PROJECT_DIR$/generator/ReactGenerator.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/generator/objects/pages/Front.py" beforeDir="false" afterPath="$PROJECT_DIR$/generator/objects/pages/Front.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/resources/utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/base/components/NavBar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/webs/base/components/NavBar.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/base/components/ProductTile.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/base/components/SearchBar.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/base/components/SectionABM.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/base/components/SectionECommerce.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/base/components/SectionInformativa.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/base/components/cartContext.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/base/components/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/webs/base/components/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/base/constants/body.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/base/constants/collection.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/base/constants/link.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/base/constants/navBarSections.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/base/constants/navbar.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/base/dataSections.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/base/src/app/layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/webs/base/src/app/layout.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/base/src/app/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/webs/base/src/app/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/base/src/app/shopping-cart/ProductShoppingTile.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/base/src/app/shopping-cart/page.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/webs/template_ecommerce/components/SectionECommerce.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/webs/template_ecommerce/components/E-Commerce.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -113,7 +93,7 @@
     "deletionFromPopupRequiresConfirmation": "false",
     "git-widget-placeholder": "lucas",
     "ignore.virus.scanning.warn.message": "true",
-    "last_opened_file_path": "D:/Desarrollo/Ingenieria-de-Software-2024/Web-Generator/webs/base/components",
+    "last_opened_file_path": "D:/Desarrollo/Ingenieria-de-Software-2024/Web-Generator/webs/template_ecommerce/src/app",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -126,11 +106,11 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\Desarrollo\Ingenieria-de-Software-2024\Web-Generator\webs\template_ecommerce\src\app" />
+      <recent name="D:\Desarrollo\Ingenieria-de-Software-2024\Web-Generator\user-pages\2086036019\test-lucas\components" />
       <recent name="D:\Desarrollo\Ingenieria-de-Software-2024\Web-Generator\webs\base\components" />
       <recent name="D:\Desarrollo\Ingenieria-de-Software-2024\Web-Generator\webs\base\constants" />
       <recent name="D:\Desarrollo\Ingenieria-de-Software-2024\Web-Generator\webs\base" />
-      <recent name="D:\Desarrollo\Ingenieria-de-Software-2024\Web-Generator\webs\template_ecommerce\components" />
-      <recent name="D:\Desarrollo\Ingenieria-de-Software-2024\Web-Generator\webs\base\src\app" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="D:\Desarrollo\Ingenieria-de-Software-2024\Web-Generator\user-pages\2086036019\test\components" />

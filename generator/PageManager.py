@@ -311,6 +311,7 @@ class PageManager():
         print("(" + threading.current_thread().getName() + ") " + "----PageManager.add_ecommerce----")
         page = cls._running_pages[(user, page_name)].get_page()
 
+
         if page.is_running_dev():
             cls.stop_page(user, page_name)
             cls._add_ecommerce(user, page_name) # Instalar sus dependencias y copiar template
@@ -323,6 +324,10 @@ class PageManager():
             cls._add_ecommerce(user, page_name) # Instalar sus dependencias y copiar template
             cls.build_project(user, page_name)
             cls.run_project(user, page_name)
+            return
+
+        cls._add_ecommerce(user, page_name)  # Instalar sus dependencias y copiar template
+
 
     @classmethod
     def _build_project(cls, user, page_name):
