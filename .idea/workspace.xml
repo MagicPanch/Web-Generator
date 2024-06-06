@@ -5,13 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="121f2593-11ee-405e-a8d8-1c2f43d81e54" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/chatbot/actions/actions.py" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/actions/actions.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chatbot/domain.yml" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/domain.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/generator/PageManager.py" beforeDir="false" afterPath="$PROJECT_DIR$/generator/PageManager.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/generator/ReactGenerator.py" beforeDir="false" afterPath="$PROJECT_DIR$/generator/ReactGenerator.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/base/components/Header.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/webs/base/components/Header.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/base/tailwind.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/webs/base/tailwind.config.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/CONSTANTS.PY" beforeDir="false" afterPath="$PROJECT_DIR$/resources/CONSTANTS.PY" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -94,7 +90,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
     "deletionFromPopupRequiresConfirmation": "false",
-    "git-widget-placeholder": "main",
+    "git-widget-placeholder": "lucas",
     "ignore.virus.scanning.warn.message": "true",
     "last_opened_file_path": "D:/Desarrollo/Ingenieria-de-Software-2024/Web-Generator/webs/base/src/app",
     "node.js.detected.package.eslint": "true",

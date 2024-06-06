@@ -81,8 +81,8 @@ class ActionCrearPagina(BaseAction):
                     page = pgm.get_page(user_id, page_name)
                     message = "Tu pagina se encuentra en modo edición. Podrás visualizar los cambios que realices en: " + page.get_page_address()
                     dispatcher.utter_message(text=message)
-                    message = "Si la pagina te solicita una contraseña ingresa: " + pgm.get_tunnel_password()
-                    dispatcher.utter_message(text=message)
+                    #message = "Si la pagina te solicita una contraseña ingresa: " + pgm.get_tunnel_password()
+                    #dispatcher.utter_message(text=message)
                     creando_pagina = False
                     return [SlotSet("creando_pagina", False), SlotSet("pregunta_nombre", False)]
                 elif dbm.get_page_by_name(page_name) is None:
@@ -124,8 +124,8 @@ class ActionEjecutarDev(Action):
         message = "Tu pagina se encuentra en modo edición. Podrás visualizar los cambios que realices en: " + page.get_page_address()
         dispatcher.utter_message(text=message)
 
-        message = "Si la pagina te solicita una contraseña ingresa: " + pgm.get_tunnel_password()
-        dispatcher.utter_message(text=message)
+        #message = "Si la pagina te solicita una contraseña ingresa: " + pgm.get_tunnel_password()
+        #dispatcher.utter_message(text=message)
         return [SlotSet("creando_pagina", False), SlotSet("pregunta_nombre", False)]
 
 class ActionEjecutarPagina(BaseAction):
@@ -142,12 +142,12 @@ class ActionEjecutarPagina(BaseAction):
             if page_obj.is_running():
             # Verificar si la pagina está ejecutando
                 dispatcher.utter_message(text="Tu pagina ya esta ejecutando. Puedes acceder a ella en el siguiente link: " + page_obj.get_page_address())
-                dispatcher.utter_message(text="Si la pagina te solicita una contraseña ingresa: " + pgm.get_tunnel_password())
+                #dispatcher.utter_message(text="Si la pagina te solicita una contraseña ingresa: " + pgm.get_tunnel_password())
                 return []
             elif page_obj.is_running_dev():
             # Se esta ejecutando en modo dev
                 pgm.stop_page(user_id, page_name)
-                pgm.stop_tunnel(user_id, page_name)
+                #pgm.stop_tunnel(user_id, page_name)
         else:
         # La pagina no vive en PageManager
             page_obj = pgm.add_page(user_id, page_name)
@@ -166,7 +166,7 @@ class ActionEjecutarPagina(BaseAction):
         page_address = page_obj.get_page_address()
         print("(" + threading.current_thread().getName() + ") " + "------------page_address: ", page_address)
         dispatcher.utter_message(text="Podes acceder a tu página en el siguiente link: " + page_address)
-        dispatcher.utter_message(text="Si la pagina te solicita una contraseña ingresa: " + pgm.get_tunnel_password())
+        #dispatcher.utter_message(text="Si la pagina te solicita una contraseña ingresa: " + pgm.get_tunnel_password())
         return [SlotSet("pregunta_ejecucion", False)]
 
     def skip_tuto_verification(self) -> bool:
@@ -190,7 +190,7 @@ class ActionEjecutarPagina(BaseAction):
             # Quiere detener todas
                 for pag in pgm.get_user_running_pages(user_id):
                     pgm.stop_page(user_id, pag.get_name())
-                    pgm.stop_tunnel(user_id, pag.get_name())
+                    #pgm.stop_tunnel(user_id, pag.get_name())
                     pgmpgm.pop_page(user_id, pag.get_name())
                     dispatcher.utter_message(text="La pagina " + pag.get_name() + " fue detenida con éxito.")
                 print("(" + threading.current_thread().getName() + ") " + "------------PAGINAS DETENIDA CON EXITO------------")
@@ -198,7 +198,7 @@ class ActionEjecutarPagina(BaseAction):
             #No especifico cual quiere detener pero hay slot de contexto
                 if page_name:
                     pgm.stop_page(user_id, page_name)
-                    pgm.stop_tunnel(user_id, page_name)
+                    #pgm.stop_tunnel(user_id, page_name)
                     pgm.pop_page(user_id, page_name)
                     print("(" + threading.current_thread().getName() + ") " + "------------PAGINA DETENIDA CON EXITO------------")
                     dispatcher.utter_message(text="Tu pagina fue apagada con exito.")
@@ -231,17 +231,17 @@ class ActionCapturarEdicion(BaseAction):
             if page_obj.is_running():
                 pgm.switch_dev(user_id, page_name)
             dispatcher.utter_message(text="Tu pagina se encuentra en modo edición. Podrás visualizar los cambios que realices en: " + page_obj.get_page_address())
-            dispatcher.utter_message(text="Si la pagina te solicita una contraseña ingresa: " + pgm.get_tunnel_password())
+            #dispatcher.utter_message(text="Si la pagina te solicita una contraseña ingresa: " + pgm.get_tunnel_password())
             if not page_obj.is_running_dev():
                 pgm.run_dev(user_id, page_name)
                 dispatcher.utter_message(text="Tu pagina se encuentra en modo edición. Podrás visualizar los cambios que realices en: " + page_obj.get_page_address())
-                dispatcher.utter_message(text="Si la pagina te solicita una contraseña ingresa: " + pgm.get_tunnel_password())
+                #dispatcher.utter_message(text="Si la pagina te solicita una contraseña ingresa: " + pgm.get_tunnel_password())
         else:
         # La pagina no está viva, hay que recuperar sus datos de la db
             page_obj = pgm.add_page(user_id, page_name)
             pgm.run_dev(user_id, page_name)
             dispatcher.utter_message(text="Tu pagina se encuentra en modo edición. Podrás visualizar los cambios que realices en: " + page_obj.get_page_address())
-            dispatcher.utter_message(text="Si la pagina te solicita una contraseña ingresa: " + pgm.get_tunnel_password())
+            #dispatcher.utter_message(text="Si la pagina te solicita una contraseña ingresa: " + pgm.get_tunnel_password())
         componente = tracker.get_slot('componente')
         print("(" + threading.current_thread().getName() + ") " + "--------componente: ", componente)
         if componente:
@@ -518,16 +518,12 @@ class ActionCapturarTipoSeccion(BaseAction):
         if not tracker.get_slot('tipo_seccion') == "e-commerce":
             if not page_obj.is_running_dev():
                 pgm.run_dev(user_id, page_name)
-                message = "Tu pagina se encuentra en modo edición. Podrás visualizar los cambios que realices en: " + page_obj.get_page_address()
-                dispatcher.utter_message(text=message)
-                message = "Si la pagina te solicita una contraseña ingresa: " + pgm.get_tunnel_password()
-                dispatcher.utter_message(text=message)
             elif page_obj.is_running():
                 pgm.switch_dev(tracker.sender_id, page_doc.name)
-                message = "Tu pagina se encuentra en modo edición. Podrás visualizar los cambios que realices en: " + page_obj.get_page_address()
-                dispatcher.utter_message(text=message)
-                message = "Si la pagina te solicita una contraseña ingresa: " + pgm.get_tunnel_password()
-                dispatcher.utter_message(text=message)
+            message = "Tu pagina se encuentra en modo edición. Podrás visualizar los cambios que realices en: " + page_obj.get_page_address()
+            dispatcher.utter_message(text=message)
+            #message = "Si la pagina te solicita una contraseña ingresa: " + pgm.get_tunnel_password()
+            #dispatcher.utter_message(text=message)
         seccion = tracker.get_slot('componente')
         if seccion.lower() == "seccion":
         # Va a editar una seccion
@@ -577,8 +573,8 @@ class ActionCrearEcommerce(BaseAction):
                 pgm.run_dev(user_id, page_name)
                 message = "Tu pagina se encuentra en modo edición. Podrás visualizar la nueva sección en: " + page.get_page_address()
                 dispatcher.utter_message(text=message)
-                message = "Si la pagina te solicita una contraseña ingresa: " + pgm.get_tunnel_password()
-                dispatcher.utter_message(text=message)
+                #message = "Si la pagina te solicita una contraseña ingresa: " + pgm.get_tunnel_password()
+                #dispatcher.utter_message(text=message)
             else:
                 dispatcher.utter_message(text="Podes ver la nueva sección en tu página.")
             dbm.add_ecomm_section(user_id, page_name)

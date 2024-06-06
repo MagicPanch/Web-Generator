@@ -232,6 +232,7 @@ class PageManager():
         print("(" + threading.current_thread().getName() + ") " + "----PageManager.run_dev----")
         page = cls._running_pages[(user, page_name)].get_page()
 
+        '''
         # Verificar si la página tiene un tunel activo
         thread_tunnel = cls._running_pages[(user, page_name)].get_thread_tunnel()
         if thread_tunnel is None:
@@ -239,6 +240,11 @@ class PageManager():
             thread_tunnel = threading.Thread(target=cls._get_tunnel_address, args=(page, True))
             cls._running_pages[(user, page_name)].set_thread_tunnel(thread_tunnel)
             thread_tunnel.start()
+        '''
+
+        page.clear_address_event()
+        page.set_page_address(CONSTANTS.LOCAL_ADDRESS + ":" + str(page.get_port()))
+        page.set_addres_event()
 
         #Si la página tiene sección e-commerce, asignar la dirección
         page_path = cls.get_page_path(user, page_name)
@@ -310,7 +316,7 @@ class PageManager():
 
         if page.is_running():
             cls.stop_page(user, page_name)
-            cls.stop_tunnel(user, page_name)
+            #cls.stop_tunnel(user, page_name)
             cls._add_ecommerce(user, page_name) # Instalar sus dependencias y copiar template
             cls.build_project(user, page_name)
             cls.run_project(user, page_name)
@@ -349,10 +355,15 @@ class PageManager():
         print("(" + threading.current_thread().getName() + ") " + "----PageManager.build_project----")
         page = cls._running_pages[(user, page_name)].get_page()
 
+        '''
         # Iniciar tunel de la página
         thread_tunnel = threading.Thread(target=cls._get_tunnel_address, kwargs={"page": page})
         cls._running_pages[(user, page_name)].set_thread_tunnel(thread_tunnel)
         thread_tunnel.start()
+        '''
+        page.clear_address_event()
+        page.set_page_address(CONSTANTS.LOCAL_ADDRESS + ":" + str(page.get_port()))
+        page.set_addres_event()
 
         # Si la página tiene sección e-commerce, asignar la dirección
         page_path = cls.get_page_path(user, page_name)
@@ -394,6 +405,7 @@ class PageManager():
         print("(" + threading.current_thread().getName() + ") " + "----PageManager.run_project----")
         page = cls._running_pages[(user, page_name)].get_page()
 
+        '''
         # Verificar si la página tiene un tunel activo
         thread_tunnel = cls._running_pages[(user, page_name)].get_thread_tunnel()
         if thread_tunnel is None:
@@ -401,6 +413,10 @@ class PageManager():
             thread_tunnel = threading.Thread(target=cls._get_tunnel_address, kwargs={"page": page})
             cls._running_pages[(user, page_name)].set_thread_tunnel(thread_tunnel)
             thread_tunnel.start()
+        '''
+        page.clear_address_event()
+        page.set_page_address(CONSTANTS.LOCAL_ADDRESS + ":" + str(page.get_port()))
+        page.set_addres_event()
 
         # Iniciar la ejecución de la página
         thread_exec = threading.Thread(target=cls._run_project, args=(user, page_name, page.get_port()))
@@ -500,7 +516,7 @@ class PageManager():
     def switch_dev(cls, user, page_name):
         #Detener la ejecucion de la pagina
         cls.stop_page(user, page_name)
-        cls.stop_tunnel(user, page_name)
+        #cls.stop_tunnel(user, page_name)
 
         #Iniciar la ejecucion en modo dev
         cls.run_dev(user, page_name)

@@ -7,7 +7,7 @@ TEMPLATE_ECOMMERCE_DIR = "webs/template_ecommerce"
 TEMPLATE_PRODUCTOS_DIR = 'resources/Template_carga_productos.xlsx'
 MIN_PORT = 55000
 MAX_PORT = 55149
-ADDRESS = "http://localhost"
+LOCAL_ADDRESS = "http://localhost"
 DB_URI = "mongodb+srv://design:label123@cluster0.3yowbc8.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 TELEGRAM_BOT_TOKEN = '6804076373:AAGVfw6smnTUmLXzReSdSmVHmcYvvempgI0'
 LOCAL_TUNNEL_PASSWORD_URL = "https://loca.lt/mytunnelpassword"
