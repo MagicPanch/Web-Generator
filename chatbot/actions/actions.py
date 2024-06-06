@@ -21,7 +21,6 @@ from rasa_sdk import Action, Tracker
 from rasa_sdk.executor import CollectingDispatcher
 from rasa_sdk.events import SlotSet, FollowupAction
 
-slots_crear_pagina = ['creando_pagina', 'pregunta_nombre']
 slots_crear_seccion = ['creando_seccion']
 creando_pagina = False
 dbm = DBManager.get_instance()
@@ -85,10 +84,7 @@ class ActionCrearPagina(BaseAction):
                     message = "Si la pagina te solicita una contraseña ingresa: " + pgm.get_tunnel_password()
                     dispatcher.utter_message(text=message)
                     creando_pagina = False
-                    events = []
-                    for slot in slots_crear_pagina:
-                        events.append(SlotSet(slot, False))
-                    return events
+                    return [SlotSet("creando_pagina", False), SlotSet("pregunta_nombre", False)]
                 elif dbm.get_page_by_name(page_name) is None:
                     #La pagina no existe
 
@@ -130,10 +126,7 @@ class ActionEjecutarDev(Action):
 
         message = "Si la pagina te solicita una contraseña ingresa: " + pgm.get_tunnel_password()
         dispatcher.utter_message(text=message)
-        events = []
-        for slot in slots_crear_pagina:
-            events.append(SlotSet(slot, False))
-        return events
+        return [SlotSet("creando_pagina", False), SlotSet("pregunta_nombre", False)]
 
 class ActionEjecutarPagina(BaseAction):
 
@@ -247,6 +240,8 @@ class ActionCapturarEdicion(BaseAction):
         # La pagina no está viva, hay que recuperar sus datos de la db
             page_obj = pgm.add_page(user_id, page_name)
             pgm.run_dev(user_id, page_name)
+            dispatcher.utter_message(text="Tu pagina se encuentra en modo edición. Podrás visualizar los cambios que realices en: " + page_obj.get_page_address())
+            dispatcher.utter_message(text="Si la pagina te solicita una contraseña ingresa: " + pgm.get_tunnel_password())
         componente = tracker.get_slot('componente')
         print("(" + threading.current_thread().getName() + ") " + "--------componente: ", componente)
         if componente:
@@ -388,7 +383,7 @@ class ActionPreguntarColorEncabezado(Action):
     def name(self) -> Text:
         return "action_preguntar_color_encabezado"
 
-    def handle_action(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
         dispatcher.utter_message(text="De que color te gustaria que sea el encabezado? Para ello necesito que me proveas su codigo hexadecimal. Podes seleccionar tu color y copiar su codigo en el siguiente link: https://g.co/kgs/FMBcG8K")
         return [SlotSet("creando_encabezado", True), SlotSet("pregunta_color", True), FollowupAction("action_listen")]
@@ -402,6 +397,7 @@ class ActionCrearEncabezado(Action):
         global dbm, pgm, rg
         print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
         page_name = tracker.get_slot("page_name")
+        user_id = tracker.sender_id
         page_path = pgm.get_page_path(user_id, page_name)
         print("(" + threading.current_thread().getName() + ")" + "--------page_path: ", page_path)
         color = tracker.get_slot('color_encabezado')

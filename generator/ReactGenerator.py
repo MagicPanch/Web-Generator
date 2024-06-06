@@ -29,8 +29,6 @@ class ReactGenerator:
 
     @staticmethod
     def _convert_file(source, destination):
-        print("source: ", source)
-        print("destination: ", destination)
         # Crear trabajo
         job = cloudconvert.Job.create(payload={
             "tasks": {
@@ -60,27 +58,27 @@ class ReactGenerator:
 
         #Esperar a que finalice el trabajo
         cloudconvert.Job.wait(id=job['id'])
+
+        #Obtener resultado
         job = cloudconvert.Job.find(id=job['id'])
-        print(job['tasks'])
-        response = requests.get(job['tasks'][2]['result']['url'])
+        for task in job['tasks']:
+            if task['name'] == 'export':
+                url = task['result']['files'][0]['url']
+        response = requests.get(url)
+
+        #Guardarlo
         with open(destination, 'wb') as f:
             f.write(response.content)
-        '''
-        export_task_id = job['tasks'][2]['id']
-        export_task = cloudconvert.Task.find(id=export_task_id)
-        cloudconvert.Task.wait(id=export_task_id)
-        '''
 
 
     @staticmethod
     def set_favicon(page_path):
         utils.go_to_main_dir()
         favicon_path = os.getcwd() + "\\" + page_path + "\\components\\Logo.png"
-        favicon_path = "D:\\Desarrollo\\Ingenieria-de-Software-2024\\Web-Generator\\user-pages\\2086036019\\test\\components\\Logo.png"
         utils.go_to_dir_from_main(page_path)
-        utils.go_to_dir("public")
+        utils.go_to_dir("src")
+        utils.go_to_dir("app")
         favicon = ReactGenerator._convert_file(favicon_path, os.getcwd() + "\\favicon.ico")
-        #utils.write_file(filename="favicon.ico", content=favicon)
 
     @staticmethod
     def set_collection(page_path, collection):
@@ -113,6 +111,8 @@ class ReactGenerator:
     @staticmethod
     def generarHeader(data):
         print("genero header")
+        ReactGenerator.set_favicon(data["address"])
+
         text = f""""use client";
         
         import React from "react";
@@ -178,8 +178,8 @@ class ReactGenerator:
             }},
             plugins: [],
         }};"""
-
-        with open(data["address"]+"\\components\\Header.tsx", "w") as file:
+        utils.go_to_main_dir()
+        with open(os.getcwd() + "\\" + data["address"]+"\\components\\Header.tsx", "w") as file:
             file.write(text)
             file.close()
 
@@ -223,7 +223,8 @@ class ReactGenerator:
         }};
         """
 
-        with open(dataFooter["address"] + "\\components\\Footer.tsx", "w") as file:
+        utils.go_to_main_dir()
+        with open(os.getcwd() + "\\" + dataFooter["address"] + "\\components\\Footer.tsx", "w") as file:
             file.write(text)
             file.close()
 
@@ -251,7 +252,8 @@ class ReactGenerator:
         }},
         ];  """
 
-        with open(dataBody["address"] + "\\constants\\body.ts", "w") as file:
+        utils.go_to_main_dir()
+        with open(os.getcwd() + "\\" + dataBody["address"] + "\\constants\\body.ts", "w") as file:
             file.write(text)
             file.close()
 
@@ -276,7 +278,9 @@ class ReactGenerator:
 
                 export default {nombre};
                 """
-        with open(address + "\\components\\" + nombre + ".tsx", "w", encoding="utf-8") as file:
+
+        utils.go_to_main_dir()
+        with open(os.getcwd() + "\\" + address + "\\components\\" + nombre + ".tsx", "w", encoding="utf-8") as file:
             file.write(textSectionNew)
 
     @staticmethod
@@ -287,13 +291,13 @@ class ReactGenerator:
         #y guaradar el json
         #generar una sectionEcommerce pero que devuelva un component con el nombre la nueva section
         #agregar la section a la lista de secciones del navBar
-        
-        #dataSections lista de secciones agrega el nuevo component
-        with open(os.getcwd() + '\\' + address + '\\dataSections.json') as file:
+
+        utils.go_to_main_dir()
+        with open(os.getcwd() + "\\" + address + '\\dataSections.json') as file:
             dataSections = json.load(file)
         dataSections.append({"titulo":nombre})
-        #guardo json 
-        with open(os.getcwd() + '\\' + address+"\\dataSections.json", "w") as file:
+        #guardo json
+        with open(os.getcwd() + "\\" + address+"\\dataSections.json", "w") as file:
             file.write(json.dumps(dataSections))
         #genero component nuevo
         textSectionNew = f"""import React from "react";
@@ -314,7 +318,7 @@ class ReactGenerator:
 
         export default {nombre};
         """
-        with open(address+"\\components\\"+nombre+".tsx", "w", encoding="utf-8") as file:
+        with open(os.getcwd() + "\\" + address+"\\components\\"+nombre+".tsx", "w", encoding="utf-8") as file:
             file.write(textSectionNew)
             
         #genero page
@@ -367,7 +371,7 @@ class ReactGenerator:
             );
             }}
         """
-        with open(address+"\\src\\app\\page.tsx", "w", encoding="utf-8") as file:
+        with open(os.getcwd() + "\\" + address+"\\src\\app\\page.tsx", "w", encoding="utf-8") as file:
             file.write(textPage)
             
         #genero navBar
@@ -407,5 +411,5 @@ class ReactGenerator:
             export default NavBar;
 
         """
-        with open(address+"\\components\\NavBar.tsx", "w", encoding="utf-8") as file:
+        with open(os.getcwd() + "\\" + address+"\\components\\NavBar.tsx", "w", encoding="utf-8") as file:
             file.write(textNavBar)       

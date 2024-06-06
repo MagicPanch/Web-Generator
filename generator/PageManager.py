@@ -177,6 +177,7 @@ class PageManager():
             "colorTitulo": "#12D7BF"
         }
         rg = ReactGenerator.get_instance()
+        rg.set_tab_name(path, page_name)
         rg.generarHeader(dataHeader)
         print("(" + threading.current_thread().getName() + ") " + "----Ejecucion finalizada----")
 
@@ -354,7 +355,7 @@ class PageManager():
         page = cls._running_pages[(user, page_name)].get_page()
 
         # Iniciar tunel de la página
-        thread_tunnel = threading.Thread(target=cls._get_tunnel_address, args=(page))
+        thread_tunnel = threading.Thread(target=cls._get_tunnel_address, kwargs={"page": page})
         cls._running_pages[(user, page_name)].set_thread_tunnel(thread_tunnel)
         thread_tunnel.start()
 
@@ -402,7 +403,7 @@ class PageManager():
         thread_tunnel = cls._running_pages[(user, page_name)].get_thread_tunnel()
         if thread_tunnel is None:
             # Iniciar el tunel de la página
-            thread_tunnel = threading.Thread(target=cls._get_tunnel_address, args=(page))
+            thread_tunnel = threading.Thread(target=cls._get_tunnel_address, kwargs={"page": page})
             cls._running_pages[(user, page_name)].set_thread_tunnel(thread_tunnel)
             thread_tunnel.start()
 

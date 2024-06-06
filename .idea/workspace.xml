@@ -6,10 +6,14 @@
   <component name="ChangeListManager">
     <list default="true" id="121f2593-11ee-405e-a8d8-1c2f43d81e54" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chatbot/actions/actions.py" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/actions/actions.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/generator/PageManager.py" beforeDir="false" afterPath="$PROJECT_DIR$/generator/PageManager.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/generator/ReactGenerator.py" beforeDir="false" afterPath="$PROJECT_DIR$/generator/ReactGenerator.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/CONSTANTS.PY" beforeDir="false" afterPath="$PROJECT_DIR$/resources/CONSTANTS.PY" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/webs/base/base/node_modules/.package-lock.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/webs/base/base/package-lock.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/webs/base/components/logo.png" beforeDir="false" afterPath="$PROJECT_DIR$/webs/base/components/logo.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/webs/base/public/favicon.ico" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/webs/base/src/app/layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/webs/base/src/app/layout.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -95,7 +99,7 @@
     "deletionFromPopupRequiresConfirmation": "false",
     "git-widget-placeholder": "main",
     "ignore.virus.scanning.warn.message": "true",
-    "last_opened_file_path": "D:/Desarrollo/Ingenieria-de-Software-2024/Web-Generator/chatbot/actions/Template Method",
+    "last_opened_file_path": "D:/Desarrollo/Ingenieria-de-Software-2024/Web-Generator/webs/base/src/app",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -108,10 +112,11 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\Desarrollo\Ingenieria-de-Software-2024\Web-Generator\webs\base\src\app" />
+      <recent name="D:\Desarrollo\Ingenieria-de-Software-2024\Web-Generator\user-pages\2086036019\design-label\src\app" />
+      <recent name="D:\Desarrollo\Ingenieria-de-Software-2024\Web-Generator\webs\base\public" />
       <recent name="D:\Desarrollo\Ingenieria-de-Software-2024\Web-Generator\chatbot\actions\Template Method" />
       <recent name="D:\Desarrollo\Ingenieria-de-Software-2024\Web-Generator\user-pages\2086036019\test1" />
-      <recent name="D:\Desarrollo\Ingenieria-de-Software-2024\Web-Generator\user-pages\2086036019\design-label" />
-      <recent name="D:\Desarrollo\Web-Generator\database\colections" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="D:\Desarrollo\Ingenieria-de-Software-2024\Web-Generator\user-pages\2086036019\test\components" />
@@ -212,16 +217,12 @@
       <workItem from="1716988705935" duration="4016000" />
       <workItem from="1717423669816" duration="15201000" />
       <workItem from="1717543029859" duration="14410000" />
+      <workItem from="1717635791077" duration="7225000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
-    <option name="exactExcludedFiles">
-      <list>
-        <option value="$PROJECT_DIR$/user-pages/2086036019/design-label/design-label/node_modules/tailwindcss/stubs/tailwind.config.cjs" />
-      </list>
-    </option>
   </component>
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">
@@ -243,7 +244,7 @@
     <SUITE FILE_PATH="coverage/Web_Generator$actions.coverage" NAME="actions Coverage Results" MODIFIED="1714769797888" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/chatbot/actions" />
     <SUITE FILE_PATH="coverage/Web_Generator$ReactGenerator.coverage" NAME="ReactGenerator Coverage Results" MODIFIED="1717558800745" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/generator" />
     <SUITE FILE_PATH="coverage/Web_Generator$router.coverage" NAME="router Coverage Results" MODIFIED="1713813104376" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/generator" />
-    <SUITE FILE_PATH="coverage/Web_Generator$test.coverage" NAME="test Coverage Results" MODIFIED="1717560323484" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/resources" />
+    <SUITE FILE_PATH="coverage/Web_Generator$test.coverage" NAME="test Coverage Results" MODIFIED="1717639866643" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/resources" />
     <SUITE FILE_PATH="coverage/Web_Generator$generator.coverage" NAME="generator Coverage Results" MODIFIED="1713816696702" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/generator" />
   </component>
 </project>
