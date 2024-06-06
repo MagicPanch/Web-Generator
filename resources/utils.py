@@ -25,7 +25,6 @@ def copy_dir(origen, destino):
 def write_file(filename, content):
     with open(filename, "w") as file:
         file.write(content)
-        file.close()
 
 def get_pid(port):
     """

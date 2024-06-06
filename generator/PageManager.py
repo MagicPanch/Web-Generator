@@ -299,8 +299,11 @@ class PageManager():
         utils.go_to_main_dir()
         utils.copy_dir(CONSTANTS.TEMPLATE_ECOMMERCE_DIR, destino)
 
-        # Asignar el nombre de su colección en la base de datos
+        # Modificar constantes
         rg = ReactGenerator.get_instance()
+        rg.add_section(destino, "E-Commerce")
+        if page.get_cant_sections() > 0:
+            rg.remove_section(destino, "Template")
         rg.set_collection(page_path=destino, collection=(user + "-" + page_name))
 
     @classmethod

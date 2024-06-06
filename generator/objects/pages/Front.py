@@ -70,6 +70,9 @@ class Front(PageRunner):
             output.append(section.get_title())
         return output
 
+    def get_cant_sections(self) -> int:
+        return len(self._sections)
+
     def has_ecomm_section(self) -> bool:
         for section in self._sections:
             if section.get_title() == "e-commerce":

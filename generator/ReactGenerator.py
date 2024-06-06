@@ -73,12 +73,12 @@ class ReactGenerator:
 
     @staticmethod
     def set_favicon(page_path):
-        utils.go_to_main_dir()
-        favicon_path = os.getcwd() + "\\" + page_path + "\\components\\Logo.png"
         utils.go_to_dir_from_main(page_path)
+        favicon_path = os.getcwd() + "\\components\\Logo.png"
         utils.go_to_dir("src")
         utils.go_to_dir("app")
         favicon = ReactGenerator._convert_file(favicon_path, os.getcwd() + "\\favicon.ico")
+        utils.go_to_main_dir()
 
     @staticmethod
     def set_collection(page_path, collection):
@@ -135,7 +135,6 @@ class ReactGenerator:
             ReactGenerator._set_header_title_color(page_path, color)
         if logo:
             ReactGenerator.set_favicon(page_path)
-        utils.go_to_main_dir()
 
     @staticmethod
     def generarFooter(dataFooter):
@@ -173,42 +172,59 @@ class ReactGenerator:
         }};
         """
 
-        utils.go_to_main_dir()
-        with open(os.getcwd() + "\\" + dataFooter["address"] + "\\components\\Footer.tsx", "w") as file:
+        utils.go_to_dir_from_main(dataFooter["address"])
+        with open(os.getcwd() + "\\components\\Footer.tsx", "w") as file:
             file.write(text)
             file.close()
-
-    @staticmethod
-    def generarBody(dataBody):
-        print("genero body")
-        text = f""" export const CARDS_DATA = [
-        {{
-            image: "https://via.placeholder.com/300",
-            title: "Producto 1",
-            description: "Descripción breve del producton 1",
-            price: "340",
-        }},
-        {{
-            image: "https://via.placeholder.com/300",
-            title: "Producto 2",
-            description: "Descripción breve del producto 2",
-            price: "5000",
-        }},
-        {{
-            image: "https://via.placeholder.com/300",
-            title: "Producto 3",
-            description: "Descripción breve del producto 3",
-            price: "{dataBody["price"]}",
-        }},
-        ];  """
-
         utils.go_to_main_dir()
-        with open(os.getcwd() + "\\" + dataBody["address"] + "\\constants\\body.ts", "w") as file:
-            file.write(text)
-            file.close()
 
     @staticmethod
-    def modificarSectionInformativa(nombre, address, texto):
+    def add_section(page_path, section_name):
+        utils.go_to_dir_from_main(page_path)
+        utils.go_to_dir("constants")
+        with open("sections.ts", 'r') as file:
+            lines = file.readlines()
+
+        # Encontrar el índice de la definición del array SECTIONS
+        start_index = next(i for i, line in enumerate(lines) if 'export const SECTIONS' in line)
+
+        # Nueva entrada en formato JSON
+        new_entry = f'  {{ name: "{section_name}", component: "{section_name}" }},\n'
+
+        # Insertar la nueva entrada en la lista SECTIONS
+        lines.insert(start_index + 1, new_entry)
+
+        # Escribir los cambios de vuelta al archivo
+        with open("sections.ts", 'w') as file:
+            file.writelines(lines)
+        utils.go_to_main_dir()
+
+    @staticmethod
+    def remove_section(page_path, section_name):
+        utils.go_to_dir_from_main(page_path)
+        utils.go_to_dir("constants")
+        with open("sections.ts", 'r') as file:
+            lines = file.readlines()
+
+        # Encontrar el índice de la definición del array SECTIONS
+        start_index = next(i for i, line in enumerate(lines) if 'export const SECTIONS' in line)
+
+        # Buscar la línea a eliminar
+        entry_to_remove = f'  {{ name: "{section_name}", component: "{section_name}" }},\n'
+        try:
+            lines.remove(entry_to_remove)
+            print(f'Sección "{section_name}" eliminada.')
+        except ValueError:
+            pass
+
+        # Escribir los cambios de vuelta al archivo
+        with open("sections.ts", 'w') as file:
+            file.writelines(lines)
+        utils.go_to_main_dir()
+
+
+    @staticmethod
+    def modificarSectionInformativa(nombre, page_path, texto):
         # genero component nuevo
         textSectionNew = f"""import React from "react";
                 const {nombre} = () => {{        
@@ -229,26 +245,13 @@ class ReactGenerator:
                 export default {nombre};
                 """
 
-        utils.go_to_main_dir()
-        with open(os.getcwd() + "\\" + address + "\\components\\" + nombre + ".tsx", "w", encoding="utf-8") as file:
+        utils.go_to_dir_from_main(page_path)
+        with open(os.getcwd() + "\\components\\" + nombre + ".tsx", "w", encoding="utf-8") as file:
             file.write(textSectionNew)
+        utils.go_to_main_dir()
 
     @staticmethod
-    def agregarSectionInformativa(nombre,address,texto):
-        #data nombre  y Folder address
-        #abrir json de secciones
-        #agregar la seccion actual al json
-        #y guaradar el json
-        #generar una sectionEcommerce pero que devuelva un component con el nombre la nueva section
-        #agregar la section a la lista de secciones del navBar
-
-        utils.go_to_main_dir()
-        with open(os.getcwd() + "\\" + address + '\\dataSections.json') as file:
-            dataSections = json.load(file)
-        dataSections.append({"titulo":nombre})
-        #guardo json
-        with open(os.getcwd() + "\\" + address+"\\dataSections.json", "w") as file:
-            file.write(json.dumps(dataSections))
+    def agregarSectionInformativa(page_path, nombre, texto):
         #genero component nuevo
         textSectionNew = f"""import React from "react";
         const {nombre} = () => {{        
@@ -268,98 +271,9 @@ class ReactGenerator:
 
         export default {nombre};
         """
-        with open(os.getcwd() + "\\" + address+"\\components\\"+nombre+".tsx", "w", encoding="utf-8") as file:
+
+        utils.go_to_dir_from_main(page_path)
+        with open(os.getcwd() + "\\components\\"+nombre+".tsx", "w", encoding="utf-8") as file:
             file.write(textSectionNew)
-            
-        #genero page
-        textPageComponents = ""
-        for section in dataSections:
-            textPageComponents +=  section["titulo"]+":"+section["titulo"] + ","
-        textPageElegibles = ""
-        for section in dataSections:
-            textPageElegibles += "|" + "\"" + section["titulo"] +"\"" 
-        textPageImports = ""
-        for section in dataSections:
-            textPageImports += "import "+ section["titulo"]  + " from \"../../components/"+section["titulo"]+"\";"
-        textPage = f""""use client"
-        import Image from "next/image";
-        import {{ SearchBar, }} from "../../components";
-        import {{ useState }} from "react";
-        import {{ NavBar }} from "../../components";
-        {textPageImports}
-
-            // Define los posibles valores de mensaje
-            type ComponentName = {textPageElegibles};
-
-            // Mapea los nombres de los componentes a los componentes reales
-            const componentMap: Record<ComponentName, () => JSX.Element> = {{
-            {textPageComponents}
-            // Agrega más componentes aquí según sea necesario
-            }};
-
-            export default function Home() {{
-            const [nombre, setNombre] = useState("Mario");
-            const [mensaje, setMensaje] = useState<ComponentName>("SectionECommerce");
-
-            // Cambia la definición de addMensaje para aceptar un argumento de tipo string
-            const addMensaje = (mensaje: string) => {{
-                console.log(mensaje);
-                setMensaje(mensaje as ComponentName); // Convierte el string a ComponentName
-            }};
-
-            // Selecciona el componente basado en el valor de `mensaje`
-            const SelectedComponent = componentMap[mensaje] || SectionECommerce;
-
-            return (
-                <main className="h-full items-center justify-between p-24 w-full">
-                <NavBar nombre={{nombre}} addMensaje={{addMensaje}} />
-                {{mensaje}}
-                <div>
-                    {{SelectedComponent ? <SelectedComponent /> : <div>Componente no encontrado</div>}}
-                </div>
-                </main>
-            );
-            }}
-        """
-        with open(os.getcwd() + "\\" + address+"\\src\\app\\page.tsx", "w", encoding="utf-8") as file:
-            file.write(textPage)
-            
-        #genero navBar
-        textNavBarSections = ""
-        for section in dataSections:
-            textNavBarSections += "\"" + section["titulo"] + "\","
-        textNavBar = f"""import React from "react";
-        import Link from "next/link";
-        import {{ NAVIGATION_LINKS }} from "../constants/navbar";
-
-            // Define un tipo para los props de NavBar
-            type NavBarProps = {{
-            nombre: string;
-            addMensaje: (mensaje: string) => void;
-            }};
-
-            const NavBar = ({{ nombre, addMensaje }}: NavBarProps) => {{
-            const enviarMensaje = () => {{
-                addMensaje("childMensaje");
-            }};
-            const secciones = [
-                {textNavBarSections}
-            ]
-            return (
-                <div className="bg-neutral-600 flex items-center justify-between h-10 px-4">
-                <nav className="flex flex-grow justify-evenly">
-                    {{secciones.map(seccion => (
-                    <button key={{seccion}} onClick={{() => addMensaje(seccion)}}>
-                        {{seccion}}
-                    </button>
-                    ))}}
-                </nav>
-                </div>
-            );
-            }};
-
-            export default NavBar;
-
-        """
-        with open(os.getcwd() + "\\" + address+"\\components\\NavBar.tsx", "w", encoding="utf-8") as file:
-            file.write(textNavBar)       
+        ReactGenerator.add_section(page_path, nombre)
+        utils.go_to_main_dir()

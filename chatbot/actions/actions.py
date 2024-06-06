@@ -230,7 +230,7 @@ class ActionCapturarEdicion(BaseAction):
             page_obj = pgm.get_page(user_id, page_name)
             if page_obj.is_running():
                 pgm.switch_dev(user_id, page_name)
-            dispatcher.utter_message(text="Tu pagina se encuentra en modo edición. Podrás visualizar los cambios que realices en: " + page_obj.get_page_address())
+                dispatcher.utter_message(text="Tu pagina se encuentra en modo edición. Podrás visualizar los cambios que realices en: " + page_obj.get_page_address())
             #dispatcher.utter_message(text="Si la pagina te solicita una contraseña ingresa: " + pgm.get_tunnel_password())
             if not page_obj.is_running_dev():
                 pgm.run_dev(user_id, page_name)
@@ -736,8 +736,10 @@ class ActionCrearInformativa3(Action):
         inf_section.set_text(text)
         dispatcher.utter_message(text="Texto informativo guardado.")
         dbm.add_inf_section(user_id, page_name, inf_section)
-        utils.go_to_main_dir()
-        rg.agregarSectionInformativa(nombre_informativa, pgm.get_page_path(user_id, page_name), inf_section.get_text())
+        page_path = pgm.get_page_path(user_id, page_name)
+        if page.get_cant_sections() > 0:
+            rg.remove_section(page_path, "Template")
+        rg.agregarSectionInformativa(page_path, nombre_informativa, inf_section.get_text())
         dispatcher.utter_message(text="Podrás ver la nueva sección en tu página")
         return [SlotSet("creando_seccion_informativa", False), SlotSet("pide_text_informativa", False), SlotSet("pregunta_seccion", False),
                 SlotSet("creando_seccion", False), SlotSet("componente", None)]

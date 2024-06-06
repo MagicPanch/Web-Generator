@@ -1,33 +1,29 @@
 import React from "react";
-    import Link from "next/link";
-    import { NAVIGATION_LINKS } from "../constants/navbar";
+import { SECTIONS } from "../constants/sections";
 
-        // Define un tipo para los props de NavBar
-        type NavBarProps = {
-        nombre: string;
-        addMensaje: (mensaje: string) => void;
-        };
+type NavBarProps = {
+  currentSection: string;
+  setSection: (section: string) => void;
+};
 
-        const NavBar = ({ nombre, addMensaje }: NavBarProps) => {
-        const enviarMensaje = () => {
-            addMensaje("childMensaje");
-        };
-        const secciones = [
-            "SectionABM","SectionECommerce","SectionInformativa",
-        ]
-        return (
-            <div className="bg-neutral-600 flex items-center justify-between h-10 px-4">
-            <nav className="flex flex-grow justify-evenly">
-                {secciones.map(seccion => (
-                <button key={seccion} onClick={() => addMensaje(seccion)}>
-                    {seccion}
-                </button>
-                ))}
-            </nav>
-            </div>
-        );
-        };
+const NavBar = ({ currentSection, setSection }: NavBarProps) => {
+  return (
+    <div className="bg-neutral-600 flex items-center justify-between h-10 px-4">
+      <nav className="flex flex-grow justify-evenly">
+        {SECTIONS.map((section) => (
+          <button
+            key={section.name}
+            className={`${
+              currentSection === section.name ? "font-bold" : ""
+            }`}
+            onClick={() => setSection(section.name)}
+          >
+            {section.name.replace("Section", "")}
+          </button>
+        ))}
+      </nav>
+    </div>
+  );
+};
 
-        export default NavBar;
-
-    
+export default NavBar;
