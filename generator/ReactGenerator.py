@@ -70,7 +70,6 @@ class ReactGenerator:
         with open(destination, 'wb') as f:
             f.write(response.content)
 
-
     @staticmethod
     def set_favicon(page_path):
         utils.go_to_dir_from_main(page_path)
@@ -78,6 +77,26 @@ class ReactGenerator:
         utils.go_to_dir("src")
         utils.go_to_dir("app")
         favicon = ReactGenerator._convert_file(favicon_path, os.getcwd() + "\\favicon.ico")
+        utils.go_to_main_dir()
+
+    @staticmethod
+    def set_colors(page_path, color):
+        utils.go_to_dir_from_main(page_path)
+        utils.go_to_dir("constants")
+        filename = os.getcwd() + "\\custom_tailwind_colors.ts"
+        with open(filename, "r") as file:
+            colors_file = file.readlines()
+
+        color = color[1:]
+        url = CONSTANTS.TAILWIND_COLOR_API_URL + "/customColor/" + color
+        response = requests.get(url=url)
+        colors_dict = json.loads(response.text)
+        output = {}
+        text = "export const CUSTOM_COLORS = {\n"
+        for key in colors_dict["customColor"].keys():
+            text += key + ": \"" + colors_dict["customColor"][key] + "\",\n"
+        text = text[:len(text) - 2] + "};"
+        utils.write_file(filename=filename, content=text)
         utils.go_to_main_dir()
 
     @staticmethod
@@ -104,16 +123,6 @@ class ReactGenerator:
         utils.go_to_dir("constants")
         text = f"""export const TAB_NAME = "{tab_name}";"""
         filename = os.getcwd() + "\\tab_name.ts"
-        utils.write_file(filename=filename, content=text)
-        utils.go_to_main_dir()
-
-
-    @staticmethod
-    def _set_header_title(page_path, title):
-        utils.go_to_dir_from_main(page_path)
-        utils.go_to_dir("constants")
-        text = f"""export const HEADER_TITLE = "{title}";"""
-        filename = os.getcwd() + "\\header_title.ts"
         utils.write_file(filename=filename, content=text)
         utils.go_to_main_dir()
 
@@ -202,7 +211,10 @@ class ReactGenerator:
         print(new_entry)
 
         # Insertar la nueva entrada en la lista SECTIONS
-        lines.insert(len(lines) - 1, new_entry)
+        if "E-Commerce" in section_name:
+            lines.insert(start_index, new_entry)
+        else:
+            lines.insert(len(lines) - 1, new_entry)
 
         # Escribir los cambios de vuelta al archivo
         with open("sections.ts", 'w') as file:
@@ -238,12 +250,12 @@ class ReactGenerator:
         textSectionNew = f"""import React from "react";
                 const {nombre} = () => {{        
                 return (
-                <section className="h-screen bg-blue-300 flex flex-col  items-center">
+                <section className="h-screen bg-customColor-200 flex flex-col  items-center">
                 <div className="max-w-screen  p-4  px-40">
-                    <h1 className="font-bold text-2xl mb-4">
+                    <h1 className="font-bold text-customColor-700 mb-4">
                         {nombre}
                     </h1>
-                    <p>
+                    <p className="text-customColor-700 mb-4">
                         {texto}
                     </p>
                 </div>
@@ -265,12 +277,12 @@ class ReactGenerator:
         textSectionNew = f"""import React from "react";
         const {nombre} = () => {{        
         return (
-        <section className="h-screen bg-blue-300 flex flex-col  items-center">
+        <section className="h-screen bg-customColor-200 flex flex-col  items-center">
         <div className="max-w-screen  p-4  px-40">
-            <h1 className="font-bold text-2xl mb-4">
+            <h1 className="font-bold text-customColor-700 mb-4">
                 {nombre}
             </h1>
-            <p>
+            <p className="text-customColor-700 mb-4">
                 {texto}
             </p>
         </div>

@@ -37,8 +37,8 @@ const SectionECommerce = () => {
 
   return (
     <section>
-      <div className="max-w-screen bg-blue-300 p-4 h-full px-4">
-        <h1 className="text-2xl mb-3 font-semibold text-center p-2 h-full">
+      <div className="max-w-screen bg-customColor-200 p-4 h-full px-4">
+        <h1 className="text-2xl text-customColor-700 mb-3 font-semibold text-center p-2 h-full">
           Compra nuestros productos
         </h1>
         <SearchBar />

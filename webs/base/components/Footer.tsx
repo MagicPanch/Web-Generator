@@ -7,7 +7,7 @@ import { FOOTER_CONTACT_INFO } from "../constants/footer_contact_info";
 
 const Footer = () => {
   return (
-    <footer className="flex items-center justify-between pt-24 bg-bgBlack px-36 py-14">
+    <footer className="flex items-center justify-between pt-24 bg-customColor-900 px-36 py-14">
       <div className="padding-container max-container flex flex-col w-full gap-14">
         <div className="flex flex-col items-start justify-center gap-[10%] md:flex-row">
           <div className="flex flex-wrap gap-10 sm:justify-between md:flex-1">
@@ -32,7 +32,7 @@ const Footer = () => {
                     className="flex gap-4 md:flex-col lg:flex-row"
                   >
                     <p className="whitespace-nowrap">{link.label}:</p>
-                    <p className="medium-18 text-primary-500">{link.value}</p>
+                    <p className="medium-18 text-customColor-400">{link.value}</p>
                   </Link>
                 ))}
               </FooterColumn>

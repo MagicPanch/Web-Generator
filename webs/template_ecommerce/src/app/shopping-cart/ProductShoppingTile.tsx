@@ -39,7 +39,7 @@ const ProductShoppingTile = ({
       </div>
       <button
         onClick={removeFromCart}
-        className="bg-blue-500 text-white px-4 rounded-md self-start"
+        className="bg-customColor-500 hover:bg-customColor-600 text-white px-4 rounded-md self-start"
       >
         Eliminar del carrito
       </button>

@@ -3,7 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "../../components/cartContext";
 import { TAB_NAME } from "../../constants/tab_name";
-import { Footer, Header } from "../../components";
+import { Footer } from "../../components";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,17 +21,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <CartProvider>
-      <html lang="en">
+      <CartProvider>
+        <html lang="en">
         <head>
-          <link rel="icon" href="/favicon.ico" />
+          <link rel="icon" href="/favicon.ico"/>
         </head>
         <body>
-          <Header />
           <main>{children}</main>
-          <Footer />
+          <Footer/>
         </body>
-      </html>
-    </CartProvider>
+        </html>
+      </CartProvider>
   );
 }

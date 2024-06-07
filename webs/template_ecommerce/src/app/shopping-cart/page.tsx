@@ -13,6 +13,7 @@ import { Console } from "console";
 
 let messageTimer: NodeJS.Timeout;
 
+
 const ShoppingCart: React.FC = () => {
   const { cart, removeFromCart,removeFromCartAll } = useCart();
   const [showMessage, setShowMessage] = useState(false);
@@ -71,89 +72,90 @@ const ShoppingCart: React.FC = () => {
   }, 0);
 
   return (
-    <div className="bg-blue-300 p-4">
-      <div style={{ filter: blurBackground ? "blur(5px)" : "none" }}> {/* Aplica el estilo de desenfoque si blurBackground es true */}
-        <h1 className="text-2xl mb-3 font-semibold text-center">
-          Carrito de Compras
-        </h1>
-        <div className="grid gap-y-4 grid-cols-1 py-8 justify-center items-center">
-          {cart.map((cartItem: CartItemInterface, index) => (
-            <ProductShoppingTile
-              key={cartItem.item.key}
-              //id={index === 0 ? "firstCartItem" : undefined} // Marca el primer elemento del carrito
-              image={cartItem.item.multimedia}
-              title={cartItem.item.name}
-              description={cartItem.item.desc}
-              price={cartItem.item.price}
-              quantity={cartItem.quantity}
-              removeFromCart={() => handleRemoveFromCart(cartItem.item)}
-            />
-          ))}
-        </div>
-        <h3 className="text-2xl mb-3 font-semibold text-center">
-          Total a pagar: ${totalToPay.toFixed(2)}
-        </h3>
+        <div className="bg-customColor-200 p-4">
+          <div
+              style={{filter: blurBackground ? "blur(5px)" : "none"}}> {/* Aplica el estilo de desenfoque si blurBackground es true */}
+            <h1 className="text-2xl text-customColor-700 mb-3 font-semibold text-center">
+              Carrito de Compras
+            </h1>
+            <div className="grid gap-y-4 grid-cols-1 py-8 justify-center items-center">
+              {cart.map((cartItem: CartItemInterface, index) => (
+                  <ProductShoppingTile
+                      key={cartItem.item.key}
+                      //id={index === 0 ? "firstCartItem" : undefined} // Marca el primer elemento del carrito
+                      image={cartItem.item.multimedia}
+                      title={cartItem.item.name}
+                      description={cartItem.item.desc}
+                      price={cartItem.item.price}
+                      quantity={cartItem.quantity}
+                      removeFromCart={() => handleRemoveFromCart(cartItem.item)}
+                  />
+              ))}
+            </div>
+            <h3 className="text-2xl text-customColor-700 mb-3 font-semibold text-center">
+              Total a pagar: ${totalToPay.toFixed(2)}
+            </h3>
 
-        {totalToPay !== 0 ? (
-          <button
-            onClick={handleCheckout}
-            className={"px-4 py-2 rounded-md w-full bg-blue-500 text-white"}
-          >
-            Realizar Pago
-          </button>
-        ) : (
-          <Link href="/">
-            <button
-              className={"px-4 py-2 rounded-md w-full bg-blue-500 text-white"}
-            >
-              Volver al Menú de Compras
-            </button>
-          </Link>
-        )}
-        {showMessage && <RemoveFromCartMessage />}
-      </div>
-      {showConfirmation && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center z-30"
-          style={{ top: modalTop ?? 170, right: modalLeft ?? 540 }}
-        >
-          <div className="bg-white p-4 rounded-md text-center shadow-lg border border-black">
-            <h2 className="text-xl text-black mb-4">
-              Felicitaciones por su compra!!!
-            </h2>
-            <h2 className="text-m text-black mb-2">
-              Podrá seguir su envío mediante un link enviado a su e-mail
-            </h2>
-            <button
-              onClick={handleCloseConfirmation}
-              className="px-4 py-2 rounded-md bg-blue-500 text-white"
-            >
-              Cerrar
-            </button>
+            {totalToPay !== 0 ? (
+                <button
+                    onClick={handleCheckout}
+                    className={"px-4 py-2 rounded-md w-full bg-customColor-500 hover:bg-customColor-600 text-white"}
+                >
+                  Realizar Pago
+                </button>
+            ) : (
+                <Link href="/">
+                  <button
+                      className={"px-4 py-2 rounded-md w-full bg-customColor-500 hover:bg-customColor-600 text-white"}
+                  >
+                    Volver al Menú de Compras
+                  </button>
+                </Link>
+            )}
+            {showMessage && <RemoveFromCartMessage/>}
           </div>
+          {showConfirmation && (
+              <div
+                  className="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center z-30"
+                  style={{top: modalTop ?? 170, right: modalLeft ?? 540}}
+              >
+                <div className="bg-white p-4 rounded-md text-center shadow-lg border border-black">
+                  <h2 className="text-xl text-black mb-4">
+                    ¡Gracias por comprar en nuestra tienda!
+                  </h2>
+                  <h2 className="text-m text-black mb-2">
+                    Podrá seguir su envío mediante un link enviado a su e-mail
+                  </h2>
+                  <button
+                      onClick={handleCloseConfirmation}
+                      className="px-4 py-2 rounded-md bg-customColor-500 hover:bg-customColor-600 text-white"
+                  >
+                    Cerrar
+                  </button>
+                </div>
+              </div>
+          )}
         </div>
-      )}
-    </div>
-  );
-};
+          );
+          };
 
-export default ShoppingCart;
+          export default ShoppingCart;
 
-const updateProductQuantities = async (cart: CartItemInterface[]) => {
-  try {
-    console.log(JSON.stringify({ cart }));
-    const response = await fetch(LINK+"/api/updateQuantity", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ cart }),
-    });
+          const updateProductQuantities = async (cart: CartItemInterface[]) => {
+          try {
+          console.log(JSON.stringify({cart}));
+          const response = await fetch(LINK+"/api/updateQuantity", {
+          method: "POST",
+          headers: {
+          "Content-Type": "application/json",
+        },
+          body: JSON.stringify({cart}),
+        });
 
-    if (!response.ok) {
-      throw new Error("Failed to update product quantities");
-    }
-  } catch (error) {
-    console.error("Error updating product quantities:", error);
-  }
-};
+          if (!response.ok) {
+          throw new Error("Failed to update product quantities");
+        }
+        } catch (error) {
+          console.error("Error updating product quantities:", error);
+        }
+        };

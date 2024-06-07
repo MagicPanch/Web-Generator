@@ -6,13 +6,18 @@
   <component name="ChangeListManager">
     <list default="true" id="121f2593-11ee-405e-a8d8-1c2f43d81e54" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chatbot/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chatbot/actions/actions.py" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/actions/actions.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chatbot/data/nlu.yml" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/data/nlu.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chatbot/data/stories.yml" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/data/stories.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chatbot/domain.yml" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/domain.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/generator/TelegramBotManager.py" beforeDir="false" afterPath="$PROJECT_DIR$/generator/TelegramBotManager.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/base/constants/footer.ts" beforeDir="false" afterPath="$PROJECT_DIR$/webs/base/constants/footer.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/generator/ReactGenerator.py" beforeDir="false" afterPath="$PROJECT_DIR$/generator/ReactGenerator.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/CONSTANTS.PY" beforeDir="false" afterPath="$PROJECT_DIR$/resources/CONSTANTS.PY" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/webs/base/components/Footer.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/webs/base/components/Footer.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/webs/base/components/Header.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/webs/base/components/Header.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/webs/base/src/app/layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/webs/base/src/app/layout.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/webs/base/src/app/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/webs/base/src/app/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/webs/template_ecommerce/components/E-Commerce.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/webs/template_ecommerce/components/E-Commerce.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/webs/template_ecommerce/components/ProductTile.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/webs/template_ecommerce/components/ProductTile.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/webs/template_ecommerce/components/SearchBar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/webs/template_ecommerce/components/SearchBar.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/webs/template_ecommerce/src/app/layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/webs/template_ecommerce/src/app/layout.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/webs/template_ecommerce/src/app/shopping-cart/ProductShoppingTile.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/webs/template_ecommerce/src/app/shopping-cart/ProductShoppingTile.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/webs/template_ecommerce/src/app/shopping-cart/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/webs/template_ecommerce/src/app/shopping-cart/page.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -97,23 +102,23 @@
     "deletionFromPopupRequiresConfirmation": "false",
     "git-widget-placeholder": "lucas",
     "ignore.virus.scanning.warn.message": "true",
-    "last_opened_file_path": "D:/Desarrollo/Ingenieria-de-Software-2024/Web-Generator/webs/template_ecommerce/src/app",
+    "last_opened_file_path": "D:/Desarrollo/Ingenieria-de-Software-2024/Web-Generator/webs/base/constants",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
     "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
-    "ts.external.directory.path": "D:\\Desarrollo\\Ingenieria-de-Software-2024\\Web-Generator\\user-pages\\2086036019\\test-lucas\\node_modules\\typescript\\lib",
+    "ts.external.directory.path": "D:\\Desarrollo\\Ingenieria-de-Software-2024\\Web-Generator\\user-pages\\2086036019\\test-lucas-1\\node_modules\\typescript\\lib",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\Desarrollo\Ingenieria-de-Software-2024\Web-Generator\webs\base\constants" />
       <recent name="D:\Desarrollo\Ingenieria-de-Software-2024\Web-Generator\webs\template_ecommerce\src\app" />
       <recent name="D:\Desarrollo\Ingenieria-de-Software-2024\Web-Generator\user-pages\2086036019\test-lucas\components" />
       <recent name="D:\Desarrollo\Ingenieria-de-Software-2024\Web-Generator\webs\base\components" />
-      <recent name="D:\Desarrollo\Ingenieria-de-Software-2024\Web-Generator\webs\base\constants" />
       <recent name="D:\Desarrollo\Ingenieria-de-Software-2024\Web-Generator\webs\base" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
@@ -218,7 +223,7 @@
       <workItem from="1717635791077" duration="7367000" />
       <workItem from="1717683377338" duration="2643000" />
       <workItem from="1717726594000" duration="154000" />
-      <workItem from="1717769098025" duration="3594000" />
+      <workItem from="1717769098025" duration="15416000" />
     </task>
     <servers />
   </component>
@@ -245,7 +250,7 @@
     <SUITE FILE_PATH="coverage/Web_Generator$actions.coverage" NAME="actions Coverage Results" MODIFIED="1714769797888" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/chatbot/actions" />
     <SUITE FILE_PATH="coverage/Web_Generator$ReactGenerator.coverage" NAME="ReactGenerator Coverage Results" MODIFIED="1717558800745" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/generator" />
     <SUITE FILE_PATH="coverage/Web_Generator$router.coverage" NAME="router Coverage Results" MODIFIED="1713813104376" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/generator" />
-    <SUITE FILE_PATH="coverage/Web_Generator$test.coverage" NAME="test Coverage Results" MODIFIED="1717639866643" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/resources" />
+    <SUITE FILE_PATH="coverage/Web_Generator$test.coverage" NAME="test Coverage Results" MODIFIED="1717784259867" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/resources" />
     <SUITE FILE_PATH="coverage/Web_Generator$generator.coverage" NAME="generator Coverage Results" MODIFIED="1713816696702" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/generator" />
   </component>
 </project>
