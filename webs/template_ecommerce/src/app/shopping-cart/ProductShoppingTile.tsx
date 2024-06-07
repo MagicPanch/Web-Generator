@@ -37,12 +37,14 @@ const ProductShoppingTile = ({
           total ${(parseFloat(price) * quantity).toFixed(2)}
         </span>
       </div>
-      <button
-        onClick={removeFromCart}
-        className="bg-customColor-500 hover:bg-customColor-600 text-white px-4 rounded-md self-start"
-      >
-        Eliminar del carrito
-      </button>
+        <div className={"text-align: right flex"}>
+        <button
+            onClick={removeFromCart}
+            className="bg-customColor-500 hover:bg-customColor-600 text-white px-4 py-2 rounded-md"
+            >
+                Eliminar del carrito
+            </button>
+        </div>
     </div>
   );
 };

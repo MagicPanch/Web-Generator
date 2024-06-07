@@ -234,24 +234,26 @@ class ReactGenerator:
     @staticmethod
     def modificarSectionInformativa(nombre, page_path, texto):
         # genero component nuevo
-        textSectionNew = f"""import React from "react";
-                const {nombre} = () => {{        
+        textSectionNew = f"""
+            import React from "react";
+            
+            const {nombre} = () => {{
                 return (
-                <section className="h-screen bg-customColor-200 flex flex-col  items-center">
-                <div className="max-w-screen  p-4  px-40">
-                    <h1 className="font-bold text-customColor-700 mb-4">
-                        {nombre}
-                    </h1>
-                    <p className="text-customColor-700 mb-4">
-                        {texto}
-                    </p>
-                </div>
-                </section>
+                    <section className="h-screen bg-gradient-to-b from-customColor-100 to-customColor-200 flex flex-col items-center p-8">
+                        <div className="max-w-4xl w-full bg-white rounded-lg shadow-lg p-6 text-center">
+                            <h1 className="text-3xl font-bold text-customColor-800 mb-4">
+                                {nombre}
+                            </h1>
+                            <p className="text-lg text-gray-700 mb-6">
+                                {texto}
+                            </p>
+                        </div>
+                    </section>
                 );
-                }};
-
-                export default {nombre};
-                """
+            }};
+            
+            export default {nombre};
+            """
 
         utils.go_to_dir_from_main(page_path)
         with open(os.getcwd() + "\\components\\" + nombre + ".tsx", "w", encoding="utf-8") as file:
@@ -261,24 +263,26 @@ class ReactGenerator:
     @staticmethod
     def agregarSectionInformativa(page_path, nombre, texto):
         #genero component nuevo
-        textSectionNew = f"""import React from "react";
-        const {nombre} = () => {{        
-        return (
-        <section className="h-screen bg-customColor-200 flex flex-col  items-center">
-        <div className="max-w-screen  p-4  px-40">
-            <h1 className="font-bold text-customColor-700 mb-4">
-                {nombre}
-            </h1>
-            <p className="text-customColor-700 mb-4">
-                {texto}
-            </p>
-        </div>
-        </section>
-        );
-        }};
-
-        export default {nombre};
-        """
+        textSectionNew = f"""
+            import React from "react";
+            
+            const {nombre} = () => {{
+                return (
+                    <section className="h-screen bg-gradient-to-b from-customColor-100 to-customColor-200 flex flex-col items-center p-8">
+                        <div className="max-w-4xl w-full bg-white rounded-lg shadow-lg p-6 text-center">
+                            <h1 className="text-3xl font-bold text-customColor-800 mb-4">
+                                {nombre}
+                            </h1>
+                            <p className="text-lg text-gray-700 mb-6">
+                                {texto}
+                            </p>
+                        </div>
+                    </section>
+                );
+            }};
+            
+            export default {nombre};
+            """
 
         utils.go_to_dir_from_main(page_path)
         with open(os.getcwd() + "\\components\\"+nombre+".tsx", "w", encoding="utf-8") as file:
