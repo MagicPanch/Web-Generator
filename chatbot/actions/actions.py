@@ -493,7 +493,7 @@ class ActionCrearFooter(Action):
             "ubicacion": ubicacion
         }
         utils.go_to_main_dir()
-        rg.generarFooter(dataFooter)
+        rg.generarFooter(page_path, mail, ubicacion)
         print("-------------FOOTER MODIFICADO-------------")
         dispatcher.utter_message(text="Podes ver los cambios que realizamos en el footer")
         return [SlotSet("creando_footer", False), SlotSet("componente", None)]

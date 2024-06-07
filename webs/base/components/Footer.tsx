@@ -2,11 +2,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
-import {
-  FOOTER_CONTACT_INFO,
-  FOOTER_LINKS,
-  SOCIALS,
-} from "../constants/footer";
+import { FOOTER_LINKS,  SOCIALS, } from "../constants/footer";
+import { FOOTER_CONTACT_INFO } from "../constants/footer_contact_info";
 
 const Footer = () => {
   return (

@@ -137,46 +137,54 @@ class ReactGenerator:
             ReactGenerator.set_favicon(page_path)
 
     @staticmethod
-    def generarFooter(dataFooter):
-        print("genero footer")
-        text = f""" export const FOOTER_LINKS = [
-        {{
-            title: "Navegacion",
-            links: [
-            {{ label: "Services", href: "/#services" }},
-            {{ label: "Portfolio", href: "/#portfolio" }},
-            {{ label: "Contact", href: "/contact-us" }},
-            {{ label: "About us", href: "/about-us" }},
-            ],
-        }},
-        ];
-    
-        export const FOOTER_CONTACT_INFO = {{
-        title: "Contactanos",
-        links: [
-            {{ label: "Email", value: "{dataFooter["email"]}" }},
-            {{ label: "Ubicacion", value: "{dataFooter["ubicacion"]}" }},
-        ],
-        }};
-    
-        export const SOCIALS = {{
-        title: "Social",
-        data: [
-            {{
-            image: "/facebook.svg",
-            href: "https://www.facebook.com"
-            }},
-            {{ image: "/instagram.svg", href: "https://www.instagram.com" }},
-            {{ image: "/x.svg", href: "https://twitter.com" }},
-        ],
-        }};
-        """
+    def set_footer_email(page_path, email):
+        utils.go_to_dir_from_main(page_path)
+        utils.go_to_dir("constants")
+        print(email)
+        with open("footer_contact_info.ts", 'r') as file:
+            lines = file.readlines()
 
-        utils.go_to_dir_from_main(dataFooter["address"])
-        with open(os.getcwd() + "\\components\\Footer.tsx", "w") as file:
-            file.write(text)
-            file.close()
+        # Encontrar el índice de la definición del array SECTIONS
+        start_index = next(i for i, line in enumerate(lines) if 'export const FOOTER_CONTACT_INFO' in line)
+
+        # Buscar la línea a modificar
+        for line in lines:
+            if "Email" in line:
+                line = f'    {{ label: "Email", value: "{email}" }},\n'
+
+        # Escribir los cambios de vuelta al archivo
+        with open("footer_contact_info.ts", 'w') as file:
+            file.writelines(lines)
         utils.go_to_main_dir()
+
+    @staticmethod
+    def set_footer_location(page_path, location):
+        utils.go_to_dir_from_main(page_path)
+        utils.go_to_dir("constants")
+        print(email)
+        with open("footer_contact_info.ts", 'r') as file:
+            lines = file.readlines()
+
+        # Encontrar el índice de la definición del array SECTIONS
+        start_index = next(i for i, line in enumerate(lines) if 'export const FOOTER_CONTACT_INFO' in line)
+
+        # Buscar la línea a modificar
+        for line in lines:
+            if "Ubicacion" in line:
+                line = f'    {{ label: "Ubicacion", value: "{location}" }},\n'
+
+        # Escribir los cambios de vuelta al archivo
+        with open("footer_contact_info.ts", 'w') as file:
+            file.writelines(lines)
+        utils.go_to_main_dir()
+
+
+    @staticmethod
+    def generarFooter(page_path, email = None, location = None):
+        if email is not None:
+            ReactGenerator.set_footer_email(page_path, email)
+        if location is not None:
+            ReactGenerator.set_footer_location(page_path, email)
 
     @staticmethod
     def add_section(page_path, section_name):
@@ -223,7 +231,6 @@ class ReactGenerator:
         with open("sections.ts", 'w') as file:
             file.writelines(lines)
         utils.go_to_main_dir()
-
 
     @staticmethod
     def modificarSectionInformativa(nombre, page_path, texto):
