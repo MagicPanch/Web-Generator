@@ -351,6 +351,7 @@ stories:
     - or:
       - intent: decir_color
       - intent: despues_te_digo
+      - intent: denegar
     - action: action_guardar_color
     - checkpoint: color_encabezado
 
@@ -363,6 +364,7 @@ stories:
     - action: utter_preguntar_logo
     - or:
       - intent: enviar_imagen
+      - intent: despues_te_digo
       - intent: denegar
     - slot_was_set:
       - componente: encabezado
@@ -381,6 +383,7 @@ stories:
       - creando_footer: true
     - or:
       - intent: decir_mail
+      - intent: despues_te_digo
       - intent: denegar
     - action: action_guardar_mail_footer
     - checkpoint: mail_footer
@@ -394,6 +397,7 @@ stories:
     - action: utter_preguntar_ubicacion
     - or:
       - intent: decir_ubicacion
+      - intent: despues_te_digo
       - intent: denegar
     - slot_was_set:
       - componente: footer
@@ -415,6 +419,7 @@ stories:
       - pide_text_informativa: true
     - or:
       - intent: decir_texto_informativa
+      - intent: despues_te_digo
       - intent: denegar
     - action: action_modificar_informativa_2
     - slot_was_set:
@@ -605,16 +610,6 @@ stories:
   steps:
     - intent: reirse
     - action: utter_reirse
-
-- story: Estado de animo triste
-  steps:
-    - intent: estado_de_animo_triste
-    - action: action_animo
-
-- story: Estado de animo feliz
-  steps:
-    - intent: estado_de_animo_feliz
-    - action: action_animo
 
 - story: Agradecer
   steps:

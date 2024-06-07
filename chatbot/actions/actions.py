@@ -333,51 +333,66 @@ class ActionRecibirImagen(Action):
         print("(" + threading.current_thread().getName() + ") " + "--------creando_seccion_informativa ", tracker.get_slot("creando_seccion_informativa"))
         print("(" + threading.current_thread().getName() + ") " + "--------pregunta_otra_imagen_seccion_informativa ", tracker.get_slot("pregunta_otra_imagen_seccion_informativa"))
         print("(" + threading.current_thread().getName() + ") " + "--------last_message_intent: ", tracker.latest_message.get('intent').get('name'))
+        user_id = tracker.sender_id
+        page_name = tracker.get_slot("page_name")
+        page_path = pgm.get_page_path(user_id, page_name)
 
         # Verifica si el último mensaje contiene una imagen
-        latest_message = tracker.latest_message
-        if 'photo' in latest_message['metadata']['message']:
-            error = False
-            photo = latest_message['metadata']['message']['photo'][1]
-            image_id = photo['file_id']
-            page_path = pgm.get_page_path(tracker.sender_id, tracker.get_slot("page_name"))
-            if not image_id:
-                error = True
+        last_user_message = str(tracker.latest_message.get('text'))
+        if not "photo" in last_user_message:
+        # El usuario no envió una imagen
+            if tracker.get_slot("creando_encabezado"):
+                dispatcher.utter_message(text="Perfecto, mantendremos el logo por defecto.")
+                return [FollowupAction("action_crear_encabezado")]
+            elif tracker.get_slot("creando_seccion_informativa"):
+                return [SlotSet("pregunta_otra_imagen_seccion_informativa", False)]
+            elif tracker.get_slot("editando_seccion_informativa"):
+                return [SlotSet("pregunta_otra_imagen_seccion_informativa", False)]
+            elif tracker.get_slot("agregando_productos"):
+                return [SlotSet("agregando_productos", False), SlotSet("pregunta_carga", False)]
             else:
-                if tracker.get_slot("creando_encabezado"):
-                    utils.go_to_main_dir()
-                    tbm.download_image(page_path=page_path, subdir="components", image_id=image_id, image_name="logo.png")
-                elif tracker.get_slot("creando_seccion_informativa"):
-                    utils.go_to_main_dir()
-                    tbm.download_image(page_path=page_path, subdir="sect_inf_images", image_id=image_id, image_name=(photo["file_unique_id"] + ".png"))
-                elif tracker.get_slot("agregando_productos"):
-                    #Descargar imagen
-                    image_url = telegram_bot.get_image_url(image_id=image_id)
-                    dbm.set_product_multimedia(tracker.sender_id, tracker.get_slot("page_name"), tracker.get_slot("id_producto"), image_url)
-            if not error:
-                dispatcher.utter_message(text="Imagen recibida con éxito.")
-                if tracker.get_slot("creando_encabezado"):
-                    return [SlotSet("cambio_logo", True), FollowupAction("action_crear_encabezado")]
-                elif tracker.get_slot("creando_seccion_informativa"):
-                    dispatcher.utter_message(text="¿Queres agregar otra imagen?")
-                    return [SlotSet("pregunta_otra_imagen_seccion_informativa", True)]
-                elif tracker.get_slot("agregando_productos"):
-                    dispatcher.utter_message(text="¿Queres cargar otro producto?")
-                    return [SlotSet("pregunta_carga", True), SlotSet("pide_img_prod", False)]
-            else:
-                dispatcher.utter_message(text="No se pudo procesar la imagen.")
+                return []
+
+        if "document" in last_user_message:
+        # El usuario envió la imagen como documento
+            file = tracker.latest_message['metadata']['message']['document']
         else:
-            if tracker.latest_message.get('intent').get('name') == "denegar":
-                if tracker.get_slot("creando_encabezado"):
-                    dispatcher.utter_message(text="Perfecto, mantendremos el logo por defecto.")
-                    return [FollowupAction("action_crear_encabezado")]
-                elif tracker.get_slot("creando_seccion_informativa"):
-                    return [SlotSet("pregunta_otra_imagen_seccion_informativa", False)]
-                elif tracker.get_slot("editando_seccion_informativa"):
-                    return [SlotSet("pregunta_otra_imagen_seccion_informativa", False)]
-                elif tracker.get_slot("agregando_productos"):
-                    return [SlotSet("agregando_productos", False), SlotSet("pregunta_carga", False)]
+        # El usuario envió la imagen como foto
+            file = tracker.latest_message['metadata']['message']['photo'][1]
+        error = self.download_image(user_id, page_name, page_path, file, tracker, dispatcher)
+
+        if not error:
+            dispatcher.utter_message(text="Imagen recibida con éxito.")
+        else:
+            dispatcher.utter_message(text="No se pudo procesar la imagen.")
+
+        if tracker.get_slot("creando_encabezado"):
+            return [SlotSet("cambio_logo", not error), FollowupAction("action_crear_encabezado")]
+        elif tracker.get_slot("creando_seccion_informativa"):
+            dispatcher.utter_message(text="¿Queres agregar otra imagen?")
+            return [SlotSet("pregunta_otra_imagen_seccion_informativa", True)]
+        elif tracker.get_slot("agregando_productos"):
+            dispatcher.utter_message(text="¿Queres cargar otro producto?")
+            return [SlotSet("pregunta_carga", True), SlotSet("pide_img_prod", False)]
         return []
+
+    def download_image(self, user_id, page_name, page_path, file, tracker: Tracker, dispatcher: CollectingDispatcher) -> bool:
+        error = False
+        image_id = file["file_id"]
+        if not image_id:
+            error = True
+        else:
+            if tracker.get_slot("creando_encabezado"):
+                utils.go_to_main_dir()
+                tbm.download_image(page_path=page_path, subdir="components", image_id=image_id, image_name="logo.png")
+            elif tracker.get_slot("creando_seccion_informativa"):
+                utils.go_to_main_dir()
+                tbm.download_image(page_path=page_path, subdir="sect_inf_images", image_id=image_id, image_name=(file["file_unique_id"] + ".png"))
+            elif tracker.get_slot("agregando_productos"):
+                # Descargar imagen
+                image_url = telegram_bot.get_image_url(image_id=image_id)
+                dbm.set_product_multimedia(user_id, page_name, tracker.get_slot("id_producto"), image_url)
+        return error
 
 class ActionPreguntarColorEncabezado(Action):
     def name(self) -> Text:
@@ -638,7 +653,7 @@ class ActionCapturarProductoCargado(Action):
             if not documento:
                 error = True
             else:
-                file = tbm.get_csv_file(file_id)
+                file = tbm.get_file(file_id)
                 file_bytes = BytesIO()
                 file.download(out=file_bytes)
                 file_bytes.seek(0)

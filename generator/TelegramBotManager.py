@@ -31,7 +31,7 @@ class TelegramBotManager:
         file.download(custom_path=download_path)
 
     @classmethod
-    def get_csv_file(cls, file_id) -> File:
+    def get_file(cls, file_id) -> File:
         file = cls.get_instance()._bot.get_file(file_id)
         return file
 

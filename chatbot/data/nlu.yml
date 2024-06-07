@@ -157,7 +157,8 @@ nlu:
 
 - intent: enviar_imagen
   examples: |
-    - img.jpg
+    - photo
+    - photo.document
 
 - intent: decir_color
   examples: |

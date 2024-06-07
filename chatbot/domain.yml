@@ -57,7 +57,6 @@ entities:
   - precio_prod
 
 actions:
-  - action_animo
   - action_capturar_creacion
   - action_crear_encabezado
   - action_crear_pagina
@@ -466,7 +465,7 @@ slots:
 responses:
 
   utter_preguntar_logo:
-  - text: Si lo deseas podes enviarme una imagen con el logo de tu página para el encabezado
+  - text: Si lo deseas podes enviarme una imagen con el logo de tu página para el encabezado. Te recomiendo que la envíes como archivo para que esta conserve su calidad original.
 
   utter_preguntar_ubicacion:
     - text: 'Queres modificar la ubicación de tu pagina? Podes proporcionarme tu dirección en el formato: <calle> <numero> <ciudad>, <pais>. Por ejemplo: Pinto 401 Tandil, Argentina'

@@ -6,9 +6,13 @@
   <component name="ChangeListManager">
     <list default="true" id="121f2593-11ee-405e-a8d8-1c2f43d81e54" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/generator/PageManager.py" beforeDir="false" afterPath="$PROJECT_DIR$/generator/PageManager.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/generator/ReactGenerator.py" beforeDir="false" afterPath="$PROJECT_DIR$/generator/ReactGenerator.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/template_ecommerce/components/SectionECommerce.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/webs/template_ecommerce/components/E-Commerce.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chatbot/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chatbot/actions/actions.py" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/actions/actions.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chatbot/data/nlu.yml" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/data/nlu.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chatbot/data/stories.yml" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/data/stories.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chatbot/domain.yml" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/domain.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/generator/TelegramBotManager.py" beforeDir="false" afterPath="$PROJECT_DIR$/generator/TelegramBotManager.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/webs/base/constants/footer.ts" beforeDir="false" afterPath="$PROJECT_DIR$/webs/base/constants/footer.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -100,7 +104,7 @@
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
     "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
-    "ts.external.directory.path": "D:\\Desarrollo\\Ingenieria-de-Software-2024\\Web-Generator\\user-pages\\2086036019\\test-lucas-2\\node_modules\\typescript\\lib",
+    "ts.external.directory.path": "D:\\Desarrollo\\Ingenieria-de-Software-2024\\Web-Generator\\user-pages\\2086036019\\test-lucas\\node_modules\\typescript\\lib",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -213,6 +217,8 @@
       <workItem from="1717543029859" duration="14410000" />
       <workItem from="1717635791077" duration="7367000" />
       <workItem from="1717683377338" duration="2643000" />
+      <workItem from="1717726594000" duration="154000" />
+      <workItem from="1717769098025" duration="3594000" />
     </task>
     <servers />
   </component>

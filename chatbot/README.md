@@ -23,8 +23,9 @@ Guía de instalación y ejecución del proyecto desarrollado por el grupo Design
 - Ir a venv/Lib/site-packages/rasa/core/channels/channel.py y encontrar el método get_metadata(self, request: Request)
 - Remplazar la definición del método por
     ```python
-    metadata=request.json
-    return metadata
+    def get_metadata(self, request: Request) -> Optional[Dict[Text, Any]]:
+        metadata=request.json
+        return metadata
     ```
 - Ir a venv/Lib/site-packages/rasa/core/channels/telegram.py y encontrar el método blueprint (línea 190 aprox)
 - En él, se tiene el siguiente bloque if (línea 220 aprox):
@@ -48,10 +49,13 @@ Guía de instalación y ejecución del proyecto desarrollado por el grupo Design
   ```
 - Agregar en el mismo nivel de identación:
   ```python    
-      elif msg.photo is not None:  # check if message contains an image
-        text = 'img.jpg'  # set the text to the file name
-      elif msg.document is not None:
-        text = 'archivo.csv'
+        elif msg.photo is not None:  # check if message contains an image
+            text = 'photo'
+        elif msg.document is not None:   # check if message contains a document
+            if "image" in msg.document.mime_type: # check if document is an image
+                text = 'photo.document'
+            else:
+                text = 'archivo.csv'
   ```
 - Antes de
   ```python    

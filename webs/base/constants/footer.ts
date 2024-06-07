@@ -13,10 +13,7 @@
     export const SOCIALS = {
     title: "Social",
     data: [
-        {
-        image: "/facebook.svg",
-        href: "https://www.facebook.com"
-        },
+        { image: "/facebook.svg", href: "https://www.facebook.com" },
         { image: "/instagram.svg", href: "https://www.instagram.com" },
         { image: "/x.svg", href: "https://twitter.com" },
     ],
