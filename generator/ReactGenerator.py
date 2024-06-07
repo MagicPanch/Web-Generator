@@ -80,14 +80,14 @@ class ReactGenerator:
         utils.go_to_main_dir()
 
     @staticmethod
-    def set_colors(page_path, color):
+    def set_colors(page_path, color:str):
         utils.go_to_dir_from_main(page_path)
         utils.go_to_dir("constants")
         filename = os.getcwd() + "\\custom_tailwind_colors.ts"
         with open(filename, "r") as file:
             colors_file = file.readlines()
 
-        color = color[1:]
+        color = color[1:len(color)]
         url = CONSTANTS.TAILWIND_COLOR_API_URL + "/customColor/" + color
         response = requests.get(url=url)
         colors_dict = json.loads(response.text)
@@ -126,22 +126,9 @@ class ReactGenerator:
         utils.write_file(filename=filename, content=text)
         utils.go_to_main_dir()
 
-    @staticmethod
-    def _set_header_title_color(page_path, color):
-        utils.go_to_dir_from_main(page_path)
-        utils.go_to_dir("constants")
-        text = f"""export const HEADER_TITLE_COLOR = "{color}";"""
-        filename = os.getcwd() + "\\header_title_color.ts"
-        utils.write_file(filename=filename, content=text)
-        utils.go_to_main_dir()
 
     @staticmethod
     def generarHeader(page_path, title = None, color = None, logo = False):
-        print("genero header")
-        if title is not None:
-            ReactGenerator._set_header_title(page_path, title)
-        if color is not None:
-            ReactGenerator._set_header_title_color(page_path, color)
         if logo:
             ReactGenerator.set_favicon(page_path)
 
@@ -212,7 +199,7 @@ class ReactGenerator:
 
         # Insertar la nueva entrada en la lista SECTIONS
         if "E-Commerce" in section_name:
-            lines.insert(start_index, new_entry)
+            lines.insert(start_index  + 1, new_entry)
         else:
             lines.insert(len(lines) - 1, new_entry)
 

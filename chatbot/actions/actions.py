@@ -246,9 +246,12 @@ class ActionCapturarEdicion(BaseAction):
         print("(" + threading.current_thread().getName() + ") " + "--------componente: ", componente)
         if componente:
         # Hay componente a modificar
-            if componente.lower() == "encabezado":
-                return [FollowupAction("action_preguntar_color_encabezado"), SlotSet("pregunta_componente", False),
+            if componente.lower() == "color":
+                return [FollowupAction("action_preguntar_color"), SlotSet("cambio_logo", True), SlotSet("pregunta_componente", False),
                         SlotSet("pregunta_nombre", False), SlotSet("pregunta_edicion", False)]
+            if componente.lower() == "logo":
+                dispatcher.utter_message("Podes enviarme una imagen con el logo de tu página para el encabezado. Te recomiendo que la envíes como archivo para que esta conserve su calidad original.")
+                return [SlotSet("cambio_logo", True)]
             elif componente.lower() == "footer":
                 return [FollowupAction("action_preguntar_mail_footer"), SlotSet("pregunta_componente", False),
                         SlotSet("pregunta_nombre", False), SlotSet("pregunta_edicion", False)]
@@ -283,7 +286,7 @@ class ActionCapturarEdicion(BaseAction):
                     return [FollowupAction("action_capturar_tipo_seccion")]
         else:
         # No hay componente a modificar
-            message = "¿Qué componente de tu página te gustaría modificar? Te recuerdo que sus componentes son:\nEncabezado\n"
+            message = "¿Qué componente de tu página te gustaría modificar? Te recuerdo que sus componentes son:\nColor\nLogo\n"
             secciones = page_obj.get_sections_name()
             if len(secciones) > 0:
                 for seccion in secciones:
@@ -299,29 +302,6 @@ class ActionCapturarEdicion(BaseAction):
     def skip_page_verification(self) -> bool:
         return False
 
-class ActionGuardarColor(Action):
-    def name(self) -> Text:
-        return "action_guardar_color"
-
-    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
-        color = next(tracker.get_latest_entity_values("color"), None)
-        print("(" + threading.current_thread().getName() + ") " + "--------color: ", color)
-        #text - yellow - 600
-        if not color or tracker.get_intent_of_latest_message() == "despues_te_digo":
-            message = "Bien, mantendremos el color actual"
-        else:
-            message = "Color capturado."
-        dispatcher.utter_message(text=str(message))
-        slot_key = None
-        if tracker.get_slot("creando_encabezado"):
-            slot_key = "color_encabezado"
-        if slot_key is not None:
-            print("(" + threading.current_thread().getName() + ") " + "--------slot_key: ", slot_key)
-            return [SlotSet(slot_key, color)]
-        else:
-            return []
-
 class ActionRecibirImagen(Action):
     def name(self) -> Text:
         return "action_recibir_imagen"
@@ -329,7 +309,6 @@ class ActionRecibirImagen(Action):
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         global dbm, pgm, tbm
         print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
-        print("(" + threading.current_thread().getName() + ") " + "--------creando_encabezado ", tracker.get_slot("creando_encabezado"))
         print("(" + threading.current_thread().getName() + ") " + "--------creando_seccion_informativa ", tracker.get_slot("creando_seccion_informativa"))
         print("(" + threading.current_thread().getName() + ") " + "--------pregunta_otra_imagen_seccion_informativa ", tracker.get_slot("pregunta_otra_imagen_seccion_informativa"))
         print("(" + threading.current_thread().getName() + ") " + "--------last_message_intent: ", tracker.latest_message.get('intent').get('name'))
@@ -341,9 +320,9 @@ class ActionRecibirImagen(Action):
         last_user_message = str(tracker.latest_message.get('text'))
         if not "photo" in last_user_message:
         # El usuario no envió una imagen
-            if tracker.get_slot("creando_encabezado"):
+            if tracker.get_slot("cambio_logo"):
                 dispatcher.utter_message(text="Perfecto, mantendremos el logo por defecto.")
-                return [FollowupAction("action_crear_encabezado")]
+                return []
             elif tracker.get_slot("creando_seccion_informativa"):
                 return [SlotSet("pregunta_otra_imagen_seccion_informativa", False)]
             elif tracker.get_slot("editando_seccion_informativa"):
@@ -363,11 +342,12 @@ class ActionRecibirImagen(Action):
 
         if not error:
             dispatcher.utter_message(text="Imagen recibida con éxito.")
+            ReactGenerator.set_favicon(page_path)
         else:
             dispatcher.utter_message(text="No se pudo procesar la imagen.")
 
-        if tracker.get_slot("creando_encabezado"):
-            return [SlotSet("cambio_logo", not error), FollowupAction("action_crear_encabezado")]
+        if tracker.get_slot("cambio_logo"):
+            return [SlotSet("cambio_logo", not error)]
         elif tracker.get_slot("creando_seccion_informativa"):
             dispatcher.utter_message(text="¿Queres agregar otra imagen?")
             return [SlotSet("pregunta_otra_imagen_seccion_informativa", True)]
@@ -382,7 +362,7 @@ class ActionRecibirImagen(Action):
         if not image_id:
             error = True
         else:
-            if tracker.get_slot("creando_encabezado"):
+            if tracker.get_slot("cambio_logo"):
                 utils.go_to_main_dir()
                 tbm.download_image(page_path=page_path, subdir="components", image_id=image_id, image_name="logo.png")
             elif tracker.get_slot("creando_seccion_informativa"):
@@ -394,35 +374,27 @@ class ActionRecibirImagen(Action):
                 dbm.set_product_multimedia(user_id, page_name, tracker.get_slot("id_producto"), image_url)
         return error
 
-class ActionPreguntarColorEncabezado(Action):
+class ActionPreguntarColor(Action):
     def name(self) -> Text:
-        return "action_preguntar_color_encabezado"
+        return "action_preguntar_color"
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
-        dispatcher.utter_message(text="¿Querés modificar el color del título? En ese caso necesito que me proveas su codigo hexadecimal. Podes seleccionar tu color y copiar su codigo en el siguiente link: https://g.co/kgs/FMBcG8K")
-        return [SlotSet("creando_encabezado", True), SlotSet("pregunta_color", True), FollowupAction("action_listen")]
+        dispatcher.utter_message(text="¿Querés modificar el color principal de tu página? En ese caso necesito que me proveas su codigo hexadecimal. Podes seleccionar tu color y copiar su codigo en el siguiente link: https://g.co/kgs/FMBcG8K")
+        return [SlotSet("pregunta_color", True), FollowupAction("action_listen")]
 
 
-class ActionCrearEncabezado(Action):
+class ActionCapturarColor(Action):
     def name(self) -> Text:
-        return "action_crear_encabezado"
+        return "action_capturar_color"
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        global dbm, pgm, rg
+        global pgm, rg
         print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
-        page_name = tracker.get_slot("page_name")
-        user_id = tracker.sender_id
-        page_path = pgm.get_page_path(user_id, page_name)
-        print("(" + threading.current_thread().getName() + ")" + "--------page_path: ", page_path)
-        color = tracker.get_slot('color_encabezado')
-        print("(" + threading.current_thread().getName() + ")" + "--------color: ", color)
-        cambio_logo = tracker.get_slot("cambio_logo")
-        rg.generarHeader(page_path=page_path, color=color, logo=cambio_logo)
-        print("-------------ENCABEZADO MODIFICADO-------------")
-        dbm.updt_modification_date(user_id, page_name)
-        dispatcher.utter_message(text="Podes ver los cambios que realizamos en el encabezado")
-        return [SlotSet("creando_encabezado", False), SlotSet("componente", None), SlotSet("cambio_logo", False)]
+        color = tracker.get_slot('color')
+        rg.set_colors(pgm.get_page_path(tracker.sender_id, tracker.get_slot("page_name")), color)
+        dispatcher.utter_message()
+        return [SlotSet("componente", None), SlotSet("pregunta_color", False), SlotSet("cambio_color", False)]
 
 
 class ActionPreguntarMailFooter(Action):

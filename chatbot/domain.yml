@@ -58,12 +58,10 @@ entities:
 
 actions:
   - action_capturar_creacion
-  - action_crear_encabezado
   - action_crear_pagina
   - action_despedida_telegram
   - action_detener_pagina
   - action_ejecutar_pagina
-  - action_guardar_color
   - action_guardar_tipo
   - action_hora
   - action_recibir_imagen
@@ -74,7 +72,8 @@ actions:
   - action_guardar_seccion
   - action_capturar_tipo_seccion
   - action_capturar_edicion
-  - action_preguntar_color_encabezado
+  - action_preguntar_color
+  - action_capturar_color
   - action_preguntar_mail_footer
   - action_guardar_mail_footer
   - action_guardar_ubicacion_footer
@@ -407,14 +406,14 @@ slots:
     mappings:
       - type: custom
 
-  creando_encabezado:
+  creando_footer:
     type: bool
     influence_conversation: true
     initial_value: false
     mappings:
-    - type: custom
+      - type: custom
 
-  creando_footer:
+  cambio_color:
     type: bool
     influence_conversation: true
     initial_value: false
@@ -423,11 +422,12 @@ slots:
 
   cambio_logo:
     type: bool
+    influence_conversation: true
     initial_value: false
     mappings:
       - type: custom
 
-  color_encabezado:
+  color:
     type: text
     mappings:
     - type: from_entity
@@ -463,9 +463,6 @@ slots:
       entity: animo
 
 responses:
-
-  utter_preguntar_logo:
-  - text: Si lo deseas podes enviarme una imagen con el logo de tu página para el encabezado. Te recomiendo que la envíes como archivo para que esta conserve su calidad original.
 
   utter_preguntar_ubicacion:
     - text: 'Queres modificar la ubicación de tu pagina? Podes proporcionarme tu dirección en el formato: <calle> <numero> <ciudad>, <pais>. Por ejemplo: Pinto 401 Tandil, Argentina'

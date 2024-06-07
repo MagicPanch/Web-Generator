@@ -339,39 +339,28 @@ stories:
     - intent: denegar
     - action: action_capturar_tutorial
 
-## ENCABEZADO
+## LOGO
 
-- story: editar encabezado 1
+- story: cambiar logo
   steps:
     - checkpoint: componente_capturado
     - slot_was_set:
-      - componente: encabezado
-      - creando_encabezado: true
-      - pregunta_color: true
-    - or:
-      - intent: decir_color
-      - intent: despues_te_digo
-      - intent: denegar
-    - action: action_guardar_color
-    - checkpoint: color_encabezado
-
-- story: editar encabezado 2
-  steps:
-    - checkpoint: color_encabezado
-    - slot_was_set:
-      - componente: encabezado
-      - creando_encabezado: true
-    - action: utter_preguntar_logo
-    - or:
-      - intent: enviar_imagen
-      - intent: despues_te_digo
-      - intent: denegar
-    - slot_was_set:
-      - componente: encabezado
-      - creando_encabezado: true
+      - componente: logo
+      - cambio_logo: true
+    - intent: enviar_imagen
     - action: action_recibir_imagen
+
+## COLOR
+
+- story: cambiar color
+  steps:
+    - checkpoint: componente_capturado
     - slot_was_set:
-      - creando_encabezado: false
+      - componente: color
+      - pregunta_color: true
+      - cambio_color: true
+    - intent: decir_color
+    - action: action_capturar_color
 
 ## FOOTER
 

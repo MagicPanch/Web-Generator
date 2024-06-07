@@ -173,7 +173,6 @@ class PageManager():
         cls._copy_template(user, page_name)
         rg = ReactGenerator.get_instance()
         rg.set_tab_name(path, page_name)
-        rg.generarHeader(page_path=path, title=page_name)
         print("(" + threading.current_thread().getName() + ") " + "----Ejecucion finalizada----")
 
     @classmethod

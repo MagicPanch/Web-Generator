@@ -6,18 +6,13 @@
   <component name="ChangeListManager">
     <list default="true" id="121f2593-11ee-405e-a8d8-1c2f43d81e54" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chatbot/actions/actions.py" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/actions/actions.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chatbot/data/nlu.yml" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/data/nlu.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chatbot/data/stories.yml" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/data/stories.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chatbot/domain.yml" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/domain.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/generator/PageManager.py" beforeDir="false" afterPath="$PROJECT_DIR$/generator/PageManager.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/generator/ReactGenerator.py" beforeDir="false" afterPath="$PROJECT_DIR$/generator/ReactGenerator.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/CONSTANTS.PY" beforeDir="false" afterPath="$PROJECT_DIR$/resources/CONSTANTS.PY" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/base/components/Footer.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/webs/base/components/Footer.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/webs/base/components/Header.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/webs/base/components/Header.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/base/src/app/layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/webs/base/src/app/layout.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/base/src/app/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/webs/base/src/app/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/template_ecommerce/components/E-Commerce.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/webs/template_ecommerce/components/E-Commerce.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/template_ecommerce/components/ProductTile.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/webs/template_ecommerce/components/ProductTile.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/template_ecommerce/components/SearchBar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/webs/template_ecommerce/components/SearchBar.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/template_ecommerce/src/app/layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/webs/template_ecommerce/src/app/layout.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/template_ecommerce/src/app/shopping-cart/ProductShoppingTile.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/webs/template_ecommerce/src/app/shopping-cart/ProductShoppingTile.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/template_ecommerce/src/app/shopping-cart/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/webs/template_ecommerce/src/app/shopping-cart/page.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -223,7 +218,7 @@
       <workItem from="1717635791077" duration="7367000" />
       <workItem from="1717683377338" duration="2643000" />
       <workItem from="1717726594000" duration="154000" />
-      <workItem from="1717769098025" duration="15416000" />
+      <workItem from="1717769098025" duration="19442000" />
     </task>
     <servers />
   </component>
