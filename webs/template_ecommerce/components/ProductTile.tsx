@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 interface CardProps {
   image: string;
@@ -18,23 +18,48 @@ const ProductTile = ({
   stock,
   onAddToCart,
 }: CardProps) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const toggleDescription = () => {
+    setIsExpanded(!isExpanded);
+  };
+
+  const truncateDescription = (text: string, length: number) => {
+    return text.length > length ? text.substring(0, length) + "..." : text;
+  };
+
+  const isTitleLong = title.length >= 45; // Ajusta este valor según sea necesario
+
   return (
-      <div className="bg-white rounded-lg overflow-hidden shadow-md p-4 m-4 transition-transform duration-300 transform hover:scale-105">
-        <img src={image} alt="Product" className="w-full h-full object-cover"/>
-        <div className="p-4 h-48 flex flex-col justify-between">
-          <h2 className="text-xl font-bold mb-2 text-customColor-800">{title}</h2>
-          <p className="text-lg text-gray-600 flex-grow">{description}</p>
-          <p className="text-customColor-800 flex-grow">Stock disponible: {stock} unidades.</p>
-          <div className="mt-4 flex items-center justify-between">
-            <span className="font-semibold text-xl text-customColor-800">${price}</span>
-            <button
-                onClick={onAddToCart}
-                className="bg-customColor-500 hover:bg-customColor-600 text-white px-3 py-2 rounded-md"
-            >
-              Agregar al carrito
-            </button>
+      <div
+          className="bg-white rounded-lg overflow-hidden shadow-md p-4 m-4 max-w-xl h-150 transition-transform duration-300 transform hover:scale-105">
+          <img src={image} alt="Product" className="w-full h-full object-cover"/>
+          <h2 className="text-lg font-bold  mb-2 text-customColor-800 ">{title}</h2>
+          <div className={`text-gray-600 flex-grow overflow-hidden relative ${isTitleLong ? truncateDescription(description, 45) : truncateDescription(description, 90)}`}>
+              <p>
+                  {isExpanded ? description : truncateDescription(description, isTitleLong ? 45 : 90)}
+                  {description.length > 45 && (
+                      <button
+                          onClick={toggleDescription}
+                          className="text-customColor-500 hover:underline ml-1"
+                      >
+                          {isExpanded ? "Leer menos" : "Leer más"}
+                      </button>
+                  )}
+              </p>
           </div>
-        </div>
+          <p className="text-customColor-800 mt-2">Stock disponible: {stock} unidades.</p>
+          <div className="flex flex-col justify-between h-full">
+              <div className="mt-4 flex items-center justify-between">
+                  <span className="font-semibold text-xl text-customColor-800">${price}</span>
+                  <button
+                      onClick={onAddToCart}
+                      className="bg-customColor-500 hover:bg-customColor-600 text-white px-3 py-2 rounded-md"
+                  >
+                      Agregar al carrito
+                  </button>
+              </div>
+          </div>
       </div>
   );
 };

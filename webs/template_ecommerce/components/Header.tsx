@@ -90,7 +90,6 @@ const Header = ({ currentSection, setSection }: HeaderProps) => {
                     <img src={cartItem.item.multimedia} alt={cartItem.item.name} className="w-24 h-24 object-cover rounded mr-4" />
                     <div>
                       <h3 className="text-lg text-customColor-700">{cartItem.item.name}</h3>
-                      <p className="text-gray-600">{cartItem.item.desc}</p>
                       <p className="text-gray-600">Precio: ${cartItem.item.price}</p>
                       <p className="text-gray-600">Cantidad: {cartItem.quantity}</p>
                       <button

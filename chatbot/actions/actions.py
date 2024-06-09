@@ -347,6 +347,7 @@ class ActionRecibirImagen(Action):
             dispatcher.utter_message(text="No se pudo procesar la imagen.")
 
         if tracker.get_slot("cambio_logo"):
+            dispatcher.utter_message("Podes ver el nuevo logo en tu página.")
             return [SlotSet("cambio_logo", not error)]
         elif tracker.get_slot("creando_seccion_informativa"):
             dispatcher.utter_message(text="¿Queres agregar otra imagen?")
@@ -631,11 +632,28 @@ class ActionCapturarProductoCargado(Action):
                 file_bytes.seek(0)
                 df = pd.read_excel(file_bytes, engine='openpyxl')
                 for producto in df.itertuples(index=True, name='Pandas'):
-                    id = dbm.add_product(user_id=tracker.sender_id, page_name=tracker.get_slot("page_name"), cant=producto.Cantidad, title=producto.Titulo, desc=producto.Descripcion, precio=float(producto.Precio))
-                    if producto.Imagen_principal is not nan:
-                        dbm.set_product_multimedia(tracker.sender_id, tracker.get_slot("page_name"), id, str(producto.Imagen_principal))
-                    message = "El producto " + producto.Titulo + " se guardó correctamente con el identificador: " + str(id)
-                    dispatcher.utter_message(text=message)
+                    if pd.isna(producto.Cantidad):
+                        break
+                    else:
+                        id = dbm.add_product(
+                            user_id=tracker.sender_id,
+                            page_name=tracker.get_slot("page_name"),
+                            cant=int(producto.Cantidad),
+                            title=producto.Titulo,
+                            desc=producto.Descripcion,
+                            precio=float(producto.Precio)
+                        )
+
+                        # Verifica si Imagen_principal no es nan
+                        if pd.notna(producto.Imagen_principal):
+                            dbm.set_product_multimedia(
+                                tracker.sender_id,
+                                tracker.get_slot("page_name"),
+                                id,
+                                str(producto.Imagen_principal)
+                            )
+                        message = "El producto " + producto.Titulo + " se guardó correctamente con el identificador: " + str(id)
+                        dispatcher.utter_message(text=message)
                 dispatcher.utter_message(text="Ha finalizado la carga de productos. ¿Puedo ayudarte con algo más?")
                 return [SlotSet("agregando_productos", False), SlotSet("pregunta_carga", False)]
             if error:

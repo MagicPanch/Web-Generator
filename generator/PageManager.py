@@ -293,6 +293,15 @@ class PageManager():
         process.terminate()
         page.set_exec_process(None)
 
+        command = "npm install @tailwindcss/line-clamp"
+        process = cls._run_process(command)
+        page = cls._running_pages[(user, page_name)].get_page()
+        page.set_exec_process(process)
+        process.wait()
+        process.terminate()
+        page.set_exec_process(None)
+
+
         # Copiar template al nuevo proyecto
         destino = cls.get_page_path(user, page_name)
         utils.go_to_main_dir()
@@ -334,6 +343,10 @@ class PageManager():
 
         #Posicionarse en el path donde se creara el proyecto
         path = cls.get_page_path(user, page_name)
+        page = cls.get_page(user, page_name)
+        if page.has_ecomm_section():
+            rg = ReactGenerator.get_instance()
+            rg.set_address(page_path=path, address=cls.get_page(user, page_name).get_page_address())
 
         utils.go_to_dir_from_main(path)
 
@@ -464,7 +477,7 @@ class PageManager():
             utils.go_to_main_dir()
             utils.go_to_dir(CONSTANTS.USER_PAGES_DIR)
             utils.go_to_dir(user)
-            utils.go_to_dir(page_name)
+            utils.go_to_dir(page_name.lower())
             utils.go_to_main_dir()
         else:
             #Recuperar sus componentes
@@ -508,7 +521,7 @@ class PageManager():
 
     @staticmethod
     def get_page_path(user, page_name) -> str:
-        path = CONSTANTS.USER_PAGES_DIR + "\\" + user + "\\" + page_name
+        path = CONSTANTS.USER_PAGES_DIR + "\\" + user + "\\" + page_name.lower()
         return path
 
     @classmethod

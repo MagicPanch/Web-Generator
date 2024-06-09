@@ -239,7 +239,7 @@ class DBManager:
             if collection:
                 product = {
                     "key": p_id,
-                    "stock": int(cant),
+                    "stock": cant,
                     "name": title,
                     "desc": desc,
                     "price": precio,

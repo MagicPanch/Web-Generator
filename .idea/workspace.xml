@@ -7,16 +7,9 @@
     <list default="true" id="121f2593-11ee-405e-a8d8-1c2f43d81e54" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/chatbot/actions/actions.py" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/actions/actions.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/generator/ReactGenerator.py" beforeDir="false" afterPath="$PROJECT_DIR$/generator/ReactGenerator.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/base/components/NavBar.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/base/components/Template.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/webs/base/components/Template.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/base/components/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/webs/base/components/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/DBManager.py" beforeDir="false" afterPath="$PROJECT_DIR$/database/DBManager.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/generator/PageManager.py" beforeDir="false" afterPath="$PROJECT_DIR$/generator/PageManager.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/webs/template_ecommerce/components/ProductTile.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/webs/template_ecommerce/components/ProductTile.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/template_ecommerce/components/SearchBar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/webs/template_ecommerce/components/SearchBar.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/template_ecommerce/components/cartContext.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/webs/template_ecommerce/components/cartContext.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/template_ecommerce/src/app/api/updateQuantity/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/webs/template_ecommerce/src/app/api/updateQuantity/route.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/template_ecommerce/src/app/shopping-cart/ProductShoppingTile.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/template_ecommerce/src/app/shopping-cart/page.tsx" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -82,36 +75,36 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
-    &quot;Python.DBManager.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Generator.executor&quot;: &quot;Run&quot;,
-    &quot;Python.ReactGenerator.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Router.executor&quot;: &quot;Run&quot;,
-    &quot;Python.actions.executor&quot;: &quot;Run&quot;,
-    &quot;Python.generator.executor&quot;: &quot;Run&quot;,
-    &quot;Python.prueba.executor&quot;: &quot;Run&quot;,
-    &quot;Python.router.executor&quot;: &quot;Run&quot;,
-    &quot;Python.test.executor&quot;: &quot;Run&quot;,
-    &quot;Python.text_extractor.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;deletionFromPopupRequiresConfirmation&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;lucas&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/Desarrollo/Ingenieria-de-Software-2024/Web-Generator/webs/template_ecommerce&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;D:\\Desarrollo\\Ingenieria-de-Software-2024\\Web-Generator\\user-pages\\2086036019\\test-lucas-1\\node_modules\\typescript\\lib&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "Python.DBManager.executor": "Run",
+    "Python.Generator.executor": "Run",
+    "Python.ReactGenerator.executor": "Run",
+    "Python.Router.executor": "Run",
+    "Python.actions.executor": "Run",
+    "Python.generator.executor": "Run",
+    "Python.prueba.executor": "Run",
+    "Python.router.executor": "Run",
+    "Python.test.executor": "Run",
+    "Python.text_extractor.executor": "Run",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "deletionFromPopupRequiresConfirmation": "false",
+    "git-widget-placeholder": "lucas",
+    "ignore.virus.scanning.warn.message": "true",
+    "last_opened_file_path": "D:/Desarrollo/Ingenieria-de-Software-2024/Web-Generator/webs/template_ecommerce",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
+    "ts.external.directory.path": "D:\\Desarrollo\\Ingenieria-de-Software-2024\\Web-Generator\\user-pages\\2086036019\\design-label\\node_modules\\typescript\\lib",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="D:\Desarrollo\Ingenieria-de-Software-2024\Web-Generator\webs\template_ecommerce" />
@@ -223,7 +216,9 @@
       <workItem from="1717683377338" duration="2643000" />
       <workItem from="1717726594000" duration="154000" />
       <workItem from="1717769098025" duration="19442000" />
-      <workItem from="1717857809832" duration="20519000" />
+      <workItem from="1717857809832" duration="20601000" />
+      <workItem from="1717892129146" duration="201000" />
+      <workItem from="1717948359409" duration="10218000" />
     </task>
     <servers />
   </component>
