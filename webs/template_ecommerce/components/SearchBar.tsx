@@ -13,12 +13,6 @@ const SearchBar = () => {
       <button className="bg-customColor-500 hover:bg-customColor-600 text-white font-bold py-2 px-4 rounded-r-md ml-2 focus:outline-none">
         Buscar
       </button>
-      <Link
-        href="/shopping-cart"
-        className="bg-customColor-500 hover:bg-customColor-600 text-white font-bold py-2 px-4 rounded-md ml-2 focus:outline-none"
-      >
-        Carrito
-      </Link>
     </div>
   );
 };

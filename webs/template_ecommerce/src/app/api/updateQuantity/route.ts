@@ -1,4 +1,3 @@
-import { NextApiRequest, NextApiResponse } from 'next';
 import dbconnect from "@/app/lib/db_function";
 import Product from '../../models/producto';
 import { NextRequest, NextResponse } from 'next/server';

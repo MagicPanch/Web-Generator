@@ -229,7 +229,17 @@ class ReactGenerator:
         # Escribir los cambios de vuelta al archivo
         with open("sections.ts", 'w') as file:
             file.writelines(lines)
-        utils.go_to_main_dir()
+        utils.go_to_dir_from_main(page_path)
+        file_path = os.getcwd() + "\\components\\" + section_name + ".tsx"
+        try:
+            os.remove(file_path)
+            print(f"Archivo {file_path} eliminado con éxito.")
+        except FileNotFoundError:
+            print(f"El archivo {file_path} no existe.")
+        except PermissionError:
+            print(f"No tienes permiso para eliminar el archivo {file_path}.")
+        except Exception as e:
+            print(f"Ha ocurrido un error al intentar eliminar el archivo {file_path}: {e}")
 
     @staticmethod
     def modificarSectionInformativa(nombre, page_path, texto):

@@ -393,7 +393,7 @@ class ActionCapturarColor(Action):
         print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
         color = tracker.get_slot('color')
         rg.set_colors(pgm.get_page_path(tracker.sender_id, tracker.get_slot("page_name")), color)
-        dispatcher.utter_message()
+        dispatcher.utter_message("Podes ver el nuevo color en tu página.")
         return [SlotSet("componente", None), SlotSet("pregunta_color", False), SlotSet("cambio_color", False)]
 
 
@@ -694,6 +694,7 @@ class ActionCrearInformativa2(Action):
         last_message_intent = tracker.latest_message.get('intent').get('name')
         if "decir_nombre_informativa" in last_message_intent:
             nombre_informativa = tracker.get_slot("nombre_informativa")
+            print(nombre_informativa)
             dispatcher.utter_message(text="Nombre de sección guardado.")
         inf_section = InformativeSection(nombre_informativa)
         page.add_section(inf_section)
@@ -719,6 +720,7 @@ class ActionCrearInformativa3(Action):
         else:
             nombre_informativa = "Informacion"
         page = pgm.get_page(user_id, page_name)
+        print("nombre_informativa: ", nombre_informativa)
         inf_section = page.get_section(nombre_informativa)
         inf_section.set_text(text)
         dispatcher.utter_message(text="Texto informativo guardado.")
@@ -729,7 +731,7 @@ class ActionCrearInformativa3(Action):
         rg.agregarSectionInformativa(page_path, nombre_informativa, inf_section.get_text())
         dispatcher.utter_message(text="Podrás ver la nueva sección en tu página")
         return [SlotSet("creando_seccion_informativa", False), SlotSet("pide_text_informativa", False), SlotSet("pregunta_seccion", False),
-                SlotSet("creando_seccion", False), SlotSet("componente", None)]
+                SlotSet("creando_seccion", False), SlotSet("componente", None), SlotSet("nombre_informativa", None)]
 
 ## EDITAR
 
