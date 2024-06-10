@@ -39,7 +39,7 @@ class ActionCapturarCreacion(BaseAction):
         if seccion:
             return [FollowupAction("action_capturar_tipo_seccion"), SlotSet("creando_seccion", True)]
         else:
-            return [FollowupAction("action_preguntar_nombre_pagina"), SlotSet("creando_pagina", True)]
+            return [FollowupAction("action_preguntar_nombre_pagina"), SlotSet("creando_pagina", True), SlotSet("page_name", None)]
 
     def skip_tuto_verification(self) -> bool:
         return False

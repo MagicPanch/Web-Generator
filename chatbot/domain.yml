@@ -46,7 +46,6 @@ entities:
   - usuario
   - seccion
   - preguntas
-  - regex_page_name
   - imagen
   - mail
   - ubicacion

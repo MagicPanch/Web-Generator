@@ -8,6 +8,10 @@ nlu:
   examples: |
     - /restart
 
+- regex: page_name
+  examples: |
+    - '^[a-zA-Z0-9-_]+$'
+
 - intent: crear_algo
   examples: |
     - quiero crear una pagina
@@ -347,9 +351,6 @@ nlu:
   examples: |
     - ((([aA-zZ]\w+ ){1,})+(, )){1,}
 
-- regex: regex_page_name
-  examples: |
-    - '^[a-zA-Z0-9-_]+$'
 
 - lookup: usuario
   examples: |
@@ -738,3 +739,4 @@ nlu:
     - myweb
     - miprimerpaginaweb
     - holamundo
+    - opensports
