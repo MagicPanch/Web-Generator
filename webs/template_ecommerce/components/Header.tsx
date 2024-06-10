@@ -82,7 +82,7 @@ const Header = ({ currentSection, setSection }: HeaderProps) => {
           <div className="bg-white p-4 rounded-lg shadow-lg w-96 h-full overflow-auto z-50">
             <h2 className="text-xl text-customColor-700 mb-4">Carrito de Compras</h2>
             {cart.length === 0 ? (
-              <p className="text-center">Aún no agregaste productos al carrito.</p>
+              <p className="text-center text-customColor-700">Aún no agregaste productos al carrito.</p>
             ) : (
               <div>
                 {cart.map((cartItem) => (
