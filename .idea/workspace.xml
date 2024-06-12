@@ -88,7 +88,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
     "deletionFromPopupRequiresConfirmation": "false",
-    "git-widget-placeholder": "lucas",
+    "git-widget-placeholder": "main",
     "ignore.virus.scanning.warn.message": "true",
     "last_opened_file_path": "D:/Desarrollo/Ingenieria-de-Software-2024/Web-Generator/user-pages/2086036019/design-label/components",
     "node.js.detected.package.eslint": "true",
@@ -216,6 +216,8 @@
       <workItem from="1717892129146" duration="201000" />
       <workItem from="1717948359409" duration="11338000" />
       <workItem from="1718020980886" duration="12951000" />
+      <workItem from="1718142801428" duration="119000" />
+      <workItem from="1718154990337" duration="333000" />
     </task>
     <servers />
   </component>
