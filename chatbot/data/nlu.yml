@@ -3,14 +3,14 @@ nlu:
 - intent: start
   examples: |
     - /start
+    - /Start
+    - /START
 
 - intent: restart
   examples: |
     - /restart
-
-- regex: page_name
-  examples: |
-    - '^[a-zA-Z0-9-_]+$'
+    - /Restart
+    - /RESTART
 
 - intent: crear_algo
   examples: |
@@ -46,6 +46,7 @@ nlu:
     - cambiemos la [seccion](componente) [informativa](seccion)
     - quiero modificar la [seccion](componente) [nosotros](nombre_informativa) en [google](page_name)
     - quiero modificar la [seccion](componente) [e-commerce](seccion)
+    - quiero cambiar los [colores](componente)
 
 - intent: tipo_seccion
   examples: |
@@ -86,8 +87,7 @@ nlu:
 
 - intent: cargar_productos_archivo
   examples: |
-    - archivo.csv
-    
+    - archivo.csv    
 
 - intent: despues_te_digo
   examples: |
@@ -108,6 +108,9 @@ nlu:
     - www. [borrador](page_name) .com
     - www. [test](page_name) .com
     - www. [super_mega_pagina_piola](page_name) .com
+    - el nombre es [youtube](page_name)
+    - la pagina se llama [linkedin](page_name)
+    - [MiTienda](page_name)
 
 - intent: preguntar_paginas_propias
   examples: |
@@ -347,384 +350,45 @@ nlu:
     - terminemos el tutorial
     - matemos el tuto
 
-- regex: pregunta
-  examples: |
-    - ((([aA-zZ]\w+ ){1,})+(, )){1,}
-
-
-- lookup: usuario
-  examples: |
-    - Lleyton
-    - Bautista
-    - Fermin
-    - Tadeo
-    - Julian
-    - Analia
-    - Santiago
-    - Francisco
-    - Joaquin
-    - Belen
-    - Julieta
-    - Macarena
-    - Mercedes
-    - Agustina
-    - Alan
-    - Pablo
-    - Milagros
-    - Gabriel
-    - Micaela
-    - Rocio
-    - Sol
-    - Andrea
-    - Tomas
-    - Ricardo
-    - Facundo
-    - Simon
-    - Eduardo
-    - Jorge
-    - Esteban
-    - Mariana
-    - Luciano
-    - Romina
-    - Leonardo
-    - Victoria
-    - Matias
-    - Ignacio
-    - Natalia
-    - Lucas
-    - Camila
-    - Maximiliano
-    - Valentina
-    - Martin
-    - Carla
-    - Juan
-    - Sofia
-    - Manuel
-    - Maria
-    - Emiliano
-    - Antonella
-    - Agustin
-    - Marina
-    - Nicolas
-    - Antonia
-    - Diego
-    - Celeste
-    - Federico
-    - Gonzalo
-    - Luciana
-    - Florencia
-    - Sebastian
-    - Lucia
-    - Alejandro
-    - Leandro
-    - Adrian
-    - Carolina
-    - Daiana
-    - Oscar
-    - Paula
-    - Ivan
-    - Jonathan
-    - Rodrigo
-    - Virginia
-    - Lara
-    - David
-    - Emanuel
-    - Brenda
-    - Melina
-    - Lujan
-    - Guadalupe
-    - Yanina
-    - Mauro
-    - Franco
-    - Daniela
-    - Candela
-    - Gaston
-    - Solange
-    - Marcos
-    - Enzo
-    - Juan
-    - Valeria
-    - Miguel
-    - Ramiro
-    - Victor
-    - Pamela
-    - Javier
-    - Celeste
-    - Jimena
-    - Nicolas
-    - Leonardo
-    - Mariano
-    - Ezequiel
-    - Natalia
-    - Lucia
-    - Sofia
-    - Antonella
-    - Micaela
-    - Valentina
-    - Florencia
-    - Tomas
-    - Martin
-    - Manuel
-    - Laura
-    - Gabriel
-    - Belen
-    - Fernando
-    - Emanuel
-    - Marina
-    - Julieta
-    - Facundo
-    - Maximiliano
-    - Diego
-    - Ariel
-    - Ezequiel
-    - Gaston
-    - Franco
-    - Miguel
-    - Javier
-    - Jonathan
-    - Leonardo
-    - Mariano
-    - Nicolas
-    - Ramiro
-    - Victor
-    - Pamela
-    - Jimena
-    - Celeste
-    - Solange
-    - Marcos
-    - Enzo
-    - Valeria
-    - Matias
-    - Luciana
-    - Paula
-    - Ricardo
-    - Alan
-    - Federico
-    - Mariana
-    - Jorge
-    - Andrea
-    - Matias
-    - Belen
-    - Luciano
-    - Natalia
-    - Ignacio
-    - Antonia
-    - Federico
-    - Luciana
-    - Sebastian
-    - Carolina
-    - Daiana
-    - Jonathan
-    - Virginia
-    - Lara
-    - David
-    - Brenda
-    - Melina
-    - Lujan
-    - Mauro
-    - Daniela
-    - Candela
-    - Gaston
-    - Marcos
-    - Enzo
-    - Valeria
-    - Miguel
-    - Ramiro
-    - Victor
-    - Pamela
-    - Javier
-    - Jimena
-    - Celeste
-    - Solange
-    - Ezequiel
-    - Franco
-    - Ariel
-    - Diego
-    - Maximiliano
-    - Facundo
-    - Julieta
-    - Marina
-    - Emanuel
-    - Fernando
-    - Leonardo
-    - Martin
-    - Manuel
-    - Laura
-    - Gabriel
-    - Belen
-    - Nicolás
-    - Ramiro
-    - Victor
-    - Pamela
-    - Jimena
-    - Celeste
-    - Solange
-    - Marcos
-    - Enzo
-    - Valeria
-    - Matías
-    - Luciana
-    - Paula
-    - Ricardo
-    - Alan
-    - Federico
-    - Mariana
-    - Jorge
-    - Andrea
-    - Belén
-    - Luciano
-    - Natalia
-    - Ignacio
-    - Sebastián
-    - Carolina
-    - Daiana
-    - Jonathan
-    - Virginia
-    - Lara
-    - David
-    - Brenda
-    - Melina
-    - Luján
-    - Mauro
-    - Daniela
-    - Candela
-    - Gastón
-    - Marcos
-    - Enzo
-    - Valeria
-    - Miguel
-    - Ariel
-    - Julieta
-    - Facundo
-    - Leonardo
-    - Emanuel
-    - Javier
-    - Manuel
-    - Laura
-    - Gabriel
-    - Nicolás
-    - Jimena
-    - Celeste
-    - Solange
-    - Franco
-    - Maximiliano
-    - Marina
-    - Ezequiel
-    - Fernando
-    - Ramiro
-    - Martín
-    - Paula
-    - Ricardo
-    - Federico
-    - Andrea
-    - Jorge
-    - Marcos
-    - Luciano
-    - Natalia
-    - Ignacio
-    - Sebastián
-    - Carolina
-    - Daiana
-    - Jonathan
-    - Virginia
-    - Lara
-    - David
-    - Brenda
-    - Melina
-    - Luján
-    - Mauro
-    - Daniela
-    - Candela
-    - Gastón
-    - Marcos
-    - Enzo
-    - Valeria
-    - Miguel
-    - Ariel
-    - Julieta
-    - Facundo
-    - Leonardo
-    - Emanuel
-    - Javier
-    - Manuel
-    - Laura
-    - Gabriel
-    - Nicolás
-    - Jimena
-    - Celeste
-    - Solange
-    - Franco
-    - Maximiliano
-    - Marina
-    - Ezequiel
-    - Fernando
-    - Ramiro
-    - Martín
-    - Paula
-    - Ricardo
-    - Federico
-    - Andrea
-    - Jorge
-    - Marcos
-    - Luciano
-    - Natalia
-    - Ignacio
-    - Sebastián
-    - Carolina
-    - Daiana
-    - Jonathan
-    - Virginia
-    - Lara
-    - David
-    - Brenda
-    - Melina
-- lookup: dia
-  examples: |
-    - Lunes
-    - Martes
-    - Miercoles
-    - Jueves
-    - Viernes
-    - Sabado
-    - Domingo
-- lookup: colores
-  examples: |
-    - Azul
-    - Rojo
-    - Naranja
-    - Violeta
-    - Marron
-    - Verde
-    - Amarillo
-    - Celeste
-    - Blanco
-    - Negro
-    - Gris
-    - Rosa
-    - Bordo
-
 - lookup: componentes
   examples: |
-    - Encabezado
-    - Boton
-    - Titulo
-    - Imagen
-    - Texto
-    - Subtitulo
-    - Video
-    - Nombre
-    - Producto
-    - Carrito
+    - logo
+    - color
+    - seccion
+    - footer
+
+- synonym: logo
+  examples: |
+    - logotipo
+    - isotipo
+    - emblema
+    - imagen
+
+- synonym: color
+  examples: |
+    - colores
+    - tonos
+    - gama de colores
+
+- synonym: seccion
+  examples: |
+    - apartado
+    - area
+
+- synonym: footer
+  examples: |
+    - pie de pagina
 
 - lookup: seccion
   examples: |
-    - E-commerce
-    - Informativa
-    - Foro
-    - Blog
-    - Red Social
-    - Portal de noticias
-    - Encuesta
+    - e-commerce
+    - informativa
+
+- synonym: e-commerce
+  examples: |
+    - ecommerce
+    - tienda
+    - store
 
 - lookup: page_name
   examples: |
@@ -740,3 +404,15 @@ nlu:
     - miprimerpaginaweb
     - holamundo
     - opensports
+    - MiTienda
+    - HogarDulceHogar
+    - RinconDeModa
+    - ParaisoDeLibros
+    - TecnologiaYMas
+    - BellezaYCuidado
+    - SaludYBienestar
+    - MundoInfantil
+    - MascotasFelices
+    - DeliciasGourmet
+    - JardineriaCreativa
+    - ViajesYAventuras

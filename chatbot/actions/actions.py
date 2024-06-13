@@ -68,9 +68,9 @@ class ActionCrearPagina(BaseAction):
             dispatcher.utter_message(text="Entendido, si mas tarde deseas retomar la creacion de tu pagina puedes pedirmelo.")
             return [SlotSet("creando_pagina", False), SlotSet("pregunta_nombre", False)]
         print("slot creando: ", tracker.get_slot("creando_pagina"))
+        print("page_name: ", page_name)
 
         if tracker.get_slot("creando_pagina"):
-            page_name = tracker.get_slot("page_name")
             if not page_name:
                 dispatcher.utter_message(
                     text="Repetime como queres que se llame tu página. Te recuerdo que el formato es: www. nombre-pagina .com")
@@ -103,7 +103,7 @@ class ActionCrearPagina(BaseAction):
                 else:
                     #La pagina ya existe
                     dispatcher.utter_message(text="Ya existe una pagina con ese nombre. Por favor elige otro.")
-                    return [SlotSet("creando_pagina", False), SlotSet("pregunta_nombre", True)]
+                    return [SlotSet("creando_pagina", True), SlotSet("pregunta_nombre", True)]
         else:
             return []
 class ActionEjecutarDev(Action):
@@ -202,13 +202,6 @@ class ActionEjecutarPagina(BaseAction):
                     pgm.pop_page(user_id, page_name)
                     print("(" + threading.current_thread().getName() + ") " + "------------PAGINA DETENIDA CON EXITO------------")
                     dispatcher.utter_message(text="Tu pagina fue apagada con exito.")
-                else:
-                    message = "Indicame el nombre de la pagina que deseas detener. Te recuerdo que tus paginas en ejecución son: \n"
-                    pags = pgm.get_user_running_pages(user_id)
-                    for pag in pags:
-                        message += str(pag.get_name()) + "\n"
-                    dispatcher.utter_message(message)
-                    return [SlotSet("pregunta_detencion", True)]
             return [SlotSet("pregunta_detencion", False)]
 
         def skip_tuto_verification(self) -> bool:
