@@ -96,7 +96,9 @@ class BaseAction(Action, ABC):
             dispatcher.utter_message(text="¿Sobre qué página te gustaría operar? Te recuerdo que tus páginas son:", buttons=buttons, button_type="vertical")
         else:
             dispatcher.utter_message(text="Antes de realizar operaciones sobre una página, debes crear una.")
-        if self.name() == "action_detener_pagina":
+        if self.name() == "action_preguntar_nombre_pagina":
+            events = self.clear_slots(tracker, domain, slots_to_true=["creando_pagina", "pregunta_nombre"])
+        elif self.name() == "action_detener_pagina":
             events = self.clear_slots(tracker, domain, slots_to_true=["pregunta_detencion"])
         elif self.name() == "action_ejecutar_pagina":
             events = self.clear_slots(tracker, domain, slots_to_true=["pregunta_ejecucion"])
