@@ -90,13 +90,12 @@ class BaseAction(Action, ABC):
 
     def handle_page_error(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any], pages) -> List[Dict[Text, Any]]:
         if len(pages) > 0:
-            message = "¿Sobre qué página te gustaría operar? Te recuerdo que tus páginas son:\n"
+            buttons = []
             for page in pages:
-                message += "www. " + str(page.name) + " .com\n"
-            message += "Por favor utiliza el formato \"www. nombre-pagina .com\"."
+                buttons.append({"payload": "www. " + str(page.name) + " .com", "title": page.name})
+            dispatcher.utter_message(text="¿Sobre qué página te gustaría operar? Te recuerdo que tus páginas son:", buttons=buttons, button_type="vertical")
         else:
-            message = "Antes de realizar operaciones sobre una página, debes crear una."
-        dispatcher.utter_message(text=message)
+            dispatcher.utter_message(text="Antes de realizar operaciones sobre una página, debes crear una.")
         if self.name() == "action_detener_pagina":
             events = self.clear_slots(tracker, domain, slots_to_true=["pregunta_detencion"])
         elif self.name() == "action_ejecutar_pagina":
@@ -107,14 +106,12 @@ class BaseAction(Action, ABC):
 
     def clear_slots(self, tracker: Tracker, domain: Dict[Text, Any], slots_to_save=[], slots_to_true=[], slots_to_false=[]):
         events = []
-        print(slots_to_save)
         for slot in domain.get("slots"):
             if slot in slots_to_true:
                 events.append(SlotSet(slot, True))
             elif slot in slots_to_false:
                     events.append(SlotSet(slot, False))
             elif slot not in slots_to_save:
-                print("slot to reset: ", slot)
                 if type(tracker.get_slot(slot)) is bool:
                     events.append(SlotSet(slot, False))
                 else:

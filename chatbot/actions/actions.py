@@ -141,7 +141,7 @@ class ActionEjecutarPagina(BaseAction):
             page_obj = pgm.get_page(user_id, page_name)
             if page_obj.is_running():
             # Verificar si la pagina está ejecutando
-                dispatcher.utter_message(text="Tu pagina ya esta ejecutando. Puedes acceder a ella en el siguiente link: " + page_obj.get_page_address())
+                dispatcher.utter_message(text="Podes acceder a tu página en el siguiente link: " + page_obj.get_page_address())
                 #dispatcher.utter_message(text="Si la pagina te solicita una contraseña ingresa: " + pgm.get_tunnel_password())
                 return []
             elif page_obj.is_running_dev():
