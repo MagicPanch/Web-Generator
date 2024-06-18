@@ -1,6 +1,3 @@
-import re
-
-import markdown
 
 from database.DBManager import DBManager
 from generator.ReactGenerator import ReactGenerator
