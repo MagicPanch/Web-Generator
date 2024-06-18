@@ -96,23 +96,34 @@ class BaseAction(Action, ABC):
             dispatcher.utter_message(text="¿Sobre qué página te gustaría operar? Te recuerdo que tus páginas son:", buttons=buttons, button_type="vertical")
         else:
             dispatcher.utter_message(text="Antes de realizar operaciones sobre una página, debes crear una.")
+            return self.clear_slots(tracker, domain)
         if self.name() == "action_preguntar_nombre_pagina":
             events = self.clear_slots(tracker, domain, slots_to_true=["creando_pagina", "pregunta_nombre"])
         elif self.name() == "action_detener_pagina":
             events = self.clear_slots(tracker, domain, slots_to_true=["pregunta_detencion"])
         elif self.name() == "action_ejecutar_pagina":
             events = self.clear_slots(tracker, domain, slots_to_true=["pregunta_ejecucion"])
+        elif self.name() == "action_pedir_productos":
+            events = self.clear_slots(tracker, domain, slots_to_true=["agregando_productos", "pregunta_nombre"])
+        elif self.name() == "action_crear_pagina":
+            events = self.clear_slots(tracker, domain, slots_to_true=["creando_pagina", "pregunta_nombre"])
+        elif self.name() == "action_capturar_tipo_seccion":
+            events = self.clear_slots(tracker, domain, slots_to_true=["creando_seccion", "pregunta_nombre"], slots_to_save=["tipo_seccion"], slots_to_set=dict({"componente": "seccion"}))
         else:
-            events = [SlotSet("pregunta_nombre", True)]
+            events = self.clear_slots(tracker, domain)
+        for slot in tracker.slots.keys():
+            print(slot + " : " + str(tracker.slots[slot]))
         return events
 
-    def clear_slots(self, tracker: Tracker, domain: Dict[Text, Any], slots_to_save=[], slots_to_true=[], slots_to_false=[]):
+    def clear_slots(self, tracker: Tracker, domain: Dict[Text, Any], slots_to_save=[], slots_to_true=[], slots_to_false=[], slots_to_set={}):
         events = []
         for slot in domain.get("slots"):
             if slot in slots_to_true:
                 events.append(SlotSet(slot, True))
             elif slot in slots_to_false:
-                    events.append(SlotSet(slot, False))
+                events.append(SlotSet(slot, False))
+            elif slot in slots_to_set.keys():
+                events.append(SlotSet(slot, slots_to_set.get(slot)))
             elif slot not in slots_to_save:
                 if type(tracker.get_slot(slot)) is bool:
                     events.append(SlotSet(slot, False))

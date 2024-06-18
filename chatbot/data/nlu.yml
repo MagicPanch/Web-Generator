@@ -63,10 +63,14 @@ nlu:
     - el titulo es [sobre nosotros](nombre_informativa)
     - que se llame [productos](nombre_informativa)
 
+- regex: texto_informativa
+  examples: |
+    - ###(.*?)###
+
 - intent: decir_texto_informativa
   examples: |
-    - ###Desde nuestra fundación en 2010, hemos trabajado incansablemente para ofrecer productos de la más alta calidad a nuestros clientes. Nuestra pasión por la innovación y el compromiso con la excelencia nos han convertido en un referente en la industria###
-    - ### Texto super interesante e informativo sobre esta maravillosa página creada por el chatbot WebGenerator del grupo Design Label ###
+    - [###Desde nuestra fundación en 2010, hemos trabajado incansablemente para ofrecer productos de la más alta calidad a nuestros clientes. Nuestra pasión por la innovación y el compromiso con la excelencia nos han convertido en un referente en la industria###](texto_informativa)
+    - [### Texto super interesante e informativo sobre esta maravillosa página creada por el chatbot WebGenerator del grupo Design Label ###](texto_informativa)
 
 - intent: agregar_producto
   examples: |

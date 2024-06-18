@@ -1,4 +1,5 @@
-from generator.ReactGenerator import ReactGenerator
-rg = ReactGenerator()
+from database.DBManager import DBManager
 
-rg.set_colors("user-pages/2086036019/design-label", "#a13d12")
+dbm = DBManager.get_instance()
+
+dbm.clear_user_data("2086036019")

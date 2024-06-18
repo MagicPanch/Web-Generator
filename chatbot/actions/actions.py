@@ -518,13 +518,18 @@ class ActionCapturarTipoSeccion(BaseAction):
                 elif "informativa" in tipo_seccion.lower():
                     return [FollowupAction("action_crear_informativa_1"), SlotSet("pregunta_edicion", False)]
                 else:
-                    dispatcher.utter_message(text=str(tipo_seccion) + " no es un tipo de seccion válido. Te recuerdo que las secciones a crear son: \n E-Commerce \n Informativa")
+                    message = str(tipo_seccion) + " no es un tipo de seccion válido. Te recuerdo que las secciones a crear son: "
+                    buttons = [{"payload": "el tipo de la seccion es e-commerce", "title": "E-Commerce"}, {"payload": "el tipo de la seccion es informativa", "title": "Informativa"}]
+                    dispatcher.utter_message(text=message, buttons=buttons, button_type="vertical")
                     return [SlotSet("pregunta_seccion", True), SlotSet("pregunta_nombre", True), SlotSet("componente", "seccion")]
             else:
                 # No hay tipo seccion
-                dispatcher.utter_message(text="¿Que tipo de sección te gustaría crear? Te recuerdo que las posibles secciones son: \n E-Commerce \n Informativa")
-                return [SlotSet("pregunta_seccion", True), SlotSet("pregunta_nombre", True)]
-        return [SlotSet("creando_seccion", True), SlotSet("pregunta_nombre", True), SlotSet("componente", "seccion")]
+                message = "¿Que tipo de sección te gustaría crear? Te recuerdo que las posibles secciones son:"
+                buttons = [{"payload": "el tipo de la seccion es e-commerce", "title": "E-Commerce"}, {"payload": "el tipo de la seccion es informativa", "title": "Informativa"}]
+                dispatcher.utter_message(text=message, buttons=buttons, button_type="vertical")
+                for slot in tracker.slots.keys():
+                    print(slot + " : " + str(tracker.slots[slot]))
+                return self.clear_slots(tracker, domain, slots_to_true=["creando_seccion", "pregunta_seccion"], slots_to_save=["componente", "page_name"])
 
     def skip_tuto_verification(self) -> bool:
         return False
@@ -758,7 +763,7 @@ class ActionModificarInformativa1(Action):
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
         dispatcher.utter_message(text="¿Cuál es el nuevo contenido de la sección?")
-        return [SlotSet("creando_seccion_informativa", True), SlotSet("pide_text_informativa", True)]
+        return [SlotSet("editando_seccion_informativa", True), SlotSet("pide_text_informativa", True)]
 
 
 class ActionModificarInformativa2(Action):

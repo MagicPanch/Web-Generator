@@ -54,6 +54,7 @@ entities:
   - tit_prod
   - desc_prod
   - precio_prod
+  - texto_informativa
 
 actions:
   - action_capturar_creacion
