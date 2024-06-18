@@ -6,9 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="121f2593-11ee-405e-a8d8-1c2f43d81e54" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chatbot/actions/BaseAction.py" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/actions/BaseAction.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/chatbot/actions/actions.py" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/actions/actions.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chatbot/data/nlu.yml" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/data/nlu.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/generator/ReactGenerator.py" beforeDir="false" afterPath="$PROJECT_DIR$/generator/ReactGenerator.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/resources/test.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -97,7 +96,7 @@
     "deletionFromPopupRequiresConfirmation": "false",
     "git-widget-placeholder": "lucas",
     "ignore.virus.scanning.warn.message": "true",
-    "last_opened_file_path": "D:/Desarrollo/Ingenieria-de-Software-2024/Web-Generator/user-pages/2086036019/design-label/components",
+    "last_opened_file_path": "D:/Desarrollo/Ingenieria-de-Software-2024/Web-Generator/user-pages/2086036019/test-lucas-1/components",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -110,18 +109,18 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\Desarrollo\Ingenieria-de-Software-2024\Web-Generator\user-pages\2086036019\test-lucas-1\components" />
       <recent name="D:\Desarrollo\Ingenieria-de-Software-2024\Web-Generator\user-pages\2086036019\design-label\components" />
       <recent name="D:\Desarrollo\Ingenieria-de-Software-2024\Web-Generator\webs\template_ecommerce" />
       <recent name="D:\Desarrollo\Ingenieria-de-Software-2024\Web-Generator\webs\template_ecommerce\components" />
       <recent name="D:\Desarrollo\Ingenieria-de-Software-2024\Web-Generator\webs\base\constants" />
-      <recent name="D:\Desarrollo\Ingenieria-de-Software-2024\Web-Generator\webs\template_ecommerce\src\app" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\Desarrollo\Ingenieria-de-Software-2024\Web-Generator\user-pages\2086036019\test-lucas-1\components" />
       <recent name="D:\Desarrollo\Ingenieria-de-Software-2024\Web-Generator\user-pages\2086036019\design-label\components\ShoppingCart" />
       <recent name="D:\Desarrollo\Ingenieria-de-Software-2024\Web-Generator\user-pages\2086036019\design-label\components" />
       <recent name="D:\Desarrollo\Ingenieria-de-Software-2024\Web-Generator\user-pages\2086036019\test\components" />
       <recent name="D:\Desarrollo\Ingenieria-de-Software-2024\Web-Generator" />
-      <recent name="D:\Desarrollo\Ingenieria-de-Software-2024\Web-Generator\chatbot\actions" />
     </key>
   </component>
   <component name="SharedIndexes">
@@ -225,7 +224,7 @@
       <workItem from="1718020980886" duration="12951000" />
       <workItem from="1718282760326" duration="14244000" />
       <workItem from="1718306535570" duration="2406000" />
-      <workItem from="1718721842444" duration="4137000" />
+      <workItem from="1718721842444" duration="10247000" />
     </task>
     <servers />
   </component>
@@ -252,7 +251,7 @@
     <SUITE FILE_PATH="coverage/Web_Generator$actions.coverage" NAME="actions Coverage Results" MODIFIED="1714769797888" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/chatbot/actions" />
     <SUITE FILE_PATH="coverage/Web_Generator$ReactGenerator.coverage" NAME="ReactGenerator Coverage Results" MODIFIED="1717558800745" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/generator" />
     <SUITE FILE_PATH="coverage/Web_Generator$router.coverage" NAME="router Coverage Results" MODIFIED="1713813104376" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/generator" />
-    <SUITE FILE_PATH="coverage/Web_Generator$test.coverage" NAME="test Coverage Results" MODIFIED="1717799318910" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/resources" />
+    <SUITE FILE_PATH="coverage/Web_Generator$test.coverage" NAME="test Coverage Results" MODIFIED="1718734204039" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/resources" />
     <SUITE FILE_PATH="coverage/Web_Generator$generator.coverage" NAME="generator Coverage Results" MODIFIED="1713816696702" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/generator" />
   </component>
 </project>

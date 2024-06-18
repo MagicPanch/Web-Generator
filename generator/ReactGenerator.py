@@ -4,6 +4,7 @@ import threading
 import requests
 import json
 import cloudconvert
+import markdown
 
 from resources import utils, CONSTANTS
 
@@ -242,15 +243,16 @@ class ReactGenerator:
             print(f"Ha ocurrido un error al intentar eliminar el archivo {file_path}: {e}")
 
     @staticmethod
-    def modificarSectionInformativa(nombre, page_path, texto):
+    def modificarSectionInformativaFromText(nombre, page_path, texto):
         # genero component nuevo
         textSectionNew = f"""
             import React from "react";
             
             const {nombre} = () => {{
                 return (
-                    <section className="h-screen bg-gradient-to-b from-customColor-100 to-customColor-200 flex flex-col items-center p-8">
-                        <div className="max-w-4xl w-full bg-white rounded-lg shadow-lg p-6 text-center">
+                <section
+                    className="min-h-screen bg-gradient-to-b from-customColor-100 to-customColor-200 flex flex-col items-center p-8 w-full">
+                    <div className="min-h-screen flex flex-col w-full bg-white rounded-lg shadow-lg p-6 text-center">
                             <h1 className="text-3xl font-bold text-customColor-800 mb-4">
                                 {nombre}
                             </h1>
@@ -271,15 +273,16 @@ class ReactGenerator:
         utils.go_to_main_dir()
 
     @staticmethod
-    def agregarSectionInformativa(page_path, nombre, texto):
+    def agregarSectionInformativaFromText(page_path, nombre, texto):
         #genero component nuevo
         textSectionNew = f"""
             import React from "react";
             
             const {nombre} = () => {{
                 return (
-                    <section className="h-screen bg-gradient-to-b from-customColor-100 to-customColor-200 flex flex-col items-center p-8">
-                        <div className="max-w-4xl w-full bg-white rounded-lg shadow-lg p-6 text-center">
+                <section
+                    className="min-h-screen bg-gradient-to-b from-customColor-100 to-customColor-200 flex flex-col items-center p-8 w-full">
+                    <div className="min-h-screen flex flex-col w-full bg-white rounded-lg shadow-lg p-6 text-center">
                             <h1 className="text-3xl font-bold text-customColor-800 mb-4">
                                 {nombre}
                             </h1>
@@ -297,5 +300,59 @@ class ReactGenerator:
         utils.go_to_dir_from_main(page_path)
         with open(os.getcwd() + "\\components\\"+nombre+".tsx", "w", encoding="utf-8") as file:
             file.write(textSectionNew)
+        ReactGenerator.add_section(page_path, nombre)
+        utils.go_to_main_dir()
+
+    @staticmethod
+    def _convert_html_to_jsx(html):
+        tag_to_jsx = {
+            'h1': 'text-3xl font-bold text-customColor-800 mb-4',
+            'h2': 'text-2xl font-bold text-customColor-700 mb-3',
+            'h3': 'text-xl font-bold text-customColor-600 mb-2',
+            'h4': 'font-bold text-customColor-500',
+            'p': 'text-lg text-gray-700 mb-6',
+            'ul': 'list-disc list-inside mb-6',
+            'ol': 'list-decimal list-inside mb-6',
+            'li': 'text-gray-700 text-left mb-2',
+            'a': 'text-customColor-500 hover:underline',
+            'strong': 'font-semibold',
+            'em': 'italic',
+            'blockquote': 'border-l-4 border-gray-400 pl-4 italic text-gray-600 mb-6',
+            'code': 'bg-gray-100 rounded p-1 text-sm font-mono',
+            'pre': 'bg-gray-100 rounded p-4 overflow-x-auto mb-6'
+        }
+        for tag, tailwind_classes in tag_to_jsx.items():
+            opening_tag = f'<{tag}>'
+            closing_tag = f'</{tag}>'
+            jsx_opening_tag = f'<{tag} className="{tailwind_classes}">'
+            jsx_closing_tag = f'</{tag}>'
+
+            html = html.replace(opening_tag, jsx_opening_tag)
+            html = html.replace(closing_tag, jsx_closing_tag)
+
+        return html
+    @staticmethod
+    def agregarSectionInformativaFromFile(page_path, nombre, contenido):
+        html = markdown.markdown(contenido)
+        jsx_content = ReactGenerator._convert_html_to_jsx(html)
+        tsx_template = f"""
+            import React from "react";
+    
+            const {nombre} = () => {{
+            return (
+                <section
+                    className="min-h-screen bg-gradient-to-b from-customColor-100 to-customColor-200 flex flex-col items-center p-8 w-full">
+                    <div className="min-h-screen flex flex-col w-full bg-white rounded-lg shadow-lg p-6 text-left">
+                        {jsx_content}
+                    </div>
+                </section>
+            );
+            }};
+    
+            export default {nombre};
+        """
+        utils.go_to_dir_from_main(page_path)
+        with open(os.getcwd() + "\\components\\" + nombre + ".tsx", "w", encoding="utf-8") as file:
+            file.write(tsx_template)
         ReactGenerator.add_section(page_path, nombre)
         utils.go_to_main_dir()

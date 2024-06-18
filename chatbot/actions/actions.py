@@ -744,7 +744,7 @@ class ActionCrearInformativa3(Action):
         page_path = pgm.get_page_path(user_id, page_name)
         if page.get_cant_sections() > 0:
             rg.remove_section(page_path, "Template")
-        rg.agregarSectionInformativa(page_path, nombre_informativa, inf_section.get_text())
+        rg.agregarSectionInformativaFromText(page_path, nombre_informativa, inf_section.get_text())
         dispatcher.utter_message(text="Podrás ver la nueva sección en tu página")
         return [SlotSet("creando_seccion_informativa", False), SlotSet("pide_text_informativa", False), SlotSet("pregunta_seccion", False),
                 SlotSet("creando_seccion", False), SlotSet("componente", None), SlotSet("nombre_informativa", None)]
@@ -786,7 +786,7 @@ class ActionModificarInformativa2(Action):
         dispatcher.utter_message(text="Texto informativo guardado.")
         dbm.updt_inf_section(user_id, page_name, nombre_informativa, text)
         utils.go_to_main_dir()
-        rg.modificarSectionInformativa(nombre_informativa, pgm.get_page_path(), text)
+        rg.modificarSectionInformativaFromText(nombre_informativa, pgm.get_page_path(), text)
         dispatcher.utter_message(text="Podrás ver la nueva sección en tu página")
         return [SlotSet("editando_seccion_informativa", False), SlotSet("pide_text_informativa", False)]
 
