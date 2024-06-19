@@ -195,7 +195,7 @@ class ReactGenerator:
         start_index = next(i for i, line in enumerate(lines) if 'export const SECTIONS' in line)
 
         # Nueva entrada en formato JSON
-        new_entry = f'  {{ name: "{section_name}", component: "{section_name}" }},\n'
+        new_entry = f'  {{ name: "{section_name}", component: "{section_name.replace(" ", "_")}" }},\n'
         print(new_entry)
 
         # Insertar la nueva entrada en la lista SECTIONS
@@ -220,7 +220,7 @@ class ReactGenerator:
         start_index = next(i for i, line in enumerate(lines) if 'export const SECTIONS' in line)
 
         # Buscar la línea a eliminar
-        entry_to_remove = f'  {{ name: "{section_name}", component: "{section_name}" }},\n'
+        entry_to_remove = f'  {{ name: "{section_name}", component: "{section_name.replace(" ", "_")}" }},\n'
         try:
             lines.remove(entry_to_remove)
             print(f'Sección "{section_name}" eliminada.')
@@ -231,7 +231,7 @@ class ReactGenerator:
         with open("sections.ts", 'w') as file:
             file.writelines(lines)
         utils.go_to_dir_from_main(page_path)
-        file_path = os.getcwd() + "\\components\\" + section_name + ".tsx"
+        file_path = os.getcwd() + "\\components\\" + section_name.replace(" ", "_") + ".tsx"
         try:
             os.remove(file_path)
             print(f"Archivo {file_path} eliminado con éxito.")
@@ -248,7 +248,7 @@ class ReactGenerator:
         textSectionNew = f"""
             import React from "react";
             
-            const {nombre} = () => {{
+            const {nombre.replace(" ", "_")} = () => {{
                 return (
                 <section
                     className="min-h-screen bg-gradient-to-b from-customColor-100 to-customColor-200 flex flex-col items-center p-8 w-full">
@@ -264,11 +264,11 @@ class ReactGenerator:
                 );
             }};
             
-            export default {nombre};
+            export default {nombre.replace(" ", "_")};
             """
 
         utils.go_to_dir_from_main(page_path)
-        with open(os.getcwd() + "\\components\\" + nombre + ".tsx", "w", encoding="utf-8") as file:
+        with open(os.getcwd() + "\\components\\" + nombre.replace(" ", "_") + ".tsx", "w", encoding="utf-8") as file:
             file.write(textSectionNew)
         utils.go_to_main_dir()
 
@@ -278,7 +278,7 @@ class ReactGenerator:
         textSectionNew = f"""
             import React from "react";
             
-            const {nombre} = () => {{
+            const {nombre.replace(" ", "_")} = () => {{
                 return (
                 <section
                     className="min-h-screen bg-gradient-to-b from-customColor-100 to-customColor-200 flex flex-col items-center p-8 w-full">
@@ -294,11 +294,11 @@ class ReactGenerator:
                 );
             }};
             
-            export default {nombre};
+            export default {nombre.replace(" ", "_")};
             """
 
         utils.go_to_dir_from_main(page_path)
-        with open(os.getcwd() + "\\components\\"+nombre+".tsx", "w", encoding="utf-8") as file:
+        with open(os.getcwd() + "\\components\\"+nombre.replace(" ", "_")+".tsx", "w", encoding="utf-8") as file:
             file.write(textSectionNew)
         ReactGenerator.add_section(page_path, nombre)
         utils.go_to_main_dir()
@@ -338,7 +338,7 @@ class ReactGenerator:
         tsx_template = f"""
             import React from "react";
     
-            const {nombre} = () => {{
+            const {nombre.replace(" ", "_")} = () => {{
             return (
                 <section
                     className="min-h-screen bg-gradient-to-b from-customColor-100 to-customColor-200 flex flex-col items-center p-8 w-full">
@@ -349,10 +349,10 @@ class ReactGenerator:
             );
             }};
     
-            export default {nombre};
+            export default {nombre.replace(" ", "_")};
         """
         utils.go_to_dir_from_main(page_path)
-        with open(os.getcwd() + "\\components\\" + nombre + ".tsx", "w", encoding="utf-8") as file:
+        with open(os.getcwd() + "\\components\\" + nombre.replace(" ", "_") + ".tsx", "w", encoding="utf-8") as file:
             file.write(tsx_template)
         ReactGenerator.add_section(page_path, nombre)
         utils.go_to_main_dir()

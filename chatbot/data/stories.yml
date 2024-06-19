@@ -202,6 +202,7 @@ stories:
   steps:
     - slot_was_set:
         - pregunta_nombre: true
+        - creando_pagina: true
     - intent: nombre_pagina
     - action: action_crear_pagina  #Aca se crea el proyecto y se guarda la pagina en la DB. Posteriormente se ejecuta en modo DEV
     - slot_was_set:
@@ -211,6 +212,7 @@ stories:
   steps:
     - slot_was_set:
         - pregunta_nombre: true
+        - creando_pagina: true
     - intent: nombre_pagina
     - action: action_crear_pagina  #Aca se detecta el conflicto con el nombre y se le repregunta al usuario
     - slot_was_set:
@@ -246,7 +248,7 @@ stories:
 - story: crear seccion informativa 1
   steps:
     - slot_was_set:
-      - componente: seccion
+      - tipo_seccion: informativa
       - creando_seccion_informativa: true
       - pregunta_nombre_informativa: true
     - or:
@@ -259,16 +261,12 @@ stories:
   steps:
     - checkpoint: crear_informativa_1
     - slot_was_set:
-      - componente: seccion
+      - tipo_seccion: informativa
       - creando_seccion_informativa: true
       - pregunta_nombre_informativa: false
       - pide_text_informativa: true
     - intent: decir_texto_informativa
     - action: action_crear_informativa_3
-    - slot_was_set:
-      - creando_seccion: false
-      - creando_seccion_informativa: false
-      - pide_text_informativa: false
 
 # EDICION
 
@@ -584,28 +582,7 @@ stories:
     - intent: saludo
     - action: action_saludo_telegram #Aca se guarda al usuario en la DB
 
-- story: Como estas
-  steps:
-    - intent: como_estas
-    - action: utter_como_estas
-
 - story: Finalizacion de charla
   steps:
     - intent: despedidasc
     - action: action_despedida_telegram
-
-#Stories randoms
-- story: Contestar risa
-  steps:
-    - intent: reirse
-    - action: utter_reirse
-
-- story: Agradecer
-  steps:
-    - intent: me_alegro
-    - action: utter_me_alegro
-
-- story: Decir nombre
-  steps:
-    - intent: decir_nombre
-    - action: utter_decir_nombre

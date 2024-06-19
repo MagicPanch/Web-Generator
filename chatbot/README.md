@@ -49,10 +49,10 @@ Guía de instalación y ejecución del proyecto desarrollado por el grupo Design
   ```
 - Agregar en el mismo nivel de identación:
   ```python    
-        elif msg.photo is not None:  # check if message contains an image
-            text = 'photo'
-        elif msg.document is not None:   # check if message contains a document
-            if "image" in msg.document.mime_type: # check if document is an image
+        elif msg.document is not None:
+            if ".md" in msg.document.file_name:
+                text = 'text.md'
+            elif "image" in msg.document.mime_type: # check if document is an image
                 text = 'photo.document'
             else:
                 text = 'archivo.csv'

@@ -36,6 +36,8 @@ class ActionCapturarCreacion(BaseAction):
     def handle_action(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any], user_id: Text,
                       page_name: Text = None, page_doc: Any = None, pages: Any = None) -> List[Dict[Text, Any]]:
         seccion = tracker.get_slot('componente')
+        if seccion is None:
+            seccion = tracker.get_slot('tipo_seccion')
         if seccion:
             return [FollowupAction("action_capturar_tipo_seccion"), SlotSet("creando_seccion", True)]
         else:
@@ -505,31 +507,28 @@ class ActionCapturarTipoSeccion(BaseAction):
             dispatcher.utter_message(text=message)
             #message = "Si la pagina te solicita una contraseña ingresa: " + pgm.get_tunnel_password()
             #dispatcher.utter_message(text=message)
-        seccion = tracker.get_slot('componente')
-        if seccion.lower() == "seccion":
-        # Va a editar una seccion
-            tipo_seccion = tracker.get_slot('tipo_seccion')
-            print("(" + threading.current_thread().getName() + ") " + "--------tipo_seccion: ", tipo_seccion)
-            if tipo_seccion:
-                # Hay tipo seccion
-                if "e-commerce" in tipo_seccion.lower():
-                    dispatcher.utter_message(text="Aguarda un momento mientras se crea la sección e-commerce en tu página.")
-                    return [FollowupAction("action_crear_ecommerce")]
-                elif "informativa" in tipo_seccion.lower():
-                    return [FollowupAction("action_crear_informativa_1"), SlotSet("pregunta_edicion", False)]
-                else:
-                    message = str(tipo_seccion) + " no es un tipo de seccion válido. Te recuerdo que las secciones a crear son: "
-                    buttons = [{"payload": "el tipo de la seccion es e-commerce", "title": "E-Commerce"}, {"payload": "el tipo de la seccion es informativa", "title": "Informativa"}]
-                    dispatcher.utter_message(text=message, buttons=buttons, button_type="vertical")
-                    return [SlotSet("pregunta_seccion", True), SlotSet("pregunta_nombre", True), SlotSet("componente", "seccion")]
+        tipo_seccion = tracker.get_slot('tipo_seccion')
+        print("(" + threading.current_thread().getName() + ") " + "--------tipo_seccion: ", tipo_seccion)
+        if tipo_seccion:
+            # Hay tipo seccion
+            if "e-commerce" in tipo_seccion.lower():
+                dispatcher.utter_message(text="Aguarda un momento mientras se crea la sección e-commerce en tu página.")
+                return [FollowupAction("action_crear_ecommerce")]
+            elif "informativa" in tipo_seccion.lower():
+                return [FollowupAction("action_crear_informativa_1"), SlotSet("pregunta_edicion", False)]
             else:
-                # No hay tipo seccion
-                message = "¿Que tipo de sección te gustaría crear? Te recuerdo que las posibles secciones son:"
+                message = str(tipo_seccion) + " no es un tipo de seccion válido. Te recuerdo que las secciones a crear son: "
                 buttons = [{"payload": "el tipo de la seccion es e-commerce", "title": "E-Commerce"}, {"payload": "el tipo de la seccion es informativa", "title": "Informativa"}]
                 dispatcher.utter_message(text=message, buttons=buttons, button_type="vertical")
-                for slot in tracker.slots.keys():
-                    print(slot + " : " + str(tracker.slots[slot]))
-                return self.clear_slots(tracker, domain, slots_to_true=["creando_seccion", "pregunta_seccion"], slots_to_save=["componente", "page_name"])
+                return [SlotSet("pregunta_seccion", True), SlotSet("pregunta_nombre", True), SlotSet("componente", "seccion")]
+        else:
+            # No hay tipo seccion
+            message = "¿Que tipo de sección te gustaría crear? Te recuerdo que las posibles secciones son:"
+            buttons = [{"payload": "el tipo de la seccion es e-commerce", "title": "E-Commerce"}, {"payload": "el tipo de la seccion es informativa", "title": "Informativa"}]
+            dispatcher.utter_message(text=message, buttons=buttons, button_type="vertical")
+            for slot in tracker.slots.keys():
+                print(slot + " : " + str(tracker.slots[slot]))
+            return self.clear_slots(tracker, domain, slots_to_true=["creando_seccion", "pregunta_seccion"], slots_to_save=["componente", "page_name"])
 
     def skip_tuto_verification(self) -> bool:
         return False
@@ -692,7 +691,8 @@ class ActionCrearInformativa1(Action):
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
-        dispatcher.utter_message(text="¿Que nombre llevará la sección?")
+        dispatcher.utter_message(text="¿Que nombre llevará la sección? Por favor utiliza el siguiente formato:")
+        dispatcher.utter_message(text="$$ nombre seccion $$")
         return [SlotSet("creando_seccion_informativa", True), SlotSet("pregunta_nombre_informativa", True)]
 
 
@@ -707,17 +707,18 @@ class ActionCrearInformativa2(Action):
         print("(" + threading.current_thread().getName() + ") " + "--------page_name: ", tracker.get_slot('page_name'))
         page = pgm.get_page(tracker.sender_id, tracker.get_slot('page_name'))
         nombre_informativa = "Informacion"
-        last_message_intent = tracker.latest_message.get('intent').get('name')
-        if "decir_nombre_informativa" in last_message_intent:
-            nombre_informativa = tracker.get_slot("nombre_informativa")
+        last_user_message = tracker.latest_message.get('text')
+        for slot in tracker.slots:
+            print(slot + " : ", tracker.get_slot(slot))
+        if "$$" in last_user_message:
+            nombre_informativa = last_user_message[2:len(last_user_message) - 2].strip()
             print(nombre_informativa)
             dispatcher.utter_message(text="Nombre de sección guardado.")
         inf_section = InformativeSection(nombre_informativa)
         page.add_section(inf_section)
-        dispatcher.utter_message(text="Proporcioname el texto informativo. Por favor, respeta el siguiente formato:")
+        dispatcher.utter_message(text="Proporcioname el texto informativo. Puedes enviarme un archivo en formato MarkDown (.md) o simplemente escribir en este chat. Si vas a escribir en el chat, por favor respeta el siguiente formato:")
         dispatcher.utter_message(text="###\nTexto\n###")
-        return [SlotSet("creando_seccion_informativa", True), SlotSet("pide_text_informativa", True), SlotSet("pregunta_nombre_informativa", False)]
-
+        return [SlotSet("componente", "seccion"), SlotSet("creando_seccion_informativa", True), SlotSet("pide_text_informativa", True), SlotSet("pregunta_nombre_informativa", False), SlotSet("nombre_informativa", nombre_informativa)]
 
 class ActionCrearInformativa3(Action):
 
@@ -729,8 +730,7 @@ class ActionCrearInformativa3(Action):
         print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
         user_id = tracker.sender_id
         page_name = tracker.get_slot('page_name')
-        last_user_message = str(tracker.latest_message.get('text'))
-        text = last_user_message[3:len(last_user_message) - 3].strip()
+        text, from_file = self.handle_text(tracker)
         if tracker.get_slot("nombre_informativa"):
             nombre_informativa = tracker.get_slot("nombre_informativa")
         else:
@@ -744,10 +744,25 @@ class ActionCrearInformativa3(Action):
         page_path = pgm.get_page_path(user_id, page_name)
         if page.get_cant_sections() > 0:
             rg.remove_section(page_path, "Template")
-        rg.agregarSectionInformativaFromText(page_path, nombre_informativa, inf_section.get_text())
+        if from_file:
+            rg.agregarSectionInformativaFromFile(page_path, nombre_informativa, text)
+        else:
+            rg.agregarSectionInformativaFromText(page_path, nombre_informativa, text)
         dispatcher.utter_message(text="Podrás ver la nueva sección en tu página")
         return [SlotSet("creando_seccion_informativa", False), SlotSet("pide_text_informativa", False), SlotSet("pregunta_seccion", False),
                 SlotSet("creando_seccion", False), SlotSet("componente", None), SlotSet("nombre_informativa", None)]
+
+    def handle_text(self, tracker: Tracker) -> (Text, bool):
+        global tbm
+        last_user_message = str(tracker.latest_message.get('text'))
+        if last_user_message == "text.md":
+            file_id = tracker.latest_message['metadata']['message']['document']['file_id']
+            file = tbm.get_file(file_id)
+            file_content = file.download_as_bytearray()
+            file_text = file_content.decode('utf-8')  # Decodificar el contenido a 'utf-8'
+            return f"""{file_text}""", True
+        else:
+            return last_user_message[3:len(last_user_message) - 3].strip(), False
 
 ## EDITAR
 

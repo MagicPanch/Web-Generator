@@ -4,26 +4,20 @@ intents:
   - start
   - restart
   - afirmar
-  - como_estas
   - modificar_pagina
   - decir_color
   - decir_mail
   - decir_ubicacion
-  - decir_nombre
   - denegar
   - despedidasc
   - despues_te_digo
   - detener_pagina
   - ejecutar_pagina
   - enviar_imagen
-  - estado_de_animo_feliz
-  - estado_de_animo_triste
   - funcionalidad
-  - me_alegro
   - nlu_fallback
   - nombre_pagina
   - out_of_scope
-  - reirse
   - saludo
   - tipo_seccion
   - pedir_tutorial
@@ -469,23 +463,6 @@ responses:
 
   utter_funcionalidad:
   - text: Por el momento puedo crear una pagina y permitirte correrla o detenerla.
-
-  utter_me_alegro:
-  - text: Muchas gracias!
-
-  utter_reirse:
-  - text: jajajajaj
-  - text: jajajajjaa
-  - text: jsjsjajaj
-  - text: kkkkkk
-
-  utter_como_estas:
-  - text: Muy bien, gracias por preguntar, vos?
-  - text: Re bien!, vos como estas?
-  - text: Todo bien!, vos?
-
-  utter_decir_nombre:
-  - text: Mi nombre es WebGenerator
 
 session_config:
   session_expiration_time: 60
