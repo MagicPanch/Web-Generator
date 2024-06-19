@@ -243,67 +243,6 @@ class ReactGenerator:
             print(f"Ha ocurrido un error al intentar eliminar el archivo {file_path}: {e}")
 
     @staticmethod
-    def modificarSectionInformativaFromText(nombre, page_path, texto):
-        # genero component nuevo
-        textSectionNew = f"""
-            import React from "react";
-            
-            const {nombre.replace(" ", "_")} = () => {{
-                return (
-                <section
-                    className="min-h-screen bg-gradient-to-b from-customColor-100 to-customColor-200 flex flex-col items-center p-8 w-full">
-                    <div className="min-h-screen flex flex-col w-full bg-white rounded-lg shadow-lg p-6 text-center">
-                            <h1 className="text-3xl font-bold text-customColor-800 mb-4">
-                                {nombre}
-                            </h1>
-                            <p className="text-lg text-gray-700 mb-6">
-                                {texto}
-                            </p>
-                        </div>
-                    </section>
-                );
-            }};
-            
-            export default {nombre.replace(" ", "_")};
-            """
-
-        utils.go_to_dir_from_main(page_path)
-        with open(os.getcwd() + "\\components\\" + nombre.replace(" ", "_") + ".tsx", "w", encoding="utf-8") as file:
-            file.write(textSectionNew)
-        utils.go_to_main_dir()
-
-    @staticmethod
-    def agregarSectionInformativaFromText(page_path, nombre, texto):
-        #genero component nuevo
-        textSectionNew = f"""
-            import React from "react";
-            
-            const {nombre.replace(" ", "_")} = () => {{
-                return (
-                <section
-                    className="min-h-screen bg-gradient-to-b from-customColor-100 to-customColor-200 flex flex-col items-center p-8 w-full">
-                    <div className="min-h-screen flex flex-col w-full bg-white rounded-lg shadow-lg p-6 text-center">
-                            <h1 className="text-3xl font-bold text-customColor-800 mb-4">
-                                {nombre}
-                            </h1>
-                            <p className="text-lg text-gray-700 mb-6">
-                                {texto}
-                            </p>
-                        </div>
-                    </section>
-                );
-            }};
-            
-            export default {nombre.replace(" ", "_")};
-            """
-
-        utils.go_to_dir_from_main(page_path)
-        with open(os.getcwd() + "\\components\\"+nombre.replace(" ", "_")+".tsx", "w", encoding="utf-8") as file:
-            file.write(textSectionNew)
-        ReactGenerator.add_section(page_path, nombre)
-        utils.go_to_main_dir()
-
-    @staticmethod
     def _convert_html_to_jsx(html):
         tag_to_jsx = {
             'h1': 'text-3xl font-bold text-customColor-800 mb-4',
@@ -332,7 +271,7 @@ class ReactGenerator:
 
         return html
     @staticmethod
-    def agregarSectionInformativaFromFile(page_path, nombre, contenido):
+    def agregarSectionInformativa(page_path, nombre, contenido):
         html = markdown.markdown(contenido)
         jsx_content = ReactGenerator._convert_html_to_jsx(html)
         tsx_template = f"""

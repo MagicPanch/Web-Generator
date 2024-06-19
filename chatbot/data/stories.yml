@@ -265,7 +265,9 @@ stories:
       - creando_seccion_informativa: true
       - pregunta_nombre_informativa: false
       - pide_text_informativa: true
-    - intent: decir_texto_informativa
+    - or:
+      - intent: decir_texto_informativa
+      - intent: decir_texto_informativa_archivo
     - action: action_crear_informativa_3
 
 # EDICION
@@ -406,6 +408,7 @@ stories:
       - pide_text_informativa: true
     - or:
       - intent: decir_texto_informativa
+      - intent: decir_texto_informativa_archivo
       - intent: despues_te_digo
       - intent: denegar
     - action: action_modificar_informativa_2

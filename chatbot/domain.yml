@@ -23,6 +23,7 @@ intents:
   - pedir_tutorial
   - decir_nombre_informativa
   - decir_texto_informativa
+  - decir_texto_informativa_archivo
   - crear_algo
   - preguntar_paginas_propias
   - agregar_producto
@@ -108,6 +109,11 @@ slots:
     mappings:
     - type: from_entity
       entity: page_name
+
+  pagina_modificando:
+    type: text
+    mappings:
+    - type: custom
 
   id_user:
     type: text

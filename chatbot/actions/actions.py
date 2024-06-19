@@ -717,12 +717,14 @@ class ActionCrearInformativa2(Action):
         if "$$" in last_user_message:
             nombre_informativa = last_user_message[2:len(last_user_message) - 2].strip()
             print(nombre_informativa)
+            print(len(nombre_informativa))
             dispatcher.utter_message(text="Nombre de sección guardado.")
         inf_section = InformativeSection(nombre_informativa)
+        print("titulo seccion creada: ", inf_section.get_title())
         page.add_section(inf_section)
         dispatcher.utter_message(text="Proporcioname el texto informativo. Puedes enviarme un archivo en formato MarkDown (.md) o simplemente escribir en este chat. Si vas a escribir en el chat, por favor respeta el siguiente formato:")
         dispatcher.utter_message(text="%%\nTexto\n%%")
-        return [SlotSet("componente", "seccion"), SlotSet("creando_seccion_informativa", True), SlotSet("pide_text_informativa", True), SlotSet("pregunta_nombre_informativa", False), SlotSet("nombre_informativa", nombre_informativa)]
+        return [SlotSet("componente", "seccion"), SlotSet("creando_seccion_informativa", True), SlotSet("pide_text_informativa", True), SlotSet("pregunta_nombre_informativa", False), SlotSet("nombre_informativa", nombre_informativa), SlotSet("pagina_modificando", tracker.get_slot('page_name'))]
 
 class ActionCrearInformativa3(Action):
 
@@ -733,14 +735,17 @@ class ActionCrearInformativa3(Action):
         global dbm, pgm, rg
         print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
         user_id = tracker.sender_id
-        page_name = tracker.get_slot('page_name')
-        text, from_file = self.handle_text(tracker)
+        page_name = tracker.get_slot('pagina_modificando')
+        text = self.handle_text(tracker)
         if tracker.get_slot("nombre_informativa"):
             nombre_informativa = tracker.get_slot("nombre_informativa")
         else:
             nombre_informativa = "Informacion"
+        print("nombre_pagina: ", page_name)
         page = pgm.get_page(user_id, page_name)
+        print("nombre_pagina: ", page.get_name())
         print("nombre_informativa: ", nombre_informativa)
+        print(len(nombre_informativa))
         inf_section = page.get_section(nombre_informativa)
         inf_section.set_text(text)
         dispatcher.utter_message(text="Texto informativo guardado.")
@@ -748,15 +753,12 @@ class ActionCrearInformativa3(Action):
         page_path = pgm.get_page_path(user_id, page_name)
         if page.get_cant_sections() > 0:
             rg.remove_section(page_path, "Template")
-        if from_file:
-            rg.agregarSectionInformativaFromFile(page_path, nombre_informativa, text)
-        else:
-            rg.agregarSectionInformativaFromText(page_path, nombre_informativa, text)
+        rg.agregarSectionInformativa(page_path, nombre_informativa, text)
         dispatcher.utter_message(text="Podrás ver la nueva sección en tu página")
         return [SlotSet("creando_seccion_informativa", False), SlotSet("pide_text_informativa", False), SlotSet("pregunta_seccion", False),
-                SlotSet("creando_seccion", False), SlotSet("componente", None), SlotSet("nombre_informativa", None)]
+                SlotSet("creando_seccion", False), SlotSet("componente", None), SlotSet("nombre_informativa", None), SlotSet("page_name", page_name)]
 
-    def handle_text(self, tracker: Tracker) -> (Text, bool):
+    def handle_text(self, tracker: Tracker) -> Text:
         global tbm
         last_user_message = str(tracker.latest_message.get('text'))
         if last_user_message == "text.md":
@@ -764,9 +766,9 @@ class ActionCrearInformativa3(Action):
             file = tbm.get_file(file_id)
             file_content = file.download_as_bytearray()
             file_text = file_content.decode('utf-8')  # Decodificar el contenido a 'utf-8'
-            return f"""{file_text}""", True
+            return f"""{file_text}"""
         else:
-            return last_user_message[2:len(last_user_message) - 2].strip(), False
+            return last_user_message[2:len(last_user_message) - 2].strip()
 
 ## EDITAR
 
@@ -797,17 +799,33 @@ class ActionModificarInformativa2(Action):
         user_id = tracker.sender_id
         page_name = tracker.get_slot('page_name')
         last_user_message = str(tracker.latest_message.get('text'))
-        text = last_user_message[3:len(last_user_message) - 3].strip()
+        text = self.handle_text(tracker)
         page = pgm.get_page(tracker.sender_id, tracker.get_slot('page_name'))
-        nombre_informativa = tracker.get_slot("nombre_informativa")
+        if tracker.get_slot("nombre_informativa"):
+            nombre_informativa = tracker.get_slot("nombre_informativa")
+        else:
+            nombre_informativa = tracker.get_slot("nombre_seccion_editando")
         inf_section = page.get_section(nombre_informativa)
         inf_section.set_text(text)
         dispatcher.utter_message(text="Texto informativo guardado.")
         dbm.updt_inf_section(user_id, page_name, nombre_informativa, text)
         utils.go_to_main_dir()
-        rg.modificarSectionInformativaFromText(nombre_informativa, pgm.get_page_path(), text)
+        rg.remove_section(page_name, tracker.get_slot("nombre_seccion_editando"))
+        rg.agregarSectionInformativa(nombre_informativa, pgm.get_page_path(), text)
         dispatcher.utter_message(text="Podrás ver la nueva sección en tu página")
-        return [SlotSet("editando_seccion_informativa", False), SlotSet("pide_text_informativa", False)]
+        return [SlotSet("editando_seccion_informativa", False), SlotSet("pide_text_informativa", False), SlotSet("nombre_informativa", None), SlotSet("nombre_seccion_editando", None)]
+
+    def handle_text(self, tracker: Tracker) -> Text:
+        global tbm
+        last_user_message = str(tracker.latest_message.get('text'))
+        if last_user_message == "text.md":
+            file_id = tracker.latest_message['metadata']['message']['document']['file_id']
+            file = tbm.get_file(file_id)
+            file_content = file.download_as_bytearray()
+            file_text = file_content.decode('utf-8')  # Decodificar el contenido a 'utf-8'
+            return f"""{file_text}"""
+        else:
+            return last_user_message[2:len(last_user_message) - 2].strip()
 
 
 class ActionModificarInformativa4(Action):
