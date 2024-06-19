@@ -44,11 +44,11 @@ entities:
   - mail
   - ubicacion
   - nombre_informativa
+  - sku_prod
   - cant_prod
   - tit_prod
   - desc_prod
   - precio_prod
-  - texto_informativa
 
 actions:
   - action_capturar_creacion
@@ -114,6 +114,12 @@ slots:
     mappings:
     - type: from_entity
       entity: id_user
+
+  sku_prod:
+    type: float
+    mappings:
+    - type: from_entity
+      entity: sku_prod
 
   cant_prod:
     type: float

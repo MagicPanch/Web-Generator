@@ -58,20 +58,21 @@ nlu:
 
 - intent: decir_nombre_informativa
   examples: |
-    - el nombre es [nosotros](nombre_informativa)
-    - ponele [quienes somos](nombre_informativa)
-    - el titulo es [sobre nosotros](nombre_informativa)
-    - que se llame [productos](nombre_informativa)
     - $$ [informativa](nombre_informativa) $$
+    - $$ [productos](nombre_informativa) $$
+    - $$ [¿como comprar?](nombre_informativa) $$
+    - $$ [mi seccion](nombre_informativa) $$
+    - $$ [tutorial](nombre_informativa) $$
 
 - regex: texto_informativa
   examples: |
-    - ###(.*?)###
+    - %%\s*([\s\S]*?)\s*%%
 
 - intent: decir_texto_informativa
   examples: |
-    - [###Desde nuestra fundación en 2010, hemos trabajado incansablemente para ofrecer productos de la más alta calidad a nuestros clientes. Nuestra pasión por la innovación y el compromiso con la excelencia nos han convertido en un referente en la industria###](texto_informativa)
-    - [### Texto super interesante e informativo sobre esta maravillosa página creada por el chatbot WebGenerator del grupo Design Label ###](texto_informativa)
+    - %% # titulo: contenido del titulo ## subtitulo: contenido del subtitulo %%
+    - %% ### Python #### Instrucciones - Es necesario instalar la versión 3.8 de Python - Verificar que la variable de entorno del sistema "PATH" tenga una entrada apuntando al directorio donde esté instalado Python. De no estar, agregarla y reiniciar la PC para guardar los cambios. - Con python instalado, posicionarse en el directorio del proyecto, abrir una terminal y ejecutar el comando ``` python -m venv venv ``` para crear un entorno virtual el el que ejecutar el proyecto.
+    - %% alkljlalsdjalksjdlas %%
     - text.md
 
 - intent: agregar_producto
@@ -81,15 +82,19 @@ nlu:
     - quiero agregar productos
     - quiero agregar productos a [design-label](page_name)
 
+- regex: productos
+  examples: |
+    - SKU:\s*(\d+)\s*Cantidad:\s*(\d+)\s*Titulo:\s*([^ ](?:.*[^ ])?)\s*Descripción:\s*([^ ](?:.*[^ ])?)\s*Precio:\s*([0-9]+(?:,[0-9]{2})?)
+
 - intent: cargar_X_cantidad_Y_producto
   examples: |
-    - Cantidad: [100](cant_prod) Titulo: [titulo_1](tit_prod) Descripción: [desc_1](desc_prod) Precio: [5499,99](precio_prod)
-    - Cantidad: [15](cant_prod) Titulo: [titulo_2](tit_prod) Descripción: [desc_2](desc_prod) Precio: [123,09](precio_prod)
-    - Cantidad: [2](cant_prod) Titulo: [titulo_3](tit_prod) Descripción: [desc_3](desc_prod) Precio: [654](precio_prod)
-    - Cantidad: [6090](cant_prod) Titulo: [titulo_4](tit_prod) Descripción: [desc_4](desc_prod) Precio: [65,82](precio_prod)
-    - Cantidad: [546364](cant_prod) Titulo: [titulo_5](tit_prod) Descripción: [desc_5](desc_prod) Precio: [42342](precio_prod)
-    - Cantidad: [432](cant_prod) Titulo: [titulo_6](tit_prod) Descripción: [desc_6](desc_prod) Precio: [159999,99](precio_prod)
-    - Cantidad: [745](cant_prod) Titulo: [titulo_7](tit_prod) Descripción: [desc_7](desc_prod) Precio: [1500](precio_prod)
+    - SKU: [0](sku_prod) Cantidad: [100](cant_prod) Titulo: [titulo_1](tit_prod) Descripción: [desc_1](desc_prod) Precio: [5499,99](precio_prod)
+    - SKU: [678](sku_prod) Cantidad: [15](cant_prod) Titulo: [titulo_2](tit_prod) Descripción: [desc_2](desc_prod) Precio: [123,09](precio_prod)
+    - SKU: [23](sku_prod) Cantidad: [2](cant_prod) Titulo: [titulo_3](tit_prod) Descripción: [desc_3](desc_prod) Precio: [654](precio_prod)
+    - SKU: [752](sku_prod) Cantidad: [6090](cant_prod) Titulo: [titulo_4](tit_prod) Descripción: [desc_4](desc_prod) Precio: [65,82](precio_prod)
+    - SKU: [56090](sku_prod) Cantidad: [546364](cant_prod) Titulo: [titulo_5](tit_prod) Descripción: [desc_5](desc_prod) Precio: [42342](precio_prod)
+    - SKU: [1246](sku_prod) Cantidad: [432](cant_prod) Titulo: [titulo_6](tit_prod) Descripción: [desc_6](desc_prod) Precio: [159999,99](precio_prod)
+    - SKU: [8](sku_prod) Cantidad: [745](cant_prod) Titulo: [titulo_7](tit_prod) Descripción: [desc_7](desc_prod) Precio: [1500](precio_prod)
 
 - intent: cargar_productos_archivo
   examples: |

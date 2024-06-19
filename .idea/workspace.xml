@@ -6,12 +6,14 @@
   <component name="ChangeListManager">
     <list default="true" id="121f2593-11ee-405e-a8d8-1c2f43d81e54" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chatbot/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/chatbot/actions/actions.py" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/actions/actions.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chatbot/config.yml" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/config.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/chatbot/data/nlu.yml" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/data/nlu.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chatbot/data/stories.yml" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/data/stories.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/chatbot/domain.yml" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/domain.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/generator/ReactGenerator.py" beforeDir="false" afterPath="$PROJECT_DIR$/generator/ReactGenerator.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/DBManager.py" beforeDir="false" afterPath="$PROJECT_DIR$/database/DBManager.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/collections/particular/Product.py" beforeDir="false" afterPath="$PROJECT_DIR$/database/collections/particular/Product.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/Template_carga_productos.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/resources/Template_carga_productos.xlsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/webs/base/components/Template.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/webs/base/components/Template.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -228,7 +230,8 @@
       <workItem from="1718282760326" duration="14244000" />
       <workItem from="1718306535570" duration="2406000" />
       <workItem from="1718721842444" duration="20828000" />
-      <workItem from="1718754945693" duration="1956000" />
+      <workItem from="1718754945693" duration="2003000" />
+      <workItem from="1718801557663" duration="9950000" />
     </task>
     <servers />
   </component>

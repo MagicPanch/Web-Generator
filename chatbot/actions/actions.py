@@ -53,7 +53,8 @@ class ActionPreguntarNombrePagina(BaseAction):
 
     def handle_action(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any], user_id: Text,
                       page_name: Text = None, page_doc: Any = None, pages: Any = None) -> List[Dict[Text, Any]]:
-        dispatcher.utter_message(text="¿Como queres que se llame tu pagina? Por favor indica su nombre en el siguiente formato: www. nombre-pagina .com")
+        dispatcher.utter_message(text="¿Como queres que se llame tu pagina? Por favor indica su nombre en el siguiente formato:")
+        dispatcher.utter_message(text="www. nombre-pagina .com")
         return [SlotSet("creando_pagina", True), SlotSet("pregunta_nombre", True)]
 
 class ActionCrearPagina(BaseAction):
@@ -302,7 +303,7 @@ class ActionRecibirImagen(Action):
         return "action_recibir_imagen"
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        global dbm, pgm, tbm
+        global dbm, pgm, tbm, rg
         print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
         print("(" + threading.current_thread().getName() + ") " + "--------creando_seccion_informativa ", tracker.get_slot("creando_seccion_informativa"))
         print("(" + threading.current_thread().getName() + ") " + "--------pregunta_otra_imagen_seccion_informativa ", tracker.get_slot("pregunta_otra_imagen_seccion_informativa"))
@@ -337,22 +338,22 @@ class ActionRecibirImagen(Action):
 
         if not error:
             dispatcher.utter_message(text="Imagen recibida con éxito.")
-            ReactGenerator.set_favicon(page_path)
         else:
             dispatcher.utter_message(text="No se pudo procesar la imagen.")
 
-        if tracker.get_slot("cambio_logo"):
+        if tracker.get_slot("cambio_logo") is True:
             dispatcher.utter_message("Podes ver el nuevo logo en tu página.")
             return [SlotSet("cambio_logo", not error)]
-        elif tracker.get_slot("creando_seccion_informativa"):
+        elif tracker.get_slot("creando_seccion_informativa") is True:
             dispatcher.utter_message(text="¿Queres agregar otra imagen?")
             return [SlotSet("pregunta_otra_imagen_seccion_informativa", True)]
-        elif tracker.get_slot("agregando_productos"):
+        elif tracker.get_slot("agregando_productos") is True:
             dispatcher.utter_message(text="¿Queres cargar otro producto?")
             return [SlotSet("pregunta_carga", True), SlotSet("pide_img_prod", False)]
         return []
 
     def download_image(self, user_id, page_name, page_path, file, tracker: Tracker, dispatcher: CollectingDispatcher) -> bool:
+        global tbm, dbm
         error = False
         image_id = file["file_id"]
         if not image_id:
@@ -361,12 +362,14 @@ class ActionRecibirImagen(Action):
             if tracker.get_slot("cambio_logo"):
                 utils.go_to_main_dir()
                 tbm.download_image(page_path=page_path, subdir="components", image_id=image_id, image_name="logo.png")
+                rg.set_favicon(page_path)
             elif tracker.get_slot("creando_seccion_informativa"):
                 utils.go_to_main_dir()
                 tbm.download_image(page_path=page_path, subdir="sect_inf_images", image_id=image_id, image_name=(file["file_unique_id"] + ".png"))
             elif tracker.get_slot("agregando_productos"):
                 # Descargar imagen
-                image_url = telegram_bot.get_image_url(image_id=image_id)
+                image_url = tbm.get_image_url(image_id=image_id)
+                print(tracker.get_slot("id_producto"))
                 dbm.set_product_multimedia(user_id, page_name, tracker.get_slot("id_producto"), image_url)
         return error
 
@@ -586,7 +589,7 @@ class ActionPedirProductos(BaseAction):
             utils.go_to_main_dir()
             tbm.send_file_to_user(user_id, CONSTANTS.TEMPLATE_PRODUCTOS_DIR)
             dispatcher.utter_message(text="Si vas a cargar los productos de a uno voy a necesitar los siguientes datos:")
-            dispatcher.utter_message(text="Cantidad:\nTitulo:\nDescripción:\nPrecio:")
+            dispatcher.utter_message(text="SKU:\nCantidad:\nTitulo:\nDescripción:\nPrecio:")
             return [SlotSet("agregando_productos", True), SlotSet("pregunta_carga", True), SlotSet("pregunta_nombre", False)]
         else:
         # No tiene sección ecommerce
@@ -632,9 +635,10 @@ class ActionCapturarProductoCargado(Action):
                     if pd.isna(producto.Cantidad):
                         break
                     else:
-                        id = dbm.add_product(
+                        dbm.add_product(
                             user_id=tracker.sender_id,
                             page_name=tracker.get_slot("page_name"),
+                            sku=int(producto.SKU),
                             cant=int(producto.Cantidad),
                             title=producto.Titulo,
                             desc=producto.Descripcion,
@@ -646,10 +650,10 @@ class ActionCapturarProductoCargado(Action):
                             dbm.set_product_multimedia(
                                 tracker.sender_id,
                                 tracker.get_slot("page_name"),
-                                id,
+                                int(producto.SKU),
                                 str(producto.Imagen_principal)
                             )
-                        message = "El producto " + producto.Titulo + " se guardó correctamente con el identificador: " + str(id)
+                        message = "El producto " + producto.Titulo + " se guardó correctamente con el identificador: " + str(int(producto.SKU))
                         dispatcher.utter_message(text=message)
                 dispatcher.utter_message(text="Ha finalizado la carga de productos. ¿Puedo ayudarte con algo más?")
                 return [SlotSet("agregando_productos", False), SlotSet("pregunta_carga", False)]
@@ -659,6 +663,8 @@ class ActionCapturarProductoCargado(Action):
         else:
             last_message = str(tracker.latest_message.get('text'))
             print("(" + threading.current_thread().getName() + ") " + "--------last_message: \n", last_message)
+            sku = tracker.get_slot("sku_prod")
+            print("(" + threading.current_thread().getName() + ") " + "--------sku: \n", sku)
             cant = tracker.get_slot("cant_prod")
             print("(" + threading.current_thread().getName() + ") " + "--------cant: \n", cant)
             titulo = tracker.get_slot("tit_prod")
@@ -675,11 +681,11 @@ class ActionCapturarProductoCargado(Action):
             if precio:
                 precio = precio.replace(",", ".")
             print("(" + threading.current_thread().getName() + ") " + "--------precio: \n", precio)
-            id = dbm.add_product(user_id=tracker.sender_id, page_name=tracker.get_slot("page_name"), cant=cant, title=titulo, desc=desc, precio=float(precio))
-            message = "El producto " + titulo + " se guardó correctamente con el identificador: " + str(id)
+            dbm.add_product(user_id=tracker.sender_id, page_name=tracker.get_slot("page_name"), sku=int(sku), cant=int(cant), title=titulo, desc=desc, precio=float(precio))
+            message = "El producto " + titulo + " se guardó correctamente con el identificador: " + str(int(sku))
             dispatcher.utter_message(text=message)
             dispatcher.utter_message(text="Si lo deseas podes enviarme alguna imagen sobre él.")
-            return [SlotSet("pide_img_prod", True), SlotSet("id_producto", id)]
+            return [SlotSet("pide_img_prod", True), SlotSet("id_producto", sku)]
 
 
 ### INFORMATIVA
@@ -708,8 +714,6 @@ class ActionCrearInformativa2(Action):
         page = pgm.get_page(tracker.sender_id, tracker.get_slot('page_name'))
         nombre_informativa = "Informacion"
         last_user_message = tracker.latest_message.get('text')
-        for slot in tracker.slots:
-            print(slot + " : ", tracker.get_slot(slot))
         if "$$" in last_user_message:
             nombre_informativa = last_user_message[2:len(last_user_message) - 2].strip()
             print(nombre_informativa)
@@ -717,7 +721,7 @@ class ActionCrearInformativa2(Action):
         inf_section = InformativeSection(nombre_informativa)
         page.add_section(inf_section)
         dispatcher.utter_message(text="Proporcioname el texto informativo. Puedes enviarme un archivo en formato MarkDown (.md) o simplemente escribir en este chat. Si vas a escribir en el chat, por favor respeta el siguiente formato:")
-        dispatcher.utter_message(text="###\nTexto\n###")
+        dispatcher.utter_message(text="%%\nTexto\n%%")
         return [SlotSet("componente", "seccion"), SlotSet("creando_seccion_informativa", True), SlotSet("pide_text_informativa", True), SlotSet("pregunta_nombre_informativa", False), SlotSet("nombre_informativa", nombre_informativa)]
 
 class ActionCrearInformativa3(Action):
@@ -762,7 +766,7 @@ class ActionCrearInformativa3(Action):
             file_text = file_content.decode('utf-8')  # Decodificar el contenido a 'utf-8'
             return f"""{file_text}""", True
         else:
-            return last_user_message[3:len(last_user_message) - 3].strip(), False
+            return last_user_message[2:len(last_user_message) - 2].strip(), False
 
 ## EDITAR
 

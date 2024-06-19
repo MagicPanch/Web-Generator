@@ -230,24 +230,24 @@ class DBManager:
             raise Exception("La pagina " + str(page_name) + " no existe o no te pertenece")
 
     @classmethod
-    def add_product(cls, user_id, page_name, cant, title, desc, precio) -> int:
+    def add_product(cls, user_id, page_name, sku, cant, title, desc, precio):
         page_id = user_id + '-' + page_name
         page = Page.objects(id=page_id).first()
         if page:
-            p_id = page.product_counter
             collection = cls.get_instance()._db[page_id]
             if collection:
-                product = {
-                    "key": p_id,
-                    "stock": cant,
-                    "name": title,
-                    "desc": desc,
-                    "price": precio,
-                }
-                collection.insert_one(product)
-                page.product_counter += 1
-                page.save()
-            return p_id
+                product = collection.find_one({'_id': sku})
+                if product:
+                    collection.update_one({"_id": sku}, {"$set": {"stock": product["stock"] + cant, "name": title, "desc": desc, "price": precio}})
+                else:
+                    product = {
+                        "_id": sku,
+                        "stock": cant,
+                        "name": title,
+                        "desc": desc,
+                        "price": precio,
+                    }
+                    collection.insert_one(product)
         else:
             raise Exception("La pagina " + str(page) + " no existe o no te pertenece")
 
@@ -256,5 +256,5 @@ class DBManager:
         page_id = user_id + '-' + page_name
         collection = cls.get_instance()._db[page_id]
         if collection:
-            collection.update_one({"key": product}, {"$set": {"multimedia": media_url}})
+            collection.update_one({"_id": product}, {"$set": {"multimedia": media_url}})
 
