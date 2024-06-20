@@ -23,6 +23,7 @@ from rasa_sdk.events import SlotSet, FollowupAction
 
 slots_crear_seccion = ['creando_seccion']
 creando_pagina = False
+creando_ecommerce = False
 dbm = DBManager.get_instance()
 pgm = PageManager.get_instance()
 rg = ReactGenerator.get_instance()
@@ -36,12 +37,17 @@ class ActionCapturarCreacion(BaseAction):
     def handle_action(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any], user_id: Text,
                       page_name: Text = None, page_doc: Any = None, pages: Any = None) -> List[Dict[Text, Any]]:
         seccion = tracker.get_slot('componente')
+        print("intent: ", tracker.latest_message.get("intent").get("name"))
+        print(tracker.latest_message.get("text"))
         if seccion is None:
             seccion = tracker.get_slot('tipo_seccion')
         if seccion:
             return [FollowupAction("action_capturar_tipo_seccion"), SlotSet("creando_seccion", True)]
         else:
-            return [FollowupAction("action_preguntar_nombre_pagina"), SlotSet("creando_pagina", True), SlotSet("page_name", None)]
+            if page_name is None:
+                return [FollowupAction("action_preguntar_nombre_pagina"), SlotSet("creando_pagina", True)]
+            else:
+                return [FollowupAction("action_crear_pagina"), SlotSet("creando_pagina", True), SlotSet("pregunta_nombre", False)]
 
     def skip_tuto_verification(self) -> bool:
         return False
@@ -66,8 +72,10 @@ class ActionCrearPagina(BaseAction):
                       page_name: Text = None, page_doc: Any = None, pages: Any = None) -> List[Dict[Text, Any]]:
         global creando_pagina, slots_crear_pagina, dbm, pgm
         print("creando_pagina: ", creando_pagina)
+        last_user_message = tracker.latest_message.get("text")
         last_message_intent = tracker.latest_message.get('intent').get('name')
-        if not 'nombre_pagina' in last_message_intent:
+        #if not 'nombre_pagina' in last_message_intent:
+        if not "&&" in last_user_message:
             dispatcher.utter_message(text="Entendido, si mas tarde deseas retomar la creacion de tu pagina puedes pedirmelo.")
             return [SlotSet("creando_pagina", False), SlotSet("pregunta_nombre", False)]
         print("slot creando: ", tracker.get_slot("creando_pagina"))
@@ -517,7 +525,7 @@ class ActionCapturarTipoSeccion(BaseAction):
 
     def handle_action(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any], user_id: Text,
                       page_name: Text = None, page_doc: Any = None, pages: Any = None) -> List[Dict[Text, Any]]:
-        global dbm, pgm
+        global dbm, pgm, creando_ecommerce
         print("(" + threading.current_thread().getName() + ") " + "--------page_name: ", page_name)
         print("(" + threading.current_thread().getName() + ") " + "--------page_doc.name: ", page_doc.name)
         if pgm.is_alive(user_id, page_name):
@@ -528,10 +536,12 @@ class ActionCapturarTipoSeccion(BaseAction):
         if not tracker.get_slot('tipo_seccion') == "e-commerce":
             if not page_obj.is_running_dev():
                 pgm.run_dev(user_id, page_name)
+                message = "Tu pagina se encuentra en modo edición. Podrás visualizar los cambios que realices en: " + page_obj.get_page_address()
+                dispatcher.utter_message(text=message)
             elif page_obj.is_running():
                 pgm.switch_dev(tracker.sender_id, page_doc.name)
-            message = "Tu pagina se encuentra en modo edición. Podrás visualizar los cambios que realices en: " + page_obj.get_page_address()
-            dispatcher.utter_message(text=message)
+                message = "Tu pagina se encuentra en modo edición. Podrás visualizar los cambios que realices en: " + page_obj.get_page_address()
+                dispatcher.utter_message(text=message)
             #message = "Si la pagina te solicita una contraseña ingresa: " + pgm.get_tunnel_password()
             #dispatcher.utter_message(text=message)
         tipo_seccion = tracker.get_slot('tipo_seccion')
@@ -539,8 +549,20 @@ class ActionCapturarTipoSeccion(BaseAction):
         if tipo_seccion:
             # Hay tipo seccion
             if "e-commerce" in tipo_seccion.lower():
-                dispatcher.utter_message(text="Aguarda un momento mientras se crea la sección e-commerce en tu página.")
-                return [FollowupAction("action_crear_ecommerce")]
+                if creando_ecommerce:
+                    creando_ecommerce = False
+                    if not page.is_running_dev():
+                        pgm.run_dev(user_id, page_name)
+                        message = "Tu pagina se encuentra en modo edición. Podrás visualizar la nueva sección en: " + page.get_page_address()
+                        dispatcher.utter_message(text=message)
+                        #message = "Si la pagina te solicita una contraseña ingresa: " + pgm.get_tunnel_password()
+                        #dispatcher.utter_message(text=message)
+                    else:
+                        dispatcher.utter_message(text="Podes ver la nueva sección en tu página.")
+                    return [SlotSet("pregunta_seccion", False), SlotSet("creando_seccion", False), SlotSet("componente", None)]
+                else:
+                    dispatcher.utter_message(text="Aguarda un momento mientras se crea la sección e-commerce en tu página.")
+                    return [FollowupAction("action_crear_ecommerce")]
             elif "informativa" in tipo_seccion.lower():
                 return [FollowupAction("action_crear_informativa_1"), SlotSet("pregunta_edicion", False)]
             else:
@@ -572,7 +594,7 @@ class ActionCrearEcommerce(BaseAction):
 
     def handle_action(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any], user_id: Text,
                       page_name: Text = None, page_doc: Any = None, pages: Any = None) -> List[Dict[Text, Any]]:
-        global dbm, pgm
+        global dbm, pgm, creando_ecommerce
         page_name = tracker.get_slot('page_name')
         if page_name is not None:
             page_name = page_name[2:len(page_name) - 2].strip()
@@ -581,6 +603,7 @@ class ActionCrearEcommerce(BaseAction):
         if seccion:
             dispatcher.utter_message(text="Tu página ya tiene una sección de e-commerce.")
         else:
+            creando_ecommerce = True
             page.add_section(EcommerceSection())
             pgm.add_ecommerce(user_id, page_name)
             if not page.is_running_dev():
@@ -781,7 +804,6 @@ class ActionCrearInformativa3(Action):
         print(len(nombre_seccion))
         inf_section = page.get_section(nombre_seccion)
         inf_section.set_text(text)
-        dispatcher.utter_message(text="Texto informativo guardado.")
         dbm.add_inf_section(user_id, page_name, inf_section)
         page_path = pgm.get_page_path(user_id, page_name)
         if page.get_cant_sections() > 0:
@@ -789,7 +811,7 @@ class ActionCrearInformativa3(Action):
         rg.agregarSectionInformativa(page_path, nombre_seccion, text)
         dispatcher.utter_message(text="Podrás ver la nueva sección en tu página")
         return [SlotSet("creando_seccion_informativa", False), SlotSet("pide_text_informativa", False), SlotSet("pregunta_seccion", False),
-                SlotSet("creando_seccion", False), SlotSet("componente", None), SlotSet("nombre_informativa", None)]
+                SlotSet("creando_seccion", False), SlotSet("componente", None), SlotSet("nombre_informativa", None), SlotSet("tipo_seccion", None)]
 
     def handle_text(self, tracker: Tracker) -> Text:
         global tbm

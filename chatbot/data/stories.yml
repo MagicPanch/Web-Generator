@@ -291,8 +291,9 @@ stories:
 - story: editar sin pagina y con componente
   steps:
     - intent: modificar_pagina
+    - action: action_capturar_edicion
     - slot_was_set:
-      - pregunta_nombre: true
+      - pregunta_nombre_edicion: true
     - intent: nombre_pagina
     - action: action_capturar_edicion
     - checkpoint: componente_capturado
@@ -310,7 +311,6 @@ stories:
 - story: editar con pagina y componente pero sin seccion
   steps:
     - slot_was_set:
-      - pregunta_edicion: true
       - pregunta_componente: true
       - pregunta_seccion: true
     - intent: decir_nombre_informativa

@@ -46,6 +46,7 @@ class PageManager():
 
     _instance = None
     _running_pages: Dict[Tuple[str, str], Entry]= {}
+    _used_ports = {}
     _tunnel_pwd:str = None
 
     @classmethod
@@ -80,7 +81,7 @@ class PageManager():
     @classmethod
     def _get_port(cls) -> int:
         port = random.randint(CONSTANTS.MIN_PORT, CONSTANTS.MAX_PORT)
-        if not cls._is_port_in_use(port):
+        if not cls._is_port_in_use(port) and port not in cls._used_ports:
             return port
         else:
             return cls._get_port()
@@ -346,9 +347,6 @@ class PageManager():
         #Posicionarse en el path donde se creara el proyecto
         path = cls.get_page_path(user, page_name)
         page = cls.get_page(user, page_name)
-        if page.has_ecomm_section():
-            rg = ReactGenerator.get_instance()
-            rg.set_address(page_path=path, address=cls.get_page(user, page_name).get_page_address())
 
         utils.go_to_dir_from_main(path)
 

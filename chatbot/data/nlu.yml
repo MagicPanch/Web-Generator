@@ -12,6 +12,26 @@ nlu:
     - /Restart
     - /RESTART
 
+
+- regex: page_name
+  examples: |
+    - &&([a-zA-Z0-9\-_]+)&&
+
+- intent: nombre_pagina
+  examples: |
+    - [&&design-label&&](page_name)
+    - [&&google&&](page_name)
+    - [&&facebook&&](page_name)
+    - [&&miprimerpagina&&](page_name)
+    - [&&miprimerforo&&](page_name)
+    - [&&pagina1&&](page_name)
+    - [&&borrador&&](page_name)
+    - [&&test&&](page_name)
+    - [&&super_mega_pagina_piola&&](page_name)
+    - el nombre es [&&youtube&&](page_name)
+    - la pagina se llama [&&linkedin&&](page_name)
+    - [&&MiTienda&&](page_name)
+
 - intent: crear_algo
   examples: |
     - quiero crear una pagina
@@ -25,8 +45,8 @@ nlu:
     - quiero una nueva [seccion](componente)
     - perfecto, quiero una nueva [seccion](componente)
     - quiero otra [seccion](componente) [informativa](seccion)
-    - quiero crear una [seccion](componente) [e-commerce](seccion) en [&&design-lucas&&](page_name)
-    - quiero una nueva [seccion](componente) en [&&test&&](page_name)
+    - quiero crear una [seccion](componente) [e-commerce](seccion)
+    - quiero una nueva [seccion](componente)
 
 - intent: modificar_pagina
   examples: |
@@ -69,12 +89,19 @@ nlu:
     - [$$tutorial$$](nombre_informativa)
     - [$$prueba 2$$](nombre_informativa)
 
-- regex: texto_informativa
+- regex: decir_texto_informativa
   examples: |
     - %%\s*([\s\S]*?)\s*%%
 
 - intent: decir_texto_informativa
   examples: |
+    - %% # Bienvenido ¡Bienvenido a nuestra plataforma! Esperamos que tengas una gran experiencia. ## Cómo empezar - Crea una cuenta - Verifica tu email - ¡Empieza a explorar! ### Preguntas frecuentes - **¿Cómo cambio mi contraseña?**  Ve a la configuración de tu cuenta y selecciona "Cambiar contraseña". - **¿Dónde puedo encontrar más información?**  Consulta nuestra sección de ayuda o contáctanos directamente. %%
+    - %% # Documentación de API Nuestra API es poderosa y fácil de usar. ## Autenticación Para autenticarte, usa tu token de API en el encabezado de cada solicitud. ### Ejemplo de solicitud ```http GET /api/v1/users Host: api.ejemplo.com Authorization: Bearer TU_TOKEN_DE_API ``` ## Endpoints - **GET /api/v1/users**: Lista de usuarios - **POST /api/v1/users**: Crear un nuevo usuario %%
+    - %% # Guía de Instalación ## Requisitos - Node.js >= 12.0.0 - npm >= 6.0.0 ## Pasos de instalación 1. Clona el repositorio ```bash git clone https://github.com/ejemplo/proyecto.git ``` 2. Instala las dependencias ```bash cd proyecto npm install ``` 3. Inicia la aplicación ```bash npm start ``` ## Contribuir Si quieres contribuir a este proyecto, por favor, sigue las pautas en nuestro archivo `CONTRIBUTING.md`. %%
+    - %% # Changelog ## [1.0.0] - 2024-06-19 ### Added - Función de autenticación de dos factores. - Interfaz de usuario rediseñada. ### Fixed - Corrección de errores menores en la interfaz de usuario. ## [0.9.0] - 2024-05-10 ### Added - Nueva API para gestión de usuarios. ### Changed - Mejoras en el rendimiento de la base de datos. ## [0.8.0] - 2024-04-01 ### Removed - Eliminado el soporte para versiones antiguas de la API. %%
+    - %% # Informe del Proyecto ## Introducción Este informe detalla el progreso del proyecto hasta la fecha. ## Metodología Utilizamos metodologías ágiles para garantizar una entrega continua y de alta calidad. ### Herramientas utilizadas - Jira para gestión de tareas - Slack para comunicación - GitHub para control de versiones ## Próximos pasos - Completar la fase de pruebas - Preparar el lanzamiento beta ## Conclusión El proyecto está en buen camino para cumplir con los plazos establecidos. %%
+    - %% # Receta de Tarta de Manzana ## Ingredientes - 2 manzanas grandes - 1 taza de azúcar - 2 tazas de harina - 1/2 taza de mantequilla - 3 huevos - 1 cucharadita de canela ## Instrucciones 1. Precalentar el horno a 180°C. 2. Pelar y cortar las manzanas en rodajas finas. 3. En un bol, mezclar el azúcar, la harina y la canela. 4. Agregar los huevos y la mantequilla derretida, mezclar bien. 5. Añadir las manzanas y mezclar suavemente. 6. Verter la mezcla en un molde y hornear durante 45 minutos. %%
+    - %% # Política de Privacidad ## Introducción Nos tomamos tu privacidad en serio. Esta política describe cómo manejamos tu información personal. ## Recopilación de datos Recopilamos la información que nos proporcionas directamente, como tu nombre, email y mensaje. ### Uso de los datos Utilizamos tus datos para responder a tus consultas y mejorar nuestros servicios. ## Compartir datos No compartimos tu información personal con terceros sin tu consentimiento. ## Seguridad Implementamos medidas de seguridad adecuadas para proteger tu información. ### Cambios en la política Podemos actualizar esta política de privacidad de vez en cuando. Te notificaremos sobre cualquier cambio significativo. %%
     - %% # lo que sea: contenido del titulo ## subtitulo: contenido del subtitulo %%
     - %% ### Python #### Instrucciones - Es necesario instalar la versión 3.8 de Python - Verificar que la variable de entorno del sistema "PATH" tenga una entrada apuntando al directorio donde esté instalado Python. De no estar, agregarla y reiniciar la PC para guardar los cambios. - Con python instalado, posicionarse en el directorio del proyecto, abrir una terminal y ejecutar el comando ``` python -m venv venv ``` para crear un entorno virtual el el que ejecutar el proyecto.
     - %% alkljlalsdjalksjdlas %%
@@ -115,25 +142,6 @@ nlu:
     - no se que quiero
     - despues te digo
     - no se que decirte
-
-- regex: page_name
-  examples: |
-    - &&([a-zA-Z0-9\-_]+)&&
-
-- intent: nombre_pagina
-  examples: |
-    - [&&design-label&&](page_name)
-    - [&&google&&](page_name)
-    - [&&facebook&&](page_name)
-    - [&&miprimerpagina&&](page_name)
-    - [&&miprimerforo&&](page_name)
-    - [&&pagina1&&](page_name)
-    - [&&borrador&&](page_name)
-    - [&&test&&](page_name)
-    - [&&super_mega_pagina_piola&&](page_name)
-    - el nombre es [&&youtube&&](page_name)
-    - la pagina se llama [&&linkedin&&](page_name)
-    - [&&MiTienda&&](page_name)
 
 - intent: preguntar_paginas_propias
   examples: |

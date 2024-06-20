@@ -335,6 +335,13 @@ slots:
     mappings:
       - type: custom
 
+  pregunta_nombre_edicion:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: custom
+
   pregunta_edicion:
     type: bool
     influence_conversation: true

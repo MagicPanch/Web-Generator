@@ -56,7 +56,7 @@ class BaseAction(Action, ABC):
 
         # Lógica específica para acciones que no requieren verificación de página
         if self.skip_page_verification():
-            events += self.handle_action(dispatcher, tracker, domain, user_id)
+            events += self.handle_action(dispatcher, tracker, domain, user_id, page_name)
             return events
 
         # Verificación de la página
@@ -110,13 +110,11 @@ class BaseAction(Action, ABC):
         elif self.name() == "action_crear_pagina":
             events = self.clear_slots(tracker, domain, slots_to_true=["creando_pagina", "pregunta_nombre"])
         elif self.name() == "action_capturar_edicion":
-            events = self.clear_slots(tracker, domain, slots_to_true=["pregunta_nombre"], slots_to_save=["componente", "tipo_seccion", "nombre_informativa"])
+            events = self.clear_slots(tracker, domain, slots_to_true=["pregunta_nombre_edicion"], slots_to_save=["componente", "tipo_seccion", "nombre_informativa"])
         elif self.name() == "action_capturar_tipo_seccion":
             events = self.clear_slots(tracker, domain, slots_to_true=["creando_seccion", "pregunta_nombre"], slots_to_save=["tipo_seccion"], slots_to_set=dict({"componente": "seccion"}))
         else:
             events = self.clear_slots(tracker, domain)
-        for slot in tracker.slots.keys():
-            print(slot + " : " + str(tracker.slots[slot]))
         return events
 
     def clear_slots(self, tracker: Tracker, domain: Dict[Text, Any], slots_to_save=[], slots_to_true=[], slots_to_false=[], slots_to_set={}):
