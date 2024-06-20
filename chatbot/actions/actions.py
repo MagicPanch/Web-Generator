@@ -54,7 +54,7 @@ class ActionPreguntarNombrePagina(BaseAction):
     def handle_action(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any], user_id: Text,
                       page_name: Text = None, page_doc: Any = None, pages: Any = None) -> List[Dict[Text, Any]]:
         dispatcher.utter_message(text="¿Como queres que se llame tu pagina? Por favor indica su nombre en el siguiente formato:")
-        dispatcher.utter_message(text="www. nombre-pagina .com")
+        dispatcher.utter_message(text="&&nombre-pagina&&")
         return [SlotSet("creando_pagina", True), SlotSet("pregunta_nombre", True)]
 
 class ActionCrearPagina(BaseAction):
@@ -76,7 +76,7 @@ class ActionCrearPagina(BaseAction):
         if tracker.get_slot("creando_pagina"):
             if not page_name:
                 dispatcher.utter_message(
-                    text="Repetime como queres que se llame tu página. Te recuerdo que el formato es: www. nombre-pagina .com")
+                    text="Repetime como queres que se llame tu página. Te recuerdo que el formato es: &&nombre-pagina&&")
                 return [SlotSet("creando_pagina", True), SlotSet("pregunta_nombre", True)]
             else:
                 if creando_pagina:
@@ -119,6 +119,8 @@ class ActionEjecutarDev(Action):
         print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
         user_id = tracker.sender_id
         page_name = tracker.get_slot('page_name')
+        if page_name is not None:
+            page_name = page_name[2:len(page_name) - 2].strip()
 
         #Inicia la ejecución del proyecto en modo desarrollo en un nuevo hilo
         pgm.run_dev(user_id, page_name)
@@ -256,8 +258,11 @@ class ActionCapturarEdicion(BaseAction):
                 tipo_seccion = tracker.get_slot('tipo_seccion')
                 print("(" + threading.current_thread().getName() + ") " + "--------tipo_seccion: ", tipo_seccion)
                 nombre_seccion = tracker.get_slot('nombre_informativa')
+                if nombre_seccion is not None:
+                    nombre_seccion = nombre_seccion[2:len(nombre_seccion) - 2].strip()
                 print("(" + threading.current_thread().getName() + ") " + "--------nombre_informativa: ", nombre_seccion)
                 secciones = page_obj.get_sections_name()
+                print(secciones)
                 if len(secciones) > 0:
                 # La pagina tiene secciones
                     if nombre_seccion:
@@ -268,13 +273,16 @@ class ActionCapturarEdicion(BaseAction):
                         if nombre_seccion in secciones:
                             return [SlotSet("nombre_seccion_editando", nombre_seccion), FollowupAction("action_modificar_informativa_1"), SlotSet("pregunta_componente", False),  SlotSet("pregunta_nombre", False), SlotSet("pregunta_edicion", False)]
                         else:
-                            dispatcher.utter_message(text=str(nombre_seccion) + " no es un tipo de seccion válido. Te recuerdo que las secciones a crear son: \n E-Commerce \n Informativa")
-                            return [SlotSet("pregunta_componente", True), SlotSet("pregunta_seccion", True)]
+                            buttons = []
+                            for seccion in secciones:
+                                buttons.append({"payload": "$$" + str(seccion) + "$$", "title": seccion})
+                            dispatcher.utter_message(text=str(nombre_seccion) + " no es un tipo de seccion válido. Te recuerdo que las secciones a modificar en tu página son:", buttons=buttons, button_type="vertical")
+                            return [SlotSet("pregunta_componente", False), SlotSet("pregunta_seccion", True)]
                     else:
-                        message = str(tipo_seccion) + " no es un tipo de seccion válido. Te recuerdo que las secciones de tu página son:\n"
+                        buttons = []
                         for seccion in secciones:
-                            message += seccion + "\n"
-                        dispatcher.utter_message(text=message)
+                            buttons.append({"payload": "$$" + str(seccion) + "$$", "title": seccion})
+                        dispatcher.utter_message(text="¿Sobre qué sección te gustaría operar?. Te recuerdo que las secciones de tu página son:", buttons=buttons, button_type="vertical")
                         return [SlotSet("pregunta_componente", True), SlotSet("pregunta_seccion", True)]
                 else:
                 # La pagina no tiene secciones
@@ -282,13 +290,16 @@ class ActionCapturarEdicion(BaseAction):
                     return [FollowupAction("action_capturar_tipo_seccion")]
         else:
         # No hay componente a modificar
-            message = "¿Qué componente de tu página te gustaría modificar? Te recuerdo que sus componentes son:\nColor\nLogo\n"
+            buttons = [{"payload": "quiero cambiar el color", "title": "Color"}, {"payload": "quiero cambiar el logo", "title": "Logo"}]
             secciones = page_obj.get_sections_name()
-            if len(secciones) > 0:
-                for seccion in secciones:
-                    message += "Seccion " + seccion + "\n"
-            message += "Footer"
-            dispatcher.utter_message(text=message)
+            sects = "("
+            for seccion in secciones:
+                sects +=str(seccion) + ", "
+            sects = sects[:len(sects) - 2] + ")"
+            buttons.append({"payload": "quiero modificar una seccion", "title": "Sección " + sects})
+            buttons.append({"payload": "quiero cambiar el color", "title": "Footer"})
+            message = "¿Qué componente de tu página te gustaría modificar? Te recuerdo que sus componentes son:"
+            dispatcher.utter_message(text=message, buttons=buttons, button_type="vertical")
             return [SlotSet("pregunta_componente", True)]
 
 
@@ -309,7 +320,9 @@ class ActionRecibirImagen(Action):
         print("(" + threading.current_thread().getName() + ") " + "--------pregunta_otra_imagen_seccion_informativa ", tracker.get_slot("pregunta_otra_imagen_seccion_informativa"))
         print("(" + threading.current_thread().getName() + ") " + "--------last_message_intent: ", tracker.latest_message.get('intent').get('name'))
         user_id = tracker.sender_id
-        page_name = tracker.get_slot("page_name")
+        page_name = tracker.get_slot('page_name')
+        if page_name is not None:
+            page_name = page_name[2:len(page_name) - 2].strip()
         page_path = pgm.get_page_path(user_id, page_name)
 
         # Verifica si el último mensaje contiene una imagen
@@ -391,7 +404,10 @@ class ActionCapturarColor(Action):
         global pgm, rg
         print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
         color = tracker.get_slot('color')
-        rg.set_colors(pgm.get_page_path(tracker.sender_id, tracker.get_slot("page_name")), color)
+        page_name = tracker.get_slot('page_name')
+        if page_name is not None:
+            page_name = page_name[2:len(page_name) - 2].strip()
+        rg.set_colors(pgm.get_page_path(tracker.sender_id, page_name), color)
         dispatcher.utter_message("Podes ver el nuevo color en tu página.")
         return [SlotSet("componente", None), SlotSet("pregunta_color", False), SlotSet("cambio_color", False)]
 
@@ -415,12 +431,15 @@ class ActionGuardarMailFooter(Action):
         print("(" + threading.current_thread().getName() + ") ", tracker.slots.items())
         last_message_intent = tracker.latest_message.get('intent').get('name')
         print("(" + threading.current_thread().getName() + ") " + "--------last message intent: ", last_message_intent)
+        page_name = tracker.get_slot('page_name')
+        if page_name is not None:
+            page_name = page_name[2:len(page_name) - 2].strip()
         if 'decir_mail' in last_message_intent:
         #El usuario proporciono el mail
             mail = tracker.get_slot('mail')
             print("(" + threading.current_thread().getName() + ") " + "------------mail: ", mail)
             #Guardar el mail en la pagina
-            dbm.set_page_mail(tracker.sender_id, tracker.get_slot('page_name'), mail)
+            dbm.set_page_mail(tracker.sender_id, page_name, mail)
             dispatcher.utter_message(text="E-mail guardado.")
             return [SlotSet("mail_footer", mail), FollowupAction("utter_preguntar_ubicacion")]
         elif 'denegar' in last_message_intent:
@@ -441,12 +460,15 @@ class ActionGuardarUbicacionFooter(Action):
         print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
         last_message_intent = tracker.latest_message.get('intent').get('name')
         print("(" + threading.current_thread().getName() + ") " + "--------last message intent: ", last_message_intent)
+        page_name = tracker.get_slot('page_name')
+        if page_name is not None:
+            page_name = page_name[2:len(page_name) - 2].strip()
         if 'decir_ubicacion' in last_message_intent:
         #El usuario proporciono su ubicacion
             ubicacion = tracker.get_slot("ubicacion")
             print("(" + threading.current_thread().getName() + ") " + "------------ubicacion: ", ubicacion)
             #Guardar la ubicacion en la pagina
-            dbm.set_page_location(tracker.sender_id, tracker.get_slot('page_name'), ubicacion)
+            dbm.set_page_location(tracker.sender_id, page_name, ubicacion)
             dispatcher.utter_message(text="Ubicacion guardada.")
             return [SlotSet("ubicacion_footer", ubicacion), FollowupAction("action_crear_footer")]
         elif 'denegar' in last_message_intent:
@@ -465,7 +487,9 @@ class ActionCrearFooter(Action):
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         global pgm, rg
         print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
-        page_name = tracker.get_slot("page_name")
+        page_name = tracker.get_slot('page_name')
+        if page_name is not None:
+            page_name = page_name[2:len(page_name) - 2].strip()
         page_path = pgm.get_page_path(user_id, page_name)
         mail = str(tracker.get_slot("mail_footer"))
         if not mail:
@@ -549,7 +573,9 @@ class ActionCrearEcommerce(BaseAction):
     def handle_action(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any], user_id: Text,
                       page_name: Text = None, page_doc: Any = None, pages: Any = None) -> List[Dict[Text, Any]]:
         global dbm, pgm
-        page_name = tracker.get_slot("page_name")
+        page_name = tracker.get_slot('page_name')
+        if page_name is not None:
+            page_name = page_name[2:len(page_name) - 2].strip()
         page = pgm.get_page(user_id, page_name)
         seccion = page.get_section("e-commerce")
         if seccion:
@@ -619,6 +645,9 @@ class ActionCapturarProductoCargado(Action):
         print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
         # Verifica si el último mensaje contiene una imagen
         latest_message = tracker.latest_message
+        page_name = tracker.get_slot('page_name')
+        if page_name is not None:
+            page_name = page_name[2:len(page_name) - 2].strip()
         if 'document' in latest_message['metadata']['message']:
             error = False
             documento = latest_message['metadata']['message']['document']
@@ -637,7 +666,7 @@ class ActionCapturarProductoCargado(Action):
                     else:
                         dbm.add_product(
                             user_id=tracker.sender_id,
-                            page_name=tracker.get_slot("page_name"),
+                            page_name=page_name,
                             sku=int(producto.SKU),
                             cant=int(producto.Cantidad),
                             title=producto.Titulo,
@@ -649,7 +678,7 @@ class ActionCapturarProductoCargado(Action):
                         if pd.notna(producto.Imagen_principal):
                             dbm.set_product_multimedia(
                                 tracker.sender_id,
-                                tracker.get_slot("page_name"),
+                                page_name,
                                 int(producto.SKU),
                                 str(producto.Imagen_principal)
                             )
@@ -681,7 +710,7 @@ class ActionCapturarProductoCargado(Action):
             if precio:
                 precio = precio.replace(",", ".")
             print("(" + threading.current_thread().getName() + ") " + "--------precio: \n", precio)
-            dbm.add_product(user_id=tracker.sender_id, page_name=tracker.get_slot("page_name"), sku=int(sku), cant=int(cant), title=titulo, desc=desc, precio=float(precio))
+            dbm.add_product(user_id=tracker.sender_id, page_name=page_name, sku=int(sku), cant=int(cant), title=titulo, desc=desc, precio=float(precio))
             message = "El producto " + titulo + " se guardó correctamente con el identificador: " + str(int(sku))
             dispatcher.utter_message(text=message)
             dispatcher.utter_message(text="Si lo deseas podes enviarme alguna imagen sobre él.")
@@ -698,7 +727,7 @@ class ActionCrearInformativa1(Action):
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
         dispatcher.utter_message(text="¿Que nombre llevará la sección? Por favor utiliza el siguiente formato:")
-        dispatcher.utter_message(text="$$ nombre seccion $$")
+        dispatcher.utter_message(text="$$nombre seccion$$")
         return [SlotSet("creando_seccion_informativa", True), SlotSet("pregunta_nombre_informativa", True)]
 
 
@@ -710,21 +739,23 @@ class ActionCrearInformativa2(Action):
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         global pgm
         print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
-        print("(" + threading.current_thread().getName() + ") " + "--------page_name: ", tracker.get_slot('page_name'))
-        page = pgm.get_page(tracker.sender_id, tracker.get_slot('page_name'))
-        nombre_informativa = "Informacion"
-        last_user_message = tracker.latest_message.get('text')
-        if "$$" in last_user_message:
-            nombre_informativa = last_user_message[2:len(last_user_message) - 2].strip()
-            print(nombre_informativa)
-            print(len(nombre_informativa))
+        page_name = tracker.get_slot('page_name')
+        if page_name is not None:
+            page_name = page_name[2:len(page_name) - 2].strip()
+        print("(" + threading.current_thread().getName() + ") " + "--------page_name: ", page_name)
+        page = pgm.get_page(tracker.sender_id, page_name)
+        nombre_seccion = tracker.get_slot('nombre_informativa')
+        if nombre_seccion is not None:
+            nombre_seccion = nombre_seccion[2:len(nombre_seccion) - 2].strip()
             dispatcher.utter_message(text="Nombre de sección guardado.")
-        inf_section = InformativeSection(nombre_informativa)
+        else:
+            nombre_seccion = "Informativa"
+        inf_section = InformativeSection(nombre_seccion)
         print("titulo seccion creada: ", inf_section.get_title())
         page.add_section(inf_section)
         dispatcher.utter_message(text="Proporcioname el texto informativo. Puedes enviarme un archivo en formato MarkDown (.md) o simplemente escribir en este chat. Si vas a escribir en el chat, por favor respeta el siguiente formato:")
         dispatcher.utter_message(text="%%\nTexto\n%%")
-        return [SlotSet("componente", "seccion"), SlotSet("creando_seccion_informativa", True), SlotSet("pide_text_informativa", True), SlotSet("pregunta_nombre_informativa", False), SlotSet("nombre_informativa", nombre_informativa), SlotSet("pagina_modificando", tracker.get_slot('page_name'))]
+        return [SlotSet("componente", "seccion"), SlotSet("creando_seccion_informativa", True), SlotSet("pide_text_informativa", True), SlotSet("pregunta_nombre_informativa", False), SlotSet("nombre_informativa", nombre_seccion), SlotSet("pagina_modificando", tracker.get_slot('page_name'))]
 
 class ActionCrearInformativa3(Action):
 
@@ -736,27 +767,29 @@ class ActionCrearInformativa3(Action):
         print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
         user_id = tracker.sender_id
         page_name = tracker.get_slot('pagina_modificando')
+        if page_name is not None:
+            if "&&" in page_name:
+                page_name = page_name[2:len(page_name) - 2].strip()
         text = self.handle_text(tracker)
-        if tracker.get_slot("nombre_informativa"):
-            nombre_informativa = tracker.get_slot("nombre_informativa")
-        else:
-            nombre_informativa = "Informacion"
+        nombre_seccion = tracker.get_slot('nombre_informativa')
+        if nombre_seccion is None:
+            nombre_seccion = "Informacion"
         print("nombre_pagina: ", page_name)
         page = pgm.get_page(user_id, page_name)
         print("nombre_pagina: ", page.get_name())
-        print("nombre_informativa: ", nombre_informativa)
-        print(len(nombre_informativa))
-        inf_section = page.get_section(nombre_informativa)
+        print("nombre_informativa: ", nombre_seccion)
+        print(len(nombre_seccion))
+        inf_section = page.get_section(nombre_seccion)
         inf_section.set_text(text)
         dispatcher.utter_message(text="Texto informativo guardado.")
         dbm.add_inf_section(user_id, page_name, inf_section)
         page_path = pgm.get_page_path(user_id, page_name)
         if page.get_cant_sections() > 0:
             rg.remove_section(page_path, "Template")
-        rg.agregarSectionInformativa(page_path, nombre_informativa, text)
+        rg.agregarSectionInformativa(page_path, nombre_seccion, text)
         dispatcher.utter_message(text="Podrás ver la nueva sección en tu página")
         return [SlotSet("creando_seccion_informativa", False), SlotSet("pide_text_informativa", False), SlotSet("pregunta_seccion", False),
-                SlotSet("creando_seccion", False), SlotSet("componente", None), SlotSet("nombre_informativa", None), SlotSet("page_name", page_name)]
+                SlotSet("creando_seccion", False), SlotSet("componente", None), SlotSet("nombre_informativa", None)]
 
     def handle_text(self, tracker: Tracker) -> Text:
         global tbm
@@ -783,7 +816,8 @@ class ActionModificarInformativa1(Action):
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
-        dispatcher.utter_message(text="¿Cuál es el nuevo contenido de la sección?")
+        dispatcher.utter_message(text="¿Cuál es el nuevo contenido de la sección? Puedes enviarme un archivo en formato MarkDown (.md) o simplemente escribir en este chat. Si vas a escribir en el chat, por favor respeta el siguiente formato:")
+        dispatcher.utter_message(text="%%\nTexto\n%%")
         return [SlotSet("editando_seccion_informativa", True), SlotSet("pide_text_informativa", True)]
 
 
@@ -798,20 +832,23 @@ class ActionModificarInformativa2(Action):
         print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
         user_id = tracker.sender_id
         page_name = tracker.get_slot('page_name')
+        if page_name is not None:
+            page_name = page_name[2:len(page_name) - 2].strip()
         last_user_message = str(tracker.latest_message.get('text'))
         text = self.handle_text(tracker)
-        page = pgm.get_page(tracker.sender_id, tracker.get_slot('page_name'))
-        if tracker.get_slot("nombre_informativa"):
-            nombre_informativa = tracker.get_slot("nombre_informativa")
+        page = pgm.get_page(tracker.sender_id, page_name)
+        nombre_seccion = tracker.get_slot('nombre_informativa')
+        if nombre_seccion is not None:
+            nombre_seccion = nombre_seccion[2:len(nombre_seccion) - 2].strip()
         else:
-            nombre_informativa = tracker.get_slot("nombre_seccion_editando")
-        inf_section = page.get_section(nombre_informativa)
+            nombre_seccion = tracker.get_slot("nombre_seccion_editando")
+        inf_section = page.get_section(nombre_seccion)
         inf_section.set_text(text)
         dispatcher.utter_message(text="Texto informativo guardado.")
-        dbm.updt_inf_section(user_id, page_name, nombre_informativa, text)
+        dbm.updt_inf_section(user_id, page_name, nombre_seccion, text)
         utils.go_to_main_dir()
-        rg.remove_section(page_name, tracker.get_slot("nombre_seccion_editando"))
-        rg.agregarSectionInformativa(nombre_informativa, pgm.get_page_path(), text)
+        rg.remove_section(pgm.get_page_path(user_id, page_name), tracker.get_slot("nombre_seccion_editando"), False)
+        rg.agregarSectionInformativa(pgm.get_page_path(user_id, page_name), nombre_seccion, text, is_update=True)
         dispatcher.utter_message(text="Podrás ver la nueva sección en tu página")
         return [SlotSet("editando_seccion_informativa", False), SlotSet("pide_text_informativa", False), SlotSet("nombre_informativa", None), SlotSet("nombre_seccion_editando", None)]
 
@@ -836,13 +873,17 @@ class ActionModificarInformativa4(Action):
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         global dbm, pgm
         print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
-        page = pgm.get_page(tracker.sender_id, tracker.get_slot('page_name'))
-        if tracker.get_slot("nombre_informativa"):
-            nombre_informativa = tracker.get_slot("nombre_informativa")
+        page_name = tracker.get_slot('page_name')
+        if page_name is not None:
+            page_name = page_name[2:len(page_name) - 2].strip()
+        page = pgm.get_page(tracker.sender_id, page_name)
+        nombre_seccion = tracker.get_slot('nombre_informativa')
+        if nombre_seccion is not None:
+            nombre_seccion = nombre_seccion[2:len(nombre_seccion) - 2].strip()
         else:
-            nombre_informativa = tracker.get_slot("nombre_seccion_editando")
-        inf_section = page.get_section(nombre_informativa)
-        dbm.updt_inf_section(tracker.sender_id, tracker.get_slot("page_name"), tracker.get_slot("nombre_seccion_editando"),  inf_section)
+            nombre_seccion = tracker.get_slot("nombre_seccion_editando")
+        inf_section = page.get_section(nombre_seccion)
+        dbm.updt_inf_section(tracker.sender_id, page_name, tracker.get_slot("nombre_seccion_editando"),  inf_section)
         dispatcher.utter_message(text="Podrás ver la nueva sección en tu página")
         return [SlotSet("editando_seccion_informativa", False)]
 

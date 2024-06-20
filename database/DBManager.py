@@ -5,10 +5,10 @@ from pymongo.mongo_client import MongoClient
 from mongoengine import connect, Document
 
 from resources import CONSTANTS
-from database.collections.general.EcommerceSection import EcommerceSection
 from database.collections.general.User import User
 from database.collections.general.Page import Page
 from database.collections.general.InformativeSection import InformativeSection
+from database.collections.general.EcommerceSection import EcommerceSection
 
 
 class DBManager:
@@ -208,12 +208,11 @@ class DBManager:
         if page:
             old_section_id = page_id + '-' + section_title
             old_section = InformativeSection.objects(id=old_section_id).first()
-            new_section = InformativeSection(id=page_id + '-' + section_title, type="informativa", title=section_title, text=section_text)
-            new_section.save()
-            page.sections = [new_section if section.id == old_section_id else section for section in page.sections]
-            page.lastModificationDate = datetime.datetime.now()
-            page.save()
-            old_section.delete()
+            if old_section:
+                old_section.text = section_text
+                old_section.save()
+                page.lastModificationDate = datetime.datetime.now()
+                page.save()
         else:
             raise Exception("La pagina " + str(page_name) + " no existe o no te pertenece")
 
@@ -221,6 +220,9 @@ class DBManager:
     def get_page_sections(user_id, page_name) -> List[Document]:
         page_id = user_id + '-' + page_name
         page = Page.objects(id=page_id).first()
+        print(page.name)
+        print(page.id)
+        print(page.sections)
         if page:
             expanded_sections = []
             for section in page.sections:

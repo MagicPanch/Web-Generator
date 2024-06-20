@@ -309,12 +309,11 @@ stories:
 
 - story: editar con pagina y componente pero sin seccion
   steps:
-    - intent: modificar_pagina
-    - action: action_capturar_edicion
-    - checkpoint: componente_capturado
     - slot_was_set:
+      - pregunta_edicion: true
+      - pregunta_componente: true
       - pregunta_seccion: true
-    - intent: tipo_seccion
+    - intent: decir_nombre_informativa
     - action: action_capturar_edicion
     - checkpoint: componente_capturado
 

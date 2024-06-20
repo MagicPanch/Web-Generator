@@ -11,8 +11,10 @@ from resources import CONSTANTS, utils
 from database.DBManager import DBManager
 from generator.objects.pages.Front import Front
 import socket
-from generator.objects.sections.EcommerceSection import EcommerceSection
-from generator.objects.sections.InformativeSection import InformativeSection
+from generator.objects.sections.EcommerceSection import EcommerceSection as EcommSectObj
+from generator.objects.sections.InformativeSection import InformativeSection as InfSectObj
+from database.collections.general.InformativeSection import InformativeSection
+from database.collections.general.EcommerceSection import EcommerceSection
 
 
 class PageManager():
@@ -484,13 +486,12 @@ class PageManager():
             dbm = DBManager.get_instance()
             sections = dbm.get_page_sections(user, page_name)
             for section in sections:
-                print(section)
                 if section.type == "informativa":
-                    s = InformativeSection(section.title)
+                    s = InfSectObj(section.title)
                     s.set_text(section.text)
                     page.add_section(s)
                 elif section.type == "ecommerce":
-                    s = EcommerceSection()
+                    s = EcommSectObj()
                     page.add_section(s)
         #Agregarla a la coleccion
         cls._running_pages[(user, page_name)] = cls.Entry(page, None, None)

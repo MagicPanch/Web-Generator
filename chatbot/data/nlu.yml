@@ -25,14 +25,14 @@ nlu:
     - quiero una nueva [seccion](componente)
     - perfecto, quiero una nueva [seccion](componente)
     - quiero otra [seccion](componente) [informativa](seccion)
-    - quiero crear una [seccion](componente) [e-commerce](seccion) en [design-lucas](page_name)
-    - quiero una nueva [seccion](componente) en [test](page_name)
+    - quiero crear una [seccion](componente) [e-commerce](seccion) en [&&design-lucas&&](page_name)
+    - quiero una nueva [seccion](componente) en [&&test&&](page_name)
 
 - intent: modificar_pagina
   examples: |
     - quiero modificar una pagina
-    - quiero modificar [facebook](page_name)
-    - hay que hacerle una modificacion a [twitter](page_name)
+    - quiero modificar [&&facebook&&](page_name)
+    - hay que hacerle una modificacion a [&&twitter&&](page_name)
     - tengo que cambiar algo de una pagina
     - quiero modificar el [logo](componente)
     - editemos el [footer](componente)
@@ -41,10 +41,10 @@ nlu:
     - terminemos el [footer](componente)
     - quiero modificar el [footer](componente)
     - quiero editar el [logo](componente)
-    - quiero modificar la [seccion](componente) [informativa](seccion) de [instagram](page_name)
+    - quiero modificar la [seccion](componente) [informativa](seccion) de [&&instagram&&](page_name)
     - cambia la [seccion](componente) [informativa](seccion)
     - cambiemos la [seccion](componente) [informativa](seccion)
-    - quiero modificar la [seccion](componente) [nosotros](nombre_informativa) en [google](page_name)
+    - quiero modificar la [seccion](componente) [$$¡ofertas!$$](nombre_informativa) en [&&google&&](page_name)
     - quiero modificar la [seccion](componente) [e-commerce](seccion)
     - quiero cambiar los [colores](componente)
 
@@ -56,13 +56,18 @@ nlu:
     - e-commerce(seccion)
     - una [informativa](seccion)
 
+- regex: nombre_informativa
+  examples: |
+    - \$\$(.*?)\$\$
+
 - intent: decir_nombre_informativa
   examples: |
-    - $$ [informativa](nombre_informativa) $$
-    - $$ [productos](nombre_informativa) $$
-    - $$ [¿como comprar?](nombre_informativa) $$
-    - $$ [mi seccion](nombre_informativa) $$
-    - $$ [tutorial](nombre_informativa) $$
+    - [$$informativa$$](nombre_informativa)
+    - [$$productos$$](nombre_informativa)
+    - [$$¿como comprar?$$](nombre_informativa)
+    - [$$mi seccion$$](nombre_informativa)
+    - [$$tutorial$$](nombre_informativa)
+    - [$$prueba 2$$](nombre_informativa)
 
 - regex: texto_informativa
   examples: |
@@ -83,7 +88,7 @@ nlu:
     - quiero agregar un producto a mi tienda
     - quiero cargar productos
     - quiero agregar productos
-    - quiero agregar productos a [design-label](page_name)
+    - quiero agregar productos a [&&design-label&&](page_name)
 
 - regex: productos
   examples: |
@@ -111,20 +116,24 @@ nlu:
     - despues te digo
     - no se que decirte
 
+- regex: page_name
+  examples: |
+    - &&([a-zA-Z0-9\-_]+)&&
+
 - intent: nombre_pagina
   examples: |
-    - www. [design-label](page_name) .com
-    - www. [google](page_name) .com
-    - www. [facebook](page_name) .com
-    - www. [miprimerpagina](page_name) .com
-    - www. [miprimerforo](page_name) .com
-    - www. [pagina1](page_name) .com
-    - www. [borrador](page_name) .com
-    - www. [test](page_name) .com
-    - www. [super_mega_pagina_piola](page_name) .com
-    - el nombre es [youtube](page_name)
-    - la pagina se llama [linkedin](page_name)
-    - [MiTienda](page_name)
+    - [&&design-label&&](page_name)
+    - [&&google&&](page_name)
+    - [&&facebook&&](page_name)
+    - [&&miprimerpagina&&](page_name)
+    - [&&miprimerforo&&](page_name)
+    - [&&pagina1&&](page_name)
+    - [&&borrador&&](page_name)
+    - [&&test&&](page_name)
+    - [&&super_mega_pagina_piola&&](page_name)
+    - el nombre es [&&youtube&&](page_name)
+    - la pagina se llama [&&linkedin&&](page_name)
+    - [&&MiTienda&&](page_name)
 
 - intent: preguntar_paginas_propias
   examples: |
@@ -144,7 +153,7 @@ nlu:
     - mandala a la pagina
     - mandala
     - ponela a correr
-    - ejecuta [test](page_name)
+    - ejecuta [&&test&&](page_name)
     - pagina terminada
     - dame la version final
     - guardala
@@ -154,7 +163,7 @@ nlu:
     - detenela
     - quiero que la apagues
     - apagala
-    - frena [test](page_name)
+    - frena [&&facebook&&](page_name)
 
 - intent: funcionalidad
   examples: |
@@ -306,27 +315,27 @@ nlu:
 
 - lookup: page_name
   examples: |
-    - facebook
-    - instagram
-    - whatsapp
-    - miforo
-    - foroexactas
-    - pagina1
-    - mipagina
-    - borrador
-    - myweb
-    - miprimerpaginaweb
-    - holamundo
-    - opensports
-    - MiTienda
-    - HogarDulceHogar
-    - RinconDeModa
-    - ParaisoDeLibros
-    - TecnologiaYMas
-    - BellezaYCuidado
-    - SaludYBienestar
-    - MundoInfantil
-    - MascotasFelices
-    - DeliciasGourmet
-    - JardineriaCreativa
-    - ViajesYAventuras
+    - &&facebook&&
+    - &&instagram&&
+    - &&whatsapp&&
+    - &&miforo&&
+    - &&foroexactas&&
+    - &&pagina1&&
+    - &&mipagina&&
+    - &&borrador&&
+    - &&myweb&&
+    - &&miprimerpaginaweb&&
+    - &&holamundo&&
+    - &&opensports&&
+    - &&MiTienda&&
+    - &&HogarDulceHogar&&
+    - &&RinconDeModa&&
+    - &&ParaisoDeLibros&&
+    - &&TecnologiaYMas&&
+    - &&BellezaYCuidado&&
+    - &&SaludYBienestar&&
+    - &&MundoInfantil&&
+    - &&MascotasFelices&&
+    - &&DeliciasGourmet&&
+    - &&JardineriaCreativa&&
+    - &&ViajesYAventuras&&

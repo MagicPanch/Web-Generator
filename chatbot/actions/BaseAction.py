@@ -32,10 +32,12 @@ class BaseAction(Action, ABC):
 
         # Verificación del nombre de la página
         page_name = tracker.get_slot("page_name")
-        if page_name is None:
+        if page_name is None or "&&" not in page_name:
         # No hay nombre de página
             page_name = self.capture_page_name(tracker)
             events.append(SlotSet("page_name", page_name))
+        else:
+            page_name = page_name[2:len(page_name) - 2].strip()
         print(f"({threading.current_thread().getName()}) --------page_name: {page_name}----")
 
         # Lógica específica para acciones que no requieren verificación de tutorial
@@ -80,9 +82,9 @@ class BaseAction(Action, ABC):
         pass
 
     def capture_page_name(self, tracker: Tracker):
-        if tracker.latest_message.get("intent").get("name") == "nombre_pagina":
-            regex = r"www\.\s*(.*?)\s*\.com"
-            user_input = tracker.latest_message.get("text")
+        user_input = tracker.latest_message.get("text")
+        if "&&" in user_input:
+            regex = r"&&([a-zA-Z0-9\-_]+)&&"
             match = re.search(regex, user_input)
             if match:
                 return match.group(1)
@@ -92,7 +94,7 @@ class BaseAction(Action, ABC):
         if len(pages) > 0:
             buttons = []
             for page in pages:
-                buttons.append({"payload": "www. " + str(page.name) + " .com", "title": page.name})
+                buttons.append({"payload": "&&" + str(page.name) + "&&", "title": page.name})
             dispatcher.utter_message(text="¿Sobre qué página te gustaría operar? Te recuerdo que tus páginas son:", buttons=buttons, button_type="vertical")
         else:
             dispatcher.utter_message(text="Antes de realizar operaciones sobre una página, debes crear una.")
@@ -107,6 +109,8 @@ class BaseAction(Action, ABC):
             events = self.clear_slots(tracker, domain, slots_to_true=["agregando_productos", "pregunta_nombre"])
         elif self.name() == "action_crear_pagina":
             events = self.clear_slots(tracker, domain, slots_to_true=["creando_pagina", "pregunta_nombre"])
+        elif self.name() == "action_capturar_edicion":
+            events = self.clear_slots(tracker, domain, slots_to_true=["pregunta_nombre"], slots_to_save=["componente", "tipo_seccion", "nombre_informativa"])
         elif self.name() == "action_capturar_tipo_seccion":
             events = self.clear_slots(tracker, domain, slots_to_true=["creando_seccion", "pregunta_nombre"], slots_to_save=["tipo_seccion"], slots_to_set=dict({"componente": "seccion"}))
         else:

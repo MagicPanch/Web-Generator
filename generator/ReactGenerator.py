@@ -210,27 +210,28 @@ class ReactGenerator:
         utils.go_to_main_dir()
 
     @staticmethod
-    def remove_section(page_path, section_name):
+    def remove_section(page_path, section_name, total_remove=True):
         utils.go_to_dir_from_main(page_path)
-        utils.go_to_dir("constants")
-        with open("sections.ts", 'r') as file:
-            lines = file.readlines()
+        if total_remove:
+            utils.go_to_dir("constants")
+            with open("sections.ts", 'r') as file:
+                lines = file.readlines()
 
-        # Encontrar el índice de la definición del array SECTIONS
-        start_index = next(i for i, line in enumerate(lines) if 'export const SECTIONS' in line)
+            # Encontrar el índice de la definición del array SECTIONS
+            start_index = next(i for i, line in enumerate(lines) if 'export const SECTIONS' in line)
 
-        # Buscar la línea a eliminar
-        entry_to_remove = f'  {{ name: "{section_name}", component: "{section_name.replace(" ", "_")}" }},\n'
-        try:
-            lines.remove(entry_to_remove)
-            print(f'Sección "{section_name}" eliminada.')
-        except ValueError:
-            pass
+            # Buscar la línea a eliminar
+            entry_to_remove = f'  {{ name: "{section_name}", component: "{section_name.replace(" ", "_")}" }},\n'
+            try:
+                lines.remove(entry_to_remove)
+                print(f'Sección "{section_name}" eliminada.')
+            except ValueError:
+                pass
 
-        # Escribir los cambios de vuelta al archivo
-        with open("sections.ts", 'w') as file:
-            file.writelines(lines)
-        utils.go_to_dir_from_main(page_path)
+            # Escribir los cambios de vuelta al archivo
+            with open("sections.ts", 'w') as file:
+                file.writelines(lines)
+            utils.go_to_dir_from_main(page_path)
         file_path = os.getcwd() + "\\components\\" + section_name.replace(" ", "_") + ".tsx"
         try:
             os.remove(file_path)
@@ -266,12 +267,18 @@ class ReactGenerator:
             jsx_opening_tag = f'<{tag} className="{tailwind_classes}">'
             jsx_closing_tag = f'</{tag}>'
 
-            html = html.replace(opening_tag, jsx_opening_tag)
-            html = html.replace(closing_tag, jsx_closing_tag)
+            jsx = html.replace('"', '&quot;')
+            jsx = jsx.replace("'", "&apos;")
+            jsx = jsx.replace("&", "&amp;")
+            jsx = jsx.replace("<", "&lt;")
+            jsx = jsx.replace(">", "&gt;")
 
-        return html
+            jsx = jsx.replace(opening_tag, jsx_opening_tag)
+            jsx = jsx.replace(closing_tag, jsx_closing_tag)
+        return jsx
+
     @staticmethod
-    def agregarSectionInformativa(page_path, nombre, contenido):
+    def agregarSectionInformativa(page_path, nombre, contenido, is_update=False):
         html = markdown.markdown(contenido)
         jsx_content = ReactGenerator._convert_html_to_jsx(html)
         tsx_template = f"""
@@ -293,5 +300,6 @@ class ReactGenerator:
         utils.go_to_dir_from_main(page_path)
         with open(os.getcwd() + "\\components\\" + nombre.replace(" ", "_") + ".tsx", "w", encoding="utf-8") as file:
             file.write(tsx_template)
-        ReactGenerator.add_section(page_path, nombre)
+        if not is_update:
+            ReactGenerator.add_section(page_path, nombre)
         utils.go_to_main_dir()
