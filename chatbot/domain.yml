@@ -82,6 +82,18 @@ actions:
   - action_pregunta_3_repetir
   - action_pregunta_4
   - action_pregunta_4_repetir
+  - action_pregunta_5
+  - action_pregunta_5_repetir
+  - action_pregunta_6
+  - action_pregunta_6_repetir
+  - action_pregunta_7
+  - action_pregunta_7_repetir
+  - action_pregunta_8
+  - action_pregunta_8_repetir
+  - action_pregunta_9
+  - action_pregunta_9_repetir
+  - action_pregunta_10
+  - action_pregunta_10_repetir
   - action_terminar_tutorial
   - action_crear_ecommerce
   - action_crear_informativa_1
@@ -301,6 +313,90 @@ slots:
       - type: custom
 
   pregunta_4_repetir_confirmacion:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: custom
+
+  pregunta_5_confirmacion:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: custom
+
+  pregunta_5_repetir_confirmacion:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: custom
+
+  pregunta_6_confirmacion:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: custom
+
+  pregunta_6_repetir_confirmacion:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: custom
+
+  pregunta_7_confirmacion:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: custom
+
+  pregunta_7_repetir_confirmacion:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: custom
+
+  pregunta_8_confirmacion:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: custom
+
+  pregunta_8_repetir_confirmacion:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: custom
+
+  pregunta_9_confirmacion:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: custom
+
+  pregunta_9_repetir_confirmacion:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: custom
+
+  pregunta_10_confirmacion:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: custom
+
+  pregunta_10_repetir_confirmacion:
     type: bool
     influence_conversation: true
     initial_value: false

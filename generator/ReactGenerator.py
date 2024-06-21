@@ -111,6 +111,7 @@ class ReactGenerator:
 
     @staticmethod
     def set_address(page_path, address):
+        print("address en set_address react generator")
         utils.go_to_dir_from_main(page_path)
         utils.go_to_dir("constants")
         text = f"""export const LINK = "{address}";"""
@@ -213,6 +214,7 @@ class ReactGenerator:
     @staticmethod
     def remove_section(page_path, section_name, total_remove=True):
         utils.go_to_dir_from_main(page_path)
+        file_name = section_name.replace(" ", "_").replace("?", "").replace("!", "").replace("¡", "").replace("¿", "")
         if total_remove:
             utils.go_to_dir("constants")
             with open("sections.ts", 'r', encoding='utf-8') as file:
@@ -220,7 +222,6 @@ class ReactGenerator:
 
             # Encontrar el índice de la definición del array SECTIONS
             start_index = next(i for i, line in enumerate(lines) if 'export const SECTIONS' in line)
-            file_name = section_name.replace(" ", "_").replace("?", "").replace("!", "").replace("¡", "").replace("¿", "")
 
             # Buscar la línea a eliminar
             entry_to_remove = f'  {{ name: "{section_name}", component: "{file_name}" }},\n'
@@ -286,7 +287,7 @@ class ReactGenerator:
             const {file_name} = () => {{
             return (
                 <section
-                    className="min-h-screen bg-gradient-to-b from-customColor-100 to-customColor-200 flex flex-col items-center p-8 w-full">
+                    className="min-h-screen bg-gradient-to-b from-customColor-100 to-customColor-900 flex flex-col items-center p-8 w-full">
                     <div className="min-h-screen flex flex-col w-full bg-white rounded-lg shadow-lg p-6 text-left">
                         {jsx_content}
                     </div>

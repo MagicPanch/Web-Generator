@@ -6,15 +6,13 @@
   <component name="ChangeListManager">
     <list default="true" id="121f2593-11ee-405e-a8d8-1c2f43d81e54" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chatbot/actions/BaseAction.py" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/actions/BaseAction.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/chatbot/actions/actions.py" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/actions/actions.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chatbot/config.yml" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/config.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/chatbot/data/nlu.yml" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/data/nlu.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/chatbot/data/stories.yml" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/data/stories.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/chatbot/domain.yml" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/domain.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/generator/PageManager.py" beforeDir="false" afterPath="$PROJECT_DIR$/generator/PageManager.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/generator/ReactGenerator.py" beforeDir="false" afterPath="$PROJECT_DIR$/generator/ReactGenerator.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/webs/base/components/Template.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/webs/base/components/Template.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/webs/base/constants/custom_tailwind_colors.ts" beforeDir="false" afterPath="$PROJECT_DIR$/webs/base/constants/custom_tailwind_colors.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -69,6 +67,7 @@
   <component name="PackageJsonUpdateNotifier">
     <dismissed value="$PROJECT_DIR$/package.json" />
     <dismissed value="$PROJECT_DIR$/user-pages/2086036019/test-lucas/package.json" />
+    <dismissed value="$PROJECT_DIR$/user-pages/2086036019/tutorial/package.json" />
   </component>
   <component name="ProblemsViewState">
     <option name="selectedTabId" value="CurrentFile" />
@@ -235,7 +234,7 @@
       <workItem from="1718754945693" duration="2003000" />
       <workItem from="1718801557663" duration="10721000" />
       <workItem from="1718830918943" duration="11255000" />
-      <workItem from="1718886647068" duration="19190000" />
+      <workItem from="1718886647068" duration="34720000" />
     </task>
     <servers />
   </component>

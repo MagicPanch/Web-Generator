@@ -165,6 +165,7 @@ nlu:
     - pagina terminada
     - dame la version final
     - guardala
+    - guarda los cambios
 
 - intent: detener_pagina
   examples: |
@@ -198,6 +199,10 @@ nlu:
     - photo
     - photo.document
 
+- regex: color
+  examples: |
+    - #([A-Fa-f0-9]{3}|[A-Fa-f0-9]{6})\b
+
 - intent: decir_color
   examples: |
     - color [#4287f5](color)
@@ -210,7 +215,7 @@ nlu:
     - [#a6149c](color)
     - [#120e12](color)
     - [#bfbebd](color)
-    - #fa2100](color)
+    - [#fa2100](color)
 
 - intent: decir_mail
   examples: |

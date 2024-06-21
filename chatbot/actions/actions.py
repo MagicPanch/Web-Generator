@@ -412,6 +412,7 @@ class ActionCapturarColor(Action):
         global pgm, rg
         print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
         color = tracker.get_slot('color')
+
         page_name = tracker.get_slot('page_name')
         if page_name is not None:
             page_name = page_name[2:len(page_name) - 2].strip()
@@ -632,7 +633,6 @@ class ActionPedirProductos(BaseAction):
         global dbm, tbm
         if page_doc.has_ecomm_section:
         # Tiene sección ecommerce
-            print("(" + threading.current_thread().getName() + ") " + "----ACTION PEDIR PRODUCTOS----")
             message = "Podes agregar los productos de a uno o cargar múltiples productos en un archivo de datos y enviármelo. Si optas por la carga mediante archivo, completa la siguiente planilla agregando los datos en una nueva fila. En los campos \"multimedia\" coloca el link a las imágenes o videos del producto"
             dispatcher.utter_message(text=message)
             utils.go_to_main_dir()
@@ -1018,8 +1018,8 @@ class ActionPregunta1(Action):
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
-        dispatcher.utter_message(text="Nuestras páginas se construyen mediante componentes. El primero de ellos es el encabezado, que se encuentra en la parte superior de la página web.")
-        dispatcher.utter_message(text="Este encabezado se compone por el título de la página, el color del título y un logo.")
+        dispatcher.utter_message(text="Antes que nada debes saber que nuestras páginas se conforman por lo que denominamos componentes. A continuación te explicaré cada uno de ellos.")
+        dispatcher.utter_message(text="El primero de ellos es el color, el cual puedes modificar con tan solo pedirmelo.")
         dispatcher.utter_message(text="¿Entendido?")
         return [SlotSet("pregunta_1_confirmacion", True)]
 
@@ -1031,10 +1031,9 @@ class ActionPregunta1Repetir(Action):
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
-        url_imagen = "https://ibb.co/dmsX1jY"
-        dispatcher.utter_message(image=url_imagen)
-        dispatcher.utter_message(text="En la imagen que esta arriba es un ejemplo de como esta formado el encabezado")
-        dispatcher.utter_message(text="Este encabezado se compone por el título de la página, el color del título y un logo.")
+        dispatcher.utter_message(text="Enviandome un mensaje como \"Quiero cambiar el color de mi pagina\" te solicitaré el valor en formato hexadecimal del color que desees y se aplicará a tu página.")
+        dispatcher.utter_message(text="En este gif se aprecia el cambio de color tras enviarme el color \"#e62c0b\"")
+        dispatcher.utter_message(attachment="https://imgur.com/a/hj8ONLT")
         dispatcher.utter_message(text="¿Entendido?")
         return [SlotSet("pregunta_1_confirmacion", False), SlotSet("pregunta_1_repetir_confirmacion", True)]
 
@@ -1046,9 +1045,7 @@ class ActionPregunta2(Action):
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
-        dispatcher.utter_message(text="El siguiente componente de nuestras páginas es el cuerpo, el cual dividimos según 3 tipos de secciones: e-commerce e informativa.")
-        dispatcher.utter_message(text="Seccion e-commerce: \nEsta sección te permite montar una tienda en tu página, cargar productos y que los usuarios puedan comprarlos.")
-        dispatcher.utter_message(text="Seccion informativa: \nEsta sección te permite incluir información sobre tu página o empresa, incluyendo un texto informativo e imágenes.")
+        dispatcher.utter_message(text="El siguiente componente es el logo. Este debe ser una imagen en formato \".png\". Puedes pedirme que modifique el logo de tu página cuando lo desees.")
         dispatcher.utter_message(text="¿Entendido?")
         return [SlotSet("pregunta_2_confirmacion", True), SlotSet("pregunta_2_repetir_confirmacion", False)]
 
@@ -1060,15 +1057,9 @@ class ActionPregunta2Repetir(Action):
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
-        url_imagen = "https://ibb.co/gTbpK4J"
-        dispatcher.utter_message(text="Nuestras páginas cuentan con múltiples secciones.")
-        dispatcher.utter_message(image=url_imagen)
-        url_imagen = "https://ibb.co/7bn2vC6"
-        dispatcher.utter_message(text="La sección e-commerce cuenta con productos y un buscardor.")
-        dispatcher.utter_message(image=url_imagen)
-        url_imagen = "https://ibb.co/Drtg946"
-        dispatcher.utter_message(text="La sección informativa muestra información sobre tu página o empresa.")
-        dispatcher.utter_message(image=url_imagen)
+        dispatcher.utter_message(text="Enviandome un mensaje como \"Quiero cambiar el logo de mi pagina\" te solicitaré que me envíes una imagen para utilizar como el nuevo logo.")
+        dispatcher.utter_message(text="En este gif se aprecia el cambio de logo tras enviar una imagen como documento.")
+        dispatcher.utter_message(attachment="https://imgur.com/a/eidSQxP")
         dispatcher.utter_message(text="¿Entendido?")
         return [SlotSet("pregunta_2_confirmacion", False), SlotSet("pregunta_2_repetir_confirmacion", True)]
 
@@ -1079,8 +1070,9 @@ class ActionPregunta3(Action):
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
-        dispatcher.utter_message(text="Finalmente llegamos al footer, que es el componente de la página encontrado al final de la misma.")
-        dispatcher.utter_message(text="Este se compone por el informacion del contacto, licencias y más.")
+        dispatcher.utter_message(text="El siguiente componente de nuestras páginas es el cuerpo, el cual dividimos según secciones de dos tipos: e-commerce e informativa.")
+        dispatcher.utter_message(text="Seccion e-commerce:\nEsta sección te permite montar una tienda en tu página, cargar productos y que los usuarios puedan comprarlos. Cada página puede tener una única sección de e-commerce")
+        dispatcher.utter_message(text="Seccion informativa:\nEsta sección te permite incluir información sobre tu página o empresa. Una página puede tener múltiples secciones informativas con distintos nombres.")
         dispatcher.utter_message(text="¿Entendido?")
         return [SlotSet("pregunta_2_confirmacion", False), SlotSet("pregunta_2_repetir_confirmacion", False), SlotSet("pregunta_3_confirmacion", True)]
 
@@ -1092,9 +1084,11 @@ class ActionPregunta3Repetir(Action):
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
-        url_imagen = "https://ibb.co/QJ5dTX7"
-        dispatcher.utter_message(text="El footer es el pie de página de tu web y en él podes modificar los datos de contacto de tu página o empresa.")
-        dispatcher.utter_message(image=url_imagen)
+        dispatcher.utter_message(text="El cuerpo de nuestras páginas está compuesto por secciones de tipo informativas o de e-commerce. Avanzando en el tutorial te explicaré cómo crear y modificar estas secciones.")
+        dispatcher.utter_message(text="Así es como se ve una sección de tipo informativa")
+        dispatcher.utter_message(attachment="https://imgur.com/a/pcPbh0D")
+        dispatcher.utter_message(text="Y así es como se ve una sección e-commerce")
+        dispatcher.utter_message(attachment="https://imgur.com/a/jynPJTW")
         dispatcher.utter_message(text="¿Entendido?")
         return [SlotSet("pregunta_3_confirmacion", False), SlotSet("pregunta_3_repetir_confirmacion", True)]
 
@@ -1105,8 +1099,8 @@ class ActionPregunta4(Action):
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
-        dispatcher.utter_message(text="Al crear una página, los componentes encabezado y footer ya estarán incluídos pero las secciones no. Para agregar una nueva sección a tu página deberás pedirmelo.")
-        dispatcher.utter_message(text="Esto no quita el hecho de que puedan modificarse. En cualquier momento podes pedirme que modifique el encabezado, el footer o una sección.")
+        dispatcher.utter_message(text="Finalmente llegamos al footer, que es el componente de la página encontrado al final de la misma.")
+        dispatcher.utter_message(text="Este se compone por el informacion del contacto, licencias y más.")
         dispatcher.utter_message(text="¿Entendido?")
         return [SlotSet("pregunta_3_confirmacion", False), SlotSet("pregunta_3_repetir_confirmacion", False), SlotSet("pregunta_4_confirmacion", True)]
 
@@ -1118,12 +1112,152 @@ class ActionPregunta4Repetir(Action):
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
-        dispatcher.utter_message(text="Todos los componentes de una página pueden ser modificados una vez creados")
-        dispatcher.utter_message(text="Encabezado: Puedes modificar su logotipo y el color del título.")
-        dispatcher.utter_message(text="Sección informativa: Podes modificar su título y contenido, modificando el texto o agregando imágenes.")
-        dispatcher.utter_message(text="Footer: Podes modificar tus datos de contacto (e-mail y ubicación)")
+        dispatcher.utter_message(text="El footer es el pie de página de tu web y en él podes modificar los datos de contacto de tu página o empresa.")
         dispatcher.utter_message(text="¿Entendido?")
         return [SlotSet("pregunta_4_confirmacion", False), SlotSet("pregunta_4_repetir_confirmacion", True)]
+
+class ActionPregunta5(Action):
+
+    def name(self) -> Text:
+        return "action_pregunta_5"
+
+    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
+        dispatcher.utter_message(text="Ya repasamos cuales son los componentes de una página, por lo que el siguiente paso es aprender a crear una página.")
+        dispatcher.utter_message(text="Para ello sólo es necesario un mensaje como \"Quiero crear una pagina\" y yo te preguntaré cuál será su nombre.")
+        return [SlotSet("pregunta_4_confirmacion", False), SlotSet("pregunta_4_repetir_confirmacion", False), SlotSet("pregunta_5_confirmacion", True)]
+
+class ActionPregunta5Repetir(Action):
+
+    def name(self) -> Text:
+        return "action_pregunta_5_repetir"
+
+    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
+        dispatcher.utter_message(text="Si me envias un mensaje como \"Quiero crear una pagina\" o \"Quiero una nueva pagina\" iniciaremos el proceso de creación de tu página web. Deberás proporcionarme un nombre, el cuál siempre que lo utilices deberás encerrar entre \"&&\".")
+        dispatcher.utter_message(text="Por ejemplo, un nombre válido para una página puede ser \"DesignLabel\". Sin embargo, para que yo pueda interpretarlo inequivocamente necesito que lo escribas como \"&&DesignLabel&&\"")
+        dispatcher.utter_message(text="¿Entendido?")
+        return [SlotSet("pregunta_5_confirmacion", False), SlotSet("pregunta_5_repetir_confirmacion", True)]
+
+class ActionPregunta6(Action):
+
+    def name(self) -> Text:
+        return "action_pregunta_6"
+
+    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
+        dispatcher.utter_message(text="Con tu página ya creada, el siguiente paso es crear una sección. Puedes iniciar este proceso con un mensaje como \"Quiero crear una seccion\".")
+        dispatcher.utter_message(text="Luego podrás decidir si la nueva sección será de tipo informativa o e-commerce.")
+        dispatcher.utter_message(text="¿Entendido?")
+        return [SlotSet("pregunta_5_confirmacion", False), SlotSet("pregunta_5_repetir_confirmacion", False), SlotSet("pregunta_6_confirmacion", True)]
+
+class ActionPregunta6Repetir(Action):
+
+    def name(self) -> Text:
+        return "action_pregunta_6_repetir"
+
+    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
+        dispatcher.utter_message(text="Si me envias un mensaje como \"Quiero crear una seccion\" o \"Quiero una nueva seccion\" iniciaremos el proceso de creación de una sección.")
+        dispatcher.utter_message(text="De esta manera se crea una sección informativa. Notarás que debes proporcionar un nombre, el cual deberás encerrar entre \"$$\".")
+        dispatcher.utter_message(attachment="https://imgur.com/a/tutorial-creacion-informativa-zTNyqbK") #PONER GIF CREACION INFORMATIVA
+        dispatcher.utter_message(text="Y así es como se crea una sección e-commerce.")
+        dispatcher.utter_message(attachment="https://imgur.com/a/GbzaISH")
+        dispatcher.utter_message(text="¿Entendido?")
+        return [SlotSet("pregunta_6_confirmacion", False), SlotSet("pregunta_6_repetir_confirmacion", True)]
+
+class ActionPregunta7(Action):
+
+    def name(self) -> Text:
+        return "action_pregunta_7"
+
+    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
+        dispatcher.utter_message(text="Ya sabes como crear una sección, ahora te mostraré como modificarlas, comenzando por la modificación de una sección informativa.")
+        dispatcher.utter_message(text="Para ello deberás enviarme un mensaje como \"Quiero modificar una seccion\" o \"Quiero modificar la seccion $$¿Como comprar?$$\". Luego podrás proporcionarme el nuevo contenido de la sección en particular.")
+        dispatcher.utter_message(text="¿Entendido?")
+        return [SlotSet("pregunta_6_confirmacion", False), SlotSet("pregunta_6_repetir_confirmacion", False), SlotSet("pregunta_7_confirmacion", True)]
+
+class ActionPregunta7Repetir(Action):
+
+    def name(self) -> Text:
+        return "action_pregunta_7_repetir"
+
+    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
+        dispatcher.utter_message(text="En este video podrás ver el proceso de edición de una sección informativa. Solo necesitas especificarme cuál es la sección a modificar y proporcionarme su nuevo contenido.")
+        dispatcher.utter_message(attachment="https://imgur.com/a/gTU9XHs")
+        dispatcher.utter_message(text="¿Entendido?")
+        return [SlotSet("pregunta_7_confirmacion", False), SlotSet("pregunta_7_repetir_confirmacion", True)]
+
+class ActionPregunta8(Action):
+
+    def name(self) -> Text:
+        return "action_pregunta_8"
+
+    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
+        dispatcher.utter_message(text="En el caso de las secciones e-commerce, estas pueden modificarse cargando productos. Para ello deberás enviarme un mensaje como \"Quiero cargar productos\" y yo te indicaré como avanzar.")
+        dispatcher.utter_message(text="¿Entendido?")
+        return [SlotSet("pregunta_7_confirmacion", False), SlotSet("pregunta_7_repetir_confirmacion", False), SlotSet("pregunta_8_confirmacion", True)]
+
+class ActionPregunta8Repetir(Action):
+
+    def name(self) -> Text:
+        return "action_pregunta_8_repetir"
+
+    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
+        dispatcher.utter_message(text="Si quieres cargar productos en la sección e-commerce de tu página podes hacerlo tal como se muestra en este video.")
+        dispatcher.utter_message(attachment="https://imgur.com/a/moNsHoW") #PONER GIF CARGA PRODUCTOS
+        dispatcher.utter_message(text="¿Entendido?")
+        return [SlotSet("pregunta_8_confirmacion", False), SlotSet("pregunta_8_repetir_confirmacion", True)]
+
+class ActionPregunta9(Action):
+
+    def name(self) -> Text:
+        return "action_pregunta_9"
+
+    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
+        dispatcher.utter_message(text="Para este punto solo queda guardar los cambios realizados a tu página. Para ello enviame un mensaje como \"Ejecutala\" o \"Guarda los cambios\" y se creará una versión optimizada de tu página.")
+        dispatcher.utter_message(text="Siempre que quieras podrás volver a modificarla tan solo solicitándolo como te mostré en los pasos anteriores del tutorial.")
+        dispatcher.utter_message(text="¿Entendido?")
+        return [SlotSet("pregunta_8_confirmacion", False), SlotSet("pregunta_8_repetir_confirmacion", False), SlotSet("pregunta_9_confirmacion", True)]
+
+class ActionPregunta9Repetir(Action):
+
+    def name(self) -> Text:
+        return "action_pregunta_9_repetir"
+
+    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
+        dispatcher.utter_message(text="Durante el proceso de creación o modificación de tu página, esta se encuentra en modo edición y no es la versión final de la misma. Para obtener la versión final de tu página debes enviarme un mensaje como \"Ejecutala\" o \"Guarda los cambios\".")
+        dispatcher.utter_message(text="¿Entendido?")
+        return [SlotSet("pregunta_9_confirmacion", False), SlotSet("pregunta_9_repetir_confirmacion", True)]
+
+class ActionPregunta10(Action):
+
+    def name(self) -> Text:
+        return "action_pregunta_10"
+
+    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
+        dispatcher.utter_message(text="Si por algún motivo queres apagar tu página web, solo debes pedirmelo enviando un mensaje como \"Apagala\" o \"Quiero que apagues $$nombre-pagina$$\".")
+        dispatcher.utter_message(text="Podrás volver a poner tu página en ejecución si me pides que la ejecute, tal como te expliqué en el paso anterior del tutorial.")
+        dispatcher.utter_message(text="¿Entendido?")
+        return [SlotSet("pregunta_9_confirmacion", False), SlotSet("pregunta_9_repetir_confirmacion", False), SlotSet("pregunta_10_confirmacion", True)]
+
+class ActionPregunta10Repetir(Action):
+
+    def name(self) -> Text:
+        return "action_pregunta_10_repetir"
+
+    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
+        dispatcher.utter_message(text="Podes apagar tu página para que esta no esté disponible para otros usuarios. Si en otro momento deseas que esta vuelva a estar en línea, podes pedirmelo con un mensaje como \"Ejecutala\".")
+        dispatcher.utter_message(text="¿Entendido?")
+        return [SlotSet("pregunta_10_confirmacion", False), SlotSet("pregunta_10_repetir_confirmacion", True)]
 
 class ActionTerminarTutorial(Action):
 
