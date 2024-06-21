@@ -11,8 +11,10 @@ from resources import CONSTANTS, utils
 from database.DBManager import DBManager
 from generator.objects.pages.Front import Front
 import socket
-from generator.objects.sections.EcommerceSection import EcommerceSection
-from generator.objects.sections.InformativeSection import InformativeSection
+from generator.objects.sections.EcommerceSection import EcommerceSection as EcommSectObj
+from generator.objects.sections.InformativeSection import InformativeSection as InfSectObj
+from database.collections.general.InformativeSection import InformativeSection
+from database.collections.general.EcommerceSection import EcommerceSection
 
 
 class PageManager():
@@ -44,6 +46,7 @@ class PageManager():
 
     _instance = None
     _running_pages: Dict[Tuple[str, str], Entry]= {}
+    _used_ports = {}
     _tunnel_pwd:str = None
 
     @classmethod
@@ -78,7 +81,7 @@ class PageManager():
     @classmethod
     def _get_port(cls) -> int:
         port = random.randint(CONSTANTS.MIN_PORT, CONSTANTS.MAX_PORT)
-        if not cls._is_port_in_use(port):
+        if not cls._is_port_in_use(port) and port not in cls._used_ports:
             return port
         else:
             return cls._get_port()
@@ -344,9 +347,6 @@ class PageManager():
         #Posicionarse en el path donde se creara el proyecto
         path = cls.get_page_path(user, page_name)
         page = cls.get_page(user, page_name)
-        if page.has_ecomm_section():
-            rg = ReactGenerator.get_instance()
-            rg.set_address(page_path=path, address=cls.get_page(user, page_name).get_page_address())
 
         utils.go_to_dir_from_main(path)
 
@@ -484,13 +484,12 @@ class PageManager():
             dbm = DBManager.get_instance()
             sections = dbm.get_page_sections(user, page_name)
             for section in sections:
-                print(section)
                 if section.type == "informativa":
-                    s = InformativeSection(section.title)
+                    s = InfSectObj(section.title)
                     s.set_text(section.text)
                     page.add_section(s)
                 elif section.type == "ecommerce":
-                    s = EcommerceSection()
+                    s = EcommSectObj()
                     page.add_section(s)
         #Agregarla a la coleccion
         cls._running_pages[(user, page_name)] = cls.Entry(page, None, None)

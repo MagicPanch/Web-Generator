@@ -5,10 +5,10 @@ from pymongo.mongo_client import MongoClient
 from mongoengine import connect, Document
 
 from resources import CONSTANTS
-from database.collections.general.EcommerceSection import EcommerceSection
 from database.collections.general.User import User
 from database.collections.general.Page import Page
 from database.collections.general.InformativeSection import InformativeSection
+from database.collections.general.EcommerceSection import EcommerceSection
 
 
 class DBManager:
@@ -208,12 +208,11 @@ class DBManager:
         if page:
             old_section_id = page_id + '-' + section_title
             old_section = InformativeSection.objects(id=old_section_id).first()
-            new_section = InformativeSection(id=page_id + '-' + section_title, type="informativa", title=section_title, text=section_text)
-            new_section.save()
-            page.sections = [new_section if section.id == old_section_id else section for section in page.sections]
-            page.lastModificationDate = datetime.datetime.now()
-            page.save()
-            old_section.delete()
+            if old_section:
+                old_section.text = section_text
+                old_section.save()
+                page.lastModificationDate = datetime.datetime.now()
+                page.save()
         else:
             raise Exception("La pagina " + str(page_name) + " no existe o no te pertenece")
 
@@ -221,6 +220,9 @@ class DBManager:
     def get_page_sections(user_id, page_name) -> List[Document]:
         page_id = user_id + '-' + page_name
         page = Page.objects(id=page_id).first()
+        print(page.name)
+        print(page.id)
+        print(page.sections)
         if page:
             expanded_sections = []
             for section in page.sections:
@@ -230,24 +232,24 @@ class DBManager:
             raise Exception("La pagina " + str(page_name) + " no existe o no te pertenece")
 
     @classmethod
-    def add_product(cls, user_id, page_name, cant, title, desc, precio) -> int:
+    def add_product(cls, user_id, page_name, sku, cant, title, desc, precio):
         page_id = user_id + '-' + page_name
         page = Page.objects(id=page_id).first()
         if page:
-            p_id = page.product_counter
             collection = cls.get_instance()._db[page_id]
             if collection:
-                product = {
-                    "key": p_id,
-                    "stock": cant,
-                    "name": title,
-                    "desc": desc,
-                    "price": precio,
-                }
-                collection.insert_one(product)
-                page.product_counter += 1
-                page.save()
-            return p_id
+                product = collection.find_one({'_id': sku})
+                if product:
+                    collection.update_one({"_id": sku}, {"$set": {"stock": product["stock"] + cant, "name": title, "desc": desc, "price": precio}})
+                else:
+                    product = {
+                        "_id": sku,
+                        "stock": cant,
+                        "name": title,
+                        "desc": desc,
+                        "price": precio,
+                    }
+                    collection.insert_one(product)
         else:
             raise Exception("La pagina " + str(page) + " no existe o no te pertenece")
 
@@ -256,5 +258,5 @@ class DBManager:
         page_id = user_id + '-' + page_name
         collection = cls.get_instance()._db[page_id]
         if collection:
-            collection.update_one({"key": product}, {"$set": {"multimedia": media_url}})
+            collection.update_one({"_id": product}, {"$set": {"multimedia": media_url}})
 

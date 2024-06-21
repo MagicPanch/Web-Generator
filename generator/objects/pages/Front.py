@@ -58,7 +58,9 @@ class Front(PageRunner):
         self._sections.append(section)
 
     def get_section(self, section_title) -> Section:
+        print("en get_section")
         for section in self._sections:
+            print(section.get_title())
             if section.get_title() == section_title:
                 return section
         else:

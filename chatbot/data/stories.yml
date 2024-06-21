@@ -59,7 +59,7 @@ stories:
 
 ## INICIAR TUTORIAL
 
-### PREGUNTA 1(ENCABEZADO)
+### PREGUNTA 1
 
 - story: Entiende 1
   steps:
@@ -87,7 +87,7 @@ stories:
     - intent: afirmar
     - checkpoint: pregunta_1_entendida
 
-### PREGUNTA 2(SECCIONES)
+### PREGUNTA 2
 
 - story: Entiende 2
   steps:
@@ -112,7 +112,7 @@ stories:
     - checkpoint: pregunta_2_entendida
 
 
-### PREGUNTA 3(FOOTER)
+### PREGUNTA 3
 
 - story: Entiende 3
   steps:
@@ -136,7 +136,7 @@ stories:
     - intent: afirmar
     - checkpoint: pregunta_3_entendida
 
-### PREGUNTA 3(MODIFICACIONES)
+### PREGUNTA 4
 
 - story: Entiende 4
   steps:
@@ -152,20 +152,187 @@ stories:
     - checkpoint: pregunta_3_entendida
     - action: action_pregunta_4
     - slot_was_set:
-      - pregunta_3_confirmacion: true
+      - pregunta_4_confirmacion: true
     - intent: denegar
     - action: action_pregunta_4_repetir
     - slot_was_set:
-      - pregunta_3_repetir_confirmacion: true
+      - pregunta_4_repetir_confirmacion: true
     - intent: afirmar
     - checkpoint: pregunta_4_entendida
 
+### PREGUNTA 5
+
+- story: Entiende 5
+  steps:
+    - checkpoint: pregunta_4_entendida
+    - action: action_pregunta_5
+    - slot_was_set:
+      - pregunta_5_confirmacion: true
+    - intent: afirmar
+    - checkpoint: pregunta_5_entendida
+
+- story: No entiende 5
+  steps:
+    - checkpoint: pregunta_4_entendida
+    - action: action_pregunta_5
+    - slot_was_set:
+      - pregunta_5_confirmacion: true
+    - intent: denegar
+    - action: action_pregunta_5_repetir
+    - slot_was_set:
+      - pregunta_5_repetir_confirmacion: true
+    - intent: afirmar
+    - checkpoint: pregunta_5_entendida
+
+### PREGUNTA 6
+
+- story: Entiende 6
+  steps:
+    - checkpoint: pregunta_5_entendida
+    - action: action_pregunta_6
+    - slot_was_set:
+      - pregunta_6_confirmacion: true
+    - intent: afirmar
+    - checkpoint: pregunta_5_entendida
+
+- story: No entiende 6
+  steps:
+    - checkpoint: pregunta_5_entendida
+    - action: action_pregunta_6
+    - slot_was_set:
+      - pregunta_6_confirmacion: true
+    - intent: denegar
+    - action: action_pregunta_6_repetir
+    - slot_was_set:
+      - pregunta_6_repetir_confirmacion: true
+    - intent: afirmar
+    - checkpoint: pregunta_6_entendida
+
+### PREGUNTA 6
+
+- story: Entiende 6
+  steps:
+    - checkpoint: pregunta_5_entendida
+    - action: action_pregunta_6
+    - slot_was_set:
+      - pregunta_6_confirmacion: true
+    - intent: afirmar
+    - checkpoint: pregunta_6_entendida
+
+- story: No entiende 6
+  steps:
+    - checkpoint: pregunta_5_entendida
+    - action: action_pregunta_6
+    - slot_was_set:
+      - pregunta_6_confirmacion: true
+    - intent: denegar
+    - action: action_pregunta_6_repetir
+    - slot_was_set:
+      - pregunta_6_repetir_confirmacion: true
+    - intent: afirmar
+    - checkpoint: pregunta_6_entendida
+
+### PREGUNTA 7
+
+- story: Entiende 7
+  steps:
+    - checkpoint: pregunta_6_entendida
+    - action: action_pregunta_7
+    - slot_was_set:
+      - pregunta_7_confirmacion: true
+    - intent: afirmar
+    - checkpoint: pregunta_7_entendida
+
+- story: No entiende 7
+  steps:
+    - checkpoint: pregunta_6_entendida
+    - action: action_pregunta_7
+    - slot_was_set:
+      - pregunta_7_confirmacion: true
+    - intent: denegar
+    - action: action_pregunta_7_repetir
+    - slot_was_set:
+      - pregunta_7_repetir_confirmacion: true
+    - intent: afirmar
+    - checkpoint: pregunta_7_entendida
+
+### PREGUNTA 8
+
+- story: Entiende 8
+  steps:
+    - checkpoint: pregunta_7_entendida
+    - action: action_pregunta_8
+    - slot_was_set:
+      - pregunta_8_confirmacion: true
+    - intent: afirmar
+    - checkpoint: pregunta_8_entendida
+
+- story: No entiende 8
+  steps:
+    - checkpoint: pregunta_7_entendida
+    - action: action_pregunta_8
+    - slot_was_set:
+      - pregunta_8_confirmacion: true
+    - intent: denegar
+    - action: action_pregunta_8_repetir
+    - slot_was_set:
+      - pregunta_8_repetir_confirmacion: true
+    - intent: afirmar
+    - checkpoint: pregunta_8_entendida
+
+### PREGUNTA 9
+
+- story: Entiende 9
+  steps:
+    - checkpoint: pregunta_8_entendida
+    - action: action_pregunta_9
+    - slot_was_set:
+      - pregunta_9_confirmacion: true
+    - intent: afirmar
+    - checkpoint: pregunta_9_entendida
+
+- story: No entiende 9
+  steps:
+    - checkpoint: pregunta_8_entendida
+    - action: action_pregunta_9
+    - slot_was_set:
+      - pregunta_9_confirmacion: true
+    - intent: denegar
+    - action: action_pregunta_9_repetir
+    - slot_was_set:
+      - pregunta_9_repetir_confirmacion: true
+    - intent: afirmar
+    - checkpoint: pregunta_9_entendida
+
+### PREGUNTA 10
+
+- story: Entiende 10
+  steps:
+    - checkpoint: pregunta_9_entendida
+    - action: action_pregunta_10
+    - slot_was_set:
+      - pregunta_10_confirmacion: true
+    - intent: afirmar
+    - checkpoint: pregunta_10_entendida
+
+- story: No entiende 10
+  steps:
+    - checkpoint: pregunta_9_entendida
+    - action: action_pregunta_10
+    - slot_was_set:
+      - pregunta_10_confirmacion: true
+    - intent: denegar
+    - action: action_pregunta_10_repetir
+    - slot_was_set:
+      - pregunta_10_repetir_confirmacion: true
+    - intent: afirmar
+    - checkpoint: pregunta_10_entendida
 
 ## TERMINAR TUTORIAL
 
 - story: terminar tutorial
   steps:
-    - checkpoint: pregunta_4_entendida
+    - checkpoint: pregunta_10_entendida
     - action: action_terminar_tutorial
 
 # CREACION
@@ -202,6 +369,7 @@ stories:
   steps:
     - slot_was_set:
         - pregunta_nombre: true
+        - creando_pagina: true
     - intent: nombre_pagina
     - action: action_crear_pagina  #Aca se crea el proyecto y se guarda la pagina en la DB. Posteriormente se ejecuta en modo DEV
     - slot_was_set:
@@ -211,6 +379,7 @@ stories:
   steps:
     - slot_was_set:
         - pregunta_nombre: true
+        - creando_pagina: true
     - intent: nombre_pagina
     - action: action_crear_pagina  #Aca se detecta el conflicto con el nombre y se le repregunta al usuario
     - slot_was_set:
@@ -246,7 +415,7 @@ stories:
 - story: crear seccion informativa 1
   steps:
     - slot_was_set:
-      - componente: seccion
+      - tipo_seccion: informativa
       - creando_seccion_informativa: true
       - pregunta_nombre_informativa: true
     - or:
@@ -259,16 +428,14 @@ stories:
   steps:
     - checkpoint: crear_informativa_1
     - slot_was_set:
-      - componente: seccion
+      - tipo_seccion: informativa
       - creando_seccion_informativa: true
       - pregunta_nombre_informativa: false
       - pide_text_informativa: true
-    - intent: decir_texto_informativa
+    - or:
+      - intent: decir_texto_informativa
+      - intent: decir_texto_informativa_archivo
     - action: action_crear_informativa_3
-    - slot_was_set:
-      - creando_seccion: false
-      - creando_seccion_informativa: false
-      - pide_text_informativa: false
 
 # EDICION
 
@@ -291,8 +458,9 @@ stories:
 - story: editar sin pagina y con componente
   steps:
     - intent: modificar_pagina
+    - action: action_capturar_edicion
     - slot_was_set:
-      - pregunta_nombre: true
+      - pregunta_nombre_edicion: true
     - intent: nombre_pagina
     - action: action_capturar_edicion
     - checkpoint: componente_capturado
@@ -309,12 +477,10 @@ stories:
 
 - story: editar con pagina y componente pero sin seccion
   steps:
-    - intent: modificar_pagina
-    - action: action_capturar_edicion
-    - checkpoint: componente_capturado
     - slot_was_set:
+      - pregunta_componente: true
       - pregunta_seccion: true
-    - intent: tipo_seccion
+    - intent: decir_nombre_informativa
     - action: action_capturar_edicion
     - checkpoint: componente_capturado
 
@@ -408,6 +574,7 @@ stories:
       - pide_text_informativa: true
     - or:
       - intent: decir_texto_informativa
+      - intent: decir_texto_informativa_archivo
       - intent: despues_te_digo
       - intent: denegar
     - action: action_modificar_informativa_2
@@ -436,7 +603,7 @@ stories:
     - action: action_pedir_productos
     - checkpoint: productos_pedidos
 
-- story: agregar productos con archivo
+- story: agregar productos
   steps:
     - checkpoint: productos_pedidos
     - slot_was_set:
@@ -584,28 +751,7 @@ stories:
     - intent: saludo
     - action: action_saludo_telegram #Aca se guarda al usuario en la DB
 
-- story: Como estas
-  steps:
-    - intent: como_estas
-    - action: utter_como_estas
-
 - story: Finalizacion de charla
   steps:
     - intent: despedidasc
     - action: action_despedida_telegram
-
-#Stories randoms
-- story: Contestar risa
-  steps:
-    - intent: reirse
-    - action: utter_reirse
-
-- story: Agradecer
-  steps:
-    - intent: me_alegro
-    - action: utter_me_alegro
-
-- story: Decir nombre
-  steps:
-    - intent: decir_nombre
-    - action: utter_decir_nombre

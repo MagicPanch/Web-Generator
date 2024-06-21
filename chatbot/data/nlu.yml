@@ -3,14 +3,34 @@ nlu:
 - intent: start
   examples: |
     - /start
+    - /Start
+    - /START
 
 - intent: restart
   examples: |
     - /restart
+    - /Restart
+    - /RESTART
+
 
 - regex: page_name
   examples: |
-    - '^[a-zA-Z0-9-_]+$'
+    - &&([a-zA-Z0-9\-_]+)&&
+
+- intent: nombre_pagina
+  examples: |
+    - [&&design-label&&](page_name)
+    - [&&google&&](page_name)
+    - [&&facebook&&](page_name)
+    - [&&miprimerpagina&&](page_name)
+    - [&&miprimerforo&&](page_name)
+    - [&&pagina1&&](page_name)
+    - [&&borrador&&](page_name)
+    - [&&test&&](page_name)
+    - [&&super_mega_pagina_piola&&](page_name)
+    - el nombre es [&&youtube&&](page_name)
+    - la pagina se llama [&&linkedin&&](page_name)
+    - [&&MiTienda&&](page_name)
 
 - intent: crear_algo
   examples: |
@@ -25,14 +45,14 @@ nlu:
     - quiero una nueva [seccion](componente)
     - perfecto, quiero una nueva [seccion](componente)
     - quiero otra [seccion](componente) [informativa](seccion)
-    - quiero crear una [seccion](componente) [e-commerce](seccion) en [design-lucas](page_name)
-    - quiero una nueva [seccion](componente) en [test](page_name)
+    - quiero crear una [seccion](componente) [e-commerce](seccion)
+    - quiero una nueva [seccion](componente)
 
 - intent: modificar_pagina
   examples: |
     - quiero modificar una pagina
-    - quiero modificar [facebook](page_name)
-    - hay que hacerle una modificacion a [twitter](page_name)
+    - quiero modificar [&&facebook&&](page_name)
+    - hay que hacerle una modificacion a [&&twitter&&](page_name)
     - tengo que cambiar algo de una pagina
     - quiero modificar el [logo](componente)
     - editemos el [footer](componente)
@@ -41,11 +61,12 @@ nlu:
     - terminemos el [footer](componente)
     - quiero modificar el [footer](componente)
     - quiero editar el [logo](componente)
-    - quiero modificar la [seccion](componente) [informativa](seccion) de [instagram](page_name)
+    - quiero modificar la [seccion](componente) [informativa](seccion) de [&&instagram&&](page_name)
     - cambia la [seccion](componente) [informativa](seccion)
     - cambiemos la [seccion](componente) [informativa](seccion)
-    - quiero modificar la [seccion](componente) [nosotros](nombre_informativa) en [google](page_name)
+    - quiero modificar la [seccion](componente) [$$¡ofertas!$$](nombre_informativa) en [&&google&&](page_name)
     - quiero modificar la [seccion](componente) [e-commerce](seccion)
+    - quiero cambiar los [colores](componente)
 
 - intent: tipo_seccion
   examples: |
@@ -55,39 +76,64 @@ nlu:
     - e-commerce(seccion)
     - una [informativa](seccion)
 
+- regex: nombre_informativa
+  examples: |
+    - \$\$(.*?)\$\$
+
 - intent: decir_nombre_informativa
   examples: |
-    - el nombre es [nosotros](nombre_informativa)
-    - ponele [quienes somos](nombre_informativa)
-    - el titulo es [sobre nosotros](nombre_informativa)
-    - que se llame [productos](nombre_informativa)
+    - [$$informativa$$](nombre_informativa)
+    - [$$productos$$](nombre_informativa)
+    - [$$¿como comprar?$$](nombre_informativa)
+    - [$$mi seccion$$](nombre_informativa)
+    - [$$tutorial$$](nombre_informativa)
+    - [$$prueba 2$$](nombre_informativa)
+
+- regex: decir_texto_informativa
+  examples: |
+    - %%\s*([\s\S]*?)\s*%%
 
 - intent: decir_texto_informativa
   examples: |
-    - ###Desde nuestra fundación en 2010, hemos trabajado incansablemente para ofrecer productos de la más alta calidad a nuestros clientes. Nuestra pasión por la innovación y el compromiso con la excelencia nos han convertido en un referente en la industria###
-    - ### Texto super interesante e informativo sobre esta maravillosa página creada por el chatbot WebGenerator del grupo Design Label ###
+    - %% # Bienvenido ¡Bienvenido a nuestra plataforma! Esperamos que tengas una gran experiencia. ## Cómo empezar - Crea una cuenta - Verifica tu email - ¡Empieza a explorar! ### Preguntas frecuentes - **¿Cómo cambio mi contraseña?**  Ve a la configuración de tu cuenta y selecciona "Cambiar contraseña". - **¿Dónde puedo encontrar más información?**  Consulta nuestra sección de ayuda o contáctanos directamente. %%
+    - %% # Documentación de API Nuestra API es poderosa y fácil de usar. ## Autenticación Para autenticarte, usa tu token de API en el encabezado de cada solicitud. ### Ejemplo de solicitud ```http GET /api/v1/users Host: api.ejemplo.com Authorization: Bearer TU_TOKEN_DE_API ``` ## Endpoints - **GET /api/v1/users**: Lista de usuarios - **POST /api/v1/users**: Crear un nuevo usuario %%
+    - %% # Guía de Instalación ## Requisitos - Node.js >= 12.0.0 - npm >= 6.0.0 ## Pasos de instalación 1. Clona el repositorio ```bash git clone https://github.com/ejemplo/proyecto.git ``` 2. Instala las dependencias ```bash cd proyecto npm install ``` 3. Inicia la aplicación ```bash npm start ``` ## Contribuir Si quieres contribuir a este proyecto, por favor, sigue las pautas en nuestro archivo `CONTRIBUTING.md`. %%
+    - %% # Changelog ## [1.0.0] - 2024-06-19 ### Added - Función de autenticación de dos factores. - Interfaz de usuario rediseñada. ### Fixed - Corrección de errores menores en la interfaz de usuario. ## [0.9.0] - 2024-05-10 ### Added - Nueva API para gestión de usuarios. ### Changed - Mejoras en el rendimiento de la base de datos. ## [0.8.0] - 2024-04-01 ### Removed - Eliminado el soporte para versiones antiguas de la API. %%
+    - %% # Informe del Proyecto ## Introducción Este informe detalla el progreso del proyecto hasta la fecha. ## Metodología Utilizamos metodologías ágiles para garantizar una entrega continua y de alta calidad. ### Herramientas utilizadas - Jira para gestión de tareas - Slack para comunicación - GitHub para control de versiones ## Próximos pasos - Completar la fase de pruebas - Preparar el lanzamiento beta ## Conclusión El proyecto está en buen camino para cumplir con los plazos establecidos. %%
+    - %% # Receta de Tarta de Manzana ## Ingredientes - 2 manzanas grandes - 1 taza de azúcar - 2 tazas de harina - 1/2 taza de mantequilla - 3 huevos - 1 cucharadita de canela ## Instrucciones 1. Precalentar el horno a 180°C. 2. Pelar y cortar las manzanas en rodajas finas. 3. En un bol, mezclar el azúcar, la harina y la canela. 4. Agregar los huevos y la mantequilla derretida, mezclar bien. 5. Añadir las manzanas y mezclar suavemente. 6. Verter la mezcla en un molde y hornear durante 45 minutos. %%
+    - %% # Política de Privacidad ## Introducción Nos tomamos tu privacidad en serio. Esta política describe cómo manejamos tu información personal. ## Recopilación de datos Recopilamos la información que nos proporcionas directamente, como tu nombre, email y mensaje. ### Uso de los datos Utilizamos tus datos para responder a tus consultas y mejorar nuestros servicios. ## Compartir datos No compartimos tu información personal con terceros sin tu consentimiento. ## Seguridad Implementamos medidas de seguridad adecuadas para proteger tu información. ### Cambios en la política Podemos actualizar esta política de privacidad de vez en cuando. Te notificaremos sobre cualquier cambio significativo. %%
+    - %% # lo que sea: contenido del titulo ## subtitulo: contenido del subtitulo %%
+    - %% ### Python #### Instrucciones - Es necesario instalar la versión 3.8 de Python - Verificar que la variable de entorno del sistema "PATH" tenga una entrada apuntando al directorio donde esté instalado Python. De no estar, agregarla y reiniciar la PC para guardar los cambios. - Con python instalado, posicionarse en el directorio del proyecto, abrir una terminal y ejecutar el comando ``` python -m venv venv ``` para crear un entorno virtual el el que ejecutar el proyecto.
+    - %% alkljlalsdjalksjdlas %%
+
+- intent: decir_texto_informativa_archivo
+  examples: |
+    - text.md
 
 - intent: agregar_producto
   examples: |
     - quiero agregar un producto a mi tienda
     - quiero cargar productos
     - quiero agregar productos
-    - quiero agregar productos a [design-label](page_name)
+    - quiero agregar productos a [&&design-label&&](page_name)
+
+- regex: productos
+  examples: |
+    - SKU:\s*(\d+)\s*Cantidad:\s*(\d+)\s*Titulo:\s*([^\n]+?)\s*Descripción:\s*([^\n]+?)\s*Precio:\s*([0-9]+(?:,[0-9]{2})?)
 
 - intent: cargar_X_cantidad_Y_producto
   examples: |
-    - Cantidad: [100](cant_prod) Titulo: [titulo_1](tit_prod) Descripción: [desc_1](desc_prod) Precio: [5499,99](precio_prod)
-    - Cantidad: [15](cant_prod) Titulo: [titulo_2](tit_prod) Descripción: [desc_2](desc_prod) Precio: [123,09](precio_prod)
-    - Cantidad: [2](cant_prod) Titulo: [titulo_3](tit_prod) Descripción: [desc_3](desc_prod) Precio: [654](precio_prod)
-    - Cantidad: [6090](cant_prod) Titulo: [titulo_4](tit_prod) Descripción: [desc_4](desc_prod) Precio: [65,82](precio_prod)
-    - Cantidad: [546364](cant_prod) Titulo: [titulo_5](tit_prod) Descripción: [desc_5](desc_prod) Precio: [42342](precio_prod)
-    - Cantidad: [432](cant_prod) Titulo: [titulo_6](tit_prod) Descripción: [desc_6](desc_prod) Precio: [159999,99](precio_prod)
-    - Cantidad: [745](cant_prod) Titulo: [titulo_7](tit_prod) Descripción: [desc_7](desc_prod) Precio: [1500](precio_prod)
+    - SKU: [0](sku_prod) Cantidad: [100](cant_prod) Titulo: [titulo 1](tit_prod) Descripción: [desc 1](desc_prod) Precio: [5499,99](precio_prod)
+    - SKU: [678](sku_prod) Cantidad: [15](cant_prod) Titulo: [titulo 2](tit_prod) Descripción: [desc 2](desc_prod) Precio: [123,09](precio_prod)
+    - SKU: [23](sku_prod) Cantidad: [2](cant_prod) Titulo: [titulo 3](tit_prod) Descripción: [desc 3](desc_prod) Precio: [654](precio_prod)
+    - SKU: [752](sku_prod) Cantidad: [6090](cant_prod) Titulo: [titulo 4](tit_prod) Descripción: [desc 4](desc_prod) Precio: [65,82](precio_prod)
+    - SKU: [56090](sku_prod) Cantidad: [546364](cant_prod) Titulo: [titulo 5](tit_prod) Descripción: [desc 5](desc_prod) Precio: [42342](precio_prod)
+    - SKU: [1246](sku_prod) Cantidad: [432](cant_prod) Titulo: [titulo 6](tit_prod) Descripción: [desc 6](desc_prod) Precio: [159999,99](precio_prod)
+    - SKU: [8](sku_prod) Cantidad: [745](cant_prod) Titulo: [titulo 7](tit_prod) Descripción: [desc 7](desc_prod) Precio: [1500](precio_prod)
 
 - intent: cargar_productos_archivo
   examples: |
-    - archivo.csv
-    
+    - archivo.csv    
 
 - intent: despues_te_digo
   examples: |
@@ -96,18 +142,6 @@ nlu:
     - no se que quiero
     - despues te digo
     - no se que decirte
-
-- intent: nombre_pagina
-  examples: |
-    - www. [design-label](page_name) .com
-    - www. [google](page_name) .com
-    - www. [facebook](page_name) .com
-    - www. [miprimerpagina](page_name) .com
-    - www. [miprimerforo](page_name) .com
-    - www. [pagina1](page_name) .com
-    - www. [borrador](page_name) .com
-    - www. [test](page_name) .com
-    - www. [super_mega_pagina_piola](page_name) .com
 
 - intent: preguntar_paginas_propias
   examples: |
@@ -127,17 +161,18 @@ nlu:
     - mandala a la pagina
     - mandala
     - ponela a correr
-    - ejecuta [test](page_name)
+    - ejecuta [&&test&&](page_name)
     - pagina terminada
     - dame la version final
     - guardala
+    - guarda los cambios
 
 - intent: detener_pagina
   examples: |
     - detenela
     - quiero que la apagues
     - apagala
-    - frena [test](page_name)
+    - frena [&&facebook&&](page_name)
 
 - intent: funcionalidad
   examples: |
@@ -164,6 +199,10 @@ nlu:
     - photo
     - photo.document
 
+- regex: color
+  examples: |
+    - #([A-Fa-f0-9]{3}|[A-Fa-f0-9]{6})\b
+
 - intent: decir_color
   examples: |
     - color [#4287f5](color)
@@ -176,7 +215,7 @@ nlu:
     - [#a6149c](color)
     - [#120e12](color)
     - [#bfbebd](color)
-    - #fa2100](color)
+    - [#fa2100](color)
 
 - intent: decir_mail
   examples: |
@@ -189,55 +228,6 @@ nlu:
     - la ubicacion es [Pinto 401 Tandil, Argentina](ubicacion)
     - [4 de abril 568 (5) Tandil, Argentina](ubicacion)
     - la direccion es [Calle 18 3235 Necochea, Argentina](ubicacion)
-
-- intent: out_of_scope
-  examples: |
-    - I want to order food
-    - What is 2 + 2?
-    - Who's the US President?
-    - Cuantos autos hay en el mundo
-    - ¿Que hay para comer?
-    - ¿Tenes mascotas?
-    - ¿Lugar mas frio de la tierra?
-    - ¿En que continente esta Ecuador?
-    - ¿Rio mas largo del mundo?
-    - ¿Pizza o panchos?
-    - ¿Donde queda Italia?
-    - ¿Que son los humanos?
-    - Cual es tu comida favorita?
-    - Quien es Leo Messi?
-    - Que musica te gusta?
-    - como te cae?
-    - te cae bien tal?
-    - como se llaman tus viejos?
-    - que te gusta?
-    - que jueguito te gusta?
-    - que jugas?
-    - idolo de chico?
-    - que relacion tiene?
-
-- intent: decir_nombre
-  examples: |
-    - Como te llamas?
-    - ¿Vos quien sos?
-    - ¿como es tu nombre?
-    - como se llaman?
-    - como son sus nombres
-    - presentensen en el grupo
-    - digan sus nombres
-    - Cual es tu nombre?
-
-- intent: reirse
-  examples: |
-    - jaajjaja
-    - JAJAJAJAJAJAJAJAJA
-    - kkkkkkk
-    - AJJAJA
-    - SJSJJS
-    - jsjsjsjsjjs
-    - jua jua juaa
-    - jaaaaaaaaaja
-    - jaaaaaaa
 
 - intent: saludo
   examples: |
@@ -271,57 +261,6 @@ nlu:
     - tengo otro plan, nos vemos!
     - seguimos en otro momento, me tengo que ir!
 
-- intent: como_estas
-  examples: |
-    - ¿Todo bien?
-    - ¿Que te contas?
-    - ¿Como va?
-    - ¿Que onda?
-    - ¿Como estas?
-    - vos?
-    - Acá andamos santi, tod bien?
-    - todo bien vos?
-    - como te sentis?
-
-- intent: estado_de_animo_feliz
-  examples: |
-    - muy bien
-    - muy feliz por suerte
-    - feliz
-    - estoy muy feliz
-    - me siento contento
-    - super feliz
-    - bieen
-    - bien gracias
-    - god
-    - good
-    - fine
-    - espectacular
-    - es pec ta cu laaar
-    - normal
-    - ahi vamos
-    - tranquiloo
-
-- intent: estado_de_animo_triste
-  examples: |
-    - estoy triste
-    - triste
-    - extremadamente triste
-    - tan triste
-    - bajon
-    - mal
-    - muy triste la verdad
-    - bajoneado
-    - medio bajon
-
-- intent: me_alegro
-  examples: |
-    - Me alegro!
-    - Me alegro por vos!
-    - Me alegra escuchar eso!
-    - Exitos
-    - exitos con eso
-
 - intent: afirmar
   examples: |
     - Si
@@ -347,396 +286,69 @@ nlu:
     - terminemos el tutorial
     - matemos el tuto
 
-- regex: pregunta
-  examples: |
-    - ((([aA-zZ]\w+ ){1,})+(, )){1,}
-
-
-- lookup: usuario
-  examples: |
-    - Lleyton
-    - Bautista
-    - Fermin
-    - Tadeo
-    - Julian
-    - Analia
-    - Santiago
-    - Francisco
-    - Joaquin
-    - Belen
-    - Julieta
-    - Macarena
-    - Mercedes
-    - Agustina
-    - Alan
-    - Pablo
-    - Milagros
-    - Gabriel
-    - Micaela
-    - Rocio
-    - Sol
-    - Andrea
-    - Tomas
-    - Ricardo
-    - Facundo
-    - Simon
-    - Eduardo
-    - Jorge
-    - Esteban
-    - Mariana
-    - Luciano
-    - Romina
-    - Leonardo
-    - Victoria
-    - Matias
-    - Ignacio
-    - Natalia
-    - Lucas
-    - Camila
-    - Maximiliano
-    - Valentina
-    - Martin
-    - Carla
-    - Juan
-    - Sofia
-    - Manuel
-    - Maria
-    - Emiliano
-    - Antonella
-    - Agustin
-    - Marina
-    - Nicolas
-    - Antonia
-    - Diego
-    - Celeste
-    - Federico
-    - Gonzalo
-    - Luciana
-    - Florencia
-    - Sebastian
-    - Lucia
-    - Alejandro
-    - Leandro
-    - Adrian
-    - Carolina
-    - Daiana
-    - Oscar
-    - Paula
-    - Ivan
-    - Jonathan
-    - Rodrigo
-    - Virginia
-    - Lara
-    - David
-    - Emanuel
-    - Brenda
-    - Melina
-    - Lujan
-    - Guadalupe
-    - Yanina
-    - Mauro
-    - Franco
-    - Daniela
-    - Candela
-    - Gaston
-    - Solange
-    - Marcos
-    - Enzo
-    - Juan
-    - Valeria
-    - Miguel
-    - Ramiro
-    - Victor
-    - Pamela
-    - Javier
-    - Celeste
-    - Jimena
-    - Nicolas
-    - Leonardo
-    - Mariano
-    - Ezequiel
-    - Natalia
-    - Lucia
-    - Sofia
-    - Antonella
-    - Micaela
-    - Valentina
-    - Florencia
-    - Tomas
-    - Martin
-    - Manuel
-    - Laura
-    - Gabriel
-    - Belen
-    - Fernando
-    - Emanuel
-    - Marina
-    - Julieta
-    - Facundo
-    - Maximiliano
-    - Diego
-    - Ariel
-    - Ezequiel
-    - Gaston
-    - Franco
-    - Miguel
-    - Javier
-    - Jonathan
-    - Leonardo
-    - Mariano
-    - Nicolas
-    - Ramiro
-    - Victor
-    - Pamela
-    - Jimena
-    - Celeste
-    - Solange
-    - Marcos
-    - Enzo
-    - Valeria
-    - Matias
-    - Luciana
-    - Paula
-    - Ricardo
-    - Alan
-    - Federico
-    - Mariana
-    - Jorge
-    - Andrea
-    - Matias
-    - Belen
-    - Luciano
-    - Natalia
-    - Ignacio
-    - Antonia
-    - Federico
-    - Luciana
-    - Sebastian
-    - Carolina
-    - Daiana
-    - Jonathan
-    - Virginia
-    - Lara
-    - David
-    - Brenda
-    - Melina
-    - Lujan
-    - Mauro
-    - Daniela
-    - Candela
-    - Gaston
-    - Marcos
-    - Enzo
-    - Valeria
-    - Miguel
-    - Ramiro
-    - Victor
-    - Pamela
-    - Javier
-    - Jimena
-    - Celeste
-    - Solange
-    - Ezequiel
-    - Franco
-    - Ariel
-    - Diego
-    - Maximiliano
-    - Facundo
-    - Julieta
-    - Marina
-    - Emanuel
-    - Fernando
-    - Leonardo
-    - Martin
-    - Manuel
-    - Laura
-    - Gabriel
-    - Belen
-    - Nicolás
-    - Ramiro
-    - Victor
-    - Pamela
-    - Jimena
-    - Celeste
-    - Solange
-    - Marcos
-    - Enzo
-    - Valeria
-    - Matías
-    - Luciana
-    - Paula
-    - Ricardo
-    - Alan
-    - Federico
-    - Mariana
-    - Jorge
-    - Andrea
-    - Belén
-    - Luciano
-    - Natalia
-    - Ignacio
-    - Sebastián
-    - Carolina
-    - Daiana
-    - Jonathan
-    - Virginia
-    - Lara
-    - David
-    - Brenda
-    - Melina
-    - Luján
-    - Mauro
-    - Daniela
-    - Candela
-    - Gastón
-    - Marcos
-    - Enzo
-    - Valeria
-    - Miguel
-    - Ariel
-    - Julieta
-    - Facundo
-    - Leonardo
-    - Emanuel
-    - Javier
-    - Manuel
-    - Laura
-    - Gabriel
-    - Nicolás
-    - Jimena
-    - Celeste
-    - Solange
-    - Franco
-    - Maximiliano
-    - Marina
-    - Ezequiel
-    - Fernando
-    - Ramiro
-    - Martín
-    - Paula
-    - Ricardo
-    - Federico
-    - Andrea
-    - Jorge
-    - Marcos
-    - Luciano
-    - Natalia
-    - Ignacio
-    - Sebastián
-    - Carolina
-    - Daiana
-    - Jonathan
-    - Virginia
-    - Lara
-    - David
-    - Brenda
-    - Melina
-    - Luján
-    - Mauro
-    - Daniela
-    - Candela
-    - Gastón
-    - Marcos
-    - Enzo
-    - Valeria
-    - Miguel
-    - Ariel
-    - Julieta
-    - Facundo
-    - Leonardo
-    - Emanuel
-    - Javier
-    - Manuel
-    - Laura
-    - Gabriel
-    - Nicolás
-    - Jimena
-    - Celeste
-    - Solange
-    - Franco
-    - Maximiliano
-    - Marina
-    - Ezequiel
-    - Fernando
-    - Ramiro
-    - Martín
-    - Paula
-    - Ricardo
-    - Federico
-    - Andrea
-    - Jorge
-    - Marcos
-    - Luciano
-    - Natalia
-    - Ignacio
-    - Sebastián
-    - Carolina
-    - Daiana
-    - Jonathan
-    - Virginia
-    - Lara
-    - David
-    - Brenda
-    - Melina
-- lookup: dia
-  examples: |
-    - Lunes
-    - Martes
-    - Miercoles
-    - Jueves
-    - Viernes
-    - Sabado
-    - Domingo
-- lookup: colores
-  examples: |
-    - Azul
-    - Rojo
-    - Naranja
-    - Violeta
-    - Marron
-    - Verde
-    - Amarillo
-    - Celeste
-    - Blanco
-    - Negro
-    - Gris
-    - Rosa
-    - Bordo
-
 - lookup: componentes
   examples: |
-    - Encabezado
-    - Boton
-    - Titulo
-    - Imagen
-    - Texto
-    - Subtitulo
-    - Video
-    - Nombre
-    - Producto
-    - Carrito
+    - logo
+    - color
+    - seccion
+    - footer
+
+- synonym: logo
+  examples: |
+    - logotipo
+    - isotipo
+    - emblema
+    - imagen
+
+- synonym: color
+  examples: |
+    - colores
+    - tonos
+    - gama de colores
+
+- synonym: seccion
+  examples: |
+    - apartado
+    - area
+
+- synonym: footer
+  examples: |
+    - pie de pagina
 
 - lookup: seccion
   examples: |
-    - E-commerce
-    - Informativa
-    - Foro
-    - Blog
-    - Red Social
-    - Portal de noticias
-    - Encuesta
+    - e-commerce
+    - informativa
+
+- synonym: e-commerce
+  examples: |
+    - ecommerce
+    - tienda
+    - store
 
 - lookup: page_name
   examples: |
-    - facebook
-    - instagram
-    - whatsapp
-    - miforo
-    - foroexactas
-    - pagina1
-    - mipagina
-    - borrador
-    - myweb
-    - miprimerpaginaweb
-    - holamundo
-    - opensports
+    - &&facebook&&
+    - &&instagram&&
+    - &&whatsapp&&
+    - &&miforo&&
+    - &&foroexactas&&
+    - &&pagina1&&
+    - &&mipagina&&
+    - &&borrador&&
+    - &&myweb&&
+    - &&miprimerpaginaweb&&
+    - &&holamundo&&
+    - &&opensports&&
+    - &&MiTienda&&
+    - &&HogarDulceHogar&&
+    - &&RinconDeModa&&
+    - &&ParaisoDeLibros&&
+    - &&TecnologiaYMas&&
+    - &&BellezaYCuidado&&
+    - &&SaludYBienestar&&
+    - &&MundoInfantil&&
+    - &&MascotasFelices&&
+    - &&DeliciasGourmet&&
+    - &&JardineriaCreativa&&
+    - &&ViajesYAventuras&&

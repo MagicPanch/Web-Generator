@@ -4,31 +4,26 @@ intents:
   - start
   - restart
   - afirmar
-  - como_estas
   - modificar_pagina
   - decir_color
   - decir_mail
   - decir_ubicacion
-  - decir_nombre
   - denegar
   - despedidasc
   - despues_te_digo
   - detener_pagina
   - ejecutar_pagina
   - enviar_imagen
-  - estado_de_animo_feliz
-  - estado_de_animo_triste
   - funcionalidad
-  - me_alegro
   - nlu_fallback
   - nombre_pagina
   - out_of_scope
-  - reirse
   - saludo
   - tipo_seccion
   - pedir_tutorial
   - decir_nombre_informativa
   - decir_texto_informativa
+  - decir_texto_informativa_archivo
   - crear_algo
   - preguntar_paginas_propias
   - agregar_producto
@@ -50,6 +45,7 @@ entities:
   - mail
   - ubicacion
   - nombre_informativa
+  - sku_prod
   - cant_prod
   - tit_prod
   - desc_prod
@@ -86,6 +82,18 @@ actions:
   - action_pregunta_3_repetir
   - action_pregunta_4
   - action_pregunta_4_repetir
+  - action_pregunta_5
+  - action_pregunta_5_repetir
+  - action_pregunta_6
+  - action_pregunta_6_repetir
+  - action_pregunta_7
+  - action_pregunta_7_repetir
+  - action_pregunta_8
+  - action_pregunta_8_repetir
+  - action_pregunta_9
+  - action_pregunta_9_repetir
+  - action_pregunta_10
+  - action_pregunta_10_repetir
   - action_terminar_tutorial
   - action_crear_ecommerce
   - action_crear_informativa_1
@@ -114,11 +122,22 @@ slots:
     - type: from_entity
       entity: page_name
 
+  pagina_modificando:
+    type: text
+    mappings:
+    - type: custom
+
   id_user:
     type: text
     mappings:
     - type: from_entity
       entity: id_user
+
+  sku_prod:
+    type: float
+    mappings:
+    - type: from_entity
+      entity: sku_prod
 
   cant_prod:
     type: float
@@ -300,6 +319,90 @@ slots:
     mappings:
       - type: custom
 
+  pregunta_5_confirmacion:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: custom
+
+  pregunta_5_repetir_confirmacion:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: custom
+
+  pregunta_6_confirmacion:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: custom
+
+  pregunta_6_repetir_confirmacion:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: custom
+
+  pregunta_7_confirmacion:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: custom
+
+  pregunta_7_repetir_confirmacion:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: custom
+
+  pregunta_8_confirmacion:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: custom
+
+  pregunta_8_repetir_confirmacion:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: custom
+
+  pregunta_9_confirmacion:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: custom
+
+  pregunta_9_repetir_confirmacion:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: custom
+
+  pregunta_10_confirmacion:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: custom
+
+  pregunta_10_repetir_confirmacion:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: custom
+
   pregunta_componente:
     type: bool
     influence_conversation: true
@@ -322,6 +425,13 @@ slots:
       - type: custom
 
   pregunta_nombre:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: custom
+
+  pregunta_nombre_edicion:
     type: bool
     influence_conversation: true
     initial_value: false
@@ -468,23 +578,6 @@ responses:
 
   utter_funcionalidad:
   - text: Por el momento puedo crear una pagina y permitirte correrla o detenerla.
-
-  utter_me_alegro:
-  - text: Muchas gracias!
-
-  utter_reirse:
-  - text: jajajajaj
-  - text: jajajajjaa
-  - text: jsjsjajaj
-  - text: kkkkkk
-
-  utter_como_estas:
-  - text: Muy bien, gracias por preguntar, vos?
-  - text: Re bien!, vos como estas?
-  - text: Todo bien!, vos?
-
-  utter_decir_nombre:
-  - text: Mi nombre es WebGenerator
 
 session_config:
   session_expiration_time: 60
