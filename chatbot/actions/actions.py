@@ -1084,9 +1084,9 @@ class ActionPregunta3Repetir(Action):
         print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
         dispatcher.utter_message(text="El cuerpo de nuestras páginas está compuesto por secciones de tipo informativas o de e-commerce. Avanzando en el tutorial te explicaré cómo crear y modificar estas secciones.")
         dispatcher.utter_message(text="Así es como se ve una sección de tipo informativa")
-        dispatcher.utter_message(attachment="https://imgur.com/a/pcPbh0D")
+        dispatcher.utter_message(image="https://imgur.com/a/pcPbh0D")
         dispatcher.utter_message(text="Y así es como se ve una sección e-commerce")
-        dispatcher.utter_message(attachment="https://imgur.com/a/jynPJTW")
+        dispatcher.utter_message(image="https://imgur.com/a/jynPJTW")
         dispatcher.utter_message(text="¿Entendido?")
         return [SlotSet("pregunta_3_confirmacion", False), SlotSet("pregunta_3_repetir_confirmacion", True)]
 

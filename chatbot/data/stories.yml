@@ -217,7 +217,7 @@ stories:
     - slot_was_set:
       - pregunta_6_confirmacion: true
     - intent: afirmar
-    - checkpoint: pregunta_5_entendida
+    - checkpoint: pregunta_6_entendida
 
 - story: No entiende 6
   steps:
