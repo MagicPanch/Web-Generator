@@ -834,7 +834,6 @@ class ActionModificarInformativa1(Action):
     def name(self) -> Text:
         return "action_modificar_informativa_1"
 
-
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
@@ -1032,8 +1031,7 @@ class ActionPregunta1Repetir(Action):
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
         dispatcher.utter_message(text="Enviandome un mensaje como \"Quiero cambiar el color de mi pagina\" te solicitaré el valor en formato hexadecimal del color que desees y se aplicará a tu página.")
-        dispatcher.utter_message(text="En este gif se aprecia el cambio de color tras enviarme el color \"#e62c0b\"")
-        dispatcher.utter_message(attachment="https://imgur.com/a/hj8ONLT")
+        dispatcher.utter_message(text="En este video se aprecia el cambio de color tras enviarme el color \"#e62c0b\".", attachment="https://youtu.be/v7xBYZHmAHs")
         dispatcher.utter_message(text="¿Entendido?")
         return [SlotSet("pregunta_1_confirmacion", False), SlotSet("pregunta_1_repetir_confirmacion", True)]
 
@@ -1059,7 +1057,7 @@ class ActionPregunta2Repetir(Action):
         print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
         dispatcher.utter_message(text="Enviandome un mensaje como \"Quiero cambiar el logo de mi pagina\" te solicitaré que me envíes una imagen para utilizar como el nuevo logo.")
         dispatcher.utter_message(text="En este gif se aprecia el cambio de logo tras enviar una imagen como documento.")
-        dispatcher.utter_message(attachment="https://imgur.com/a/eidSQxP")
+        dispatcher.utter_message(attachment="https://youtu.be/2ERmPt_Qgc4")
         dispatcher.utter_message(text="¿Entendido?")
         return [SlotSet("pregunta_2_confirmacion", False), SlotSet("pregunta_2_repetir_confirmacion", True)]
 
@@ -1160,9 +1158,9 @@ class ActionPregunta6Repetir(Action):
         print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
         dispatcher.utter_message(text="Si me envias un mensaje como \"Quiero crear una seccion\" o \"Quiero una nueva seccion\" iniciaremos el proceso de creación de una sección.")
         dispatcher.utter_message(text="De esta manera se crea una sección informativa. Notarás que debes proporcionar un nombre, el cual deberás encerrar entre \"$$\".")
-        dispatcher.utter_message(attachment="https://imgur.com/a/tutorial-creacion-informativa-zTNyqbK") #PONER GIF CREACION INFORMATIVA
+        dispatcher.utter_message(attachment="https://youtu.be/-GVppQu9jZE")
         dispatcher.utter_message(text="Y así es como se crea una sección e-commerce.")
-        dispatcher.utter_message(attachment="https://imgur.com/a/GbzaISH")
+        dispatcher.utter_message(attachment="https://youtu.be/OO7hLl0ElgQ")
         dispatcher.utter_message(text="¿Entendido?")
         return [SlotSet("pregunta_6_confirmacion", False), SlotSet("pregunta_6_repetir_confirmacion", True)]
 
@@ -1186,7 +1184,7 @@ class ActionPregunta7Repetir(Action):
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
         dispatcher.utter_message(text="En este video podrás ver el proceso de edición de una sección informativa. Solo necesitas especificarme cuál es la sección a modificar y proporcionarme su nuevo contenido.")
-        dispatcher.utter_message(attachment="https://imgur.com/a/gTU9XHs")
+        dispatcher.utter_message(attachment="https://youtu.be/iY-MTk2HdNo")
         dispatcher.utter_message(text="¿Entendido?")
         return [SlotSet("pregunta_7_confirmacion", False), SlotSet("pregunta_7_repetir_confirmacion", True)]
 
@@ -1209,7 +1207,7 @@ class ActionPregunta8Repetir(Action):
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
         dispatcher.utter_message(text="Si quieres cargar productos en la sección e-commerce de tu página podes hacerlo tal como se muestra en este video.")
-        dispatcher.utter_message(attachment="https://imgur.com/a/moNsHoW") #PONER GIF CARGA PRODUCTOS
+        dispatcher.utter_message(attachment="https://youtu.be/QoGadncgAxU") #PONER GIF CARGA PRODUCTOS
         dispatcher.utter_message(text="¿Entendido?")
         return [SlotSet("pregunta_8_confirmacion", False), SlotSet("pregunta_8_repetir_confirmacion", True)]
 
