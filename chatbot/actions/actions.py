@@ -44,10 +44,7 @@ class ActionCapturarCreacion(BaseAction):
         if seccion:
             return [FollowupAction("action_capturar_tipo_seccion"), SlotSet("creando_seccion", True)]
         else:
-            if page_name is None:
-                return [FollowupAction("action_preguntar_nombre_pagina"), SlotSet("creando_pagina", True)]
-            else:
-                return [FollowupAction("action_crear_pagina"), SlotSet("creando_pagina", True), SlotSet("pregunta_nombre", False)]
+            return [FollowupAction("action_preguntar_nombre_pagina"), SlotSet("creando_pagina", True)]
 
     def skip_tuto_verification(self) -> bool:
         return False
@@ -169,12 +166,12 @@ class ActionEjecutarPagina(BaseAction):
             print("(" + threading.current_thread().getName() + ") " + "----------------pagina no compilada")
             pgm.build_project(user_id, page_name)
             dbm.set_compilation_date(user_id, page_name)
-            print("(" + threading.current_thread().getName() + ") " + "------------PAGINA COMPILADA")
         else:
             print("(" + threading.current_thread().getName() + ") " + "----------------pagina ya compilada")
 
         # Inicia la ejecución del proyecto en modo desarrollo en un nuevo hilo
         pgm.run_project(user_id, page_name)
+        print("(" + threading.current_thread().getName() + ") " + "------------PAGINA COMPILADA")
 
         page_address = page_obj.get_page_address()
         print("(" + threading.current_thread().getName() + ") " + "------------page_address: ", page_address)
@@ -552,7 +549,7 @@ class ActionCapturarTipoSeccion(BaseAction):
             if "e-commerce" in tipo_seccion.lower():
                 if creando_ecommerce:
                     creando_ecommerce = False
-                    if not page.is_running_dev():
+                    if not page_obj.is_running_dev():
                         pgm.run_dev(user_id, page_name)
                         message = "Tu pagina se encuentra en modo edición. Podrás visualizar la nueva sección en: " + page.get_page_address()
                         dispatcher.utter_message(text=message)
@@ -560,7 +557,8 @@ class ActionCapturarTipoSeccion(BaseAction):
                         #dispatcher.utter_message(text=message)
                     else:
                         dispatcher.utter_message(text="Podes ver la nueva sección en tu página.")
-                    return [SlotSet("pregunta_seccion", False), SlotSet("creando_seccion", False), SlotSet("componente", None)]
+                    return self.clear_slots(tracker, domain, slots_to_save=["page_name"])
+                    #return [SlotSet("pregunta_seccion", False), SlotSet("creando_seccion", False), SlotSet("componente", None)]
                 else:
                     dispatcher.utter_message(text="Aguarda un momento mientras se crea la sección e-commerce en tu página.")
                     return [FollowupAction("action_crear_ecommerce")]
@@ -616,7 +614,8 @@ class ActionCrearEcommerce(BaseAction):
             else:
                 dispatcher.utter_message(text="Podes ver la nueva sección en tu página.")
             dbm.add_ecomm_section(user_id, page_name)
-        return [SlotSet("pregunta_seccion", False), SlotSet("creando_seccion", False), SlotSet("componente", None)]
+        return self.clear_slots(tracker, domain, slots_to_save=["page_name"])
+        #return [SlotSet("pregunta_seccion", False), SlotSet("creando_seccion", False), SlotSet("componente", None)]
 
     def skip_page_verification(self) -> bool:
         return False
@@ -708,7 +707,7 @@ class ActionCapturarProductoCargado(Action):
                         message = "El producto " + producto.Titulo + " se guardó correctamente con el identificador: " + str(int(producto.SKU))
                         dispatcher.utter_message(text=message)
                 dispatcher.utter_message(text="Ha finalizado la carga de productos. ¿Puedo ayudarte con algo más?")
-                return [SlotSet("agregando_productos", False), SlotSet("pregunta_carga", False)]
+                return [FollowupAction("action_listen"), SlotSet("agregando_productos", False), SlotSet("pregunta_carga", False)]
             if error:
                 dispatcher.utter_message(text="No se pudo recibir el archivo. Por favor envíalo nuevamente.")
                 return [SlotSet("agregando_productos", True), SlotSet("pregunta_carga", True)]

@@ -17,6 +17,10 @@ class Front(PageRunner):
         self._tunnel_process = None
         self._page_address = None
         self._sections = []
+        self._has_ecomm_section = False
+
+    def set_has_ecomm_section(self, has_ecomm_section):
+        self._has_ecomm_section = has_ecomm_section
 
     def set_page_address(self, address):
         self._page_address = address
@@ -76,8 +80,4 @@ class Front(PageRunner):
         return len(self._sections)
 
     def has_ecomm_section(self) -> bool:
-        for section in self._sections:
-            if section.get_title() == "e-commerce":
-                return True
-        else:
-            return False
+        return self._has_ecomm_section

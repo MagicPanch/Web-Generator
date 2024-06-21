@@ -19,9 +19,16 @@ const SectionECommerce: React.FC = () => {
       try {
         const res = await fetch(`${LINK}/api?search=${searchTerm}`);
         const productsData = await res.json();
-        setProducts(productsData);
+        console.log("Fetched products:", productsData);
+        if (Array.isArray(productsData)) {
+          setProducts(productsData);
+        } else {
+          console.error("Fetched data is not an array:", productsData);
+          setProducts([]); // O maneja este caso adecuadamente
+      }
       } catch (error) {
         console.error("Error fetching products:", error);
+        setProducts([]); // O maneja este caso adecuadamente
       }
     };
 

@@ -321,7 +321,7 @@ class PageManager():
     def add_ecommerce(cls, user, page_name):
         print("(" + threading.current_thread().getName() + ") " + "----PageManager.add_ecommerce----")
         page = cls._running_pages[(user, page_name)].get_page()
-
+        page.set_has_ecomm_section(True)
 
         if page.is_running_dev():
             cls.stop_page(user, page_name)
@@ -471,7 +471,6 @@ class PageManager():
     def add_page(cls, user, page_name, new=False) -> Front:
         #Crear la pagina
         page = Front(user, page_name, cls._get_port())
-
         if new:
         #Crea sus directorios
             utils.go_to_main_dir()
@@ -482,6 +481,8 @@ class PageManager():
         else:
             #Recuperar sus componentes
             dbm = DBManager.get_instance()
+            page_doc = dbm.get_page(user, page_name)
+            page.set_has_ecomm_section(page_doc.has_ecomm_section)
             sections = dbm.get_page_sections(user, page_name)
             for section in sections:
                 if section.type == "informativa":

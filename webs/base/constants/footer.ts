@@ -2,10 +2,10 @@
     {
         title: "Navegacion",
         links: [
-        { label: "Services", href: "/#services" },
-        { label: "Portfolio", href: "/#portfolio" },
-        { label: "Contact", href: "/contact-us" },
-        { label: "About us", href: "/about-us" },
+        { label: "Services", href: "/" },
+        { label: "Portfolio", href: "/" },
+        { label: "Contact", href: "/" },
+        { label: "About us", href: "/" },
         ],
     },
     ];
