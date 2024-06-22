@@ -578,12 +578,12 @@ class ActionCapturarTipoSeccion(BaseAction):
             page_obj = pgm.add_page(tracker.sender_id, page_doc.name)
         print("(" + threading.current_thread().getName() + ") " + "--------page_obj.name: ", page_obj.get_name())
         if not tracker.get_slot('tipo_seccion') == "e-commerce":
-            if not page_obj.is_running_dev():
-                pgm.run_dev(user_id, page_name)
+            if page_obj.is_running() and not page_obj.is_running_dev():
+                pgm.switch_dev(tracker.sender_id, page_doc.name)
                 message = "Tu pagina se encuentra en modo edición. Podrás visualizar los cambios que realices en: " + page_obj.get_page_address()
                 dispatcher.utter_message(text=message)
-            elif page_obj.is_running():
-                pgm.switch_dev(tracker.sender_id, page_doc.name)
+            elif not page_obj.is_running_dev():
+                pgm.run_dev(user_id, page_name)
                 message = "Tu pagina se encuentra en modo edición. Podrás visualizar los cambios que realices en: " + page_obj.get_page_address()
                 dispatcher.utter_message(text=message)
             #message = "Si la pagina te solicita una contraseña ingresa: " + pgm.get_tunnel_password()
@@ -811,7 +811,10 @@ class ActionCrearInformativa1(Action):
         print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
         dispatcher.utter_message(text="¿Que nombre llevará la sección? Por favor utiliza el siguiente formato:")
         dispatcher.utter_message(text="$$nombre seccion$$")
-        return clear_slots(tracker, domain, slots_to_true=["creando_seccion_informativa", "pregunta_nombre_informativa"], slots_to_save=["page_name", "componente", "tipo_seccion"])
+        events = clear_slots(tracker, domain, slots_to_true=["creando_seccion_informativa", "pregunta_nombre_informativa"], slots_to_save=["page_name", "componente", "tipo_seccion"])
+        events.append(FollowupAction("action_listen"))
+        return events
+        #return clear_slots(tracker, domain, slots_to_true=["creando_seccion_informativa", "pregunta_nombre_informativa"], slots_to_save=["page_name", "componente", "tipo_seccion"])
         #return [SlotSet("creando_seccion_informativa", True), SlotSet("pregunta_nombre_informativa", True)]
 
 
