@@ -12,4 +12,9 @@ rules:
     - intent: despedidasc
     - action: action_despedida_telegram
 
+  - rule: Siempre capturar carga de productos
+    steps:
+    - intent: agregar_producto
+    - action: action_pedir_productos
+
 

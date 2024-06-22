@@ -102,13 +102,12 @@ actions:
   - action_crear_informativa_4
   - action_modificar_informativa_1
   - action_modificar_informativa_2
-  - action_modificar_informativa_3
-  - action_modificar_informativa_4
   - action_responder_paginas_propias
   - action_pedir_productos
   - action_capturar_producto_cargado
   - action_guardar_producto
   - action_avisame
+  - action_restart
 
 slots:
   hizo_tutorial:

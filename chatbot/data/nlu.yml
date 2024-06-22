@@ -116,6 +116,7 @@ nlu:
     - quiero cargar productos
     - quiero agregar productos
     - quiero agregar productos a [&&design-label&&](page_name)
+    - quiero cargar mas productos
 
 - regex: productos
   examples: |

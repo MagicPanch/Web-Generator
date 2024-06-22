@@ -12,6 +12,8 @@ from generator.PageManager import PageManager
 from generator.ReactGenerator import ReactGenerator
 from generator.TelegramBotManager import TelegramBotManager
 
+from chatbot.actions.utils import clear_slots
+
 dbm = DBManager.get_instance()
 pgm = PageManager.get_instance()
 rg = ReactGenerator.get_instance()
@@ -98,39 +100,23 @@ class BaseAction(Action, ABC):
             dispatcher.utter_message(text="¿Sobre qué página te gustaría operar? Te recuerdo que tus páginas son:", buttons=buttons, button_type="vertical")
         else:
             dispatcher.utter_message(text="Antes de realizar operaciones sobre una página, debes crear una.")
-            return self.clear_slots(tracker, domain)
+            return clear_slots(tracker, domain)
         if self.name() == "action_preguntar_nombre_pagina":
-            events = self.clear_slots(tracker, domain, slots_to_true=["creando_pagina", "pregunta_nombre"])
+            events = clear_slots(tracker, domain, slots_to_true=["creando_pagina", "pregunta_nombre"])
         elif self.name() == "action_detener_pagina":
-            events = self.clear_slots(tracker, domain, slots_to_true=["pregunta_detencion"])
+            events = clear_slots(tracker, domain, slots_to_true=["pregunta_detencion"])
         elif self.name() == "action_ejecutar_pagina":
-            events = self.clear_slots(tracker, domain, slots_to_true=["pregunta_ejecucion"])
+            events = clear_slots(tracker, domain, slots_to_true=["pregunta_ejecucion"])
         elif self.name() == "action_pedir_productos":
-            events = self.clear_slots(tracker, domain, slots_to_true=["agregando_productos", "pregunta_nombre"])
+            events = clear_slots(tracker, domain, slots_to_true=["agregando_productos", "pregunta_nombre"])
         elif self.name() == "action_crear_pagina":
-            events = self.clear_slots(tracker, domain, slots_to_true=["creando_pagina", "pregunta_nombre"])
+            events = clear_slots(tracker, domain, slots_to_true=["creando_pagina", "pregunta_nombre"])
         elif self.name() == "action_capturar_edicion":
-            events = self.clear_slots(tracker, domain, slots_to_true=["pregunta_nombre_edicion"], slots_to_save=["componente", "tipo_seccion", "nombre_informativa"])
+            events = clear_slots(tracker, domain, slots_to_true=["pregunta_nombre_edicion"], slots_to_save=["componente", "tipo_seccion", "nombre_informativa"])
         elif self.name() == "action_capturar_tipo_seccion":
-            events = self.clear_slots(tracker, domain, slots_to_true=["creando_seccion", "pregunta_nombre"], slots_to_save=["tipo_seccion"], slots_to_set=dict({"componente": "seccion"}))
+            events = clear_slots(tracker, domain, slots_to_true=["creando_seccion", "pregunta_nombre"], slots_to_save=["tipo_seccion"], slots_to_set=dict({"componente": "seccion"}))
         else:
-            events = self.clear_slots(tracker, domain)
-        return events
-
-    def clear_slots(self, tracker: Tracker, domain: Dict[Text, Any], slots_to_save=[], slots_to_true=[], slots_to_false=[], slots_to_set={}):
-        events = []
-        for slot in domain.get("slots"):
-            if slot in slots_to_true:
-                events.append(SlotSet(slot, True))
-            elif slot in slots_to_false:
-                events.append(SlotSet(slot, False))
-            elif slot in slots_to_set.keys():
-                events.append(SlotSet(slot, slots_to_set.get(slot)))
-            elif slot not in slots_to_save:
-                if type(tracker.get_slot(slot)) is bool:
-                    events.append(SlotSet(slot, False))
-                else:
-                    events.append(SlotSet(slot, None))
+            events = clear_slots(tracker, domain)
         return events
 
     def skip_tuto_verification(self) -> bool:

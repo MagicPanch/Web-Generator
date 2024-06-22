@@ -1,9 +1,33 @@
+import io
 import os
 import shutil
 
 import psutil
+import requests
 
 from resources import CONSTANTS
+from imgurpython import ImgurClient
+
+imgur_client = ImgurClient(CONSTANTS.IMGUR_CLIENT_ID, CONSTANTS.IMGUR_API_SECRET)
+
+def upload_image(image_source_url) -> str:
+    response = requests.get(image_source_url)
+    if response.status_code == 200:
+        image_data = response.content
+        headers = { 'Authorization': f'Client-ID {CONSTANTS.IMGUR_CLIENT_ID}'}
+        imgur_response = requests.post('https://api.imgur.com/3/upload', headers=headers, files={'image': image_data})
+        if imgur_response.status_code == 200:
+            response_data = imgur_response.json()
+            image_url = response_data['data']['link']
+            print(f"Imagen subida correctamente. Enlace: {image_url}")
+            return image_url
+        else:
+            print(f"Error subiendo la imagen a Imgur: {imgur_response.status_code}")
+            print(imgur_response.json())
+    else:
+        print(f"Error descargando la imagen de Telegram: {response.status_code}")
+        print(response.json())
+    return ""
 
 def go_to_dir(dir_name):
     # Nos posiciona en el subdirectorio indicado. Si no existe, lo crea
@@ -55,8 +79,6 @@ def get_pid(port):
     # Si no se encontró ningún proceso que escuche en el puerto
     return None
 
-
 def get_process(port):
     pid = get_pid(port)
-    print("pid:", pid)
     return psutil.Process(pid)

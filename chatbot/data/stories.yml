@@ -193,30 +193,6 @@ stories:
     - slot_was_set:
       - pregunta_6_confirmacion: true
     - intent: afirmar
-    - checkpoint: pregunta_5_entendida
-
-- story: No entiende 6
-  steps:
-    - checkpoint: pregunta_5_entendida
-    - action: action_pregunta_6
-    - slot_was_set:
-      - pregunta_6_confirmacion: true
-    - intent: denegar
-    - action: action_pregunta_6_repetir
-    - slot_was_set:
-      - pregunta_6_repetir_confirmacion: true
-    - intent: afirmar
-    - checkpoint: pregunta_6_entendida
-
-### PREGUNTA 6
-
-- story: Entiende 6
-  steps:
-    - checkpoint: pregunta_5_entendida
-    - action: action_pregunta_6
-    - slot_was_set:
-      - pregunta_6_confirmacion: true
-    - intent: afirmar
     - checkpoint: pregunta_6_entendida
 
 - story: No entiende 6
@@ -632,10 +608,16 @@ stories:
         - pide_img_prod: true
     - intent: enviar_imagen
     - action: action_recibir_imagen
+
+- story: afirmar cargar otro producto
+  steps:
     - slot_was_set:
       - pide_img_prod: false
       - agregando_productos: true
       - pregunta_carga: true
+    - intent: afirmar
+    - action: action_pedir_productos
+    - checkpoint: productos_pedidos
 
 - story: no dar imagen para producto
   steps:

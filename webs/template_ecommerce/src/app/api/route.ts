@@ -8,7 +8,6 @@ export async function GET(request: Request) {
     try {
         const { searchParams } = new URL(request.url);
         const palabra = searchParams.get('search') || '';
-
         const productos = await producto.find({
             name: { $regex: new RegExp(palabra, 'i') }
         });

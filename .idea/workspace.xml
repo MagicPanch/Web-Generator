@@ -6,104 +6,21 @@
   <component name="ChangeListManager">
     <list default="true" id="121f2593-11ee-405e-a8d8-1c2f43d81e54" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chatbot/actions/BaseAction.py" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/actions/BaseAction.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/chatbot/actions/actions.py" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/actions/actions.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chatbot/credentials.yml" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/credentials.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/generator/PageManager.py" beforeDir="false" afterPath="$PROJECT_DIR$/generator/PageManager.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/generator/objects/pages/Front.py" beforeDir="false" afterPath="$PROJECT_DIR$/generator/objects/pages/Front.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/base/constants/footer.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/template_ecommerce/components/E-Commerce.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/webs/template_ecommerce/components/E-Commerce.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chatbot/data/nlu.yml" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/data/nlu.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chatbot/data/rules.yml" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/data/rules.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chatbot/data/stories.yml" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/data/stories.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chatbot/domain.yml" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot/domain.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/DBManager.py" beforeDir="false" afterPath="$PROJECT_DIR$/database/DBManager.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/collections/particular/Product.py" beforeDir="false" afterPath="$PROJECT_DIR$/database/collections/particular/Product.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/CONSTANTS.PY" beforeDir="false" afterPath="$PROJECT_DIR$/resources/CONSTANTS.PY" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/resources/utils.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/webs/template_ecommerce/components/Header.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/webs/template_ecommerce/components/Header.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/webs/template_ecommerce/src/app/api/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/webs/template_ecommerce/src/app/api/route.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/app-build-manifest.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/build-manifest.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/cache/images/WgV2UZb+U1PvPMbiQFoE7biHfeS8EWK7wMbUxAMgYK0=/60.1715621051461.hj+2AqiQg+eE7HxpNp2BboB3YjY1bVxap5PIlACdMy8=.webp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/cache/images/scPS5T1KtJGgW6oSLY1WO89T4j2uoSxF-++J7NJvBPM=/60.1715620503599.0nzByEVSJ4z8x+8yLamCwgKCu6eL3OCNTmFzZBwBgtY=.webp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/cache/webpack/client-development/0.pack.gz" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/cache/webpack/client-development/1.pack.gz" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/cache/webpack/client-development/2.pack.gz" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/cache/webpack/client-development/3.pack.gz" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/cache/webpack/client-development/4.pack.gz" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/cache/webpack/client-development/5.pack.gz" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/cache/webpack/client-development/index.pack.gz" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/cache/webpack/client-development/index.pack.gz.old" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/cache/webpack/server-development/0.pack.gz" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/cache/webpack/server-development/1.pack.gz" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/cache/webpack/server-development/2.pack.gz" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/cache/webpack/server-development/3.pack.gz" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/cache/webpack/server-development/index.pack.gz" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/cache/webpack/server-development/index.pack.gz.old" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/package.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/react-loadable-manifest.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/server/app-paths-manifest.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/server/app/_not-found/page.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/server/app/_not-found/page_client-reference-manifest.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/server/app/page.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/server/app/page_client-reference-manifest.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/server/interception-route-rewrite-manifest.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/server/middleware-build-manifest.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/server/middleware-manifest.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/server/middleware-react-loadable-manifest.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/server/next-font-manifest.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/server/next-font-manifest.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/server/pages-manifest.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/server/server-reference-manifest.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/server/server-reference-manifest.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/server/vendor-chunks/@swc.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/server/vendor-chunks/next.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/server/webpack-runtime.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/static/chunks/app-pages-internals.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/static/chunks/app/_not-found/page.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/static/chunks/app/layout.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/static/chunks/app/page.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/static/chunks/main-app.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/static/chunks/polyfills.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/static/chunks/webpack.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/static/css/app/layout.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/static/development/_buildManifest.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/static/development/_ssgManifest.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/static/media/05a31a2ca4975f99-s.woff2" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/static/media/513657b02c5c193f-s.woff2" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/static/media/51ed15f9841b9f9d-s.woff2" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/static/media/c9a5bc6a7c948fb0-s.p.woff2" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/static/media/d6b16ce4a6175f26-s.woff2" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/static/media/ec159349637c90ad-s.woff2" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/static/media/fd4db3eb5472fc27-s.woff2" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/static/media/logo.1184d053.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/static/webpack/0c5c83bc0a94b437.webpack.hot-update.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/static/webpack/12bb9f121b6e8b44.webpack.hot-update.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/static/webpack/29edc3f6e4f76872.webpack.hot-update.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/static/webpack/33cc25d6669f81f3.webpack.hot-update.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/static/webpack/633457081244afec._.hot-update.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/static/webpack/66cf747ea9d53fc2.webpack.hot-update.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/static/webpack/74e9c4d9566267a9.webpack.hot-update.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/static/webpack/7743096633925c37.webpack.hot-update.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/static/webpack/app/layout.0c5c83bc0a94b437.hot-update.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/static/webpack/app/layout.12bb9f121b6e8b44.hot-update.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/static/webpack/app/layout.33cc25d6669f81f3.hot-update.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/static/webpack/app/layout.66cf747ea9d53fc2.hot-update.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/static/webpack/app/layout.74e9c4d9566267a9.hot-update.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/static/webpack/app/layout.7743096633925c37.hot-update.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/static/webpack/app/layout.d99a067100383380.hot-update.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/static/webpack/app/page.0c5c83bc0a94b437.hot-update.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/static/webpack/app/page.33cc25d6669f81f3.hot-update.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/static/webpack/app/page.66cf747ea9d53fc2.hot-update.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/static/webpack/app/page.74e9c4d9566267a9.hot-update.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/static/webpack/app/page.7743096633925c37.hot-update.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/static/webpack/app/page.d99a067100383380.hot-update.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/static/webpack/d99a067100383380.webpack.hot-update.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/static/webpack/webpack.0c5c83bc0a94b437.hot-update.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/static/webpack/webpack.12bb9f121b6e8b44.hot-update.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/static/webpack/webpack.29edc3f6e4f76872.hot-update.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/static/webpack/webpack.33cc25d6669f81f3.hot-update.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/static/webpack/webpack.66cf747ea9d53fc2.hot-update.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/static/webpack/webpack.74e9c4d9566267a9.hot-update.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/static/webpack/webpack.7743096633925c37.hot-update.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/static/webpack/webpack.d99a067100383380.hot-update.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/trace" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/types/app/layout.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/types/app/page.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/.next/types/package.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webs/webParaCopiar/next-env.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/webs/template_ecommerce/src/app/api/updateQuantity/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/webs/template_ecommerce/src/app/api/updateQuantity/route.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/webs/template_ecommerce/src/app/models/producto.ts" beforeDir="false" afterPath="$PROJECT_DIR$/webs/template_ecommerce/src/app/models/producto.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -150,6 +67,7 @@
 }</component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$PROJECT_DIR$/chatbot/actions/actions.py" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/chatbot/data/rules.yml" root0="SKIP_INSPECTION" />
     <setting file="file://$PROJECT_DIR$/generator/ReactGenerator.py" root0="SKIP_INSPECTION" />
   </component>
   <component name="MarkdownSettingsMigration">
@@ -169,43 +87,43 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_ADD_EXTERNAL_FILES": "true",
-    "Python.DBManager.executor": "Run",
-    "Python.Generator.executor": "Run",
-    "Python.ReactGenerator.executor": "Run",
-    "Python.Router.executor": "Run",
-    "Python.actions.executor": "Run",
-    "Python.generator.executor": "Run",
-    "Python.prueba.executor": "Run",
-    "Python.router.executor": "Run",
-    "Python.test.executor": "Run",
-    "Python.text_extractor.executor": "Run",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "deletionFromPopupRequiresConfirmation": "false",
-    "git-widget-placeholder": "main",
-    "ignore.virus.scanning.warn.message": "true",
-    "last_opened_file_path": "D:/Desarrollo/Ingenieria-de-Software-2024/Web-Generator/user-pages/2086036019/prueba/constants",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
-    "ts.external.directory.path": "D:\\Desarrollo\\Ingenieria-de-Software-2024\\Web-Generator\\user-pages\\2086036019\\opensports\\node_modules\\typescript\\lib",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;Python.DBManager.executor&quot;: &quot;Run&quot;,
+    &quot;Python.Generator.executor&quot;: &quot;Run&quot;,
+    &quot;Python.ReactGenerator.executor&quot;: &quot;Run&quot;,
+    &quot;Python.Router.executor&quot;: &quot;Run&quot;,
+    &quot;Python.actions.executor&quot;: &quot;Run&quot;,
+    &quot;Python.generator.executor&quot;: &quot;Run&quot;,
+    &quot;Python.prueba.executor&quot;: &quot;Run&quot;,
+    &quot;Python.router.executor&quot;: &quot;Run&quot;,
+    &quot;Python.test.executor&quot;: &quot;Run&quot;,
+    &quot;Python.text_extractor.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;deletionFromPopupRequiresConfirmation&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/Desarrollo/Ingenieria-de-Software-2024/Web-Generator/webs/template_ecommerce/src/app&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;D:\\Desarrollo\\Ingenieria-de-Software-2024\\Web-Generator\\user-pages\\2086036019\\opensports\\node_modules\\typescript\\lib&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\Desarrollo\Ingenieria-de-Software-2024\Web-Generator\webs\template_ecommerce\src\app" />
+      <recent name="D:\Desarrollo\Ingenieria-de-Software-2024\Web-Generator\webs\template_ecommerce\components" />
       <recent name="D:\Desarrollo\Ingenieria-de-Software-2024\Web-Generator\user-pages\2086036019\prueba\constants" />
       <recent name="D:\Desarrollo\Ingenieria-de-Software-2024\Web-Generator\webs\base\constants" />
       <recent name="D:\Desarrollo\Ingenieria-de-Software-2024\Web-Generator\user-pages\2086036019\design-label\components" />
-      <recent name="D:\Desarrollo\Ingenieria-de-Software-2024\Web-Generator\webs\template_ecommerce" />
-      <recent name="D:\Desarrollo\Ingenieria-de-Software-2024\Web-Generator\webs\template_ecommerce\components" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="D:\Desarrollo\Ingenieria-de-Software-2024\Web-Generator\user-pages\2086036019\design-label\components\ShoppingCart" />
@@ -318,6 +236,12 @@
       <workItem from="1718154990337" duration="333000" />
       <workItem from="1718237340004" duration="2195000" />
       <workItem from="1718560108983" duration="695000" />
+      <workItem from="1719013330179" duration="6057000" />
+      <workItem from="1719027903347" duration="147000" />
+      <workItem from="1719063150860" duration="35000" />
+      <workItem from="1719063910868" duration="4813000" />
+      <workItem from="1719070607374" duration="245000" />
+      <workItem from="1719071373698" duration="432000" />
     </task>
     <servers />
   </component>

@@ -87,7 +87,7 @@ const Header = ({ currentSection, setSection }: HeaderProps) => {
               <div>
                 {cart.map((cartItem) => (
                   <div key={cartItem.item.key} className="flex items-center mb-4">
-                    <Image src={cartItem.item.multimedia} alt={cartItem.item.name} className="w-24 h-24 object-cover rounded mr-4" />
+                    <img src={cartItem.item.multimedia} alt={cartItem.item.name} className="w-24 h-24 object-cover rounded mr-4" />
                     <div>
                       <h3 className="text-lg text-customColor-700">{cartItem.item.name}</h3>
                       <p className="text-gray-600">Precio: ${cartItem.item.price}</p>

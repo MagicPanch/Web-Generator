@@ -238,12 +238,12 @@ class DBManager:
         if page:
             collection = cls.get_instance()._db[page_id]
             if collection:
-                product = collection.find_one({'_id': sku})
+                product = collection.find_one({'key': sku})
                 if product:
-                    collection.update_one({"_id": sku}, {"$set": {"stock": product["stock"] + cant, "name": title, "desc": desc, "price": precio}})
+                    collection.update_one({"key": sku}, {"$set": {"stock": product["stock"] + cant, "name": title, "desc": desc, "price": precio}})
                 else:
                     product = {
-                        "_id": sku,
+                        "key": sku,
                         "stock": cant,
                         "name": title,
                         "desc": desc,
@@ -257,6 +257,13 @@ class DBManager:
     def set_product_multimedia(cls, user_id, page_name, product, media_url):
         page_id = user_id + '-' + page_name
         collection = cls.get_instance()._db[page_id]
+        print("producto: ", product)
+        print("imagen: ", media_url)
         if collection:
-            collection.update_one({"_id": product}, {"$set": {"multimedia": media_url}})
+            producto = collection.find_one({"key": product})
+            print("producto encontrado: ", producto)
+            collection.update_one({"key": product}, {"$set": {"multimedia": media_url}})
+            print("imagen seteada")
+        else:
+            print("no hay coleccion")
 

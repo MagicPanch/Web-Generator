@@ -5,9 +5,10 @@ import { NextRequest, NextResponse } from 'next/server';
 export async function POST(request: NextRequest) {
     await dbconnect();
     const { cart } = await request.json();
-  
+    console.log("en POST")
     try {
       const updatePromises = cart.map(async (cartItem: { item: { key: Number }, quantity: number }) => {
+          console.log(cartItem.item.key)
         const product = await Product.findOne({key: cartItem.item.key});
         if (product) {
           product.stock -= cartItem.quantity;

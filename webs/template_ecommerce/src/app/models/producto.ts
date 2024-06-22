@@ -16,9 +16,9 @@ const productoSchema: Schema = new mongoose.Schema({
     price: { type: Number, required: true },
     multimedia: { type: String, required: true },
     desc: { type: String, required: true },
-    key: { type: Number, required: false }
+    key: { type: Number, required: true }
 }, {
-    collection: Nombre_Esquema // Aquí se especifica el nombre de la colección de forma explícita
+    collection: Nombre_Esquema
 });
 
 const Producto = mongoose.models[Nombre_Esquema] || mongoose.model<Producto>(Nombre_Esquema, productoSchema);
