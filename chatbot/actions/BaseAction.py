@@ -48,10 +48,11 @@ class BaseAction(Action, ABC):
             return events
 
         # Verificación del tutorial
-        if tracker.get_slot("hizo_tutorial") is not None:
-            tuto = tracker.get_slot("hizo_tutorial")
-        else:
+        tuto = tracker.get_slot("hizo_tutorial")
+        print("hizo tutorial slot: ", tuto)
+        if tuto is None:
             tuto = dbm.get_user_tutorial(user_id)
+            print("hizo tutorial db: ", tuto)
         if not tuto:
             dispatcher.utter_message(text="Para continuar primero debes completar el tutorial. ¿Deseas hacerlo ahora?")
             return [SlotSet("pregunta_tutorial", True)]

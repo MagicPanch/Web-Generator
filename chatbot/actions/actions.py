@@ -44,7 +44,7 @@ class ActionCapturarCreacion(BaseAction):
         if seccion is None:
             seccion = tracker.get_slot('tipo_seccion')
         if seccion:
-            events = clear_slots(tracker, domain, slots_to_true=["creando_seccion"], slots_to_save=["page_name", "componente", "tipo_seccion"])
+            events = clear_slots(tracker, domain, slots_to_true=["creando_seccion"], slots_to_save=["hizo_tutorial", "page_name", "componente", "tipo_seccion"])
             events.append(FollowupAction("action_capturar_tipo_seccion"))
             #return [FollowupAction("action_capturar_tipo_seccion"), SlotSet("creando_seccion", True)]
         else:
@@ -65,7 +65,7 @@ class ActionPreguntarNombrePagina(BaseAction):
                       page_name: Text = None, page_doc: Any = None, pages: Any = None) -> List[Dict[Text, Any]]:
         dispatcher.utter_message(text="¿Como queres que se llame tu pagina? Por favor indica su nombre en el siguiente formato:")
         dispatcher.utter_message(text="&&nombre-pagina&&")
-        return clear_slots(tracker, domain, slots_to_true=["creando_pagina", "pregunta_nombre"])
+        return clear_slots(tracker, domain, slots_to_true=["creando_pagina", "pregunta_nombre"], slots_to_save=["hizo_tutorial"])
         #return [SlotSet("creando_pagina", True), SlotSet("pregunta_nombre", True)]
 
 class ActionCrearPagina(BaseAction):
@@ -82,7 +82,7 @@ class ActionCrearPagina(BaseAction):
         #if not 'nombre_pagina' in last_message_intent:
         if not "&&" in last_user_message:
             dispatcher.utter_message(text="Entendido, si mas tarde deseas retomar la creacion de tu pagina puedes pedirmelo.")
-            return clear_slots(tracker, domain, slots_to_save=["page_name"])
+            return clear_slots(tracker, domain, slots_to_save=["page_name", "hizo_tutorial"])
             #return [SlotSet("creando_pagina", False), SlotSet("pregunta_nombre", False)]
         print("slot creando: ", tracker.get_slot("creando_pagina"))
         print("page_name: ", page_name)
@@ -90,7 +90,7 @@ class ActionCrearPagina(BaseAction):
         if tracker.get_slot("creando_pagina"):
             if not page_name:
                 dispatcher.utter_message(text="Repetime como queres que se llame tu página. Te recuerdo que el formato es: &&nombre-pagina&&")
-                return clear_slots(tracker, domain, slots_to_true=["creando_pagina", "pregunta_nombre"])
+                return clear_slots(tracker, domain, slots_to_true=["creando_pagina", "pregunta_nombre", "hizo_tutorial"])
                 #return [SlotSet("creando_pagina", True), SlotSet("pregunta_nombre", True)]
             else:
                 if creando_pagina:
@@ -101,7 +101,7 @@ class ActionCrearPagina(BaseAction):
                     #message = "Si la pagina te solicita una contraseña ingresa: " + pgm.get_tunnel_password()
                     #dispatcher.utter_message(text=message)
                     creando_pagina = False
-                    return clear_slots(tracker, domain, slots_to_save=["page_name"])
+                    return clear_slots(tracker, domain, slots_to_save=["page_name", "hizo_tutorial"])
                     #return [SlotSet("creando_pagina", False), SlotSet("pregunta_nombre", False)]
                 elif dbm.get_page_by_name(page_name) is None:
                     #La pagina no existe
@@ -117,18 +117,18 @@ class ActionCrearPagina(BaseAction):
                     creando_pagina = True
 
                     dispatcher.utter_message(text="Aguarda un momento mientras se crea tu página. Este proceso puede demorar unos minutos.")
-                    events = clear_slots(tracker, domain, slots_to_save=["page_name"])
+                    events = clear_slots(tracker, domain, slots_to_save=["page_name", "hizo_tutorial"])
                     events.append(FollowupAction("action_ejecutar_dev"))
                     return events
                     #return [SlotSet("creando_pagina", False), FollowupAction("action_ejecutar_dev")]
                 else:
                     #La pagina ya existe
                     dispatcher.utter_message(text="Ya existe una pagina con ese nombre. Por favor elige otro.")
-                    return clear_slots(tracker, domain, slots_to_true=["creando_pagina", "pregunta_nombre"])
+                    return clear_slots(tracker, domain, slots_to_true=["creando_pagina", "pregunta_nombre"], slots_to_save=["hizo_tutorial"])
                     #return [SlotSet("creando_pagina", True), SlotSet("pregunta_nombre", True)]
         else:
             dispatcher.utter_message("No te entendi, por favor repetime.")
-            return clear_slots(tracker, domain, slots_to_save=["page_name"])
+            return clear_slots(tracker, domain, slots_to_save=["page_name", "hizo_tutorial"])
             #return []
 class ActionEjecutarDev(Action):
 
@@ -152,7 +152,7 @@ class ActionEjecutarDev(Action):
 
         #message = "Si la pagina te solicita una contraseña ingresa: " + pgm.get_tunnel_password()
         #dispatcher.utter_message(text=message)
-        return clear_slots(tracker, domain, slots_to_save=["page_name"])
+        return clear_slots(tracker, domain, slots_to_save=["page_name", "hizo_tutorial"])
         #return [SlotSet("creando_pagina", False), SlotSet("pregunta_nombre", False)]
 
 class ActionEjecutarPagina(BaseAction):
@@ -170,7 +170,7 @@ class ActionEjecutarPagina(BaseAction):
             # Verificar si la pagina está ejecutando
                 dispatcher.utter_message(text="Podes acceder a tu página en el siguiente link: " + page_obj.get_page_address())
                 #dispatcher.utter_message(text="Si la pagina te solicita una contraseña ingresa: " + pgm.get_tunnel_password())
-                return clear_slots(tracker, domain, slots_to_save=["page_name"])
+                return clear_slots(tracker, domain, slots_to_save=["page_name", "hizo_tutorial"])
                 #return []
             elif page_obj.is_running_dev():
             # Se esta ejecutando en modo dev
@@ -196,7 +196,7 @@ class ActionEjecutarPagina(BaseAction):
         print("(" + threading.current_thread().getName() + ") " + "------------page_address: ", page_address)
         dispatcher.utter_message(text="Podes acceder a tu página en el siguiente link: " + page_address)
         #dispatcher.utter_message(text="Si la pagina te solicita una contraseña ingresa: " + pgm.get_tunnel_password())
-        return clear_slots(tracker, domain, slots_to_save=["page_name"])
+        return clear_slots(tracker, domain, slots_to_save=["page_name", "hizo_tutorial"])
         #return [SlotSet("pregunta_ejecucion", False)]
 
     def skip_tuto_verification(self) -> bool:
@@ -221,7 +221,7 @@ class ActionEjecutarPagina(BaseAction):
                 for pag in pgm.get_user_running_pages(user_id):
                     pgm.stop_page(user_id, pag.get_name())
                     #pgm.stop_tunnel(user_id, pag.get_name())
-                    pgmpgm.pop_page(user_id, pag.get_name())
+                    pgm.pop_page(user_id, pag.get_name())
                     dispatcher.utter_message(text="La pagina " + pag.get_name() + " fue detenida con éxito.")
                 print("(" + threading.current_thread().getName() + ") " + "------------PAGINAS DETENIDA CON EXITO------------")
             else:
@@ -232,7 +232,7 @@ class ActionEjecutarPagina(BaseAction):
                     pgm.pop_page(user_id, page_name)
                     print("(" + threading.current_thread().getName() + ") " + "------------PAGINA DETENIDA CON EXITO------------")
                     dispatcher.utter_message(text="Tu pagina fue apagada con exito.")
-            return clear_slots(tracker, domain, slots_to_save=["page_name"])
+            return clear_slots(tracker, domain, slots_to_save=["page_name", "hizo_tutorial"])
             #return [SlotSet("pregunta_detencion", False)]
 
         def skip_tuto_verification(self) -> bool:
@@ -271,16 +271,16 @@ class ActionCapturarEdicion(BaseAction):
         if componente:
         # Hay componente a modificar
             if componente.lower() == "color":
-                events = clear_slots(tracker, domain, slots_to_true=["cambio_color"], slots_to_save=["page_name", "componente"])
+                events = clear_slots(tracker, domain, slots_to_true=["cambio_color"], slots_to_save=["page_name", "componente", "hizo_tutorial"])
                 events.append(FollowupAction("action_preguntar_color"))
                 return events
                 #return [FollowupAction("action_preguntar_color"), SlotSet("cambio_logo", True), SlotSet("pregunta_componente", False), SlotSet("pregunta_nombre", False), SlotSet("pregunta_edicion", False)]
             if componente.lower() == "logo":
                 dispatcher.utter_message("Podes enviarme una imagen con el logo de tu página para el encabezado. Te recomiendo que la envíes como archivo para que esta conserve su calidad original.")
-                return clear_slots(tracker, domain, slots_to_true=["cambio_logo"], slots_to_save=["page_name", "componente"])
+                return clear_slots(tracker, domain, slots_to_true=["cambio_logo"], slots_to_save=["page_name", "componente", "hizo_tutorial"])
                 #return [SlotSet("cambio_logo", True)]
             elif componente.lower() == "footer":
-                events = clear_slots(tracker, domain, slots_to_save=["page_name", "componente"])
+                events = clear_slots(tracker, domain, slots_to_save=["page_name", "componente", "hizo_tutorial"])
                 events.append(FollowupAction("action_preguntar_mail_footer"))
                 return events
                 #return [FollowupAction("action_preguntar_mail_footer"), SlotSet("pregunta_componente", False), lotSet("pregunta_nombre", False), SlotSet("pregunta_edicion", False)]
@@ -300,10 +300,10 @@ class ActionCapturarEdicion(BaseAction):
                         if nombre_seccion.lower() == "e-commerce":
                             message = "No hay modificaciones que puedas realizar en la sección e-commerce de tu página. Si queres agregar productos debes pedirmelo como tal."
                             dispatcher.utter_message(text=message)
-                            return clear_slots(tracker, domain, slots_to_save=["page_name"])
+                            return clear_slots(tracker, domain, slots_to_save=["page_name", "hizo_tutorial"])
                             #return [SlotSet("componente", None), SlotSet("tipo_seccion", None), SlotSet("nombre_informativa", None), SlotSet("pregunta_edicion", False)]
                         if nombre_seccion in secciones:
-                            events = clear_slots(tracker, domain, slots_to_save=["page_name", "componente", "tipo_seccion", "nombre_informativa"], slots_to_set={"nombre_seccion_editando": nombre_seccion})
+                            events = clear_slots(tracker, domain, slots_to_save=["page_name", "componente", "tipo_seccion", "nombre_informativa", "hizo_tutorial"], slots_to_set={"nombre_seccion_editando": nombre_seccion})
                             events.append(FollowupAction("action_modificar_informativa_1"))
                             return events
                             #return [SlotSet("nombre_seccion_editando", nombre_seccion), FollowupAction("action_modificar_informativa_1"), SlotSet("pregunta_componente", False),  SlotSet("pregunta_nombre", False), SlotSet("pregunta_edicion", False)]
@@ -312,19 +312,19 @@ class ActionCapturarEdicion(BaseAction):
                             for seccion in secciones:
                                 buttons.append({"payload": "$$" + str(seccion) + "$$", "title": seccion})
                             dispatcher.utter_message(text=str(nombre_seccion) + " no es un tipo de seccion válido. Te recuerdo que las secciones a modificar en tu página son:", buttons=buttons, button_type="vertical")
-                            return clear_slots(tracker, domain, slots_to_true=["pregunta_seccion"], slots_to_save=["page_name", "componente"])
+                            return clear_slots(tracker, domain, slots_to_true=["pregunta_seccion"], slots_to_save=["page_name", "componente", "hizo_tutorial"])
                             #return [SlotSet("pregunta_componente", False), SlotSet("pregunta_seccion", True)]
                     else:
                         buttons = []
                         for seccion in secciones:
                             buttons.append({"payload": "$$" + str(seccion) + "$$", "title": seccion})
                         dispatcher.utter_message(text="¿Sobre qué sección te gustaría operar?. Te recuerdo que las secciones de tu página son:", buttons=buttons, button_type="vertical")
-                        return clear_slots(tracker, domain, slots_to_true=["pregunta_componente", "pregunta_seccion"], slots_to_save=["page_name", "componente"])
+                        return clear_slots(tracker, domain, slots_to_true=["pregunta_componente", "pregunta_seccion"], slots_to_save=["page_name", "componente", "hizo_tutorial"])
                         #return [SlotSet("pregunta_componente", True), SlotSet("pregunta_seccion", True)]
                 else:
                 # La pagina no tiene secciones
                     dispatcher.utter_message(text="La pagina " + page_doc.name + " no cuenta con ninguna sección, por lo que antes deberás crear una.")
-                    events = clear_slots(tracker, domain, slots_to_save=["page_name"])
+                    events = clear_slots(tracker, domain, slots_to_save=["page_name", "hizo_tutorial"])
                     events.append(FollowupAction("action_capturar_tipo_seccion"))
                     return events
                     #return [FollowupAction("action_capturar_tipo_seccion")]
@@ -332,15 +332,16 @@ class ActionCapturarEdicion(BaseAction):
         # No hay componente a modificar
             buttons = [{"payload": "quiero cambiar el color", "title": "Color"}, {"payload": "quiero cambiar el logo", "title": "Logo"}]
             secciones = page_obj.get_sections_name()
-            sects = "("
-            for seccion in secciones:
-                sects +=str(seccion) + ", "
-            sects = sects[:len(sects) - 2] + ")"
-            buttons.append({"payload": "quiero modificar una seccion", "title": "Sección " + sects})
+            if len(secciones) > 0:
+                sects = "("
+                for seccion in secciones:
+                    sects +=str(seccion) + ", "
+                sects = sects[:len(sects) - 2] + ")"
+                buttons.append({"payload": "quiero modificar una seccion", "title": "Sección " + sects})
             buttons.append({"payload": "quiero cambiar el color", "title": "Footer"})
             message = "¿Qué componente de tu página te gustaría modificar? Te recuerdo que sus componentes son:"
             dispatcher.utter_message(text=message, buttons=buttons, button_type="vertical")
-            return clear_slots(tracker, domain, slots_to_true=["pregunta_componente"], slots_to_save=["page_name"])
+            return clear_slots(tracker, domain, slots_to_true=["pregunta_componente"], slots_to_save=["page_name", "hizo_tutorial"])
             #return [SlotSet("pregunta_componente", True)]
 
     def skip_tuto_verification(self) -> bool:
@@ -375,12 +376,12 @@ class ActionRecibirImagen(Action):
             elif tracker.get_slot("agregando_productos"):
                 dispatcher.utter_message(text="Perfecto, este producto no tendrá imagen.")
                 dispatcher.utter_message(text="¿Queres cargar otro producto?")
-                return clear_slots(tracker, domain, slots_to_true=["pregunta_carga"], slots_to_save=["page_name", "agregando_productos"])
+                return clear_slots(tracker, domain, slots_to_true=["pregunta_carga"], slots_to_save=["page_name", "agregando_productos", "hizo_tutorial"])
                 #return clear_slots(tracker, domain, slots_to_save=["page_name"])
                 #return [SlotSet("agregando_productos", False), SlotSet("pregunta_carga", False)]
             else:
                 dispatcher.utter_message(text="No te entendi, por favor repetime.")
-            return clear_slots(tracker, domain, slots_to_save=["page_name"])
+            return clear_slots(tracker, domain, slots_to_save=["page_name", "hizo_tutorial"])
 
         if "document" in last_user_message:
         # El usuario envió la imagen como documento
@@ -388,7 +389,7 @@ class ActionRecibirImagen(Action):
         else:
         # El usuario envió la imagen como foto
             file = tracker.latest_message['metadata']['message']['photo'][1]
-        error = self.download_image(user_id, page_name, page_path, file, tracker, dispatcher)
+        error = self.download_image(user_id, page_name, page_path, file, tracker)
 
         if error:
             dispatcher.utter_message(text="No se pudo procesar la imagen.")
@@ -397,17 +398,17 @@ class ActionRecibirImagen(Action):
 
         if tracker.get_slot("cambio_logo") is True:
             dispatcher.utter_message("Podes ver el nuevo logo en tu página.")
-            return clear_slots(tracker, domain, slots_to_save=["page_name"], slots_to_set={"cambio_logo": error})
+            return clear_slots(tracker, domain, slots_to_save=["page_name", "hizo_tutorial"], slots_to_set={"cambio_logo": error})
             #return [SlotSet("cambio_logo", error)]
         elif tracker.get_slot("agregando_productos") is True:
             dispatcher.utter_message(text="¿Queres cargar otro producto?")
-            return clear_slots(tracker, domain, slots_to_true=["pregunta_carga"], slots_to_save=["page_name", "agregando_productos"])
+            return clear_slots(tracker, domain, slots_to_true=["pregunta_carga"], slots_to_save=["page_name", "agregando_productos", "hizo_tutorial"])
             #return [SlotSet("pregunta_carga", True), SlotSet("pide_img_prod", False)]
         else:
             dispatcher.utter_message(text="No te entendi, por favor repetime.")
-            return clear_slots(tracker, domain, slots_to_save=["page_name"])
+            return clear_slots(tracker, domain, slots_to_save=["page_name", "hizo_tutorial"])
 
-    def download_image(self, user_id, page_name, page_path, file, tracker: Tracker, dispatcher: CollectingDispatcher) -> bool:
+    def download_image(self, user_id, page_name, page_path, file, tracker: Tracker) -> bool:
         global tbm, dbm, rg
         error = False
         image_id = file["file_id"]
@@ -434,7 +435,7 @@ class ActionPreguntarColor(Action):
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
         dispatcher.utter_message(text="¿Querés modificar el color principal de tu página? En ese caso necesito que me proveas su codigo hexadecimal. Podes seleccionar tu color y copiar su codigo en el siguiente link: https://g.co/kgs/FMBcG8K")
-        return clear_slots(tracker, domain, slots_to_true=["pregunta_color"], slots_to_save=["page_name", "componente", "cambio_color"])
+        return clear_slots(tracker, domain, slots_to_true=["pregunta_color"], slots_to_save=["page_name", "componente", "cambio_color", "hizo_tutorial"])
         #return [SlotSet("pregunta_color", True), FollowupAction("action_listen")]
 
 
@@ -452,7 +453,7 @@ class ActionCapturarColor(Action):
             page_name = page_name[2:len(page_name) - 2].strip()
         rg.set_colors(pgm.get_page_path(tracker.sender_id, page_name), color)
         dispatcher.utter_message("Podes ver el nuevo color en tu página.")
-        return clear_slots(tracker, domain, slots_to_save=["page_name"])
+        return clear_slots(tracker, domain, slots_to_save=["page_name", "hizo_tutorial"])
         #return [SlotSet("componente", None), SlotSet("pregunta_color", False), SlotSet("cambio_color", False), FollowupAction("action_listen")]
 
 
@@ -463,7 +464,7 @@ class ActionPreguntarMailFooter(Action):
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
         dispatcher.utter_message(text="¿Queres cambiar tu e-mail en el footer?")
-        return clear_slots(tracker, domain, slots_to_true=["creando_footer"], slots_to_save=["page_name", "componente"])
+        return clear_slots(tracker, domain, slots_to_true=["creando_footer"], slots_to_save=["page_name", "componente", "hizo_tutorial"])
         #return [SlotSet("creando_footer", True), FollowupAction("action_listen")]
 
 class ActionGuardarMailFooter(Action):
@@ -486,7 +487,7 @@ class ActionGuardarMailFooter(Action):
             #Guardar el mail en la pagina
             dbm.set_page_mail(tracker.sender_id, page_name, mail)
             dispatcher.utter_message(text="E-mail guardado.")
-            events = clear_slots(tracker, domain, slots_to_save=["page_name", "componente", "creando_footer"], slots_to_set={"mail_footer": mail})
+            events = clear_slots(tracker, domain, slots_to_save=["page_name", "componente", "creando_footer", "hizo_tutorial"], slots_to_set={"mail_footer": mail})
             events.append(FollowupAction("utter_preguntar_ubicacion"))
             return events
             #return [SlotSet("mail_footer", mail), FollowupAction("utter_preguntar_ubicacion")]
@@ -494,7 +495,7 @@ class ActionGuardarMailFooter(Action):
         #El usuario no quiere modificar el mail
             print("(" + threading.current_thread().getName() + ") " + "------------denegar")
             dispatcher.utter_message(text="Perfecto, no se modificara el mail mostrado en el footer de su pagina.")
-            events = clear_slots(tracker, domain, slots_to_save=["page_name", "componente", "creando_footer"])
+            events = clear_slots(tracker, domain, slots_to_save=["page_name", "componente", "creando_footer", "hizo_tutorial"])
             events.append(FollowupAction("utter_preguntar_ubicacion"))
             return events
             #return []
@@ -518,7 +519,7 @@ class ActionGuardarUbicacionFooter(Action):
             #Guardar la ubicacion en la pagina
             dbm.set_page_location(tracker.sender_id, page_name, ubicacion)
             dispatcher.utter_message(text="Ubicacion guardada.")
-            events = clear_slots(tracker, domain, slots_to_save=["page_name", "componente", "creando_footer"], slots_to_set={"ubicacion_footer": ubicacion})
+            events = clear_slots(tracker, domain, slots_to_save=["page_name", "componente", "creando_footer", "hizo_tutorial"], slots_to_set={"ubicacion_footer": ubicacion})
             events.append(FollowupAction("action_crear_footer"))
             return events
             #return [SlotSet("ubicacion_footer", ubicacion), FollowupAction("action_crear_footer")]
@@ -526,7 +527,7 @@ class ActionGuardarUbicacionFooter(Action):
         #El usuario no quiere modificar el mail
             print("(" + threading.current_thread().getName() + ") " + "------------denegar")
             dispatcher.utter_message(text="Perfecto, no se modificara la ubicacion mostrada en el footer de su pagina.")
-            events = clear_slots(tracker, domain, slots_to_save=["page_name", "componente", "creando_footer"])
+            events = clear_slots(tracker, domain, slots_to_save=["page_name", "componente", "creando_footer", "hizo_tutorial"])
             events.append(FollowupAction("action_crear_footer"))
             return events
             #return [FollowupAction("action_crear_footer")]
@@ -541,7 +542,7 @@ class ActionCrearFooter(Action):
         page_name = tracker.get_slot('page_name')
         if page_name is not None:
             page_name = page_name[2:len(page_name) - 2].strip()
-        page_path = pgm.get_page_path(user_id, page_name)
+        page_path = pgm.get_page_path(tracker.sender_id, page_name)
         mail = str(tracker.get_slot("mail_footer"))
         if not mail:
             mail = "contactDesignLabel@gmail.com"
@@ -557,7 +558,7 @@ class ActionCrearFooter(Action):
         rg.generarFooter(page_path, mail, ubicacion)
         print("-------------FOOTER MODIFICADO-------------")
         dispatcher.utter_message(text="Podes ver los cambios que realizamos en el footer")
-        return clear_slots(tracker, domain, slots_to_save=["page_name"])
+        return clear_slots(tracker, domain, slots_to_save=["page_name", "hizo_tutorial"])
         #return [SlotSet("creando_footer", False), SlotSet("componente", None)]
 
 # SECCIONES
@@ -597,13 +598,13 @@ class ActionCapturarTipoSeccion(BaseAction):
                     creando_ecommerce = False
                     if not page_obj.is_running_dev():
                         pgm.run_dev(user_id, page_name)
-                        message = "Tu pagina se encuentra en modo edición. Podrás visualizar la nueva sección en: " + page.get_page_address()
+                        message = "Tu pagina se encuentra en modo edición. Podrás visualizar la nueva sección en: " + page_obj.get_page_address()
                         dispatcher.utter_message(text=message)
                         #message = "Si la pagina te solicita una contraseña ingresa: " + pgm.get_tunnel_password()
                         #dispatcher.utter_message(text=message)
                     else:
                         dispatcher.utter_message(text="Podes ver la nueva sección en tu página.")
-                    return clear_slots(tracker, domain, slots_to_save=["page_name"])
+                    return clear_slots(tracker, domain, slots_to_save=["page_name", "hizo_tutorial"])
                     #return [SlotSet("pregunta_seccion", False), SlotSet("creando_seccion", False), SlotSet("componente", None)]
                 else:
                     dispatcher.utter_message(text="Aguarda un momento mientras se crea la sección e-commerce en tu página.")
@@ -622,7 +623,7 @@ class ActionCapturarTipoSeccion(BaseAction):
             dispatcher.utter_message(text=message, buttons=buttons, button_type="vertical")
             for slot in tracker.slots.keys():
                 print(slot + " : " + str(tracker.slots[slot]))
-            return clear_slots(tracker, domain, slots_to_true=["creando_seccion", "pregunta_seccion"], slots_to_save=["componente", "page_name"])
+            return clear_slots(tracker, domain, slots_to_true=["creando_seccion", "pregunta_seccion"], slots_to_save=["componente", "page_name", "hizo_tutorial"])
 
     def skip_tuto_verification(self) -> bool:
         return False
@@ -660,7 +661,7 @@ class ActionCrearEcommerce(BaseAction):
             else:
                 dispatcher.utter_message(text="Podes ver la nueva sección en tu página.")
             dbm.add_ecomm_section(user_id, page_name)
-        return clear_slots(tracker, domain, slots_to_save=["page_name"])
+        return clear_slots(tracker, domain, slots_to_save=["page_name", "hizo_tutorial"])
         #return [SlotSet("pregunta_seccion", False), SlotSet("creando_seccion", False), SlotSet("componente", None)]
 
     def skip_page_verification(self) -> bool:
@@ -684,7 +685,7 @@ class ActionPedirProductos(BaseAction):
             tbm.send_file_to_user(user_id, CONSTANTS.TEMPLATE_PRODUCTOS_DIR)
             dispatcher.utter_message(text="Si vas a cargar los productos de a uno voy a necesitar los siguientes datos:")
             dispatcher.utter_message(text="SKU:\nCantidad:\nTitulo:\nDescripción:\nPrecio:")
-            return clear_slots(tracker, domain, slots_to_true=["agregando_productos", "pregunta_carga"], slots_to_save=["page_name"])
+            return clear_slots(tracker, domain, slots_to_true=["agregando_productos", "pregunta_carga"], slots_to_save=["page_name", "hizo_tutorial"])
             #return [SlotSet("agregando_productos", True), SlotSet("pregunta_carga", True), SlotSet("pregunta_nombre", False)]
         else:
         # No tiene sección ecommerce
@@ -696,7 +697,7 @@ class ActionPedirProductos(BaseAction):
                     if page.has_ecomm_section:
                         message += str(page.name) + "\n"
             dispatcher.utter_message(text=message)
-            return clear_slots(tracker, domain, slots_to_true=["agregando_productos", "pregunta_nombre"], slots_to_save=["page_name"])
+            return clear_slots(tracker, domain, slots_to_true=["agregando_productos", "pregunta_nombre"], slots_to_save=["page_name", "hizo_tutorial"])
             #return [SlotSet("agregando_productos", True), SlotSet("pregunta_nombre", True)]
 
     def skip_tuto_verification(self) -> bool:
@@ -755,11 +756,11 @@ class ActionCapturarProductoCargado(Action):
                         message = "El producto " + producto.Titulo + " se guardó correctamente con el identificador: " + str(int(producto.SKU))
                         dispatcher.utter_message(text=message)
                 dispatcher.utter_message(text="Ha finalizado la carga de productos. ¿Puedo ayudarte con algo más?")
-                return clear_slots(tracker, domain, slots_to_save=["page_name"])
+                return clear_slots(tracker, domain, slots_to_save=["page_name", "hizo_tutorial"])
                 #return [FollowupAction("action_listen"), SlotSet("agregando_productos", False), SlotSet("pregunta_carga", False)]
             if error:
                 dispatcher.utter_message(text="No se pudo recibir el archivo. Por favor envíalo nuevamente.")
-                return clear_slots(tracker, domain, slots_to_true=["agregando_productos", "pregunta_carga"], slots_to_save=["page_name"])
+                return clear_slots(tracker, domain, slots_to_true=["agregando_productos", "pregunta_carga"], slots_to_save=["page_name", "hizo_tutorial"])
                 #return [SlotSet("agregando_productos", True), SlotSet("pregunta_carga", True)]
         else:
             last_message = str(tracker.latest_message.get('text'))
@@ -796,7 +797,7 @@ class ActionCapturarProductoCargado(Action):
             message = "El producto " + titulo + " se guardó correctamente con el identificador: " + str(int(sku))
             dispatcher.utter_message(text=message)
             dispatcher.utter_message(text="Si lo deseas podes enviarme alguna imagen sobre él.")
-            return clear_slots(tracker, domain, slots_to_true=["pide_img_prod"], slots_to_save=["page_name", "agregando_productos"], slots_to_set={"id_producto": int(sku)})
+            return clear_slots(tracker, domain, slots_to_true=["pide_img_prod"], slots_to_save=["page_name", "agregando_productos", "hizo_tutorial"], slots_to_set={"id_producto": int(sku)})
             #return [SlotSet("pide_img_prod", True), SlotSet("id_producto", sku)]
 
 
@@ -811,7 +812,7 @@ class ActionCrearInformativa1(Action):
         print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
         dispatcher.utter_message(text="¿Que nombre llevará la sección? Por favor utiliza el siguiente formato:")
         dispatcher.utter_message(text="$$nombre seccion$$")
-        events = clear_slots(tracker, domain, slots_to_true=["creando_seccion_informativa", "pregunta_nombre_informativa"], slots_to_save=["page_name", "componente", "tipo_seccion"])
+        events = clear_slots(tracker, domain, slots_to_true=["creando_seccion_informativa", "pregunta_nombre_informativa"], slots_to_save=["page_name", "componente", "tipo_seccion", "hizo_tutorial"])
         events.append(FollowupAction("action_listen"))
         return events
         #return clear_slots(tracker, domain, slots_to_true=["creando_seccion_informativa", "pregunta_nombre_informativa"], slots_to_save=["page_name", "componente", "tipo_seccion"])
@@ -842,7 +843,7 @@ class ActionCrearInformativa2(Action):
         page.add_section(inf_section)
         dispatcher.utter_message(text="Proporcioname el texto informativo. Puedes enviarme un archivo en formato MarkDown (.md) o simplemente escribir en este chat. Si vas a escribir en el chat, por favor respeta el siguiente formato:")
         dispatcher.utter_message(text="%%\nTexto\n%%")
-        return clear_slots(tracker, domain, slots_to_true=["creando_seccion_informativa", "pide_text_informativa"], slots_to_save=["page_name", "componente", "tipo_seccion"], slots_to_set={"nombre_informativa": nombre_seccion, "pagina_modificando": tracker.get_slot('page_name')})
+        return clear_slots(tracker, domain, slots_to_true=["creando_seccion_informativa", "pide_text_informativa"], slots_to_save=["page_name", "componente", "tipo_seccion", "hizo_tutorial"], slots_to_set={"nombre_informativa": nombre_seccion, "pagina_modificando": tracker.get_slot('page_name')})
         #return [SlotSet("componente", "seccion"), SlotSet("creando_seccion_informativa", True), SlotSet("pide_text_informativa", True), SlotSet("pregunta_nombre_informativa", False), SlotSet("nombre_informativa", nombre_seccion), SlotSet("pagina_modificando", tracker.get_slot('page_name'))]
 
 class ActionCrearInformativa3(Action):
@@ -875,7 +876,7 @@ class ActionCrearInformativa3(Action):
             rg.remove_section(page_path, "Template")
         rg.agregarSectionInformativa(page_path, nombre_seccion, text)
         dispatcher.utter_message(text="Podrás ver la nueva sección en tu página")
-        return clear_slots(tracker, domain, slots_to_save=["page_name"])
+        return clear_slots(tracker, domain, slots_to_save=["page_name", "hizo_tutorial"])
         #return [SlotSet("creando_seccion_informativa", False), SlotSet("pide_text_informativa", False), SlotSet("pregunta_seccion", False),
         #        SlotSet("creando_seccion", False), SlotSet("componente", None), SlotSet("nombre_informativa", None), SlotSet("tipo_seccion", None)]
 
@@ -905,7 +906,7 @@ class ActionModificarInformativa1(Action):
         print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
         dispatcher.utter_message(text="¿Cuál es el nuevo contenido de la sección? Puedes enviarme un archivo en formato MarkDown (.md) o simplemente escribir en este chat. Si vas a escribir en el chat, por favor respeta el siguiente formato:")
         dispatcher.utter_message(text="%%\nTexto\n%%")
-        return clear_slots(tracker, domain, slots_to_true=["editando_seccion_informativa", "pide_text_informativa"], slots_to_save=["page_name", "componente", "tipo_seccion"])
+        return clear_slots(tracker, domain, slots_to_true=["editando_seccion_informativa", "pide_text_informativa"], slots_to_save=["page_name", "componente", "tipo_seccion", "hizo_tutorial"])
         #return [SlotSet("editando_seccion_informativa", True), SlotSet("pide_text_informativa", True)]
 
 
@@ -938,7 +939,7 @@ class ActionModificarInformativa2(Action):
         rg.remove_section(pgm.get_page_path(user_id, page_name), tracker.get_slot("nombre_seccion_editando"), False)
         rg.agregarSectionInformativa(pgm.get_page_path(user_id, page_name), nombre_seccion, text, is_update=True)
         dispatcher.utter_message(text="Podrás ver la nueva sección en tu página")
-        return clear_slots(tracker, domain, slots_to_save=["page_name"])
+        return clear_slots(tracker, domain, slots_to_save=["page_name", "hizo_tutorial"])
         #return [SlotSet("editando_seccion_informativa", False), SlotSet("pide_text_informativa", False), SlotSet("nombre_informativa", None), SlotSet("nombre_seccion_editando", None)]
 
     def handle_text(self, tracker: Tracker) -> Text:
@@ -961,7 +962,7 @@ class ActionRestart(Action):
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         for slot in tracker.slots:
             print(slot + ": " + str(tracker.get_slot(slot)))
-        return clear_slots(tracker, domain)
+        return clear_slots(tracker, domain, slots_to_set={"hizo_tutorial": None})
 
 
 # Saludo Actions
@@ -1180,6 +1181,7 @@ class ActionPregunta5(Action):
         print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
         dispatcher.utter_message(text="Ya repasamos cuales son los componentes de una página, por lo que el siguiente paso es aprender a crear una página.")
         dispatcher.utter_message(text="Para ello sólo es necesario un mensaje como \"Quiero crear una pagina\" y yo te preguntaré cuál será su nombre.")
+        dispatcher.utter_message(text="¿Entendido?")
         return [SlotSet("pregunta_4_confirmacion", False), SlotSet("pregunta_4_repetir_confirmacion", False), SlotSet("pregunta_5_confirmacion", True)]
 
 class ActionPregunta5Repetir(Action):
@@ -1324,7 +1326,8 @@ class ActionTerminarTutorial(Action):
         print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
         dispatcher.utter_message(text="¡Felicitaciones " + str(tracker.get_slot("nombre_usuario")) + ", terminaste el tutorial! Ya estas listo para crear tu primera página web")
         dbm.set_user_tutorial(tracker.sender_id)
-        return [SlotSet("hizo_tutorial", True), SlotSet("pregunta_4_confirmacion", False), SlotSet("pregunta_4_repetir_confirmacion", False), SlotSet("pregunta_tutorial", False), SlotSet("inicia_tutorial", False)]
+        return clear_slots(tracker, domain, slots_to_true=["hizo_tutorial"])
+        #return [SlotSet("hizo_tutorial", True), SlotSet("pregunta_4_confirmacion", False), SlotSet("pregunta_4_repetir_confirmacion", False), SlotSet("pregunta_tutorial", False), SlotSet("inicia_tutorial", False)]
 
 class ActionAvisame(Action):
 
@@ -1334,4 +1337,4 @@ class ActionAvisame(Action):
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
         dispatcher.utter_message(text="Perfecto, cualquier cosa que necesites no dudes en pedirmelo.")
-        return clear_slots(tracker, domain, slots_to_save=["page_name"])
+        return clear_slots(tracker, domain, slots_to_save=["page_name", "hizo_tutorial"])
