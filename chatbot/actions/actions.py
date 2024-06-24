@@ -184,7 +184,7 @@ class ActionEjecutarPagina(BaseAction):
         if not dbm.was_compiled(user_id, page_name):
             print("(" + threading.current_thread().getName() + ") " + "----------------pagina no compilada")
             pgm.build_project(user_id, page_name)
-            dbm.set_compilation_date(user_id, page_name)
+            dbm.set_compilation_date(user_id, page_name, page_obj.get_port())
         else:
             print("(" + threading.current_thread().getName() + ") " + "----------------pagina ya compilada")
 
@@ -270,21 +270,21 @@ class ActionCapturarEdicion(BaseAction):
         print("(" + threading.current_thread().getName() + ") " + "--------componente: ", componente)
         if componente:
         # Hay componente a modificar
-            if componente.lower() == "color":
+            if "color" in componente.lower():
                 events = clear_slots(tracker, domain, slots_to_true=["cambio_color"], slots_to_save=["page_name", "componente", "hizo_tutorial"])
                 events.append(FollowupAction("action_preguntar_color"))
                 return events
                 #return [FollowupAction("action_preguntar_color"), SlotSet("cambio_logo", True), SlotSet("pregunta_componente", False), SlotSet("pregunta_nombre", False), SlotSet("pregunta_edicion", False)]
-            if componente.lower() == "logo":
+            if "logo" in componente.lower():
                 dispatcher.utter_message("Podes enviarme una imagen con el logo de tu página para el encabezado. Te recomiendo que la envíes como archivo para que esta conserve su calidad original.")
                 return clear_slots(tracker, domain, slots_to_true=["cambio_logo"], slots_to_save=["page_name", "componente", "hizo_tutorial"])
                 #return [SlotSet("cambio_logo", True)]
-            elif componente.lower() == "footer":
+            elif "footer" in componente.lower():
                 events = clear_slots(tracker, domain, slots_to_save=["page_name", "componente", "hizo_tutorial"])
                 events.append(FollowupAction("action_preguntar_mail_footer"))
                 return events
                 #return [FollowupAction("action_preguntar_mail_footer"), SlotSet("pregunta_componente", False), lotSet("pregunta_nombre", False), SlotSet("pregunta_edicion", False)]
-            elif componente.lower() == "seccion":
+            elif "seccion" in componente.lower():
             # Va a editar una seccion
                 tipo_seccion = tracker.get_slot('tipo_seccion')
                 print("(" + threading.current_thread().getName() + ") " + "--------tipo_seccion: ", tipo_seccion)
@@ -444,7 +444,7 @@ class ActionCapturarColor(Action):
         return "action_capturar_color"
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        global pgm, rg
+        global pgm, dbm, rg
         print(f"({threading.current_thread().getName()}) ----{self.name().upper()}----")
         color = tracker.get_slot('color')
 
@@ -452,6 +452,7 @@ class ActionCapturarColor(Action):
         if page_name is not None:
             page_name = page_name[2:len(page_name) - 2].strip()
         rg.set_colors(pgm.get_page_path(tracker.sender_id, page_name), color)
+        dbm.updt_modification_date(tracker.sender_id, page_name)
         dispatcher.utter_message("Podes ver el nuevo color en tu página.")
         return clear_slots(tracker, domain, slots_to_save=["page_name", "hizo_tutorial"])
         #return [SlotSet("componente", None), SlotSet("pregunta_color", False), SlotSet("cambio_color", False), FollowupAction("action_listen")]

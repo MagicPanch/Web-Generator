@@ -23,6 +23,9 @@ class PageRunner():
     def get_port(self) -> int:
         return self._page_port
 
+    def set_port(self, port):
+        self._page_port = port
+
     def set_exec_process(self, process):
         with self._output_ready:
             self._exec_process = process

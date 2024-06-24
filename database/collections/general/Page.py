@@ -8,6 +8,7 @@ class Page(Document):
     contact = StringField(required=False)
     creationDate = DateTimeField(required=True)
     compilationDate = DateTimeField(required=False)
+    port = IntField(required=False)
     lastModificationDate = DateTimeField(required=True)
     mail = StringField(required=False)
     location = StringField(required=False)

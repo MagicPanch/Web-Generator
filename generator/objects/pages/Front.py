@@ -9,7 +9,7 @@ class Front(PageRunner):
     # Clase encargada de la ejecución del front-end.
     # En ella se deben definir los métodos para la gestión de estas páginas.
 
-    def __init__(self, user, page_name, page_port):
+    def __init__(self, user, page_name, page_port=0):
         super().__init__(user, page_name, page_port)
         self._running = False
         self._dev = False

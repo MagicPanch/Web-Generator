@@ -162,11 +162,12 @@ class DBManager:
             raise Exception("La pagina " + str(page_name) + " no existe o no te pertenece")
 
     @staticmethod
-    def set_compilation_date(user_id, page_name):
+    def set_compilation_date(user_id, page_name, port):
         page_id = user_id + '-' + page_name
         page = Page.objects(id=page_id).first()
         if page:
             page.compilationDate = datetime.datetime.now()
+            page.port = port
             page.save()
         else:
             raise Exception("La pagina " + str(page_name) + " no existe o no te pertenece")

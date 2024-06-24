@@ -344,9 +344,7 @@ class PageManager():
     def _build_project(cls, user, page_name):
         print("(" + threading.current_thread().getName() + ") " + "----PageManager._build_project----")
 
-        #Posicionarse en el path donde se creara el proyecto
         path = cls.get_page_path(user, page_name)
-        page = cls.get_page(user, page_name)
 
         utils.go_to_dir_from_main(path)
 
@@ -470,9 +468,10 @@ class PageManager():
     @classmethod
     def add_page(cls, user, page_name, new=False) -> Front:
         #Crear la pagina
-        page = Front(user, page_name, cls._get_port())
+        page = Front(user, page_name)
         if new:
         #Crea sus directorios
+            page.set_port(cls._get_port())
             utils.go_to_main_dir()
             utils.go_to_dir(CONSTANTS.USER_PAGES_DIR)
             utils.go_to_dir(user)
@@ -482,6 +481,10 @@ class PageManager():
             #Recuperar sus componentes
             dbm = DBManager.get_instance()
             page_doc = dbm.get_page(user, page_name)
+            port = page_doc.port
+            if port is None:
+                port = cls._get_port()
+            page.set_port(port)
             page.set_has_ecomm_section(page_doc.has_ecomm_section)
             sections = dbm.get_page_sections(user, page_name)
             for section in sections:
